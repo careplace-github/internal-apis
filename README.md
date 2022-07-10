@@ -29,12 +29,6 @@
 This guide will help you on how to set up everything so that you can start working on this project. 
 <br>
 
-#### Setting up the Backend
-1) Download Node.js [**v16.16.0**](https://nodejs.org/en/download/releases/)<br> <br>
-
-2) Install dependencies\
-`npm install` <br> <br>
-
 #### Setting up Git
 1) [Download and install the latest version of Git](https://git-scm.com/downloads). <br> <br>
 
@@ -92,22 +86,21 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 
 #### Setting up the Repository
 
-1) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
+1) Download Node.js [v16.16.0](https://nodejs.org/en/download/releases/)<br> <br>
 
-2) Paste the text below.\
-`git@github.com:CarelyPT/CRM.git` <br> <br>
+2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
 
-<br>
+3) Paste the text below.\
+`git clone git@github.com:CarelyPT/CRM.git` <br> <br>
 
-#### Setting up Backend
+4) Install dependencies\
+`npm install` <br> <br>
 
-- Install [Node.js](https://nodejs.org/en/download/)
-- Recommended `node js 14.x` and `npm 6+`. (suggestion v14.17.3 / v16.15.0)
-- Change the current working directory to the <u> Backend Directory </u>
-- Install dependencies: `npm install`
-- Start the Node.js Server: `nodemon server` 
+5) Start the Node.js Server:\
+`nodemon server`
 
 <br>
+
 
 
 
