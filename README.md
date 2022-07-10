@@ -29,7 +29,7 @@
 This guide will help you on how to set up everything so that you can start working on this project. 
 <br>
 
-#### Setting up Git
+### Setting up Git
 1) [Download and install the latest version of Git](https://git-scm.com/downloads). <br> <br>
 
 2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
@@ -50,7 +50,7 @@ This guide will help you on how to set up everything so that you can start worki
 
 <br>
 
-#### Setting up SSH Key
+### Setting up SSH Key
 
 
 1) Open Terminal.  <br> <br>
@@ -84,7 +84,7 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 
 <br>
 
-#### Setting up the Repository
+### Setting up the Repository
 
 1) Download Node.js [v16.16.0](https://nodejs.org/en/download/releases/)<br> <br>
 
