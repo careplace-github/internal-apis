@@ -58,13 +58,13 @@ This guide will help you on how to set up everything so that you can start worki
  
 2) Paste the text below, substituting in your GitHub email address.\
 `$ ssh-keygen -t ed25519 -C "your_email@example.com"`
-\
+<br>
 This creates a new SSH key, using the provided email as a label.\
 `Generating public/private algorithm key pair.`
-\
+<br>
 When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.\
 `> Enter a file in which to save the key (/c/Users/you/.ssh/id_algorithm):[Press enter]`
-\
+<br>
 At the prompt, type a secure passphrase. For more information, see ["Working with SSH key passphrases"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases).\
 `> Enter passphrase (empty for no passphrase): [Type a passphrase]`\
 `> Enter same passphrase again: [Type passphrase again]` <br> <br>
