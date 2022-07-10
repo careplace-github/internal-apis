@@ -35,17 +35,17 @@ This guide will help you on how to set up everything so that you can start worki
 
 2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
 
-3) Set a Git username:
+3) Set a Git username:\
 `$ git config user.name "Mona Lisa"` <br> <br>
 
-4) Confirm that you have set the Git username correctly:
-`$ git config user.name`
+4) Confirm that you have set the Git username correctly:\
+`$ git config user.name`\
 `> Mona Lisa` <br> <br>
 
-5) Set a Git email:
+5) Set a Git email:\
 `$ git config user.email "email@carely.pt"` <br> <br>
 
-4) Confirm that you have set the Git email correctly:
+4) Confirm that you have set the Git email correctly:\
 `$ git config user.email`
 `> email@carely.pt` <br> <br>
 
@@ -56,26 +56,26 @@ This guide will help you on how to set up everything so that you can start worki
 
 1) Open Terminal.  <br> <br>
  
-2) Paste the text below, substituting in your GitHub email address.
+2) Paste the text below, substituting in your GitHub email address.\
 `$ ssh-keygen -t ed25519 -C "your_email@example.com"`
 \
-This creates a new SSH key, using the provided email as a label.
+This creates a new SSH key, using the provided email as a label.\
 `Generating public/private algorithm key pair.`
 \
-When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.
+When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.\
 `> Enter a file in which to save the key (/c/Users/you/.ssh/id_algorithm):[Press enter]`
 \
-At the prompt, type a secure passphrase. For more information, see ["Working with SSH key passphrases"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases).
-`> Enter passphrase (empty for no passphrase): [Type a passphrase]`
+At the prompt, type a secure passphrase. For more information, see ["Working with SSH key passphrases"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases).\
+`> Enter passphrase (empty for no passphrase): [Type a passphrase]`\
 `> Enter same passphrase again: [Type passphrase again]` <br> <br>
 
 
-3) Ensure the ssh-agent is running. You can use the "Auto-launching the ssh-agent" instructions in "Working with SSH key passphrases", or start it manually:
-`# start the ssh-agent in the background`
-`$ eval "$(ssh-agent -s)"` 
+3) Ensure the ssh-agent is running. You can use the "Auto-launching the ssh-agent" instructions in "Working with SSH key passphrases", or start it manually:\
+`# start the ssh-agent in the background`\
+`$ eval "$(ssh-agent -s)"` \
 `> Agent pid 59566` <br> <br>
 
-4) Add your SSH private key to the ssh-agent. If you created your key with a different name, or if you are adding an existing key that has a different name, replace id_ed25519 in the command with the name of your private key file.
+4) Add your SSH private key to the ssh-agent. If you created your key with a different name, or if you are adding an existing key that has a different name, replace id_ed25519 in the command with the name of your private key file.\
 `$ ssh-add ~/.ssh/id_ed25519` <br> <br>
 
 5) Add the SSH key to your account on GitHub. For more information, see ["Adding a new SSH key to your GitHub account"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account). <br> <br>
@@ -86,7 +86,7 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 
 1) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
 
-2) Paste the text below.
+2) Paste the text below.\
 `git@github.com:CarelyPT/CRM.git` <br> <br>
 
 <br>
