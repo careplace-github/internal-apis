@@ -45,8 +45,8 @@ This guide will help you on how to set up everything so that you can start worki
 5) Set a Git email:\
 `$ git config user.email "email@carely.pt"` <br> <br>
 
-4) Confirm that you have set the Git email correctly:\
-`$ git config user.email`
+6) Confirm that you have set the Git email correctly:\
+`$ git config user.email`\
 `> email@carely.pt` <br> <br>
 
 <br>
