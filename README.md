@@ -27,7 +27,7 @@
 ## Getting Started  
 
 This guide will help you on how to set up everything so that you can start working on this project. 
-<br>
+<br> <br> <br>
 
 ## Setting up Git
 1) [Download and install the latest version of Git](https://git-scm.com/downloads). <br> <br>
@@ -97,7 +97,7 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 `npm install` <br> <br>
 
 5) Start the Node.js Server:\
-`nodemon server`
+`nodemon server` <br> <br>
 
 <br>
 
@@ -110,9 +110,9 @@ This workflow consists of five types of branches, each with different roles:
 - feature branches 
 - release branch
 - hotfix branch
-- develop branch (aka Integration branch)
+- develop branch (aka Integration branch) <br>
 
-![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br>
+![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br> <br>
 
 
 
@@ -122,9 +122,9 @@ When you start working on a new feature/bug fix, you should create a feature/top
 
 You will push this branch to the remote repository whenever you are ready to merge the change set with the develop branch. 
 
-When merging the change with the develop branch use `git merge --no-ff` to avoid fast forwarding so that the branch history is visible on the graph:
+When merging the change with the develop branch use `git merge --no-ff` to avoid fast forwarding so that the branch history is visible on the graph: <br>
 ![](https://i.stack.imgur.com/pPQd7.png)
-<br> <br>
+<br> <br> 
 
 #### Release
 
@@ -138,7 +138,7 @@ Only bug fixes and release related issues should be addressed on this branch. Ha
 
 When you are ready to release, merge the release branch with the master branch and tag a release number to the newly created merge commit.
 
-You should also merge the release branch with the develop/integration branch so that both the master and develop/integration branches receive the latest changes/bug fixes from the release branch.
+You should also merge the release branch with the develop/integration branch so that both the master and develop/integration branches receive the latest changes/bug fixes from the release branch. <br> <br>
 
 #### Hotfix
 
@@ -154,7 +154,7 @@ A hotfix branch should be merged with the develop/integration branch as well. <b
 
 A develop/integration branch should be kept stable at all times. This is important because new branches are created off of this branch, and this branch could eventually go out live on production. Continuous integration tools such as Jenkins can be used to help do just that.
 
-When some changes need to be merged into the develop/integration branch, it is generally a good idea to create a feature/topic branch to work on independently. <br> <br>
+When some changes need to be merged into the develop/integration branch, it is generally a good idea to create a feature/topic branch to work on independently. <br> <br> <br>
 
 
 ## Branch Naming
@@ -162,16 +162,54 @@ When some changes need to be merged into the develop/integration branch, it is g
 When creating a new feature/bug fix/hot fix branch, respecting the workflow previously explained, use grouping tokens at the beginning of your branch names followed by a small description.
 
 Choose one of the following tokens to every one of your branch names:
-- feat: feature I'm adding or expanding
-- bug: bug fix or hot fix
-- junk: throwaway branch created to experiment
+- **feat**: feature I'm adding or expanding
+- **b**ug**: bug fix or hot fix
+- **junk**: throwaway branch created to experiment
 
 When creating a feature branch after the token use the ticket ID of the task (from GitHub Projects Cards).
 If it's a bug branch and theres an issue open use the issue tracker ID.
 
-Here are two example:
+Here are two example: <br>
 `feat-22/authentication`\
-`bug-1/payment-information-only-shows-after-refresh`
+`bug-1/payment-information-only-shows-after-refresh` <br> <br> <br>
+
+## Copyright
+
+Every piece of software developed in this repository is intelectual property of Carely, Lda. <br>
+Please make sure to insert the following copyright notice on every file:
+```
+/*  
+ * [EN]
+ *
+ * Copyright (C) Carely, Lda - All Rights Reserved
+ *
+ * Unauthorized copying or distributing of this file via any medium is strictly prohibited.
+ * This file is confidential and intellectual property of Carely, Lda.
+ * For more information visit www.carely.pt or get in contact at 
+ * contact@carely.pt
+ * 
+ * © 2022 Carely. All Rights Reserved.
+ * 
+ * 
+ * [PT]
+ * 
+ * Copyright (C) Carely, Lda - Todos os direitos reservados
+ *
+ * A cópia ou distribuição não autorizada deste ficheiro por qualquer meio é estritamente proibida.
+ * Este ficheiro é confidencial e parte da propriedade intelectual da
+ * Carely, Lda.
+ * Para mais informações visite www.carely.pt ou entre em contacto 
+ * em contact@carely.pt 
+ * 
+ * © 2022 Carely. Todos os direitos reservados. 
+ */
+```
+
+<br> <br> <br>
+
+## License
+
+Copyright © 2022 [Carely](https://www.carely.pt) - All Rights Reserved
 
 
 
