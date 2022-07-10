@@ -112,17 +112,19 @@ This workflow consists of five types of branches, each with different roles:
 - hotfix branch
 - develop branch (aka Integration branch)
 
-![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png)
+![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br>
 
 
-#### Master
-Codebase residing in the master branch is considered to be production-ready. When it is ready for a specific release, the latest commit will be given a release tag. <br> <br>
 
 #### Features
 
 When you start working on a new feature/bug fix, you should create a feature/topic branch. A feature/topic branch is normally created off a develop/integration branch. This feature/topic branch can reside in your local machine throughout the entire development lifecycle of the feature.
 
-You will push this branch to the remote repository whenever you are ready to merge the change set with the develop/integration branch. <br> <br>
+You will push this branch to the remote repository whenever you are ready to merge the change set with the develop branch. 
+
+When merging the change with the develop branch use `git merge --no-ff` to avoid fast forwarding so that the branch history is visible on the graph:
+![](https://i.stack.imgur.com/pPQd7.png)
+<br> <br>
 
 #### Release
 
@@ -152,11 +154,24 @@ A hotfix branch should be merged with the develop/integration branch as well. <b
 
 A develop/integration branch should be kept stable at all times. This is important because new branches are created off of this branch, and this branch could eventually go out live on production. Continuous integration tools such as Jenkins can be used to help do just that.
 
-When some changes need to be merged into the develop/integration branch, it is generally a good idea to create a feature/topic branch to work on independently.
+When some changes need to be merged into the develop/integration branch, it is generally a good idea to create a feature/topic branch to work on independently. <br> <br>
 
 
+## Branch Naming
 
+When creating a new feature/bug fix/hot fix branch, respecting the workflow previously explained, use grouping tokens at the beginning of your branch names followed by a small description.
 
+Choose one of the following tokens to every one of your branch names:
+- feat: feature I'm adding or expanding
+- bug: bug fix or hot fix
+- junk: throwaway branch created to experiment
+
+When creating a feature branch after the token use the ticket ID of the task (from GitHub Projects Cards).
+If it's a bug branch and theres an issue open use the issue tracker ID.
+
+Here are two example:
+`feat-22/authentication`\
+`bug-1/payment-information-only-shows-after-refresh`
 
 
 
