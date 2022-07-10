@@ -29,8 +29,13 @@
 This guide will help you on how to set up everything so that you can start working on this project. 
 <br>
 
+#### Setting up the Backend
+1) Download Node.js [**v16.16.0**](https://nodejs.org/en/download/releases/)<br> <br>
 
-#### 1) Setting up Git
+2) Install dependencies\
+`npm install` <br> <br>
+
+#### Setting up Git
 1) [Download and install the latest version of Git](https://git-scm.com/downloads). <br> <br>
 
 2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
@@ -51,7 +56,7 @@ This guide will help you on how to set up everything so that you can start worki
 
 <br>
 
-#### 2) Setting up SSH Key
+#### Setting up SSH Key
 
 
 1) Open Terminal.  <br> <br>
@@ -85,7 +90,7 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 
 <br>
 
-#### 3) Setting up the Repository
+#### Setting up the Repository
 
 1) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
 
@@ -94,17 +99,7 @@ At the prompt, type a secure passphrase. For more information, see ["Working wit
 
 <br>
 
-#### 4. a) Setting up Frontend
-
-- Install [Node.js](https://nodejs.org/en/download/)
-- Recommended `node js 14.x` and `npm 6+`. (suggestion v14.17.3 / v16.15.0)
-- - Change the current working directory to the <u> Frontend Directory </u>
-- Install dependencies: `npm install`
-- Start the React frontend server: `npm run start` 
-
-<br>
-
-#### 4. b) Setting up Backend
+#### Setting up Backend
 
 - Install [Node.js](https://nodejs.org/en/download/)
 - Recommended `node js 14.x` and `npm 6+`. (suggestion v14.17.3 / v16.15.0)
