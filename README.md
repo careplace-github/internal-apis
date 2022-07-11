@@ -1,29 +1,5 @@
 # CRM
 
-[![Build Status][action-image]][action-url]
-[![codecov][codecov-image]][codecov-url]
-[![NPM version][npm-image]][npm-url]
-[![License][license-image]][license-url]
-[![minisize][min-image]][min-url]
-
-
-[action-image]: https://github.com/mikbry/material-ui-color/workflows/Build%20and%20Deploy/badge.svg
-[action-url]: https://carely.pt
-
-[codecov-image]: https://codecov.io/gh/mikbry/material-ui-color/branch/master/graph/badge.svg?token=K4P0vnM5fh
-[codecov-url]: https://codecov.io/gh/mikbry/material-ui-color
-
-[npm-image]: https://img.shields.io/npm/v/material-ui-color.svg
-[npm-url]: https://npmjs.org/package/material-ui-color
-
-[license-image]: https://img.shields.io/github/license/mikbry/material-ui-color
-[License-url]:""https://github.com/mikbry/material-ui-color/blob/master/LICENSE""
-
-[min-image]:https://badgen.net/bundlephobia/min/material-ui-color
-[min-url]:https://bundlephobia.com/result?p=material-ui-color
-
-
-
 ## Getting Started  
 
 This guide will help you on how to set up everything so that you can start working on this project. 
@@ -111,6 +87,7 @@ This workflow consists of five types of branches, each with different roles:
 - release branch
 - hotfix branch
 - develop branch (aka Integration branch) <br>
+<br>
 
 ![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br> <br>
 
@@ -123,8 +100,9 @@ When you start working on a new feature/bug fix, you should create a feature/top
 You will push this branch to the remote repository whenever you are ready to merge the change set with the develop branch. 
 
 When merging the change with the develop branch use `git merge --no-ff` to avoid fast forwarding so that the branch history is visible on the graph: <br>
+<br>
 ![](https://i.stack.imgur.com/pPQd7.png)
-<br> <br> 
+<br> <br> <br>
 
 #### Release
 
@@ -163,13 +141,13 @@ When creating a new feature/bug fix/hot fix branch, respecting the workflow prev
 
 Choose one of the following tokens to every one of your branch names:
 - **feat**: feature I'm adding or expanding
-- **b**ug**: bug fix or hot fix
+- **bug**: bug fix or hot fix
 - **junk**: throwaway branch created to experiment
 
 When creating a feature branch after the token use the ticket ID of the task (from GitHub Projects Cards).
 If it's a bug branch and theres an issue open use the issue tracker ID.
 
-Here are two example: <br>
+Here are two examples: <br>
 `feat-22/authentication`\
 `bug-1/payment-information-only-shows-after-refresh` <br> <br> <br>
 
@@ -177,13 +155,15 @@ Here are two example: <br>
 
 Every piece of software developed in this repository is intelectual property of Carely, Lda. <br>
 Please make sure to insert the following copyright notice on every file:
+<br>
 ```
 /*  
  * [EN]
  *
  * Copyright (C) Carely, Lda - All Rights Reserved
  *
- * Unauthorized copying or distributing of this file via any medium is strictly prohibited.
+ * Unauthorized copying or distributing of this file via any medium is 
+ * strictly prohibited.
  * This file is confidential and intellectual property of Carely, Lda.
  * For more information visit www.carely.pt or get in contact at 
  * contact@carely.pt
@@ -195,7 +175,8 @@ Please make sure to insert the following copyright notice on every file:
  * 
  * Copyright (C) Carely, Lda - Todos os direitos reservados
  *
- * A cópia ou distribuição não autorizada deste ficheiro por qualquer meio é estritamente proibida.
+ * A cópia ou distribuição não autorizada deste ficheiro por qualquer 
+ * meio é estritamente proibida.
  * Este ficheiro é confidencial e parte da propriedade intelectual da
  * Carely, Lda.
  * Para mais informações visite www.carely.pt ou entre em contacto 
