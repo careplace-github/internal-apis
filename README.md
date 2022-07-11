@@ -3,7 +3,7 @@
 ## Getting Started  
 
 This guide will help you on how to set up everything so that you can start working on this project. <br>
-Please make sure to add a profile image and confirm that you're username look something like:
+Please make sure to add a profile image and confirm that you're username looks something like: <br>
 `carely-elonmusk` 
 <br> <br> <br>
 
