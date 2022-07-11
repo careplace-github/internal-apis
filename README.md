@@ -2,7 +2,9 @@
 
 ## Getting Started  
 
-This guide will help you on how to set up everything so that you can start working on this project. 
+This guide will help you on how to set up everything so that you can start working on this project. <br>
+Please make sure to add a profile image and confirm that you're username look something like:
+`carely-elonmusk` 
 <br> <br> <br>
 
 ## Setting up Git
@@ -92,8 +94,13 @@ This workflow consists of five types of branches, each with different roles:
 ![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br> <br>
 
 
+### Master
+Upon making the first commit in a repository, Git will automatically create a master branch by default. Subsequent commits will go under the master branch until you decide to create and switch over to another branch.
 
-#### Features
+Codebase residing in the master branch is considered to be production-ready. When it is ready for a specific release, the latest commit will be given a release tag.
+<br> <br> <br>
+
+### Features
 
 When you start working on a new feature/bug fix, you should create a feature/topic branch. A feature/topic branch is normally created off a develop/integration branch. This feature/topic branch can reside in your local machine throughout the entire development lifecycle of the feature.
 
@@ -104,7 +111,7 @@ When merging the change with the develop branch use `git merge --no-ff` to avoid
 ![](https://i.stack.imgur.com/pPQd7.png)
 <br> <br> <br>
 
-#### Release
+### Release
 
 When you roll out a new release, you create a release branch. A release branch helps you to ensure that the new features are running correctly.
 
@@ -118,7 +125,7 @@ When you are ready to release, merge the release branch with the master branch a
 
 You should also merge the release branch with the develop/integration branch so that both the master and develop/integration branches receive the latest changes/bug fixes from the release branch. <br> <br>
 
-#### Hotfix
+### Hotfix
 
 When you need to add an important fix to your production codebase quickly, you can create a Hotfix branch off the master branch.
 
@@ -128,7 +135,7 @@ The advantage of a hotfix branch is that it allows you to quickly issue a patch 
 
 A hotfix branch should be merged with the develop/integration branch as well. <br> <br>
 
-#### Develop
+### Develop
 
 A develop/integration branch should be kept stable at all times. This is important because new branches are created off of this branch, and this branch could eventually go out live on production. Continuous integration tools such as Jenkins can be used to help do just that.
 
