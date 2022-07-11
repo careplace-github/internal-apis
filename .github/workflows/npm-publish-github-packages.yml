@@ -34,11 +34,10 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@carely-henriquefonseca'
       - run: npm login
-        with: 
-          Username: carely-henriquefonseca
-          Password: 9&dvc!3M9zW6#^b@827!Z&L6!%xd$P
-          Email: henrique.fonseca@carely.pt
       - run: npm ci
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: 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
+          name: carely-henriquefonseca
+          password: 9&dvc!3M9zW6#^b@827!Z&L6!%xd$P
+          Email: henrique.fonseca@carely.pt
