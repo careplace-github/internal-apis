@@ -3,6 +3,8 @@
 
 name: Node.js CI
 
+environment: development
+
 on:
   push:
     branches: [ "develop" ]
@@ -10,16 +12,14 @@ on:
     branches: [ "develop" ]
 
 jobs:
-  environment: development
+ 
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16.16.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
