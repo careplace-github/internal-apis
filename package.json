@@ -2,7 +2,7 @@
   "name": "crm-backend",
   "version": "1.0.0",
   "description": "[![Build Status][action-image]][action-url] [![codecov][codecov-image]][codecov-url] [![NPM version][npm-image]][npm-url] [![License][license-image]][license-url] [![minisize][min-image]][min-url]",
-  "main": "index.js",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
