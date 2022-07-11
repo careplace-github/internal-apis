@@ -3,9 +3,9 @@ import mongodb from "mongodb"
 import dotenv from "dotenv"
 
 "Loads environment variables"
-dotenv.config({path: '../.env' }) 
-
+dotenv.config({path: './src/config/.env/.env'}) 
 const env = process.env.NODE_ENV
+dotenv.config({path: `./src/config/.env/.env.${env}`}) 
 
 const MongoClient = mongodb.MongoClient
 
@@ -18,9 +18,6 @@ const DB_orders_ns = process.env.DB_CRM_USERS_NS
 const DB_orders_uri = `mongodb+srv://${DB_user}:${DB_password}@crm-cluster.gptj1ti.mongodb.net/${DB_orders_ns}?retryWrites=true&w=majorit`
 
 
-
-
-const test = process.env.TEST
 
 // Connects to MongoDB Databases
 MongoClient.connect(DB_users_uri)
