@@ -20,6 +20,7 @@ jobs:
 
   publish-gpr:
     needs: build
+    environment: development
     runs-on: ubuntu-latest
     permissions:
       contents: read
