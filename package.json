@@ -2,11 +2,11 @@
   "name": "crm-backend",
   "version": "1.0.0",
   "description": "[![Build Status][action-image]][action-url] [![codecov][codecov-image]][codecov-url] [![NPM version][npm-image]][npm-url] [![License][license-image]][license-url] [![minisize][min-image]][min-url]",
-  "main": "./src/index.js",
+  "main": "./src/server.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon server",
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js",
     "test": ""
   },
   "repository": {
