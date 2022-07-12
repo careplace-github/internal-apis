@@ -3,13 +3,13 @@ import mongodb from "mongodb"
 import dotenv from "dotenv"
 
 "Loads environment variables"
-dotenv.config({path: './src/config/.env/.env'}) 
+dotenv.config({path: './config/.env/.env'}) 
 const env = process.env.NODE_ENV
-dotenv.config({path: `./src/config/.env/.env.${env}`}) 
+dotenv.config({path: `./config/.env/.env.${env}`}) 
 
 const MongoClient = mongodb.MongoClient
 
-const DB_port = process.env.DB_PORT || 8000
+const DB_port = process.env.DB_PORT || process.env.DB_PORT_BACKUP
 const DB_user = process.env.DB_USER
 const DB_password = process.env.DB_PASSWORD
 const DB_users_ns = process.env.DB_CRM_USERS_NS
