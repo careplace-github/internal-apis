@@ -5,6 +5,8 @@
   "main": "./src/index.js",
   "type": "module",
   "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon server",
     "test": ""
   },
   "repository": {
@@ -19,10 +21,18 @@
   },
   "homepage": "https://github.com/CarelyPT/crm-backend#readme",
   "dependencies": {
+    "aws-sdk": "^2.1172.0",
+    "bcryptjs": "^2.4.3",
+    "consola": "^2.15.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
+    "esm": "^3.2.25",
     "express": "^4.18.1",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.7.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   }
