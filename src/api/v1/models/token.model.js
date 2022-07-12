@@ -1,4 +1,6 @@
-import { Schema, model} from "mongoose"
+import mongoose from "mongoose"
+
+const Schema = mongoose.Schema
 
 const tokenSchema = new Schema ({
     string:{
@@ -15,5 +17,5 @@ const tokenSchema = new Schema ({
 { timestamps: true}
 )
 
-const token = model("crm_tokens", tokenSchema)
-export default token
+const Token = mongoose.model("crm_tokens", tokenSchema)
+export default Token
