@@ -30,9 +30,12 @@ import dotenv from "dotenv"
 
 
 "Loads environment variables"
-dotenv.config({path: './src/config/.env/.env'}) 
+dotenv.config({path: './config/.env/.env'}) 
 const env = process.env.NODE_ENV
-const api_url = process.env.API_URL.concat(process.env.API_VERSION)
+console.log(env)
+const api = process.env.API_URL
+const api_url = api.concat(process.env.API_VERSION)
+console.log(api_url)
 dotenv.config({path: `./src/config/.env/.env.${env}`}) 
 
 
