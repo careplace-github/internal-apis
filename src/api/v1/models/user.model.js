@@ -1,10 +1,14 @@
-import { Schema, model} from "mongoose"
-import { hash } from "bcryptjs"
-import { sign } from "jsonwebtoken"
-import { randomBytes } from "crypto"
-import { pick } from lodash
-import { token } from "./token.model.js"
+import mongoose from "mongoose"
+import hash from "bcryptjs"
+import sign from "jsonwebtoken"
+import randomBytes from "crypto"
+import pick from "lodash"
+import token from "./token.model.js"
 import { JWT_secret } from "../../../config/constants/index.js"
+
+
+const Schema = mongoose.Schema
+const tokens = token.Schema 
 
 const userSchema = new Schema ({
     name:{
@@ -38,9 +42,11 @@ const userSchema = new Schema ({
     },
 
     resetPasswordToken:{
-        type: token,
-        required:false,
-    },  
+        type: Schema.Types.ObjectId, ref: 'Event' ,
+        required: false,
+    },
+
+  
 
 },
 { timestamps: true}
@@ -79,5 +85,5 @@ userSchema.methods.getUserInfo = function () {
     return pick(this, ["_id", "username", "email", "name" ])
 }
 
-const user = model("crm_users", userSchema)
-export default user
+const User = mongoose.model("crm_users", userSchema)
+export default User

@@ -24,14 +24,15 @@
 
 import express from "express"
 import cors from "cors"
-import users from "./api/v1/routes/users.route.js"
+
 import mongodb from "mongodb"
 import dotenv from "dotenv"
+// Loads environment constants"
+import {env, api_version, api_url, DB_users_uri, DB_users_ns, DB_port} from "./config/constants/index.js"
+// Router exports  
+import userAPIs from "./api/v1/routes/users.route.js"
+import { JWT_secret } from "./config/constants/index.js"
 
-
-
-// Loads environment variables"
-import {env, api_version, api_url, DB_users_uri, DB_port} from "./config/constants/index.js"
 
 // Initialize MongoDB client
 const MongoClient = mongodb.MongoClient
@@ -43,9 +44,16 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Inject sub router and APIs
+app.use(api_url, userAPIs)
+
+
+
+//app.use("*", (req, res) => res.status(404).json({ error: "not found"}))
+//app.use('/users', userAPIs)
 //app.use(process.env.API_URL, caregivers)
-app.use(api_url, users)
-app.use("*", (req, res) => res.status(404).json({ error: "not found"}))
+
+
 
 
 const main = async () => {
@@ -59,7 +67,7 @@ const main = async () => {
                 process.exit(1)
             })
             .then(async client => {
-                console.log(`Connected to database`)
+                console.log(`Connected to database: ${DB_users_ns}`)
                  // Connects to MongoDB Collections
                 //await CaregiversDAO.injectDB(client) 
             })
@@ -69,6 +77,7 @@ const main = async () => {
         console.log(`Server started on port: ${DB_port}`)
         console.log(`Server environment mode: ${env}`)
         console.log(`HTTP requests API version: ${api_version}`)
+        console.log(`API route: ${api_url}`)
         })
         
     } catch (error) {

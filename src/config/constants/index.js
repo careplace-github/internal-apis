@@ -19,3 +19,4 @@ export const DB_users_ns = process.env.DB_CRM_USERS_NS
 export const DB_users_uri = `mongodb+srv://${DB_user}:${DB_password}@crm-cluster.gptj1ti.mongodb.net/${DB_users_ns}?retryWrites=true&w=majorit`
 export const DB_orders_ns = process.env.DB_CRM_USERS_NS
 export const DB_orders_uri = `mongodb+srv://${DB_user}:${DB_password}@crm-cluster.gptj1ti.mongodb.net/${DB_orders_ns}?retryWrites=true&w=majorit`
+export const JWT_secret = process.env.JWT_SECRET
