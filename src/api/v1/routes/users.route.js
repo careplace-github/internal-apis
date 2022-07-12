@@ -19,8 +19,6 @@ router.route("/users")
      *     summary: Get all users
      *     description: Get all users
      *     operationId: getUsers
-     *     produces:
-     *     - "application/json"
      *     parameters: []
      *     responses:
      *       200:
@@ -29,7 +27,22 @@ router.route("/users")
      */ 
     .get(UsersController.apiGetUsers)
 
-
+    /** 
+     * @swagger 
+     * 
+     * /api/v1/users: 
+     *   post: 
+     *     tags: 
+     *     - "Users"
+     *     summary: Add user
+     *     description: Add a new user 
+     *     operationId: getUsers
+     *     parameters: []
+     *     responses:
+     *       200:
+     *        description: "successful operation"
+     *        schema:
+     */ 
     .post(UsersController.apiAddUser)
     
 
