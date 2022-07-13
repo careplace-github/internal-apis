@@ -1,7 +1,7 @@
 import Router from "express"
 import user from "../models/user.model.js"
 import express from "express"
-import {RegisterUserValidations} from "../validators/user.validator.js"
+import {RegisterUserValidations} from "../validators/addUser.validator.js"
 import {api_url} from "../../../config/constants/index.js"
 import UsersController from "../controllers/users.controller.js"
 
