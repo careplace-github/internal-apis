@@ -18,12 +18,21 @@ export default class usersDAO {
         }
     } 
 
+    static async getUserByEmail (email) {
+        try {
+            const user = await users.findOne({email})
+            return user
+        } catch (e) {
+            console.error(`Unable to find user by email, ${e}`)
+            return {error: e}
+        }
+    }
+
     static async addUser(cognitoId, name, email) {
       
         try {
 
 
-            console.log("cog" + cognitoId)
 
             const newUser = new User ({
                 cognitoId,
@@ -31,7 +40,7 @@ export default class usersDAO {
                 email,
             })
 
-            console.log("cog" + newUser.cognitoId)
+       
          
 
             return await users.insertOne(newUser)
