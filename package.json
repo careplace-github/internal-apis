@@ -23,7 +23,7 @@
   "homepage": "https://github.com/CarelyPT/crm-backend#readme",
   "dependencies": {
     "amazon-cognito-identity-js": "^5.2.10",
-    "aws-sdk": "^2.1172.0",
+    "aws-sdk": "^2.1174.0",
     "bcryptjs": "^2.4.3",
     "consola": "^2.15.3",
     "cors": "^2.8.5",
@@ -32,15 +32,20 @@
     "express-validation": "^4.1.0",
     "express-validator": "^6.14.2",
     "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.5",
+    "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "mongodb": "^4.7.0",
     "mongoose": "^6.4.4",
+    "node-fetch": "^3.2.8",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
+    "request": "^2.88.2",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {
-    "concurrently": "^7.2.2"
+    "concurrently": "^7.2.2",
+    "webpack-cli": "^4.10.0"
   }
 }

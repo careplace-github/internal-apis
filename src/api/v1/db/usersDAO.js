@@ -32,18 +32,15 @@ export default class usersDAO {
       
         try {
 
-
-
             const newUser = new User ({
                 cognitoId,
                 name,
                 email,
             })
 
-       
-         
 
-            return await users.insertOne(newUser)
+         await users.insertOne(newUser)
+         return newUser
 
         } catch (e) {
             console.error(`Unable to POST user: ${e}`)
@@ -53,52 +50,15 @@ export default class usersDAO {
 
     }
 
-static async getusers ({
-    filters = null,
-    page = 0,
-    usersPerPage = 10,
-} = {}) {
-    let query 
-    if (filters) {
-        //  Get users by Name 
-        if ("name" in filters) {
-            query = { $text: { $search: filters["name"] } }
-        // Get users by Age    
-        } else if ("age" in filters) {
-            query = {"age": { $eq: filters["age"] } }
-        // Get users by Rating        
-        } else if ("rating" in filters) {
-            query = {"rating": { $eq: filters["rating"] } }
-        // Get users by Work Experience 
-        } else if ("workExperience" in filters) {
-            query = {"workExperience": { $eq: filters["workExperience"] } }
+static async getUsers (
+) {
+    try {
+    const list = await users.find().toArray()
+        return list
+    } catch (e) {
+        console.error(`Unable to find users, ${e}`)
+        return {error: e}
     }
-}
-
-let cursor
-
-try {
-    cursor = await users
-        .find(query)
-}   catch (e) {
-    console.error(`Unable to issue find command, ${e}`)
-    return { usersList: [], totalNumusers: 0}
-}
-
-const displayCursor = cursor.limit(usersPerPage).skip(usersPerPage * page)
-
-try {
-    const usersList = await displayCursor.toArray()
-    const totalNumusers = await users.countDocuments(query)
-
-    return { usersList, totalNumusers }
-}   catch (e) {
-    console.error(`Unable to convert cursor to array or problem counting documents, ${e} `)
-
-    return { usersList: [], totalNumusers: 0}
-}
-
-
 }
 }
 
