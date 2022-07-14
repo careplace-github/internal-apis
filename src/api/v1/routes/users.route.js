@@ -7,8 +7,9 @@ import express from "express"
 
 import {api_url} from "../../../config/constants/index.js"
 import UsersController from "../controllers/users.controller.js"
-import {registerUserValidation, authenticationValidation} from "../validators/users.validator.js"
-import Validator from "../middlewares/validator.middleware.js"
+import {registerUserValidation} from "../validators/users.validator.js"
+import validatorMiddleware from "../middlewares/validator.middleware.js"
+
 
 
 
@@ -18,7 +19,7 @@ const router = express.Router()
 
 
 router.route("/users")
-    .post(registerUserValidation, authenticationValidation, Validator, UsersController.createUser)
+    .post(registerUserValidation, validatorMiddleware, UsersController.createUser) 
     
     /** 
      * @swagger 
