@@ -15,8 +15,9 @@ dotenv.config({path: `./src/config/.env/.env.${env}`})
 export const DB_port = process.env.DB_PORT || process.env.DB_PORT_BACKUP
 export const DB_user = process.env.DB_USER
 export const DB_password = process.env.DB_PASSWORD
-export const DB_users_ns = process.env.DB_CRM_USERS_NS
-export const DB_users_uri = `mongodb+srv://${DB_user}:${DB_password}@crm-cluster.gptj1ti.mongodb.net/${DB_users_ns}?retryWrites=true&w=majorit`
-export const DB_orders_ns = process.env.DB_CRM_USERS_NS
-export const DB_orders_uri = `mongodb+srv://${DB_user}:${DB_password}@crm-cluster.gptj1ti.mongodb.net/${DB_orders_ns}?retryWrites=true&w=majorit`
+export const DB_users_ns = process.env.DB_USERS_NS
+export const DB_users_uri = `mongodb+srv://${DB_user}:${DB_password}@development-node.0f8rxwj.mongodb.net/?retryWrites=true&w=majority`
 export const JWT_secret = process.env.JWT_SECRET
+
+export const AWS_user_pool_id = process.env.AWS_USER_POOL_ID
+export const AWS_client_id = process.env.AWS_CLIENT_ID
