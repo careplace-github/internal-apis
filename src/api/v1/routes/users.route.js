@@ -1,68 +1,28 @@
-'use strict'
-
 import Router from "express"
-import user from "../models/users.model.js"
 import express from "express"
-
-
-import {api_url} from "../../../config/constants/index.js"
+import AuthenticationController from "../controllers/authentication.controller.js"
 import UsersController from "../controllers/users.controller.js"
-import {registerUserValidation} from "../validators/users.validator.js"
+
+import {registerUserValidation} from "../validators/signup.validator.js"
 import validatorMiddleware from "../middlewares/validator.middleware.js"
-
-
-
-
 
 
 const router = express.Router()
 
+router.route("/signup")
+    .post(registerUserValidation, validatorMiddleware, UsersController.createUser)
 
+router.route("/login") 
+    .post(AuthenticationController.login)
+    
 router.route("/users")
-    .post(registerUserValidation, validatorMiddleware, UsersController.createUser) 
+    .get(AuthenticationController.isAuthenticated, UsersController.getUsers)
+
+router.route("/users/:id")
+    .get(AuthenticationController.isAuthenticated, UsersController.getUserById)
+    .put(AuthenticationController.isAuthenticated, UsersController.updateUser)
+    .delete(AuthenticationController.isAuthenticated, UsersController.deleteUser)
     
-    /** 
-     * @swagger 
-     * 
-     * /api/v1/users: 
-     *   get: 
-     *     tags: 
-     *     - "Users"
-     *     summary: Get all users
-     *     description: Get all users
-     *     operationId: getUsers
-     *     parameters: []
-     *     responses:
-     *       200:
-     *        description: "successful operation"
-     *        schema:
-     */ 
-    .get(UsersController.apiGetUsers)
-
-    /** 
-     * @swagger 
-     * 
-     * /api/v1/users: 
-     *   post: 
-     *     tags: 
-     *     - "Users"
-     *     summary: Add user
-     *     description: Add a new user 
-     *     operationId: getUsers
-     *     parameters: []
-     *     responses:
-     *       200:
-     *        description: "successful operation"
-     *        schema:
-     */ 
-    //.post(validateUser)
-    //.post(UsersController.createUser)
-
- 
-    
-
-//router.route("users/:id")
-
   
 
 

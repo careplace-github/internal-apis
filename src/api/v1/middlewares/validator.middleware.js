@@ -6,11 +6,9 @@ const validatorMiddleware = async (req, res, next) => {
 
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        res.status(500).json({
+       return res.status(500).json({
             errors: errors.array()
-        
         })
-       return
     }
     next()
 }
