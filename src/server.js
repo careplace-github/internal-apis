@@ -31,7 +31,8 @@ import usersDAO from "./api/v1/db/usersDAO.js"
 // Loads environment constants"
 import {env, api_version, api_url, DB_users_uri, DB_users_ns, DB_port} from "./config/constants/index.js"
 // Router exports  
-import userAPIs from "./api/v1/routes/users.route.js"
+import usersAPI from "./api/v1/routes/users.route.js"
+
 import { JWT_secret } from "./config/constants/index.js"
 
 
@@ -46,7 +47,7 @@ app.use(cors())
 app.use(express.json())
 
 // Inject sub router and APIs
-app.use(api_url, userAPIs)
+app.use(api_url, usersAPI)
 
 
 

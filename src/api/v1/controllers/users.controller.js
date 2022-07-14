@@ -1,81 +1,67 @@
-//import usersHelper from "../helpers/users.helper.js"
+
+import CognitoService from "../services/cognito.service.js"
 import usersDAO from "../db/usersDAO.js"
-//import usersValidator from "../validators/users.validator.js"
-// import authenticationService from "../services/authentication.service.js"
-import User from "../models/users.model.js"
-import { check } from "express-validator"
 
-
-
-
-import validationResults from "express-validator"
-const validationResult = validationResults.validationResult;
 
 export default class UsersController {
 
+    static async createUser(req, res, next) { 
 
-    static async apiGetUsers(req, res, next) { 
-        let response 
-        res.json(response)
-    //    res.json("Hello world")
+    const newUser = {
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+        cognitoId: ""
+    }    
+        
+    const congitoResponse = await CognitoService.createCognitoUser(newUser.email, newUser.password)
+
+    console.log("code " + congitoResponse.statusCode)
+      if (congitoResponse.statusCode == 422) {
+        return res.status(400).json({
+            message: "User already exists",
+            request: {
+                type: "POST",
+                url: "host/signup",
+                body: {"name": newUser.name, "email": newUser.email}
+            }})
     }
 
-
-    static async createUser(req, res, next) {
-
-        let cognitoId
-        const name = req.body.name
-        const email = req.body.email 
-
-       
-        const userAlreadyRegistered = await usersDAO.getUserByEmail(email)
-        console.log(userAlreadyRegistered)
-        if (userAlreadyRegistered != null) {
-             res.status(400).json({
-                error: "User already registered"
-            })
-        }
-        
-        try {
-            //const cognitoId = await authenticationService.createCognitoUser()
-            // const cognitoId = req.body.cognitoId
-        
-               
-        } catch (e) {
-                //errors with aws cognito
-                res.status(500).json({ error: e.message})
-        }
-        
-
-        try {
-            
-            await usersDAO.addUser(cognitoId, name, email)
-            
-            console.log(`email: ${email}`)
-
-            res.status(200).json({
-                message: "User created",
-                request: {
-                    type: "POST",
-                    url: "host/users",
-                    body: {"name": name, "email": email}
-                }
-                
-            })
-                 
-        } catch (e) {
-         
-            
-        }
-
-        // Send the email to the user with the link to verify their email address.
-        // authenticationService.sendVerificationEmail(email, cognitoId)
-        next();
+    newUser.cognitoId = congitoResponse.response.cognitoId
     
-        }}
+    const userCreated = await usersDAO.addUser(newUser.cognitoId, newUser.name, newUser.email)
 
-
+    return res.status(200).json({
+        message: "User registered successfully",
+        request: {
+            type: "POST",
+            url: "host/signup",
+            body: {"name": userCreated.name, "email": userCreated.email, "verified": false}
+        }})
     
+}
+
+
+static async getUsers(req, res, next) { 
+}
+
+static async getUserById(req, res, next) { 
+}
+
+static async updateUser(req, res, next) { 
+}
+
+static async deleteUser(req, res, next) { 
+}
 
 
 
+
+
+
+
+
+
+
+
+}
