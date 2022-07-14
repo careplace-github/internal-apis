@@ -1,15 +1,47 @@
+import {DB_users_ns,DB_users_uri } from "../../../config/constants/index.js"
+import mongodb from "mongodb"
+import User from "../models/users.model.js"
 let users
+const ObjectId = mongodb.ObjectId
+
 export default class usersDAO {
 
     static async injectDB(conn) {
+       
         if (users) {
             return
         }
         try {
-            users = await conn.db(process.env.DB_CRM_CLUSTER_URI).collection("crm_users")
+            users = await conn.db(DB_users_ns).collection("users")
         } catch (e) {
             console.error(`Unable to establish a collection handle in usersDAO: ${e}`,)
         }
+    } 
+
+    static async addUser(cognitoId, name, email) {
+      
+        try {
+
+
+            console.log("cog" + cognitoId)
+
+            const newUser = new User ({
+                cognitoId,
+                name,
+                email,
+            })
+
+            console.log("cog" + newUser.cognitoId)
+         
+
+            return await users.insertOne(newUser)
+
+        } catch (e) {
+            console.error(`Unable to POST user: ${e}`)
+            return {error: e}
+
+        }
+
     }
 
 static async getusers ({

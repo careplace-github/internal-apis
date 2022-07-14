@@ -1,25 +1,18 @@
-'use strict'
-
 import Router from "express"
 import user from "../models/users.model.js"
 import express from "express"
 
-
 import {api_url} from "../../../config/constants/index.js"
 import UsersController from "../controllers/users.controller.js"
-import {registerUserValidation, authenticationValidation} from "../validators/users.validator.js"
-import Validator from "../middlewares/validator.middleware.js"
+import AuthenticationController from "../controllers/authentication.controller.js"
 
-
-
+import {RegisterUserValidations} from "../validators/users.validator.js"
+import ValidationResult from "express-validation"
 
 
 const router = express.Router()
 
-
-router.route("/users")
-    .post(registerUserValidation, authenticationValidation, Validator, UsersController.createUser)
-    
+router.route("/signup")
     /** 
      * @swagger 
      * 
@@ -36,17 +29,19 @@ router.route("/users")
      *        description: "successful operation"
      *        schema:
      */ 
-    .get(UsersController.apiGetUsers)
+    .post(AuthenticationController.apiRegisterUser)
 
+
+    router.route("/signin")
     /** 
      * @swagger 
      * 
      * /api/v1/users: 
-     *   post: 
+     *   get: 
      *     tags: 
      *     - "Users"
-     *     summary: Add user
-     *     description: Add a new user 
+     *     summary: Get all users
+     *     description: Get all users
      *     operationId: getUsers
      *     parameters: []
      *     responses:
@@ -54,14 +49,27 @@ router.route("/users")
      *        description: "successful operation"
      *        schema:
      */ 
-    //.post(validateUser)
-    //.post(UsersController.createUser)
-
- 
+    .post(AuthenticationController.apiLoginUser)
     
 
-//router.route("users/:id")
-
+    router.route("/verify")
+    /** 
+     * @swagger 
+     * 
+     * /api/v1/users: 
+     *   get: 
+     *     tags: 
+     *     - "Users"
+     *     summary: Get all users
+     *     description: Get all users
+     *     operationId: getUsers
+     *     parameters: []
+     *     responses:
+     *       200:
+     *        description: "successful operation"
+     *        schema:
+     */ 
+    .post(AuthenticationController.apiVerifyUser)
   
 
 
