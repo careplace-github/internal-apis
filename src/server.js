@@ -27,6 +27,7 @@ import cors from "cors"
 
 import mongodb from "mongodb"
 import dotenv from "dotenv"
+import usersDAO from "./api/v1/db/usersDAO.js"
 // Loads environment constants"
 import {env, api_version, api_url, DB_users_uri, DB_users_ns, DB_port} from "./config/constants/index.js"
 // Router exports  
@@ -49,6 +50,8 @@ app.use(api_url, userAPIs)
 
 
 
+
+
 //app.use("*", (req, res) => res.status(404).json({ error: "not found"}))
 //app.use('/users', userAPIs)
 //app.use(process.env.API_URL, caregivers)
@@ -60,16 +63,19 @@ const main = async () => {
 
     try {
 
-        // Connects to MongoDB Databases
+        // Connects to MongoDB Database
+        
         await MongoClient.connect(DB_users_uri)
             .catch(err => {
                 console.error(err.stack)
+                
                 process.exit(1)
+                console.log(DB_users_uri)
             })
             .then(async client => {
                 console.log(`Connected to database: ${DB_users_ns}`)
-                 // Connects to MongoDB Collections
-                //await CaregiversDAO.injectDB(client) 
+                // Connects to MongoDB Collections
+                await usersDAO.injectDB(client) 
             })
         
         // Starts server
@@ -80,7 +86,7 @@ const main = async () => {
         console.log(`API route: ${api_url}`)
         })
         
-    } catch (error) {
+    } catch (err) {
         console.log(`Unable to start the server: ${err}`)
     }
     
