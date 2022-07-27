@@ -13,15 +13,40 @@ export default class CognitoService {
         AwsConfig.initAWS ();
         AwsConfig.setCognitoAttributeList(email,agent);
         AwsConfig.getUserPool().signUp(email, password, AwsConfig.getCognitoAttributeList(), null, function(err, result){
+
+         
+
           if (err) {
-            return resolve({ statusCode: 422, response: err });
+
+            switch (err.code) {
+
+            case 'UserNotFoundException':
+                return resolve({ statusCode: 400, error: err.message || JSON.stringify(err)});
+            
+            case 'UsernameExistsException':
+                
+             case 'NotAuthorizedException':
+                return resolve({ statusCode: 400, error: err.message || JSON.stringify(err)});
+             case 'PasswordResetRequiredException':
+                return resolve({ statusCode: 400, error: err.message || JSON.stringify(err)});
+             case 'UserNotConfirmedException':
+                return resolve({ statusCode: 400, error: err.message || JSON.stringify(err)});
+
+            default:
+             return resolve({ statusCode: 500, error: err.message || JSON.stringify(err)});
+            }
+
+            
           }
+
           const response = {
             username: result.user.username,
             cognitoId: result.userSub,
-            // userConfirmed: result.userConfirmed,
-            // userAgent: result.user.client.userAgent,
+            userConfirmed: result.userConfirmed,
+            userAgent: result.user.client.userAgent,
           }
+
+       
             return resolve({ statusCode: 201, response: response });
           });
         });
