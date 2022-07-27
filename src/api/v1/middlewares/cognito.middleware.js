@@ -55,7 +55,7 @@ static getUserPool(){
     Pool: this.getUserPool()
   };
 
-  console.log( new AmazonCognitoIdentity.CognitoUser(userData) )
+
   
   return new AmazonCognitoIdentity.CognitoUser(userData);
 }
