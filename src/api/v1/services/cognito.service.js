@@ -14,8 +14,6 @@ export default class CognitoService {
         AwsConfig.setCognitoAttributeList(email,agent);
         AwsConfig.getUserPool().signUp(email, password, AwsConfig.getCognitoAttributeList(), null, function(err, result){
 
-         
-
           if (err) {
 
             switch (err.code) {
@@ -35,7 +33,6 @@ export default class CognitoService {
             default:
              return resolve({ statusCode: 500, error: err.message || JSON.stringify(err)});
             }
-
             
           }
 
@@ -52,6 +49,45 @@ export default class CognitoService {
         });
     }
 
+    static signIn(email, password) {
+
+      return new Promise((resolve) => {
+        AwsConfig.initAWS ()
+        AwsConfig.getCognitoUser(email).authenticateUser(AwsConfig.getAuthDetails(email, password), {  
+
+          onFailure: function(err) {
+            const error = {
+              code: err.code,
+              message: err.message,
+            }
+            console.log("Login failed: " + JSON.stringify(error, null, 2));
+
+            return resolve({ statusCode: 400, error: err });
+          },
+
+          onSuccess: function(result) {
+            
+            console.log("Login success: " + (JSON.stringify(result, null, 2)));
+
+            const response = {
+              username: result.idToken.payload.email,
+              cognitoId: result.idToken.payload.sub,
+              userConfirmed: result.idToken.payload.email_verified,
+              userAgent: result.idToken.payload.user_agent,
+              token: result.getAccessToken().getJwtToken(),
+            }
+            return resolve({ statusCode: 200, response: response });
+          },
+          
+        });
+      });
+    }
+       
+
+    
+      
+    
+
           
    
       
@@ -66,22 +102,7 @@ export default class CognitoService {
         });
       }
       
-      static signIn(email, password) {
-        return new Promise((resolve) => {
-          AwsConfig.getCognitoUser(email).authenticateUser(AwsConfig.getAuthDetails(email, password), {
-            onSuccess: (result) => {
-              const token = {
-                accessToken: result.getAccessToken().getJwtToken(),
-                idToken: result.getIdToken().getJwtToken(),
-                refreshToken: result.getRefreshToken().getToken(),
-              }  
-              return resolve({ statusCode: 200, response: AwsConfig.decodeJWTToken(token) });
-            },
-            
-            onFailure: (err) => {
-              return resolve({ statusCode: 400, response: err.message || JSON.stringify(err)});
-            },
-          });
-        });
-      }
+      
+
+
     }
