@@ -73,27 +73,39 @@ export default class AuthenticationController {
 
 
     static async login (req, res, next) { 
+
+        console.log(`Attempting to login user '${req.body.email}': \n`)    
         
         const cognitoResponse = await CognitoService.signIn(req.body.email, req.body.password)
-        console.log(req.body.email + " " + req.body.password)
-        if (cognitoResponse.statusCode == 401) {
-            return res.status(401).json({
-                message: "Invalid credentials",
+        
+
+        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+
+        if(cognitoResponse.error != null){
+
+            return res.status(400).json({
+                statusCode: 400,
+                error: {
+                    code: cognitoResponse.error.code,
+                    message: cognitoResponse.error.message,
+                },
                 request: {
                     type: "POST",
-                    url: "host/signin",
-                    body: {"email": email, "password": password}
-                }
-            })
+                    url: "host/login",
+                    body: {"email": req.body.email}
+                }})
         }
-        return res.status(200).json({
-            message: "User logged in successfully",
-            request: {
-                type: "POST",
-                url: "host/signin",
-                
-            }
-        })
+
+
+      return res.status(200).json({
+        statusCode: 200,
+        message: "User logged in successfully",
+        request: {
+            type: "POST",
+            url: "host/login",
+            body: {email: req.body.email}
+        }})
     }
 
 
