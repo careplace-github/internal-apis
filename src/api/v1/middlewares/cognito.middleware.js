@@ -13,6 +13,7 @@ let cognitoAttributeList = [];
 const poolData = { 
     UserPoolId : AWS_user_pool_id,
     ClientId : AWS_client_id,
+    Region: AWS_region,
 };
 
  const attributes = (key, value) => { 
@@ -23,6 +24,10 @@ const poolData = {
 };
 
 export default class AuthenticationService {
+
+  static getCognitoPoolData () {
+    return poolData
+  }
 
 static setCognitoAttributeList(email, agent) {
   let attributeList = [];
@@ -36,19 +41,30 @@ static getCognitoAttributeList() {
   return cognitoAttributeList;
 }
 
-
-
 static getUserPool(){
   return new AmazonCognitoIdentity.CognitoUserPool(poolData);
 }
 
-static getCognitoUser(email) {
+
+
+
+
+  static getCognitoUser(email) {
   const userData = {
     Username: email,
     Pool: this.getUserPool()
   };
+
+  console.log( new AmazonCognitoIdentity.CognitoUser(userData) )
+  
   return new AmazonCognitoIdentity.CognitoUser(userData);
 }
+ 
+
+
+
+
+
 
 static getAuthDetails(email, password) {
   var authenticationData = {
@@ -72,7 +88,41 @@ static decodeJWTToken(token) {
 }
 
 
+
+static adminAuthenticate(email, password) {
+
+ /**
+  * 
+  */
+  // this.initAWS()
+  
+
+  if(!password){
+    password = ""
+  }
+
+  AWS.config.region = AWS_region; // Region
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: AWS_identity_pool_id,
+  });
+
+
+  const payload = {
+    ClientId: AWS_client_id,
+    AuthFlow: "ADMIN_NO_SRP_AUTH",
+    UserPoolId: AWS_user_pool_id,
+    AuthParameters: {
+        USERNAME: email,
+        PASSWORD: password,
+    }
+}
+
+
+return new AmazonCognitoIdentity().adminInitiateAuth(payload).promise();
+
+
 }
 
 
 
+}
