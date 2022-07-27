@@ -7,7 +7,7 @@ import AwsConfig from "../middlewares/cognito.middleware.js"
 
 export default class CognitoService {
 
-    static createCognitoUser(email, password, agent = 'none') {
+    static signUp(email, password, agent = 'none') {
   
       return new Promise((resolve) => {
         AwsConfig.initAWS ();
@@ -44,7 +44,7 @@ export default class CognitoService {
           }
 
        
-            return resolve({ statusCode: 201, response: response });
+            return resolve({ statusCode: 201, message: "Created Cognito User successfuly", response: response });
           });
         });
     }
@@ -52,7 +52,7 @@ export default class CognitoService {
     static signIn(email, password) {
 
       return new Promise((resolve) => {
-        AwsConfig.initAWS ()
+        
         AwsConfig.getCognitoUser(email).authenticateUser(AwsConfig.getAuthDetails(email, password), {  
 
           onFailure: function(err) {
@@ -82,7 +82,88 @@ export default class CognitoService {
         });
       });
     }
+
+
+    static getSession(email) {
+      return new Promise((resolve) => {
        
+
+
+        AwsConfig.getCognitoUser(email).getSession(function(err, session) {
+        
+          if (err) {
+            return resolve({ statusCode: 400, error: err });
+          }
+
+
+          return resolve({ statusCode: 200, response: session });
+        });
+      });
+
+    }
+
+
+     // function to logout a user with the provided email and session token
+     static logout(email, token) {
+      
+      
+      return new Promise((resolve) => {
+
+        this.getSession(email)
+
+        AwsConfig.getCognitoUser(email).signOut(function(err, result) { 
+          if (err) {
+          
+            return resolve({ statusCode: 400, error: err });
+          }
+
+          console.log("Logged success");
+
+          return resolve({ statusCode: 200, response: result });
+        } )
+
+
+       
+      });
+
+    
+    }
+
+    
+    
+
+       
+
+    // function to verify if a user is logged in
+    // if a user is not logged in log them in with the provided email and token
+    // if a user is logged in, return the user
+    static authenticateUser(email, token ) {
+
+      return new Promise((resolve) => {
+        AwsConfig.getCognitoUser(email).getSession( (err, result) => {
+          if (err) {
+            return resolve({ statusCode: 400, error: err });
+          }
+
+          const response = {
+            username: result.idToken.payload.email,
+            cognitoId: result.idToken.payload.sub,
+            userConfirmed: result.idToken.payload.email_verified,
+            userAgent: result.idToken.payload.user_agent,
+            token: result.getAccessToken().getJwtToken(),
+          }
+
+          return resolve({ statusCode: 200, response: response });
+        });
+      });
+
+
+    }
+
+
+
+   
+         
 
     
       
@@ -103,6 +184,6 @@ export default class CognitoService {
       }
       
       
-
+    
 
     }

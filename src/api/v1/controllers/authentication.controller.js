@@ -108,7 +108,48 @@ export default class AuthenticationController {
         }})
     }
 
+    static async logout(req, res, next) {
 
+        console.log(`Attempting to logout user '${req.body.email}': \n`)    
+
+       
+        
+        const cognitoResponse = await CognitoService.logout(req.body.email, req.body.token)
+        
+
+        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+
+        if(cognitoResponse.error != null){
+
+            return res.status(400).json({
+                statusCode: 400,
+                response: {
+                    error: {
+                        code: cognitoResponse.error.code,
+                        message: cognitoResponse.error.message,
+                    }
+                },
+                request: {
+                    type: "POST",
+                    url: "host/logout",
+                    body: {"email": req.body.email}
+                }})
+        }
+
+
+      return res.status(200).json({
+        statusCode: 200,
+        response: {
+            message: "User logged out successfully",
+        },
+        request: {
+            type: "POST",
+            url: "host/logout",
+            body: {email: req.body.email}
+        }})
+
+    }
 
     static async isAuthenticated(req, res, next) { }
 
