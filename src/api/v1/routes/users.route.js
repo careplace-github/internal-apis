@@ -16,9 +16,13 @@ router.route("/signup")
     // create user using cognito validator
     .post(AuthenticationController.signup)
 
+    
 router.route("/login") 
     .post(AuthenticationController.login)
-    
+
+router.route("/logout")    
+    .post(AuthenticationController.logout)    
+
 router.route("/users")
     .get(AuthenticationController.isAuthenticated, UsersController.getUsers)
 
