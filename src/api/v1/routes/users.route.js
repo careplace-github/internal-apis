@@ -10,7 +10,11 @@ import validatorMiddleware from "../middlewares/validator.middleware.js"
 const router = express.Router()
 
 router.route("/signup")
-    .post(registerUserValidation, validatorMiddleware, UsersController.createUser)
+
+    // .post(registerUserValidation, validatorMiddleware, AuthenticationController.signup) => create user using own validator
+
+    // create user using cognito validator
+    .post(AuthenticationController.signup)
 
 router.route("/login") 
     .post(AuthenticationController.login)

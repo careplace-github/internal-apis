@@ -84,7 +84,7 @@ const main = async () => {
         console.log(`Server started on port: ${DB_port}`)
         console.log(`Server environment mode: ${env}`)
         console.log(`HTTP requests API version: ${api_version}`)
-        console.log(`API route: ${api_url}`)
+        console.log(`API route: ${api_url}` + "\n")
         })
         
     } catch (err) {

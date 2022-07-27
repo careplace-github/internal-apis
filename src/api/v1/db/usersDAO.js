@@ -40,11 +40,16 @@ export default class usersDAO {
 
 
          await users.insertOne(newUser)
-         return newUser
+
+         return {
+            statusCode: 200, 
+            message: "Added user to the MongoDB database successfuly", 
+            userCreated: newUser }
 
         } catch (e) {
             console.error(`Unable to POST user: ${e}`)
-            return {error: e}
+            
+            return {statusCode: e.code, error: e.message}
 
         }
 
