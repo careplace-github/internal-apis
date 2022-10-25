@@ -32,8 +32,9 @@ import usersDAO from "./api/v1/db/usersDAO.js"
 import {env, api_version, api_url, DB_users_uri, DB_users_ns, SERVER_Port} from "./config/constants/index.js"
 // Router exports  
 import configAPI from "./api/v1/routes/config.route.js"
+import authenticationAPI from "./api/v1/routes/authentication.route.js"
 import usersAPI from "./api/v1/routes/users.route.js"
-import caregiversAPI from "./api/v1/routes/caregivers.route.js"
+
 
 
 
@@ -51,9 +52,9 @@ app.use(cors())
 app.use(express.json())
 
 // Inject sub router and APIs
-app.use(api_url, usersAPI)
-app.use(api_url, caregiversAPI)
 app.use(api_url, configAPI)
+app.use(api_url, authenticationAPI)
+app.use(api_url, usersAPI)
 
 
 
