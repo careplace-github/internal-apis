@@ -9,7 +9,7 @@ import validatorMiddleware from "../middlewares/validator.middleware.js"
 
 const router = express.Router()
 
-router.route("/signup")
+router.route("/auth/register")
 
     // .post(registerUserValidation, validatorMiddleware, AuthenticationController.signup) => create user using own validator
 
@@ -17,14 +17,14 @@ router.route("/signup")
     .post(AuthenticationController.signup)
 
     
-router.route("/login") 
+router.route("/auth/login") 
     .post(AuthenticationController.login)
 
-router.route("/logout")    
+router.route("/auth/logout")    
     .post(AuthenticationController.logout)    
 
 router.route("/users")
-    .get(AuthenticationController.isAuthenticated, UsersController.getUsers)
+    .get(UsersController.getUsers)
 
 router.route("/users/:id")
     .get(AuthenticationController.isAuthenticated, UsersController.getUserById)
