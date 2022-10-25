@@ -1,9 +1,10 @@
 {
   "name": "crm-backend",
   "version": "1.0.0",
-  "description": "[![Build Status][action-image]][action-url] [![codecov][codecov-image]][codecov-url] [![NPM version][npm-image]][npm-url] [![License][license-image]][license-url] [![minisize][min-image]][min-url]",
+  "description": "CRM Backend",
   "main": "./src/server.js",
   "type": "module",
+  "private": true,
   "scripts": {
     "start": "node ./src/server.js",
     "dev": "concurrently \"nodemon ./src/server.js\" \"npm run api-doc\" ",
@@ -16,7 +17,6 @@
   },
   "keywords": [],
   "author": "Carely, Lda",
-  "license": "Copyright © 2022 Carely - All Rights Reserved",
   "bugs": {
     "url": "https://github.com/CarelyPT/crm-backend/issues"
   },
@@ -25,6 +25,7 @@
     "amazon-cognito-identity-js": "^5.2.10",
     "aws-sdk": "^2.1174.0",
     "bcryptjs": "^2.4.3",
+    "check-peer-dependencies": "^4.1.0",
     "consola": "^2.15.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
