@@ -13,7 +13,7 @@ export const api_url = api.concat(process.env.API_VERSION)
 // Loads environment variables
 dotenv.config({path: `./src/config/.env/.env.${env}`}) 
 
-export const DB_port = process.env.DB_PORT || process.env.DB_PORT_BACKUP
+export const SERVER_Port = process.env.PORT || process.env.PORT_BACKUP
 export const DB_user = process.env.DB_USER
 export const DB_password = process.env.DB_PASSWORD
 export const DB_users_ns = process.env.DB_USERS_NS

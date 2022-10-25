@@ -55,8 +55,7 @@ export default class usersDAO {
 
     }
 
-static async getUsers (
-) {
+static async getUsers () {
     try {
     const list = await users.find().toArray()
         return list
@@ -65,6 +64,21 @@ static async getUsers (
         return {error: e}
     }
 }
+
+
+static async getUserByCognitoId(cognitoId){
+    
+        try {
+       const list = await users.find( {cognitoId: cognitoId}).toArray()
+       const user = list[0]
+
+            return user
+        } catch (e) {
+            console.error(`Unable to find users, ${e}`)
+            return {error: e}
+        }
+    
+    }
 }
 
 

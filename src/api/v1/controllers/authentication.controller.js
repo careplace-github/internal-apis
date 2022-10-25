@@ -20,7 +20,7 @@ export default class AuthenticationController {
         cognitoId: ""
     }    
         
-    const cognitoResponse = await CognitoService.createCognitoUser(newUser.email, newUser.password)
+    const cognitoResponse = await CognitoService.signUp(newUser.email, newUser.password)
 
     console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
 
@@ -85,27 +85,17 @@ export default class AuthenticationController {
         if(cognitoResponse.error != null){
 
             return res.status(400).json({
-                statusCode: 400,
-                error: {
-                    code: cognitoResponse.error.code,
-                    message: cognitoResponse.error.message,
-                },
-                request: {
-                    type: "POST",
-                    url: "host/login",
-                    body: {"email": req.body.email}
-                }})
+                
+            })
         }
+        console.log(cognitoResponse.response.token)  
 
+        const user = await usersDAO.getUserByCognitoId(cognitoResponse.response.cognitoId)
 
       return res.status(200).json({
-        statusCode: 200,
-        message: "User logged in successfully",
-        request: {
-            type: "POST",
-            url: "host/login",
-            body: {email: req.body.email}
-        }})
+        accessToken: cognitoResponse.response.token,
+        user: user
+    })
     }
 
     static async logout(req, res, next) {
