@@ -12,37 +12,30 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema ({
 
-    cognitoId: {
-        type: String,
-        required: true,
-    },
+    cognitoId: {type: String, required: true, unique: true},
 
-    name:{
-        type: String,
-        required: true,
-    },
+    verified:{type: Boolean, required: true, default: false},
 
-    email:{
-        type: String,
-        required: true,
-    },
+    role:{type: String, required: true, default: "user"},
 
-    verified:{
-        type: Boolean,
-        default: false,
-    },
+    email:{type: String, required: true, unique: true},
 
-    test: {
-        type: String,
-        required: true,
-    },
+    name:{type: String,required: true},
+
+    photoURL:{type: String, required: false, unique: true},
+
+    phoneNumber:{type: String, required: false, unique: true},
+
+    birthday:{type: Date, required: false},
+
+    age:{type: Number, required: false},
+
+    address:{type: String, required: false},
+
+    city:{type: String, required: false},
+
+    zipCode:{type: String, required: false}
     
-    userType: {
-        type: Schema.Types.ObjectId,
-        required: false,
-    }
-
-  
 
 },{ 
     timestamps: true
