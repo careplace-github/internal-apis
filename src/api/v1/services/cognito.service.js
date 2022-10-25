@@ -67,7 +67,7 @@ export default class CognitoService {
 
           onSuccess: function(result) {
             
-            console.log("Login success: " + (JSON.stringify(result, null, 2)));
+           // console.log("Login success: " + (JSON.stringify(result, null, 2)));
 
             const response = {
               username: result.idToken.payload.email,

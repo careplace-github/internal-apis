@@ -29,9 +29,13 @@ import mongodb from "mongodb"
 import dotenv from "dotenv"
 import usersDAO from "./api/v1/db/usersDAO.js"
 // Loads environment constants"
-import {env, api_version, api_url, DB_users_uri, DB_users_ns, DB_port} from "./config/constants/index.js"
+import {env, api_version, api_url, DB_users_uri, DB_users_ns, SERVER_Port} from "./config/constants/index.js"
 // Router exports  
+import configAPI from "./api/v1/routes/config.route.js"
 import usersAPI from "./api/v1/routes/users.route.js"
+import caregiversAPI from "./api/v1/routes/caregivers.route.js"
+
+
 
 import { JWT_secret } from "./config/constants/index.js"
 
@@ -48,6 +52,8 @@ app.use(express.json())
 
 // Inject sub router and APIs
 app.use(api_url, usersAPI)
+app.use(api_url, caregiversAPI)
+app.use(api_url, configAPI)
 
 
 
@@ -74,17 +80,18 @@ const main = async () => {
                 console.log(DB_users_uri)
             })
             .then(async client => {
-                console.log(`Connected to database: ${DB_users_ns}`)
+                
                 // Connects to MongoDB Collections
                 await usersDAO.injectDB(client) 
+                console.log(`Connected to database: ${DB_users_ns}`)
             })
         
         // Starts server
-        app.listen(DB_port, () => {
-        console.log(`Server started on port: ${DB_port}`)
+        app.listen(SERVER_Port, () => {
+        console.log(`Server started on port: ${SERVER_Port}`)
         console.log(`Server environment mode: ${env}`)
         console.log(`HTTP requests API version: ${api_version}`)
-        console.log(`API route: ${api_url}` + "\n")
+        console.log(`API route: http://localhost:${SERVER_Port}${api_url}` + "\n")
         })
         
     } catch (err) {
