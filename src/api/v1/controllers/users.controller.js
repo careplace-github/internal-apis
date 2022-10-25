@@ -9,7 +9,7 @@ export default class UsersController {
 static async getUsers(req, res, next) { 
 
     const users = await usersDAO.getUsers()
-       res.status(200).json(response)
+       res.status(200).json(users)
 }
 
 static async getUserById(req, res, next) { 
