@@ -3,8 +3,8 @@ import hash from "bcryptjs"
 import sign from "jsonwebtoken"
 import randomBytes from "crypto"
 import pick from "lodash"
-import token from "./tokens.model.js"
-import { JWT_secret } from "../../../config/constants/index.js"
+import token from "../_archive/tokens.model.js"
+import { JWT_secret } from "../../../../config/constants/index.js"
 
 
 const Schema = mongoose.Schema
@@ -16,7 +16,14 @@ const userSchema = new Schema ({
 
     verified:{type: Boolean, required: true, default: false},
 
+    // User | Admin 
     role:{type: String, required: true, default: "user"},
+
+    // Marketplace | CRM
+    platformAccess:{type: String, required: true},
+
+    // Client -> Marketplace | Caregiver, Team, Board, Owner -> CRM
+    userType:{type: String, required: true},
 
     email:{type: String, required: true, unique: true},
 
@@ -33,6 +40,8 @@ const userSchema = new Schema ({
     address:{type: String, required: false},
 
     city:{type: String, required: false},
+
+    country:{type: String, required: false},
 
     zipCode:{type: String, required: false}
     
