@@ -1,6 +1,6 @@
 import {DB_users_ns,DB_users_uri } from "../../../config/constants/index.js"
 import mongodb from "mongodb"
-import User from "../models/users.model.js"
+import User from "../models/auth/user.model.js"
 let users
 const ObjectId = mongodb.ObjectId
 
