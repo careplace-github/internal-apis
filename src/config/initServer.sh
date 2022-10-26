@@ -2,12 +2,14 @@
 
 # Server path to script -> /opt/backend/src/config/initServer.sh
 
-apt update
+sudo apt update
 
-apt upgrade
+sudo apt upgrade
 
 cd /opt/backend
 
-yarn install
+sudo service nginx start
 
-yarn start
+sudo yarn install
+
+sudo yarn start
