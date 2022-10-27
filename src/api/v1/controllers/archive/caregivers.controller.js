@@ -1,56 +1,82 @@
-import UsersDAO from "../../dao/usersDAO.js"
+//import usersHelper from "../helpers/users.helper.js"
+import usersDAO from "../db/usersDAO.js"
+//import usersValidator from "../validators/users.validator.js"
+// import authenticationService from "../services/authentication.service.js"
+import User from "../models/auth/user.model.js"
+import { check } from "express-validator"
+import validationResults from "express-validator"
+import CognitoService from "../services/cognito.service.js"
+
+
 
 export default class CaregiversController {
-    static async apiGetCaregivers(req, res, next) {
-        const caregiversPerPage = req.query.caregiversPerPage ? parseInt(req.query.caregiversPerPage, 10): 20
-        const page = req.query.page ? parseInt (req.query.page, 10) : 0
 
-        let filters = {}
-            if (req.query.age) {
-                filters.age = req.query.age
-            } else if (req.query.rating) {
-                filters.rating = req.query.age
-            } else if (req.query.workExperience) {
-                filters.workExperience = req.query.workExperience
-            } else if (req.query.name) {
-                filters.name = req.query.name
-            }
 
-            const { caregiversList, totalNumCaregivers } = await CaregiversDAO.getCaregivers({
-                filters,
-                page,
-                caregiversPerPage,
+    static async getUsers(req, res, next) { 
+       const users = await usersDAO.getUsers()
+       res.status(200).json(users)
+    }
+
+
+    static async createUser(req, res, next) {
+
+        let cognitoId
+        const name = req.body.name
+        const email = req.body.email 
+        const password = req.body.password
+
+       
+        const userAlreadyRegistered = await usersDAO.getUserByEmail(email)
+        
+        if (userAlreadyRegistered != null) {
+           
+            return res.status(200).json({
+                message: "User already exists",
+                request: {
+                    type: "POST",
+                    url: "host/users",
+                    body: {"name": name, "email": email}
+                },
+                user:userAlreadyRegistered
+                
             })
-
-            let response = {
-                caregivers: caregiversList,
-                page: page,
-                filters: filters,
-                entrier_per_page: caregiversPerPage,
-                total_results: totalNumCaregivers,
-            }
-            res.json(response)
-        
-    }
-
-
-
-    static async apiGetCaregiverById(req, res, next) {
-
-        try{
-            let id = req.parans.id || {}
-            let caregiver = await CaregiversDAO.getCaregiverByID(id)
-
-        if (!caregiver) {
-            res.status(404).json({ error: "Not found" })
-            return
         }
-        res.json(caregiver)
-    } catch (e) {
-        console.log(`api, ${e}`)
-        res.status(500).json({ error: e})
-    }
         
-    }
+        try {
+            //const cognitoId = await authenticationService.createCognitoUser()
+            // const cognitoId = req.body.cognitoId
+        
+               
+        } catch (e) {
+                //errors with aws cognito
+                res.status(500).json({ error: e.message})
+        }
+        
 
-}
+        try {
+            
+            console.log("aqui: " + email)
+            await usersDAO.addUser(cognitoId, name, email)
+            const test = await AuthenticationService.createCognitoUser(email, password)
+            
+            
+            
+
+          
+                 
+        } catch (e) {
+         
+            
+        }
+
+        // Send the email to the user with the link to verify their email address.
+        // authenticationService.sendVerificationEmail(email, cognitoId)
+        next();
+    
+        }}
+
+
+    
+
+
+
