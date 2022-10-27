@@ -1,11 +1,11 @@
 //import usersHelper from "../helpers/users.helper.js"
-import usersDAO from "../db/usersDAO.js"
+import usersDAO from "../../db/usersDAO.js"
 //import usersValidator from "../validators/users.validator.js"
 // import authenticationService from "../services/authentication.service.js"
-import User from "../models/auth/user.model.js"
+import User from "../../models/auth/user.model.js"
 import { check } from "express-validator"
 import validationResults from "express-validator"
-import CognitoService from "../services/cognito.service.js"
+import CognitoService from "../../services/cognito.service.js"
 
 
 
