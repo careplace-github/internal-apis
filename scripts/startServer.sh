@@ -1,21 +1,19 @@
 #!/bin/bash
 
-sudo apt update
+processes=$(sudo lsof -i:8080 -t | wc -l)
 
-sudo apt upgrade
+if [ $processes -gt 0 ] ; then
+    i=1
 
-processes=$(sudo lsof -i:3000 -t | wc -l)
-i=1
+    while [ $i -le $processes ] ; do
+        pid=$(sudo lsof -i:8080 -t | sed -n ${i}p)
+        sudo kill -9 $pid
+        i=$((i+1))
+    done
 
-while [ $i -le $processes ] ; do
-    pid=$(sudo lsof -i:3000 -t | sed -n ${i}p)
-    sudo kill -9 $pid
-    i=$((i+1))
-done
+fi
 
-cd /opt/backend
-
-sudo yarn install
+sudo service nginx reload
 
 sudo service nginx start
 

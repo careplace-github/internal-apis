@@ -24,6 +24,9 @@ export const AWS_user_pool_id = process.env.AWS_COGNITO_USER_POOL_ID
 export const AWS_client_id = process.env.AWS_COGNITO_CLIENT_ID
 export const AWS_region = process.env.AWS_COGNITO_REGION
 export const AWS_identity_pool_id = process.env.AWS_COGNITO_IDENTITY_POOL_ID
+export const AWS_access_key_id = process.env.AWS_ACCESS_KEY_ID
+export const AWS_secret_access_key = process.env.AWS_SECRET_ACCESS_KEY
+
 
 
 

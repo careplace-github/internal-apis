@@ -33,7 +33,8 @@ import {env, api_version, api_url, DB_users_uri, DB_users_ns, SERVER_Port} from 
 // Router exports  
 import configAPI from "./api/v1/routes/config.route.js"
 import usersAPI from "./api/v1/routes/users.route.js"
-import caregiversAPI from "./api/v1/routes/caregivers.route.js"
+import authAPI from "./api/v1/routes/authentication.route.js"
+
 
 
 
@@ -52,7 +53,7 @@ app.use(express.json())
 
 // Inject sub router and APIs
 app.use(api_url, usersAPI)
-app.use(api_url, caregiversAPI)
+app.use(api_url, authAPI)
 app.use(api_url, configAPI)
 
 
