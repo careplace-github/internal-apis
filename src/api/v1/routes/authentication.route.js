@@ -21,7 +21,12 @@ router.route("/auth/login")
     
 
 router.route("/auth/logout")    
-    .post(validateAuth, AuthenticationController.logout)    
+    .post(validateAuth, AuthenticationController.logout) 
+    
+
+
+router.route("/auth/my-account") 
+    .get(validateAuth, AuthenticationController.myAccount) 
 
     
   
