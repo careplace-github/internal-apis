@@ -18,7 +18,7 @@ export default function roleBasedGuard(role) {
 
   return function (req, res, next) {
 
-    console.log("test", role)
+    
 
   // Check that the request contains a token
   if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {

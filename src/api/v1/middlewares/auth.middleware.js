@@ -22,20 +22,24 @@ let cognitoAttributeList = [];
  * If the token is valid, the request is passed to the next middleware
  * If the token is invalid, a 401 Unauthorized is returned
  */
-export default function validateAuth(req, res, next, test) {
+export default function validateAuth(req, res, next) {
+
 
   // Check that the request contains a token
   if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
     // Validate the token
     const token = req.headers.authorization.split(" ")[1]
     const response = CognitoService.isLoggedIn(token)
+
+
+    
     
     if (response) {
       // Token is valid
    
       
       // print the request 
-      console.log()
+      //console.log()
 
      // Pass the request to the next middleware
       next()
