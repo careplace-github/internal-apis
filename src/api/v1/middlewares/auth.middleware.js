@@ -39,7 +39,12 @@ export default function validateAuth(req, res, next) {
    
       
       // print the request 
-      //console.log()
+      // print the request as json
+      // console.log(JSON.stringify(req))
+      
+      console.log( "HTTP request: " + req.body)
+
+      console.log("User authenticated")
 
      // Pass the request to the next middleware
       next()
@@ -48,12 +53,14 @@ export default function validateAuth(req, res, next) {
     else {
       // Token is invalid
       // Return a 401 Unauthorized
+      console.log("User not authenticated")
       res.status(401).send("Unauthorized")
     }
     
   } else {
     // If there is no token, respond appropriately 
-    res.status(401).send("No token provided.")
+    console.log("No token provided")
+    res.status(404).send("No token provided.")
   }
 }
 

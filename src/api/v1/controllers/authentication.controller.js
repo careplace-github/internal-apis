@@ -71,10 +71,48 @@ export default class AuthenticationController {
      }
 
 
+     // Function to retireve user's account information from the database and return it to the client 
+     // This function is called when the user clicks on the "My Account" button on the client side
+     // Uses the token to get the user's cognitoId and then uses the cognitoId to get the user's information from the database
+    static async myAccount(req, res, next) {
+
+        const token = req.headers.authorization.split(" ")[1]
+
+        console.log("Token: " + token + "\n")
+
+        const cognitoId = await CognitoService.getCognitoIdFromToken(token)
+
+        const user = await usersDAO.getUserByCognitoId(cognitoId)
+      
+        return res.status(200).json({
+            statusCode: 200,
+            message: "User information retrieved successfully",
+            request: {
+                type: "GET",
+                url: "host/myaccount",
+                body: {"token": token}
+            },
+
+            // Return the user's information to the client
+            response: {
+                user: user
+              
+            },
+            user: user
+        
+        })
+             
+    
+              
+    }
+
+
+
 
     static async login (req, res, next) { 
 
         console.log(`Attempting to login user '${req.body.email}': \n`)    
+        
         
         const cognitoResponse = await CognitoService.signIn(req.body.email, req.body.password)
         
@@ -88,9 +126,9 @@ export default class AuthenticationController {
                 
             })
         }
-        console.log(cognitoResponse.response.token)  
+    
 
-        const user = await usersDAO.getUserByCognitoId(cognitoResponse.response.cognitoId)
+       const user = await usersDAO.getUserByCognitoId(cognitoResponse.response.cognitoId)
 
       return res.status(200).json({
         accessToken: cognitoResponse.response.token,

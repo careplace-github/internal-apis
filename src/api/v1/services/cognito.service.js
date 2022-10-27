@@ -211,6 +211,25 @@ export default class CognitoService {
       });
     }
 
+    static getCognitoIdFromToken(token) {
+    
+        
+        const decoded = jwt_decode(token);
+
+        const cognitoId = decoded.sub;
+
+        const response = {
+          cognitoId: cognitoId,
+        }
+
+        
+
+        return cognitoId
+      
+    }
+
+
+
     // uses congito service to decode the token
     // compares the token expiry with the current time
     // returns true if token is valid

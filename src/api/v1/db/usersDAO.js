@@ -69,9 +69,8 @@ static async getUsers () {
 static async getUserByCognitoId(cognitoId){
     
         try {
-       const list = await users.find( {cognitoId: cognitoId}).toArray()
-       const user = list[0]
-
+            const user = await users.findOne({"cognitoId": cognitoId})
+            console.log("User found: " + JSON.stringify(user, null, 2) + "\n")
             return user
         } catch (e) {
             console.error(`Unable to find users, ${e}`)
