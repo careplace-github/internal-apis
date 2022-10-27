@@ -6,6 +6,7 @@ import express from "express"
 
 
 import {api_url} from "../../../../config/constants/index.js"
+import CaregiversController from "../../controllers/caregivers.controller.js"
 import {registerUserValidation} from "../../validators/signup.validator.js"
 import validatorMiddleware from "../../middlewares/validator.middleware.js"
 
@@ -18,7 +19,7 @@ const router = express.Router()
 
 
 router.route("/caregivers")
-    
+    .post(registerUserValidation, validatorMiddleware, CaregiversController.createUser) 
     
     /** 
      * @swagger 
@@ -36,7 +37,7 @@ router.route("/caregivers")
      *        description: "successful operation"
      *        schema:
      */ 
-   
+    .get(CaregiversController.getUsers)
 
     /** 
      * @swagger 
