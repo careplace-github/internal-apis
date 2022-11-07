@@ -23,7 +23,7 @@ export default class CognitoService {
   
    
   
-  static signUp(email, password, role, agent = 'none') {
+  static signUp(email, password, agent = 'none') {
   
     return new Promise((resolve) => {
       AwsConfig.initAWS ();
