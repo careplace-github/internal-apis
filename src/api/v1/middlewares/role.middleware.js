@@ -19,11 +19,10 @@ import usersDAO from "../db/usersDAO.js"
 let cognitoAttributeList = [];
 
 
-export default function roleBasedGuard(role) {
+export default function validateRole(role) {
 
   return function (req, res, next) {
 
-    
 
   // Check that the request contains a token
   if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
