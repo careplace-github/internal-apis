@@ -14,12 +14,26 @@ export const api_url = api.concat(process.env.API_VERSION)
 dotenv.config({path: `./src/config/.env/.env.${env}`}) 
 
 export const SERVER_Port = process.env.PORT || process.env.PORT_BACKUP
+
+// MongoDB credentials
 export const DB_user = process.env.DB_USER
 export const DB_password = process.env.DB_PASSWORD
-export const DB_users_ns = process.env.DB_USERS_NS
-export const DB_users_uri = `mongodb+srv://${DB_user}:${DB_password}@development-node.0f8rxwj.mongodb.net/?retryWrites=true&w=majority`
+
+// MongoDB connection 
+export const DB_uri = `mongodb+srv://${DB_user}:${DB_password}@development-node.0f8rxwj.mongodb.net/?retryWrites=true&w=majority`
+
+//MongoDB database name
+export const DB_name = process.env.DB_NAME
+
+// MongoDB collections name
+export const COLLECTION_users_ns = process.env.COLLECTION_USERS_NS
+export const COLLECTION_companies_ns = process.env.COLLECTION_COMPANIES_NS
+
+
 export const JWT_secret = process.env.JWT_SECRET
 
+
+// AWS credentials
 export const AWS_user_pool_id = process.env.AWS_COGNITO_USER_POOL_ID
 export const AWS_client_id = process.env.AWS_COGNITO_CLIENT_ID
 export const AWS_region = process.env.AWS_COGNITO_REGION
