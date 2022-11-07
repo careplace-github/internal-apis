@@ -31,18 +31,17 @@ export default function validateAuth(req, res, next) {
     const token = req.headers.authorization.split(" ")[1]
     const response = CognitoService.isLoggedIn(token)
 
+    const email = CognitoService.getEmailFromToken(token)
+
 
     
     
     if (response) {
       // Token is valid
    
-      
-      // print the request 
-      // print the request as json
-      // console.log(JSON.stringify(req))
-      
-      console.log( "HTTP request: " + req.body)
+      req.body.userEmail = email
+
+   
 
       console.log("User authenticated")
 

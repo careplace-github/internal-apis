@@ -25,8 +25,9 @@ router.route("/auth/logout")
     
 
 
-router.route("/auth/my-account") 
-    .get(validateAuth, AuthenticationController.myAccount) 
+router.route("/auth/change-password")
+
+router.route("/auth/forgot-password")
 
     
   

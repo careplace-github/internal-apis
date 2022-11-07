@@ -213,7 +213,6 @@ export default class CognitoService {
 
     static getCognitoIdFromToken(token) {
     
-        
         const decoded = jwt_decode(token);
 
         const cognitoId = decoded.sub;
@@ -222,13 +221,32 @@ export default class CognitoService {
           cognitoId: cognitoId,
         }
 
-        
-
         return cognitoId
-      
     }
 
 
+// Function to decode the token
+    static decodeToken(token) {
+
+      const decoded = AwsConfig.decodeJWTToken(token);
+
+      return decoded;
+    }
+
+
+// Function that decodes the token and returns the user's email address
+    static getEmailFromToken(token) {
+     
+      
+
+      const decoded = this.decodeToken(token);
+
+      const email = decoded.username;
+     
+      return email
+    }
+    
+    
 
     // uses congito service to decode the token
     // compares the token expiry with the current time
