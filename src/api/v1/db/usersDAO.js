@@ -19,14 +19,39 @@ export default class usersDAO {
     } 
 
     static async getUserByEmail (email) {
+
+        
+
+        // Verifies if the email is not null
+        if (email) {
+
         try {
-            const user = await users.findOne({email})
+            const user = await users.findOne({"email": email})
             return user
         } catch (e) {
             console.error(`Unable to find user by email, ${e}`)
             return {error: e}
         }
     }
+
+
+    }
+
+
+    // Function to get the object id of the user by email
+    static async getUserIdByEmail(email) {
+        try {
+            const user = await users.findOne({"email": email})
+            return user._id
+        } catch (e) {
+            console.error(`Unable to find user by email, ${e}`)
+            return {error: e}
+        }
+    }
+    
+
+
+    static a
 
     static async addUser(cognitoId , email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL) {
       

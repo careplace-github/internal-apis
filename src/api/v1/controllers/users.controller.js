@@ -1,5 +1,6 @@
 import CognitoService from "../services/cognito.service.js"
 import usersDAO from "../db/usersDAO.js"
+import companiesDAO from "../db/companiesDAO.js"
 
 
 export default class UsersController {
@@ -31,8 +32,20 @@ static async getUsers(req, res, next) {
        res.status(200).json(users)
 }
 
-static async getUserById(req, res, next) { 
-}
+// Get's the user by the email from the request
+
+static async getAccount(req, res, next) {
+
+
+
+    const user = await usersDAO.getUserByEmail(req.body.userEmail)
+    const company = await companiesDAO.getCompanyByUserId(user._id)
+
+    user.company = company
+
+
+    res.status(200).json(user)
+ }
 
 static async updateUser(req, res, next) { 
 }
