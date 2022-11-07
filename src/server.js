@@ -28,12 +28,16 @@ import cors from "cors"
 import mongodb from "mongodb"
 import dotenv from "dotenv"
 import usersDAO from "./api/v1/db/usersDAO.js"
+import companiesDAO from "./api/v1/db/companiesDAO.js"
 // Loads environment constants"
-import {env, api_version, api_url, DB_users_uri, DB_users_ns, SERVER_Port} from "./config/constants/index.js"
+import {env, api_version, api_url, DB_uri, DB_name, COLLECTION_users_ns, COLLECTION_companies_ns, SERVER_Port} from "./config/constants/index.js"
 // Router exports  
 import configAPI from "./api/v1/routes/config.route.js"
-import usersAPI from "./api/v1/routes/users.route.js"
 import authAPI from "./api/v1/routes/authentication.route.js"
+import usersAPI from "./api/v1/routes/users.route.js"
+import companiesAPI from "./api/v1/routes/companies.route.js"
+
+
 
 
 
@@ -55,6 +59,7 @@ app.use(express.json())
 app.use(api_url, usersAPI)
 app.use(api_url, authAPI)
 app.use(api_url, configAPI)
+app.use(api_url, companiesAPI)
 
 
 
@@ -71,20 +76,23 @@ const main = async () => {
 
     try {
 
-        // Connects to MongoDB Database
-        
-        await MongoClient.connect(DB_users_uri)
+        // Connects to MongoDB Cluster
+        await MongoClient.connect(DB_uri)
             .catch(err => {
+               // console.log(DB_users_uri)
                 console.error(err.stack)
-                
                 process.exit(1)
-                console.log(DB_users_uri)
+                
             })
+            
             .then(async client => {
+                console.log(`Connected to database: ${DB_name}`)
                 
                 // Connects to MongoDB Collections
                 await usersDAO.injectDB(client) 
-                console.log(`Connected to database: ${DB_users_ns}`)
+                console.log(`Connected to collection: ${COLLECTION_users_ns}`)
+                await companiesDAO.injectDB(client)
+                console.log(`Connected to collection: ${COLLECTION_companies_ns}`)
             })
         
         // Starts server

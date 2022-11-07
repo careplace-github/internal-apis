@@ -1,4 +1,4 @@
-import {DB_users_ns,DB_users_uri } from "../../../config/constants/index.js"
+import {DB_name, COLLECTION_users_ns } from "../../../config/constants/index.js"
 import mongodb from "mongodb"
 import User from "../models/auth/user.model.js"
 let users
@@ -12,7 +12,7 @@ export default class usersDAO {
             return
         }
         try {
-            users = await conn.db(DB_users_ns).collection("users")
+            users = await conn.db(DB_name).collection(COLLECTION_users_ns)
         } catch (e) {
             console.error(`Unable to establish a collection handle in usersDAO: ${e}`,)
         }
@@ -28,14 +28,21 @@ export default class usersDAO {
         }
     }
 
-    static async addUser(cognitoId, name, email) {
+    static async addUser(cognitoId , email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL) {
       
         try {
 
             const newUser = new User ({
-                cognitoId,
-                name,
-                email,
+                cognitoId, 
+                email, 
+                name, 
+                phoneNumber, 
+                country, 
+                city, 
+                address, 
+                zipCode, 
+                companyId, 
+                role,
             })
 
 
@@ -78,7 +85,25 @@ static async getUserByCognitoId(cognitoId){
         }
     
     }
+
+
+static async getUserRoleByCognitoId(cognitoId){ 
+    try {
+        const user = await users.findOne({"cognitoId": cognitoId})
+        console.log("User found: " + JSON.stringify(user, null, 2) + "\n")
+
+        const role = user.role
+        console.log("User role: " + role)
+        
+        return role
+    }
+    catch (e) {
+        console.error(`Unable to find users, ${e}`)
+        return {error: e}
+    }
 }
 
 
 
+
+}

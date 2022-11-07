@@ -7,21 +7,19 @@ import validateAuth from "../middlewares/auth.middleware.js"
 import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
 
 // Import controllers
-import UsersController from "../controllers/users.controller.js"
+import companiesController from "../controllers/companies.controller.js"
+
 
 
 const router = express.Router()
 
 
-router.route("/users")
-    // Test route
-    .get(validateAuth, roleBasedGuard("admin"), UsersController.getUsers)
+
+router.route("/companies/")
+    .get(validateAuth, roleBasedGuard("admin"), companiesController.getCompanies)
 
 
-
-
-    
-
+  
 
     
   
