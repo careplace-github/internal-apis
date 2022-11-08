@@ -5,10 +5,10 @@ import cognitoExpress from "cognito-express"
 
 import CognitoService from "../services/cognito.service.js"
 
-import {AWS_user_pool_id} from "../../../config/constants/index.js"
-import {AWS_client_id} from "../../../config/constants/index.js"
-import {AWS_region} from "../../../config/constants/index.js"
-import {AWS_identity_pool_id} from "../../../config/constants/index.js"
+import { AWS_user_pool_id } from "../../../config/constants/index.js"
+import { AWS_client_id } from "../../../config/constants/index.js"
+import { AWS_region } from "../../../config/constants/index.js"
+import { AWS_identity_pool_id } from "../../../config/constants/index.js"
 
 import AuthHelper from "../helpers/auth.helper.js"
 
@@ -35,49 +35,51 @@ export default function validateAccess(req, res, next) {
     async function handleRequest() {
 
 
-    // Check that the request contains a token
-    if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
-       
-        const token = req.headers.authorization.split(" ")[1]
-
-        
-        
-        // Token provided
-        if (token) {
-        
-        
+        try {
 
 
-        const requestedUserId = req.params.userId
+            // Check that the request contains a token
+            if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
+
+                const token = req.headers.authorization.split(" ")[1]
+
+                // Token provided
+                if (token) {
+
+                    const requestedUserId = req.params.userId
+
+                    const userId = await AuthHelper.getUserId(token, 'cognito')
 
 
-        
-            const userId = await AuthHelper.getUserId(token, 'cognito')
 
-       
+                    if (userId == requestedUserId) {
+                        // The user's id in the token matches the user's id in the request parameters
+                        // Pass the request to the next middleware
 
-        if (userId == requestedUserId) {
-            // The user's id in the token matches the user's id in the request parameters
-            // Pass the request to the next middleware
-      
-            next()
-        } else {
-            // The user's id in the token does not match the user's id in the request parameters
-            // Return a 403 Forbidden
-            res.status(403).send("Forbidden")
+                        next()
+                    } else {
+                        // The user's id in the token does not match the user's id in the request parameters
+                        // Return a 403 Forbidden
+                        res.status(403).send("Forbidden")
+                    }
+                } else {
+                    // Token is invalid
+                    // Return a 401 Unauthorized
+                    res.status(401).send("Unauthorized")
+                }
+            } else {
+                // Request does not contain a token
+                // Return a 401 Unauthorized
+                res.status(401).send("No token provided.")
+            }
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).send("Internal server error")
+
         }
-        } else {
-        // Token is invalid
-        // Return a 401 Unauthorized
-        res.status(401).send("Unauthorized")
-        }
-    } else {
-        // Request does not contain a token
-        // Return a 401 Unauthorized
-        res.status(401).send("No token provided.")
     }
 
-    }
 
     // Call the async function
     handleRequest()

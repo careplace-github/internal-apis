@@ -7,75 +7,75 @@ import AuthHelper from "../helpers/auth.helper.js"
 
 export default class UsersController {
 
-static async createUser(req, res, next) {
-    try {
-        const { email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL} = req.body
+    static async createUser(req, res, next) {
+        try {
+            const { email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL } = req.body
 
-        // generate a random password of 10 characters
-        const password = Math.random().toString(36).slice(-10)
+            // generate a random password of 10 characters
+            const password = Math.random().toString(36).slice(-10)
 
-        const cognitoUser = await CognitoService.signUp(email, password)
+            const cognitoUser = await CognitoService.signUp(email, password)
 
-        
-   
-        const newUser = await usersDAO.addUser(cognitoUser.userSub , email, name, phoneNumber, country, city, address, zipCode, companyId, role)
+            const newUser = await usersDAO.addUser(cognitoUser.userSub, email, name, phoneNumber, country, city, address, zipCode, companyId, role)
 
-        res.status(201).json(newUser)
+            res.status(201).json(newUser)
 
-    } catch (error) {
-        next(error)
-    }
-}
-
-static async getUserById(req, res, next) {
-
- 
-    
-    try {
-
-        console.log("PARAMS: " + req.params.userId)
-
-        
-        const userId = req.params.userId
-
-        const user = await usersDAO.getUserById(userId)
-
-        if (user) {
-            res.status(200).json(user)
-        } else {
-            res.status(404).send("User not found")
+        } catch (error) {
+            next(error)
         }
-    } catch (error) {
-        next(error)
     }
-}
+
+    static async getUserById(req, res, next) {
+
+        try {
+
+            const userId = req.params.userId
+
+            const user = await usersDAO.getUserById(userId)
 
 
-// Get's the user by the email from the request
 
-static async getAccount(req, res, next) {
+            if (user) {
+
+                if (user.role != "user") {
+                    const company = await companiesDAO.getCompanyByUserId(userId)
+                    user.company = company
+                }
+                res.status(200).json(user)
+            } else {
+                res.status(404).send("User not found")
+            }
+        } catch (error) {
+            next(error)
+        }
+    }
+
+
+    // Get's the user by the email from the request
+
+    static async getAccount(req, res, next) {
 
 
 
-    const user = await usersDAO.getUserByEmail(req.body.userEmail)
-    const company = await companiesDAO.getCompanyByUserId(user._id)
+        const user = await usersDAO.getUserByEmail(req.body.userEmail)
+        const company = await companiesDAO.getCompanyByUserId(user._id)
 
-    user.company = company
+        user.company = company
 
 
-    res.status(200).json(user)
- }
+        res.status(200).json(user)
+    }
 
-static async updateUser(req, res, next) { 
-}
+    static async updateUser(req, res, next) {
+    }
 
-static async deleteUser(req, res, next) { 
-}
+    static async deleteUser(req, res, next) {
+    }
 
-static async getUsers(req, res, next) { 
+    static async getUsers(req, res, next) {
 
-    const users = await usersDAO.getUsers()
-       res.status(200).json(users)
-}
+        const users = await usersDAO.getUsers()
+        res.status(200).json(users)
+    }
 
 }

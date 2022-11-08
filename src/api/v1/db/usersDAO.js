@@ -1,13 +1,14 @@
-import {DB_name, COLLECTION_users_ns } from "../../../config/constants/index.js"
+import { DB_name, COLLECTION_users_ns } from "../../../config/constants/index.js"
 import mongodb from "mongodb"
 import User from "../models/auth/user.model.js"
+
 let users
 const ObjectId = mongodb.ObjectId
 
 export default class usersDAO {
 
     static async injectDB(conn) {
-       
+
         if (users) {
             return
         }
@@ -16,7 +17,7 @@ export default class usersDAO {
         } catch (e) {
             console.error(`Unable to establish a collection handle in usersDAO: ${e}`,)
         }
-    } 
+    }
 
 
     static async getUserByAuthId(authId, authProvider) {
@@ -26,92 +27,94 @@ export default class usersDAO {
         // Verifies if the email is not null
         if (authProvider) {
 
-        try {
+            try {
 
-            switch (authProvider) {
-                case 'cognito':
-                     user = await users.findOne({"cognitoId": authId})
-                    return user
-                default:
-                     user = await users.findOne({"cognitoId": authId})
-                    return user
+                switch (authProvider) {
+                    case 'cognito':
+                        user = await users.findOne({ "cognitoId": authId })
+                        return user
+                    default:
+                        user = await users.findOne({ "cognitoId": authId })
+                        return user
+                }
+            } catch (e) {
+                console.error(`Unable to find user by email, ${e}`)
+                return { error: e }
             }
-        } catch (e) {
-            console.error(`Unable to find user by email, ${e}`)
-            return {error: e}
         }
-    }
 
 
     }
 
 
 
-    static async getUserById (userId) {
-         
-          if (userId) {
+    static async getUserById(userId) {
+
+        if (userId) {
 
             try {
-                const user = await users.findOne({"_id": userId})
+                const user = await users.findOne({ "_id": ObjectId(userId) })
+
                 return user
             } catch (e) {
                 console.error(`Unable to find user by id, ${e}`)
-                return {error: e}
+                return { error: e }
             }
         }
     }
 
 
-     
-
-    
 
 
-    
 
-    static async addUser(cognitoId , email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL) {
-      
+
+
+
+
+    static async addUser(cognitoId, email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL) {
+
         try {
 
-            const newUser = new User ({
-                cognitoId, 
-                email, 
-                name, 
-                phoneNumber, 
-                country, 
-                city, 
-                address, 
-                zipCode, 
-                companyId, 
+            const newUser = new User({
+                cognitoId,
+                email,
+                name,
+                phoneNumber,
+                country,
+                city,
+                address,
+                zipCode,
+                companyId,
                 role,
             })
 
 
-         await users.insertOne(newUser)
+            await users.insertOne(newUser)
 
-         return {
-            statusCode: 200, 
-            message: "Added user to the MongoDB database successfuly", 
-            userCreated: newUser }
+            return {
+                statusCode: 200,
+                message: "Added user to the MongoDB database successfuly",
+                userCreated: newUser
+            }
 
         } catch (e) {
             console.error(`Unable to POST user: ${e}`)
-            
-            return {statusCode: e.code, error: e.message}
+
+            return { statusCode: e.code, error: e.message }
 
         }
 
     }
 
-static async getUsers () {
-    try {
-    const list = await users.find().toArray()
-        return list
-    } catch (e) {
-        console.error(`Unable to find users, ${e}`)
-        return {error: e}
+    static async getUsers() {
+        try {
+            const list = await users.find().toArray()
+            return list
+        } catch (e) {
+            console.error(`Unable to find users, ${e}`)
+            return { error: e }
+        }
     }
-}
 
 
 
