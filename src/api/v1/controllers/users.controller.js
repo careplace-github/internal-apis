@@ -2,6 +2,8 @@ import CognitoService from "../services/cognito.service.js"
 import usersDAO from "../db/usersDAO.js"
 import companiesDAO from "../db/companiesDAO.js"
 
+import AuthHelper from "../helpers/auth.helper.js"
+
 
 export default class UsersController {
 
@@ -25,12 +27,29 @@ static async createUser(req, res, next) {
     }
 }
 
+static async getUserById(req, res, next) {
 
-static async getUsers(req, res, next) { 
+ 
+    
+    try {
 
-    const users = await usersDAO.getUsers()
-       res.status(200).json(users)
+        console.log("PARAMS: " + req.params.userId)
+
+        
+        const userId = req.params.userId
+
+        const user = await usersDAO.getUserById(userId)
+
+        if (user) {
+            res.status(200).json(user)
+        } else {
+            res.status(404).send("User not found")
+        }
+    } catch (error) {
+        next(error)
+    }
 }
+
 
 // Get's the user by the email from the request
 
@@ -53,5 +72,10 @@ static async updateUser(req, res, next) {
 static async deleteUser(req, res, next) { 
 }
 
+static async getUsers(req, res, next) { 
+
+    const users = await usersDAO.getUsers()
+       res.status(200).json(users)
+}
 
 }

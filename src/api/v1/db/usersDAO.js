@@ -18,16 +18,24 @@ export default class usersDAO {
         }
     } 
 
-    static async getUserByEmail (email) {
 
-        
+    static async getUserByAuthId(authId, authProvider) {
+
+        let user
 
         // Verifies if the email is not null
-        if (email) {
+        if (authProvider) {
 
         try {
-            const user = await users.findOne({"email": email})
-            return user
+
+            switch (authProvider) {
+                case 'cognito':
+                     user = await users.findOne({"cognitoId": authId})
+                    return user
+                default:
+                     user = await users.findOne({"cognitoId": authId})
+                    return user
+            }
         } catch (e) {
             console.error(`Unable to find user by email, ${e}`)
             return {error: e}
@@ -38,20 +46,28 @@ export default class usersDAO {
     }
 
 
-    // Function to get the object id of the user by email
-    static async getUserIdByEmail(email) {
-        try {
-            const user = await users.findOne({"email": email})
-            return user._id
-        } catch (e) {
-            console.error(`Unable to find user by email, ${e}`)
-            return {error: e}
+
+    static async getUserById (userId) {
+         
+          if (userId) {
+
+            try {
+                const user = await users.findOne({"_id": userId})
+                return user
+            } catch (e) {
+                console.error(`Unable to find user by id, ${e}`)
+                return {error: e}
+            }
         }
     }
+
+
+     
+
     
 
 
-    static a
+    
 
     static async addUser(cognitoId , email, name, phoneNumber, country, city, address, zipCode, companyId, role, photoURL) {
       
@@ -98,35 +114,10 @@ static async getUsers () {
 }
 
 
-static async getUserByCognitoId(cognitoId){
-    
-        try {
-            const user = await users.findOne({"cognitoId": cognitoId})
-            console.log("User found: " + JSON.stringify(user, null, 2) + "\n")
-            return user
-        } catch (e) {
-            console.error(`Unable to find users, ${e}`)
-            return {error: e}
-        }
-    
-    }
 
 
-static async getUserRoleByCognitoId(cognitoId){ 
-    try {
-        const user = await users.findOne({"cognitoId": cognitoId})
-        console.log("User found: " + JSON.stringify(user, null, 2) + "\n")
 
-        const role = user.role
-        console.log("User role: " + role)
-        
-        return role
-    }
-    catch (e) {
-        console.error(`Unable to find users, ${e}`)
-        return {error: e}
-    }
-}
+
 
 
 

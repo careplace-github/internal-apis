@@ -1,18 +1,4 @@
-import AWS from "aws-sdk"
-import jwt_decode from "jwt-decode"
-import AmazonCognitoIdentity from "amazon-cognito-identity-js"
-import cognitoExpress from "cognito-express"
-
-import CognitoService from "../services/cognito.service.js"
-
-import {AWS_user_pool_id} from "../../../config/constants/index.js"
-import {AWS_client_id} from "../../../config/constants/index.js"
-import {AWS_region} from "../../../config/constants/index.js"
-import {AWS_identity_pool_id} from "../../../config/constants/index.js"
-
-
-let cognitoAttributeList = [];
-
+import AuthHelper from "../helpers/auth.helper.js"
 
 
 /**
@@ -29,20 +15,14 @@ export default function validateAuth(req, res, next) {
   if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
     // Validate the token
     const token = req.headers.authorization.split(" ")[1]
-    const response = CognitoService.isLoggedIn(token)
-
-    const email = CognitoService.getEmailFromToken(token)
-
+    
+    const response = AuthHelper.isLoggedIn(token)
 
     
     
     if (response) {
       // Token is valid
    
-      req.body.userEmail = email
-
-   
-
       console.log("User authenticated")
 
      // Pass the request to the next middleware

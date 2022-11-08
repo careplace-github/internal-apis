@@ -131,49 +131,6 @@ export default class CognitoService {
       });
     }
 
-    
-
-
-
-
-
-        
-  
-  
-
-     
-        
-     
-
-
-      
-    
-/**
- static addUserToGroup(user, groupName) {
-        return new Promise((resolve) => {
-          AwsConfig.initAWS ();
-          const params = {
-            GroupName: groupName,
-            UserPoolId: AwsConfig.getUserPoolId(),
-            Username: user.username,
-          };
-
-          AwsConfig.getCognitoIdentityServiceProvider().adminAddUserToGroup(params, (err, data) => {
-            if (err) {
-              return resolve({ statusCode: 422, response: err });
-            }
-            return resolve({ statusCode: 200, response: data });
-          }
-
-          );
-        });
-
-      }
- */
-
-
-       
-   
 
         
 
@@ -210,60 +167,6 @@ export default class CognitoService {
         });
       });
     }
-
-    static getCognitoIdFromToken(token) {
-    
-        const decoded = jwt_decode(token);
-
-        const cognitoId = decoded.sub;
-
-        const response = {
-          cognitoId: cognitoId,
-        }
-
-        return cognitoId
-    }
-
-
-// Function to decode the token
-    static decodeToken(token) {
-
-      const decoded = AwsConfig.decodeJWTToken(token);
-
-      return decoded;
-    }
-
-
-// Function that decodes the token and returns the user's email address
-    static getEmailFromToken(token) {
-     
-      
-
-      const decoded = this.decodeToken(token);
-
-      const email = decoded.username;
-     
-      return email
-    }
-    
-    
-
-    // uses congito service to decode the token
-    // compares the token expiry with the current time
-    // returns true if token is valid
-    static isLoggedIn(token) {
-       
-        const decoded = AwsConfig.decodeJWTToken(token);
-        const currentTime = new Date().getTime() / 1000;
-
-       return decoded.exp > currentTime
-      }
-
-      static role(token) {
-        const decoded = AwsConfig.decodeJWTToken(token);
-        const role = decoded['cognito:groups'][0];
-        return role;
-      }
 
       
       

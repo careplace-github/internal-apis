@@ -5,6 +5,7 @@ import express from "express"
 // Import middlewares
 import validateAuth from "../middlewares/auth.middleware.js"
 import validateRole from "../middlewares/role.middleware.js"
+import validateAccess from "../middlewares/access.middleware.js"
 
 // Import controllers
 import UsersController from "../controllers/users.controller.js"
@@ -15,12 +16,20 @@ const router = express.Router()
 
 router.route("/users")
     // Test route
-    .get(validateAuth, validateRole("user"), UsersController.getUsers)
+    .get(validateAuth, validateRole("admin"), UsersController.getUsers)
+
+
+// router to get user information by id
+router.route("/users/:userId")
+    .get(validateAuth, validateAccess, UsersController.getUserById)    
+
+
+
+
 
 
 router.route("/users/my-account")
     .get(validateAuth, UsersController.getAccount)
-
 
 
 
