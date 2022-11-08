@@ -1,6 +1,9 @@
-
+// Import Cognito Service
 import CognitoService from "../services/cognito.service.js"
+
+// Import database access objects
 import usersDAO from "../db/usersDAO.js"
+import companiesDAO  from "../db/companiesDAO.js"
 
 
 
@@ -126,9 +129,18 @@ export default class AuthenticationController {
                 
             })
         }
+
+
+        console.log("Cognito Response: " + cognitoResponse.response.cognitoId)
     
 
-       const user = await usersDAO.getUserByCognitoId(cognitoResponse.response.cognitoId)
+       const user = await usersDAO.getUserByAuthId(cognitoResponse.response.cognitoId, "cognito")
+
+       const company = await companiesDAO.getCompanyByUserId(user._id)
+
+       user.company = company
+
+         console.log("User: " + JSON.stringify(user, null, 2) + "\n")
 
       return res.status(200).json({
         accessToken: cognitoResponse.response.token,
