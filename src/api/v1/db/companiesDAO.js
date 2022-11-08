@@ -24,7 +24,7 @@ export default class companiesDAO {
 // Function to return a company by the user id
 static async getCompanyByUserId(userId) {
     try {
-        const company = await companies.findOne({"ownerId": userId})
+        const company = await companies.findOne({"userId": ObjectId(userId)})
         return company
     } catch (e) {
         console.error(`Unable to find company by user id, ${e}`)
