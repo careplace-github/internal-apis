@@ -16,11 +16,12 @@ const router = express.Router()
 
 router.route("/users")
     // Test route
-    .get(validateAuth, validateRole("admin"), UsersController.getUsers)
+    .get(validateAuth, validateRole(["admin"]), UsersController.getUsers)
+    .post(validateAuth, validateRole(["admin","companyOwner"]), UsersController.createUser)
 
 
 // router to get user information by id
-router.route("/users/:userId")
+router.route("/users/:id")
     .get(validateAuth, validateAccess, UsersController.getUserById)    
 
 

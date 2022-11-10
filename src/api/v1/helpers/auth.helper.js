@@ -13,7 +13,7 @@ import { AWS_access_key_id } from "../../../config/constants/index.js"
 import { AWS_secret_access_key } from "../../../config/constants/index.js"
 
 import usersDAO from "../db/usersDAO.js"
-
+import companiesDAO from "../db/companiesDAO.js"
 
 
 
@@ -92,6 +92,77 @@ export default class AuthHelper {
   }
 
 
+  static async getUser(token, authProvider) {
 
+    try {
+
+      let user
+    
+
+      
+
+      const decodedToken = await this.decodeToken(token);
+
+     
+
+      switch (authProvider) {
+        case 'cognito':
+
+      
+
+          user = await usersDAO.getUserByAuthId(decodedToken.sub, 'cognito')
+          
+          if (user.role != 'user') {
+            const company = await companiesDAO.getCompanyByUserId(user._id)
+            user.company = company
+          }
+
+          return user
+
+
+        default:
+          user = await usersDAO.getUserByAuthId(decodedToken.sub, 'cognito')
+
+          if (user.role != 'user') {
+            const company = await companiesDAO.getCompanyByUserId(user._id)
+            user.company = company
+          }
+
+          return user
+
+
+      }
+
+
+    }
+
+    catch (e) {
+      return null
+    }
+
+      
+  }
+
+static async getUserById (userId) {
+  
+    try {
+  
+      let user
+  
+      user = await usersDAO.getUserById(userId)
+
+      if (user.role != 'user') {
+        const company = await companiesDAO.getCompanyByUserId(user._id)
+        user.company = company
+      }
+      return user
+      
+      }
+  
+    catch (e) {
+      return null
+    }
+  
+  }
 
 }

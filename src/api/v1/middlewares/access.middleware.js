@@ -43,13 +43,21 @@ export default function validateAccess(req, res, next) {
 
                 const token = req.headers.authorization.split(" ")[1]
 
+
+
                 // Token provided
                 if (token) {
 
                     const requestedUserId = req.params.userId
+                    const requestedUser = await AuthHelper.getUserById(requestedUserId)
 
-                    const userId = await AuthHelper.getUserId(token, 'cognito')
 
+                    const user = await AuthHelper.getUser(token, 'cognito')
+                    const userId = user._id
+
+
+                    console.log("requestedUserId: " + requestedUserId)
+                    console.log("userId: " + userId)
 
 
                     if (userId == requestedUserId) {
@@ -57,31 +65,46 @@ export default function validateAccess(req, res, next) {
                         // Pass the request to the next middleware
 
                         next()
+
                     } else {
-                        // The user's id in the token does not match the user's id in the request parameters
-                        // Return a 403 Forbidden
-                        res.status(403).send("Forbidden")
+                        // The user role 'user' is the only role that is not associated with a company
+
+                        // Checks if the user is associated with a company
+                        if (user.company && requestedUser.company ) {
+
+                            // User is an admin, company owner or company board member of the company that the user in the request parameters belongs to
+                            if ((user.company._id == requestedUser.company._id) && (user.role == 'admin' || user.role == 'companyOwner' || user.role == 'companyBoard')) {
+
+                                next()
+                            }
+                        }
+                        else {
+                            // User is not associated with a company
+                            // User is not allowed to access the requested user's information
+                            res.status(403).send("Forbidden" )
+
+                        }
+
                     }
-                } else {
-                    // Token is invalid
-                    // Return a 401 Unauthorized
-                    res.status(401).send("Unauthorized")
                 }
-            } else {
+            }
+            else {
                 // Request does not contain a token
                 // Return a 401 Unauthorized
                 res.status(401).send("No token provided.")
             }
 
-        } catch (error) {
+
+        }
+
+
+        catch (error) {
             console.log(error)
             res.status(500).send("Internal server error")
 
         }
+
     }
-
-
     // Call the async function
     handleRequest()
-
 }
