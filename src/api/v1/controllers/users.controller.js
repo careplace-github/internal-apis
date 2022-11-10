@@ -41,7 +41,18 @@ export default class UsersController {
     }
   }
 
-  static async getUserById(req, res, next) {
+  // Get's the user by the email from the request
+
+  static async getAccount(req, res, next) {
+    const user = await usersDAO.getUserByEmail(req.body.userEmail);
+    const company = await companiesDAO.getCompanyByUserId(user._id);
+
+    user.company = company;
+
+    res.status(200).json(user);
+  }
+
+  static async getUser(req, res, next) {
     try {
       const userId = req.params.userId;
 
@@ -61,20 +72,42 @@ export default class UsersController {
     }
   }
 
-  // Get's the user by the email from the request
+  static async updateUser(req, res, next) {
+    try {
+      const userId = req.params.userId;
+      const user = req.body;
 
-  static async getAccount(req, res, next) {
-    const user = await usersDAO.getUserByEmail(req.body.userEmail);
-    const company = await companiesDAO.getCompanyByUserId(user._id);
+      // Check if user already exists by verifying the id
+      const userExists = await usersDAO.getUserById(userId);
+      if (!userExists) {
+        return res.status(400).send("User does not exist");
+      }
 
-    user.company = company;
+      const updatedUser = await usersDAO.updateUser(userId, user);
 
-    res.status(200).json(user);
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async updateUser(req, res, next) {}
+  static async deleteUser(req, res, next) {
+    try {
+      const userId = req.params.userId;
 
-  static async deleteUser(req, res, next) {}
+      // Check if user already exists by verifying the id
+      const userExists = await usersDAO.getUserById(userId);
+      if (!userExists) {
+        return res.status(400).send("User does not exist");
+      }
+
+      const deletedUser = await usersDAO.deleteUser(userId);
+
+      res.status(200).json(deletedUser);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getUsers(req, res, next) {
     const users = await usersDAO.getUsers();
