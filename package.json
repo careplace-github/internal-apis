@@ -45,6 +45,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "request": "^2.88.2",
+    "secure-random-password": "^0.2.3",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0"
   },

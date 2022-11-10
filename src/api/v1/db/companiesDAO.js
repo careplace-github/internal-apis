@@ -1,46 +1,101 @@
-import {DB_name, COLLECTION_companies_ns } from "../../../config/constants/index.js"
-import mongodb from "mongodb"
-import User from "../models/auth/user.model.js"
-let companies
-const ObjectId = mongodb.ObjectId
+import {
+  DB_name,
+  COLLECTION_companies_ns,
+} from "../../../config/constants/index.js";
+import mongodb from "mongodb";
+import User from "../models/auth/user.model.js";
+
+let companies;
+const ObjectId = mongodb.ObjectId;
 
 export default class companiesDAO {
-
-    static async injectDB(conn) {
-       
-        if (companies) {
-            return
-        }
-        try {
-            companies = await conn.db(DB_name).collection(COLLECTION_companies_ns)
-        } catch (e) {
-            console.error(`Unable to establish a collection handle in companiesDAO: ${e}`,)
-        }
-    } 
-
-    
-
-
-// Function to return a company by the user id
-static async getCompanyByUserId(userId) {
-    try {
-        const company = await companies.findOne({"userId": ObjectId(userId)})
-        return company
-    } catch (e) {
-        console.error(`Unable to find company by user id, ${e}`)
-        return {error: e}
+  static async injectDB(conn) {
+    if (companies) {
+      return;
     }
-   
-}
+    try {
+      companies = await conn.db(DB_name).collection(COLLECTION_companies_ns);
+    } catch (e) {
+      console.error(
+        `Unable to establish a collection handle in companiesDAO: ${e}`
+      );
+    }
+  }
 
+  static async getCompanies() {
+    try {
+      const list = await companies.find().toArray();
+      return list;
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return { error: e };
+    }
+  }
 
+  static async createCompany(company) {
+    try {
+      const newCompany = await companies.insertOne(company);
+      return newCompany;
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return { error: e };
+    }
+  }
 
+  static async updateCompany(company) {
+    try {
+      const updatedCompany = await companies.updateOne(
+        { _id: ObjectId(company.id) },
+        { $set: company }
+      );
+      return updatedCompany;
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return { error: e };
+    }
+  }
 
+  static async deleteCompany(companyId) {
+    try {
+      const deletedCompany = await companies.deleteOne({
+        _id: ObjectId(companyId),
+      });
+      return deletedCompany;
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return { error: e };
+    }
+  }
 
-   
+  // Function to return a company by the user id
+  static async getCompanyByUserId(userId) {
+    try {
+      const company = await companies.findOne({ userId: userId });
+      return company;
+    } catch (e) {
+      console.error(`Unable to find company by user id, ${e}`);
+      return { error: e };
+    }
+  }
 
+  static async getCompanyByEmail(email) {
+    try {
+      const company = await companies.findOne({ email: email });
+      return company;
+    } catch (e) {
+      console.error(`Unable to find company by email, ${e}`);
+      return { error: e };
+    }
+  }
 
-
-
-
+  // Function to return a company by the company id
+  static async getCompanyById(companyId) {
+    try {
+      const company = await companies.findOne({ _id: ObjectId(companyId) });
+      return company;
+    } catch (e) {
+      console.error(`Unable to find company by id, ${e}`);
+      return { error: e };
+    }
+  }
 }

@@ -3706,6 +3706,18 @@ sax@1.2.1, sax@>=0.6.0:
   resolved "https://registry.npmjs.org/sax/-/sax-1.2.1.tgz"
   integrity sha512-8I2a3LovHTOpm7NV5yOyO8IHqgVsfK4+UuySrXU8YXkSRX7k6hCV9b3HrkKCr3nMpgj+0bmocaJJWpvp1oc7ZA==
 
+secure-random-password@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/secure-random-password/-/secure-random-password-0.2.3.tgz#cc99714a824328f251b11b35b557b685c09717db"
+  integrity sha512-2zpmr6pK3CZGIS9fgApFw00/tKEBVbJTqe4AZLrLNgahCK6ueIR5uMzvbERNibr8hkWneMcOqDcm4wpHWUxrYw==
+  dependencies:
+    secure-random "^1.1.2"
+
+secure-random@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/secure-random/-/secure-random-1.1.2.tgz#ed103b460a851632d420d46448b2a900a41e7f7c"
+  integrity sha512-H2bdSKERKdBV1SwoqYm6C0y+9EA94v6SUBOWO8kDndc4NoUih7Dv6Tsgma7zO1lv27wIvjlD0ZpMQk7um5dheQ==
+
 semver@^5.6.0:
   version "5.7.1"
   resolved "https://registry.npmjs.org/semver/-/semver-5.7.1.tgz"

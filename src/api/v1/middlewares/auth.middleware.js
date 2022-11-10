@@ -41,12 +41,14 @@ export default function validateAuth(req, res, next) {
           res.status(401).send("Unauthorized")
         }
 
-      } else {
-        // If there is no token, respond appropriately 
-        console.log("No token provided")
-        res.status(404).send("No token provided.")
-      }
+      
 
+    }
+  }
+    else {
+      // If there is no token, respond appropriately 
+      console.log("No token provided")
+      res.status(404).send("No token provided.")
     }
 
   } catch (error) {
