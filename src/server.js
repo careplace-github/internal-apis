@@ -34,6 +34,8 @@ import {env, api_version, api_url, DB_uri, DB_name, COLLECTION_users_ns, COLLECT
 // Router exports  
 import configAPI from "./api/v1/routes/config.route.js"
 import authAPI from "./api/v1/routes/authentication.route.js"
+import filesAPI from "./api/v1/routes/files.route.js"
+
 import usersAPI from "./api/v1/routes/users.route.js"
 import companiesAPI from "./api/v1/routes/companies.route.js"
 
@@ -58,6 +60,8 @@ app.use(express.json())
 // Inject sub router and APIs
 app.use(api_url, usersAPI)
 app.use(api_url, authAPI)
+app.use(api_url, filesAPI)
+
 app.use(api_url, configAPI)
 app.use(api_url, companiesAPI)
 
