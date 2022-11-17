@@ -1,196 +1,303 @@
 // Import Cognito Service
-import CognitoService from "../services/cognito.service.js"
+import CognitoService from "../services/cognito.service.js";
 
 // Import database access objects
-import usersDAO from "../db/usersDAO.js"
-import companiesDAO  from "../db/companiesDAO.js"
-
-
+import usersDAO from "../db/usersDAO.js";
+import companiesDAO from "../db/companiesDAO.js";
 
 export default class AuthenticationController {
-
-
-    static async signup(req, res, next) {
-
-           
-
-    console.log("Attempting to create new user: \n")    
+  static async signup(req, res, next) {
+    console.log("Attempting to create new user: \n");
 
     const newUser = {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        cognitoId: ""
-    }    
-        
-    const cognitoResponse = await CognitoService.signUp(newUser.email, newUser.password)
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      cognitoId: "",
+    };
 
-    console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+    const cognitoResponse = await CognitoService.signUp(
+      newUser.email,
+      newUser.password
+    );
 
+    console.log(
+      "Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n"
+    );
 
-    if(cognitoResponse.error != null){
-
-        return res.status(400).json({
-            statusCode: 400,
-            error: cognitoResponse.error,
-            request: {
-                type: "POST",
-                url: "host/signup",
-                body: {"name": newUser.name, "email": newUser.email}
-            }})
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({
+        statusCode: 400,
+        error: cognitoResponse.error,
+        request: {
+          type: "POST",
+          url: "host/signup",
+          body: { name: newUser.name, email: newUser.email },
+        },
+      });
     }
 
-    
+    newUser.cognitoId = cognitoResponse.response.cognitoId;
 
-    newUser.cognitoId = cognitoResponse.response.cognitoId
-    
-    const mongoDbResponse = await usersDAO.addUser(newUser.cognitoId, newUser.name, newUser.email)
+    const mongoDbResponse = await usersDAO.addUser(
+      newUser.cognitoId,
+      newUser.name,
+      newUser.email
+    );
 
+    console.log(
+      "MongoDB Response: " + JSON.stringify(mongoDbResponse, null, 2) + "\n"
+    );
 
-    console.log("MongoDB Response: " + JSON.stringify(mongoDbResponse, null, 2) + "\n")
-
-    if(mongoDbResponse.error != null){
-
-        return res.status(400).json({
-            statusCode: mongoDbResponse.statusCode,
-            error: mongoDbResponse.error,
-            request: {
-                type: "POST",
-                url: "host/signup",
-                body: {"name": mongoDbResponse.userCreated.name, "email": mongoDbResponse.userCreated.email}
-            }})
+    if (mongoDbResponse.error != null) {
+      return res.status(400).json({
+        statusCode: mongoDbResponse.statusCode,
+        error: mongoDbResponse.error,
+        request: {
+          type: "POST",
+          url: "host/signup",
+          body: {
+            name: mongoDbResponse.userCreated.name,
+            email: mongoDbResponse.userCreated.email,
+          },
+        },
+      });
     }
-
-
 
     return res.status(200).json({
-        statusCode: 200,
-        message: "User registered successfully",
-        request: {
-            type: "POST",
-            url: "host/signup",
-            body: {"name": mongoDbResponse.userCreated.name, "email": mongoDbResponse.userCreated.email, "verified": false}
-        }})
-     }
+      statusCode: 200,
+      message: "User registered successfully",
+      request: {
+        type: "POST",
+        url: "host/signup",
+        body: {
+          name: mongoDbResponse.userCreated.name,
+          email: mongoDbResponse.userCreated.email,
+          verified: false,
+        },
+      },
+    });
+  }
 
+  // Function to retireve user's account information from the database and return it to the client
+  // This function is called when the user clicks on the "My Account" button on the client side
+  // Uses the token to get the user's cognitoId and then uses the cognitoId to get the user's information from the database
+  static async myAccount(req, res, next) {
+    const token = req.headers.authorization.split(" ")[1];
 
-     // Function to retireve user's account information from the database and return it to the client 
-     // This function is called when the user clicks on the "My Account" button on the client side
-     // Uses the token to get the user's cognitoId and then uses the cognitoId to get the user's information from the database
-    static async myAccount(req, res, next) {
+    console.log("Token: " + token + "\n");
 
-        const token = req.headers.authorization.split(" ")[1]
+    const cognitoId = await CognitoService.getCognitoIdFromToken(token);
 
-        console.log("Token: " + token + "\n")
+    const user = await usersDAO.getUserByCognitoId(cognitoId);
 
-        const cognitoId = await CognitoService.getCognitoIdFromToken(token)
+    return res.status(200).json({
+      statusCode: 200,
+      message: "User information retrieved successfully",
+      request: {
+        type: "GET",
+        url: "host/myaccount",
+        body: { token: token },
+      },
 
-        const user = await usersDAO.getUserByCognitoId(cognitoId)
-      
-        return res.status(200).json({
-            statusCode: 200,
-            message: "User information retrieved successfully",
-            request: {
-                type: "GET",
-                url: "host/myaccount",
-                body: {"token": token}
-            },
+      // Return the user's information to the client
+      response: {
+        user: user,
+      },
+      user: user,
+    });
+  }
 
-            // Return the user's information to the client
-            response: {
-                user: user
-              
-            },
-            user: user
-        
-        })
-             
-    
-              
+  static async login(req, res, next) {
+    console.log(`Attempting to login user '${req.body.email}': \n`);
+
+    const cognitoResponse = await CognitoService.signIn(
+      req.body.email,
+      req.body.password
+    );
+
+    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({});
     }
 
+    console.log("Cognito Response: " + cognitoResponse.response.cognitoId);
 
+    const user = await usersDAO.getUserByAuthId(
+      cognitoResponse.response.cognitoId,
+      "cognito"
+    );
 
+    const company = await companiesDAO.getCompanyByUserId(user._id);
 
-    static async login (req, res, next) { 
+    user.company = company;
 
-        console.log(`Attempting to login user '${req.body.email}': \n`)    
-        
-        
-        const cognitoResponse = await CognitoService.signIn(req.body.email, req.body.password)
-        
+    console.log("User: " + JSON.stringify(user, null, 2) + "\n");
 
-        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+    return res.status(200).json({
+      accessToken: cognitoResponse.response.token,
+      user: user,
+    });
+  }
 
+  static async logout(req, res, next) {
+    console.log(`Attempting to logout user '${req.body.email}': \n`);
 
-        if(cognitoResponse.error != null){
+    const cognitoResponse = await CognitoService.logout(
+      req.body.email,
+      req.body.token
+    );
 
-            return res.status(400).json({
-                
-            })
-        }
+    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
 
-
-        console.log("Cognito Response: " + cognitoResponse.response.cognitoId)
-    
-
-       const user = await usersDAO.getUserByAuthId(cognitoResponse.response.cognitoId, "cognito")
-
-       const company = await companiesDAO.getCompanyByUserId(user._id)
-
-       user.company = company
-
-         console.log("User: " + JSON.stringify(user, null, 2) + "\n")
-
-      return res.status(200).json({
-        accessToken: cognitoResponse.response.token,
-        user: user
-    })
-    }
-
-    static async logout(req, res, next) {
-
-        console.log(`Attempting to logout user '${req.body.email}': \n`)    
-
-       
-        
-        const cognitoResponse = await CognitoService.logout(req.body.email, req.body.token)
-        
-
-        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
-
-
-        if(cognitoResponse.error != null){
-
-            return res.status(400).json({
-                statusCode: 400,
-                response: {
-                    error: {
-                        code: cognitoResponse.error.code,
-                        message: cognitoResponse.error.message,
-                    }
-                },
-                request: {
-                    type: "POST",
-                    url: "host/logout",
-                    body: {"email": req.body.email}
-                }})
-        }
-
-
-      return res.status(200).json({
-        statusCode: 200,
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({
+        statusCode: 400,
         response: {
-            message: "User logged out successfully",
+          error: {
+            code: cognitoResponse.error.code,
+            message: cognitoResponse.error.message,
+          },
         },
         request: {
-            type: "POST",
-            url: "host/logout",
-            body: {email: req.body.email}
-        }})
-
+          type: "POST",
+          url: "host/logout",
+          body: { email: req.body.email },
+        },
+      });
     }
 
-    static async isAuthenticated(req, res, next) { }
+    return res.status(200).json({
+      statusCode: 200,
+      response: {
+        message: "User logged out successfully",
+      },
+      request: {
+        type: "POST",
+        url: "host/logout",
+        body: { email: req.body.email },
+      },
+    });
+  }
 
+  static async changePassword(req, res, next) {
+    console.log(`Attempting to change user password: \n`);
+
+    const cognitoResponse = await CognitoService.changePassword(
+      req.body.email,
+      req.body.token,
+      req.body.oldPassword,
+      req.body.newPassword
+    );
+
+    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({
+        statusCode: 400,
+        response: {
+          error: {
+            code: cognitoResponse.error.code,
+            message: cognitoResponse.error.message,
+          },
+        },
+        request: {
+          type: "POST",
+          url: "host/changepassword",
+          body: { email: req.body.email },
+        },
+      });
+    }
+
+    return res.status(200).json({
+      statusCode: 200,
+      response: {
+        message: "User password changed successfully",
+      },
+      request: {
+        type: "POST",
+        url: "host/changepassword",
+        body: { email: req.body.email },
+      },
+    });
+  }
+
+  static async forgotPassword(req, res, next) {
+    console.log(`Attempting to reset user password: \n`);
+
+    const cognitoResponse = await CognitoService.forgotPassword(req.body.email);
+
+    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({
+        statusCode: 400,
+        response: {
+          error: {
+            code: cognitoResponse.error.code,
+            message: cognitoResponse.error.message,
+          },
+        },
+        request: {
+          type: "POST",
+          url: "host/forgotpassword",
+          body: { email: req.body.email },
+        },
+      });
+    }
+
+    return res.status(200).json({
+      statusCode: 200,
+      response: {
+        message: "User password reset successfully",
+      },
+      request: {
+        type: "POST",
+        url: "host/forgotpassword",
+        body: { email: req.body.email },
+      },
+    });
+  }
+
+  static async resetPassword(req, res, next) {
+    console.log(`Attempting to confirm forgot password: \n`);
+
+    const cognitoResponse = await CognitoService.confirmForgotPassword(
+      req.body.email,
+      req.body.code,
+      req.body.newPassword
+    );
+
+    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+
+    if (cognitoResponse.error != null) {
+      return res.status(400).json({
+        statusCode: 400,
+        response: {
+          error: {
+            code: cognitoResponse.error.code,
+            message: cognitoResponse.error.message,
+          },
+        },
+        request: {
+          type: "POST",
+          url: "host/confirmforgotpassword",
+          body: { email: req.body.email },
+        },
+      });
+    }
+
+    return res.status(200).json({
+      statusCode: 200,
+      response: {
+        message: "User password reset successfully",
+      },
+      request: {
+        type: "POST",
+        url: "host/confirmforgotpassword",
+        body: { email: req.body.email },
+      },
+    });
+  }
 }

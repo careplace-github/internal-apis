@@ -44,8 +44,11 @@ export default class UsersController {
   // Get's the user by the email from the request
 
   static async getAccount(req, res, next) {
-    const user = await usersDAO.getUserByEmail(req.body.userEmail);
+    console.log("getAccount");
+    const user = await usersDAO.getUserByAuthId(req.user.sub, "cognito");
+    console.log("USER AQUI", user);
     const company = await companiesDAO.getCompanyByUserId(user._id);
+    console.log("COMPANY AQUI", company);
 
     user.company = company;
 
