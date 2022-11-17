@@ -48,13 +48,12 @@ export default function validateAccess(req, res, next) {
                 // Token provided
                 if (token) {
 
-                    const requestedUserId = req.params.userId
+                    const requestedUserId = req.params.id
                     const requestedUser = await AuthHelper.getUserById(requestedUserId)
 
 
                     const user = await AuthHelper.getUser(token, 'cognito')
-                    const userId = user._id
-
+                    const userId = await AuthHelper.getUserId(token, 'cognito')
 
                     console.log("requestedUserId: " + requestedUserId)
                     console.log("userId: " + userId)
