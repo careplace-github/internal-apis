@@ -15,9 +15,6 @@ import {AWS_secret_access_key} from "../../../config/constants/index.js"
 
 
 
-
-
-
 let cognitoAttributeList = [];
 
 const poolData = { 
@@ -220,6 +217,8 @@ static adminAuthenticate(email, password) {
         PASSWORD: password,
     }
 }
+
+
 
 
 return new AmazonCognitoIdentity().adminInitiateAuth(payload).promise();
