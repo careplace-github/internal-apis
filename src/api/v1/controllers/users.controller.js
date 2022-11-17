@@ -57,7 +57,7 @@ export default class UsersController {
 
   static async getUser(req, res, next) {
     try {
-      const userId = req.params.userId;
+      const userId = req.params.id;
 
       const user = await usersDAO.getUserById(userId);
 

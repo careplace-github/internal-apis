@@ -1,5 +1,4 @@
-import AuthHelper from "../helpers/auth.helper.js"
-
+import AuthHelper from "../helpers/auth.helper.js";
 
 /**
  * Middleware to validate the token
@@ -9,60 +8,40 @@ import AuthHelper from "../helpers/auth.helper.js"
  * If the token is invalid, a 401 Unauthorized is returned
  */
 export default function validateAuth(req, res, next) {
-
-
   try {
-
     // Check that the request contains a token
-    if (req.headers.authorization && req.headers.authorization.split(" ")[0] === "Bearer") {
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.split(" ")[0] === "Bearer"
+    ) {
       // Validate the token
-      const token = req.headers.authorization.split(" ")[1]
+      const token = req.headers.authorization.split(" ")[1];
 
       // Token provided
       if (token) {
-
-        const response = AuthHelper.isLoggedIn(token)
-
-
+        const response = AuthHelper.isLoggedIn(token);
 
         if (response) {
           // Token is valid
 
-          console.log("User authenticated")
+          console.log("User authenticated");
 
           // Pass the request to the next middleware
-          next()
-        }
-
-        else {
+          next();
+        } else {
           // Token is invalid
           // Return a 401 Unauthorized
-          console.log("User not authenticated")
-          res.status(401).send("Unauthorized")
+          console.log("User not authenticated");
+          res.status(401).send("Unauthorized");
         }
-
-      
-
+      }
+     else {
+      // If there is no token, respond appropriately
+      console.log("No token provided");
+      res.status(404).send("No token provided.");
     }
   }
-    else {
-      // If there is no token, respond appropriately 
-      console.log("No token provided")
-      res.status(404).send("No token provided.")
-    }
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
