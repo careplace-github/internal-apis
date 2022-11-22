@@ -45,14 +45,19 @@ export default class UsersController {
 
   static async getAccount(req, res, next) {
     console.log("getAccount");
-    const user = await usersDAO.getUserByAuthId(req.user.sub, "cognito");
-    console.log("USER AQUI", user);
-    const company = await companiesDAO.getCompanyByUserId(user._id);
-    console.log("COMPANY AQUI", company);
 
-    user.company = company;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.split(" ")[0] === "Bearer"
+    ) {
+      const token = req.headers.authorization.split(" ")[1];
 
-    res.status(200).json(user);
+      const user = await AuthHelper.getUser(token, "cognito");
+
+      console.log(user);
+
+      res.status(200).json(user);
+    }
   }
 
   static async getUser(req, res, next) {
