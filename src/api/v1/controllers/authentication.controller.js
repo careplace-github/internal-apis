@@ -131,9 +131,13 @@ export default class AuthenticationController {
 
     const company = await companiesDAO.getCompanyByUserId(user._id);
 
+    console.log("UserId: " + user._id + "\n");
+
     user.company = company;
 
     console.log("User: " + JSON.stringify(user, null, 2) + "\n");
+
+    console.log("Company:" + JSON.stringify(company, null, 2) + "\n");
 
     return res.status(200).json({
       accessToken: cognitoResponse.response.token,

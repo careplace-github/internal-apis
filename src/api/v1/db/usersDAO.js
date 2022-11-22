@@ -30,9 +30,10 @@ export default class usersDAO {
       try {
         switch (authProvider) {
           case "cognito":
-            console.log("USER: " + JSON.stringify(user));
-            console.log("AUTHID: " + authId);
+           
+           
             user = await users.findOne({ cognitoId: authId });
+            
             return user;
           default:
             user = await users.findOne({ cognitoId: authId });
