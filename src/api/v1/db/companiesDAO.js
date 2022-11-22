@@ -70,7 +70,7 @@ export default class companiesDAO {
   // Function to return a company by the user id
   static async getCompanyByUserId(userId) {
     try {
-      const company = await companies.findOne({ userId: userId });
+      const company = await companies.findOne({ userId: this.userId });
       return company;
     } catch (e) {
       console.error(`Unable to find company by user id, ${e}`);
@@ -81,6 +81,7 @@ export default class companiesDAO {
   static async getCompanyByEmail(email) {
     try {
       const company = await companies.findOne({ email: email });
+      console.log("CompaniesDAO COmpnay: " + company);
       return company;
     } catch (e) {
       console.error(`Unable to find company by email, ${e}`);
