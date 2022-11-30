@@ -164,21 +164,21 @@ export default class CognitoService {
     });
   }
 
-  static changePassword(email, oldPassword, newPassword) {
+  // Function to change the password of a user 
+  static changePassword(accessToken, oldPassword, newPassword) {
     return new Promise((resolve) => {
-      AwsConfig.getCognitoUser(email).changePassword(
-        oldPassword,
-        newPassword,
-        (err, result) => {
-          if (err) {
-            return resolve({ statusCode: 422, response: err });
-          }
-          return resolve({ statusCode: 400, response: result });
-        }
-      );
-    });
-  }
+      const cognitoUser = AwsConfig.getCognitoUser(accessToken.email);
 
+      cognitoUser.changePassword(token, oldPassword, newPassword, (err, result) => {
+        if (err) {
+          return resolve({ statusCode: 422, response: err });
+        }
+        return resolve({ statusCode: 200, response: result });
+      });
+    });
+   
+  }
+      
   static forgotPassword(email) {
     return new Promise((resolve) => {
       AwsConfig.getCognitoUser(email).forgotPassword({
@@ -194,6 +194,13 @@ export default class CognitoService {
       });
     });
   }
+
+  
+      
+
+
+
+
 
   static confirmForgotPassword(email, code, newPassword) {
     return new Promise((resolve) => {
@@ -212,6 +219,4 @@ export default class CognitoService {
       );
     });
   }
-
-
 }

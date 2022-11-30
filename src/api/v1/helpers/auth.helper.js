@@ -67,15 +67,11 @@ export default class AuthHelper {
       switch (authProvider) {
         case "cognito":
           user = await usersDAO.getUserByAuthId(decodedToken.sub, "cognito");
-          
-          
 
           if (user.role != "user") {
-
             const company = await companiesDAO.getCompanyByUserId(user._id);
-            
+
             user.company = company;
-            
           }
 
           return user;
@@ -110,4 +106,21 @@ export default class AuthHelper {
       return null;
     }
   }
+
+  static async decodeToken(token) {
+    return jwt_decode(token);
+  }
+
+  static async getAuthIdFromToken(token) {
+    const decodedToken = await this.decodeToken(token);
+
+    return decodedToken.sub;
+  }
+
+ static async getEmailFromToken(token) {
+    const decodedToken = await this.decodeToken(token);
+
+    return decodedToken.email;
+  }
+
 }
