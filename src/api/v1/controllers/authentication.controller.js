@@ -213,8 +213,7 @@ export default class AuthenticationController {
     console.log("Decoded Token: " + JSON.stringify(decodedToken, null, 2) + "\n");
 
     const cognitoResponse = await CognitoService.changePassword(
-      token,
-      req.body.oldPassword,
+      req.body.email,
       req.body.newPassword
     );
 
