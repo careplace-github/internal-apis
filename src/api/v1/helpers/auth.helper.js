@@ -120,7 +120,9 @@ export default class AuthHelper {
  static async getEmailFromToken(token) {
     const decodedToken = await this.decodeToken(token);
 
-    return decodedToken.email;
+    return decodedToken.username;
   }
+
+  
 
 }

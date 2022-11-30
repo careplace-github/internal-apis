@@ -9,6 +9,7 @@ import { AWS_region } from "../../../config/constants/index.js";
 import { AWS_identity_pool_id } from "../../../config/constants/index.js";
 import { AWS_access_key_id } from "../../../config/constants/index.js";
 import { AWS_secret_access_key } from "../../../config/constants/index.js";
+import AuthHelper from "../helpers/auth.helper.js";
 
 export default class CognitoService {
   static signUp(email, password, agent = "none") {
@@ -164,21 +165,31 @@ export default class CognitoService {
     });
   }
 
-  // Function to change the password of a user 
-  static changePassword(accessToken, oldPassword, newPassword) {
-    return new Promise((resolve) => {
-      const cognitoUser = AwsConfig.getCognitoUser(accessToken.email);
+  // Function to change the password of a user
+  static async changePassword(token, oldPassword, newPassword) {
+    const email = await AuthHelper.getEmailFromToken(token);
 
-      cognitoUser.changePassword(token, oldPassword, newPassword, (err, result) => {
-        if (err) {
-          return resolve({ statusCode: 422, response: err });
+    const payload = {
+      AccessToken: token,
+      PreviousPassword: oldPassword,
+      ProposedPassword: newPassword,
+    };
+
+    
+    return new Promise((resolve) => {
+      AwsConfig.getCognitoUser(email).changePassword(
+        payload,
+        (err, result) => {
+          if (err) {
+            return resolve({ statusCode: 422, response: err });
+          }
+          return resolve({ statusCode: 200, response: result });
         }
-        return resolve({ statusCode: 200, response: result });
-      });
+      );
     });
-   
+
   }
-      
+
   static forgotPassword(email) {
     return new Promise((resolve) => {
       AwsConfig.getCognitoUser(email).forgotPassword({
@@ -194,13 +205,6 @@ export default class CognitoService {
       });
     });
   }
-
-  
-      
-
-
-
-
 
   static confirmForgotPassword(email, code, newPassword) {
     return new Promise((resolve) => {
