@@ -5,6 +5,9 @@ import CognitoService from "../services/cognito.service.js";
 import usersDAO from "../db/usersDAO.js";
 import companiesDAO from "../db/companiesDAO.js";
 
+// Import auth helper
+import AuthHelper from "../helpers/auth.helper.js";
+
 export default class AuthenticationController {
   static async signup(req, res, next) {
     console.log("Attempting to create new user: \n");
@@ -118,9 +121,19 @@ export default class AuthenticationController {
 
     //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
 
+    // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {
-      return res.status(400).json({});
+      return res.status(400).json({
+        statusCode: 400,
+        error: cognitoResponse.error,
+        request: {
+          type: "POST",
+          url: "host/login",
+          body: { email: req.body.email, password: req.body.password },
+        },
+      });
     }
+
 
     console.log("Cognito Response: " + cognitoResponse.response.cognitoId);
 
@@ -185,46 +198,62 @@ export default class AuthenticationController {
     });
   }
 
+  // Function to change the user's password
+  // This function is called when the user clicks on the "Change Password" button on the client side
+  // Uses the token to get the user's cognitoId and then uses the cognitoId to change the user's password
   static async changePassword(req, res, next) {
-    console.log(`Attempting to change user password: \n`);
+    const token = req.headers.authorization.split(" ")[1];
+
+    console.log("Token: " + token + "\n");
+
+    const decodedToken = await AuthHelper.decodeToken(token);
+    
+    console.log("Decoded Token: " + decodedToken + "\n");
 
     const cognitoResponse = await CognitoService.changePassword(
-      req.body.email,
-      req.body.token,
+      token,
       req.body.oldPassword,
       req.body.newPassword
     );
 
-    //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+    console.log(
+      "Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n"
+    );
 
+    // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {
       return res.status(400).json({
         statusCode: 400,
-        response: {
-          error: {
-            code: cognitoResponse.error.code,
-            message: cognitoResponse.error.message,
-          },
-        },
+        error: cognitoResponse.error,
         request: {
           type: "POST",
           url: "host/changepassword",
-          body: { email: req.body.email },
+          body: {
+            oldPassword: req.body.oldPassword,
+            newPassword: req.body.newPassword,
+          },
         },
       });
     }
 
+    // If there is no error, return a success message to the client
     return res.status(200).json({
       statusCode: 200,
-      response: {
-        message: "User password changed successfully",
-      },
+      message: "Password changed successfully",
       request: {
         type: "POST",
         url: "host/changepassword",
-        body: { email: req.body.email },
+        body: {
+          oldPassword: req.body.oldPassword,
+          newPassword: req.body.newPassword,
+        },
       },
     });
+
+
+   
+
+
   }
 
   static async forgotPassword(req, res, next) {

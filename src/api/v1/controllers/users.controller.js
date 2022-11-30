@@ -82,7 +82,7 @@ export default class UsersController {
 
   static async updateUser(req, res, next) {
     try {
-      const userId = req.params.userId;
+      const userId = req.params.id;
       const user = req.body;
 
       // Check if user already exists by verifying the id
