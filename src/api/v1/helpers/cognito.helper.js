@@ -85,6 +85,10 @@ export default class AuthenticationService {
     });
   }
 
+
+
+
+
   // functio to
   static initAWS(
     region = AWS_region,

@@ -3,7 +3,6 @@ import hash from "bcryptjs"
 import sign from "jsonwebtoken"
 import randomBytes from "crypto"
 import pick from "lodash"
-import token from "../_archive/tokens.model.js"
 import { JWT_secret } from "../../../../config/constants/index.js"
 
 
