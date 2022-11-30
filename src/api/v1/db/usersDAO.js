@@ -30,10 +30,8 @@ export default class usersDAO {
       try {
         switch (authProvider) {
           case "cognito":
-           
-           
             user = await users.findOne({ cognitoId: authId });
-            
+
             return user;
           default:
             user = await users.findOne({ cognitoId: authId });
@@ -88,6 +86,22 @@ export default class usersDAO {
       console.error(`Unable to POST user: ${e}`);
 
       return { statusCode: e.code, error: e.message };
+    }
+  }
+
+  static async updateUser(userId, user) {
+    try {
+      console.log("AQUI");
+      console.log(user)
+      const updatedUser = await users.updateOne(
+        { _id: ObjectId(userId) },
+        { $set: user }
+      );
+      console.log(updatedUser)
+      return updatedUser;
+    } catch (e) {
+      console.error(`Unable to issue find command, ${e}`);
+      return { error: e };
     }
   }
 

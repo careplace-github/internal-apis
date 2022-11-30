@@ -59,8 +59,10 @@ export default class UsersController {
       const company = req.body;
       const companyId = req.params.id;
       company.id = companyId;
+      console.log(company);
       // Check if company already exists by verifying the company id
       const companyExists = await companiesDAO.getCompanyById(companyId);
+      console.log(companyExists);
       if (!companyExists) {
         return res.status(400).send("Company does not exist");
       }
