@@ -167,27 +167,29 @@ export default class CognitoService {
 
   // Function to change the password of a user
   static async changePassword(token, oldPassword, newPassword) {
-    const email = await AuthHelper.getEmailFromToken(token);
-
     const payload = {
       AccessToken: token,
       PreviousPassword: oldPassword,
       ProposedPassword: newPassword,
     };
 
-    
     return new Promise((resolve) => {
-      AwsConfig.getCognitoUser(email).changePassword(
-        payload,
-        (err, result) => {
-          if (err) {
-            return resolve({ statusCode: 422, response: err });
-          }
-          return resolve({ statusCode: 200, response: result });
+      //AwsConfig.initAWS();
+
+      AwsConfig.adminAuthenticateUser(null, null, token, "REFRESH_TOKEN").then(
+        (result) => {
+          AwsConfig.getCognitoIdentityServiceProvider().changePassword(
+            payload,
+            (err, data) => {
+              if (err) {
+                return resolve({ statusCode: 400, error: err });
+              }
+              return resolve({ statusCode: 200, response: data });
+            }
+          );
         }
       );
     });
-
   }
 
   static forgotPassword(email) {

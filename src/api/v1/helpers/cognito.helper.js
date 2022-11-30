@@ -78,7 +78,7 @@ export default class AuthenticationService {
     return new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
   }
 
-  static setCredentials() {
+  static setCredentials(AWS) {
     AWS.config.region = AWS_region;
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
       IdentityPoolId: AWS_identity_pool_id,
@@ -86,6 +86,21 @@ export default class AuthenticationService {
   }
 
 
+static async adminSetUserPassword(email, password) {
+    const cognitoUser = this.getCognitoUser(email);
+    const params = {
+      Password: password,
+      Permanent: true,
+    };
+    return new Promise((resolve, reject) => {
+      cognitoUser.adminSetUserPassword(params, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      });
+    });
+  }
 
 
 
@@ -106,6 +121,8 @@ export default class AuthenticationService {
       accessSecretKey: AWS_secret_access_key,
       accessKeyId: AWS_access_key_id,
     });
+
+
   }
 
   // function to decode the token
@@ -151,34 +168,44 @@ export default class AuthenticationService {
     );
   }
 
-  static adminAuthenticate(email, password) {
-    /**
-     *
-     */
-    // this.initAWS()
+  static adminAuthenticateUser(email, password, token, authFlow) {
+if (token == null) {token = "";}
+if (!password) {
+  password = "";
+}
 
-    if (!password) {
-      password = "";
-    }
+this.initAWS();
+
+
+
+   
 
     AWS.config.region = AWS_region; // Region
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({
       IdentityPoolId: AWS_identity_pool_id,
-      // add credentials here
       accessSecretKey: AWS_secret_access_key,
       accessKeyId: AWS_access_key_id,
     });
 
     const payload = {
       ClientId: AWS_client_id,
-      AuthFlow: "ADMIN_NO_SRP_AUTH",
+      AuthFlow: authFlow || "ADMIN_NO_SRP_AUTH",
       UserPoolId: AWS_user_pool_id,
       AuthParameters: {
+        'REFRESH_TOKEN': token,
         USERNAME: email,
         PASSWORD: password,
+
       },
     };
 
-    return new AmazonCognitoIdentity().adminInitiateAuth(payload).promise();
+    var cognitoidentityserviceprovider =
+      new AWS.CognitoIdentityServiceProvider();
+
+
+     this.initAWS() 
+
+
+    return cognitoidentityserviceprovider.adminInitiateAuth(payload).promise();
   }
 }
