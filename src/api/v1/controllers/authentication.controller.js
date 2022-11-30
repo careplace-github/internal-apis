@@ -207,8 +207,10 @@ export default class AuthenticationController {
     console.log("Token: " + token + "\n");
 
     const decodedToken = await AuthHelper.decodeToken(token);
+
     
-    console.log("Decoded Token: " + decodedToken + "\n");
+    
+    console.log("Decoded Token: " + JSON.stringify(decodedToken, null, 2) + "\n");
 
     const cognitoResponse = await CognitoService.changePassword(
       token,
