@@ -1,15 +1,32 @@
 import BucketService from "../services/bucket.service.js";
-import multer from "multer";
 
 export default class FilesController {
   static async uploadFile(req, res, next) {
+    let response;
+
     try {
-      const file = req.body;
-      console.log("file: " + JSON.stringify(file));
-      const bucketName = process.env.AWS_BUCKET_NAME;
-      const uploadResponse = await BucketService.uploadFile(file, bucketName);
-      res.status(200).json(uploadResponse);
+      const file = req.file;
+
+      console.log("file: ", file);
+
+      response = await BucketService.uploadFile(file);
+
+      console.log("sucsess response: ", response);
+
+      // If there is no error, the file has been uploaded successfully
+
+      return res.status(200).json({
+        message: "File uploaded successfully",
+        data: response,
+      });
     } catch (error) {
+      // If there is an error, the file has not been uploaded successfully
+      console.log("error response: ", response);
+      return res.status(500).json({
+        message: "File upload failed",
+        data: response,
+      });
+
       next(error);
     }
   }
@@ -17,7 +34,7 @@ export default class FilesController {
   static async deleteFile(req, res, next) {
     try {
       const key = req.params.key;
-      const bucketName = process.env.AWS_BUCKET_NAME;
+      const bucketName = BUCKET_NAME;
       const deleteResponse = await BucketService.deleteFile(key, bucketName);
       res.status(200).json(deleteResponse);
     } catch (error) {
@@ -27,7 +44,7 @@ export default class FilesController {
 
   static async getFiles(req, res, next) {
     try {
-      const bucketName = process.env.AWS_BUCKET_NAME;
+      const bucketName = BUCKET_NAME;
       const getResponse = await BucketService.getFiles(bucketName);
       res.status(200).json(getResponse);
     } catch (error) {
@@ -38,7 +55,7 @@ export default class FilesController {
   static async getFile(req, res, next) {
     try {
       const key = req.params.key;
-      const bucketName = process.env.AWS_BUCKET_NAME;
+      const bucketName = BUCKET_NAME;
       const getResponse = await BucketService.getFile(key, bucketName);
       res.status(200).json(getResponse);
     } catch (error) {

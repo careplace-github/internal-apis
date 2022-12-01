@@ -134,7 +134,6 @@ export default class AuthenticationController {
       });
     }
 
-
     console.log("Cognito Response: " + cognitoResponse.response.cognitoId);
 
     const user = await usersDAO.getUserByAuthId(
@@ -208,18 +207,23 @@ export default class AuthenticationController {
 
     const decodedToken = await AuthHelper.decodeToken(token);
 
-    
-    
-    console.log("Decoded Token: " + JSON.stringify(decodedToken, null, 2) + "\n");
+    console.log(
+      "Decoded Token: " + JSON.stringify(decodedToken, null, 2) + "\n"
+    );
 
     const cognitoResponse = await CognitoService.changePassword(
+      token,
       req.body.email,
-      req.body.newPassword
+      req.body.oldPassword,
+      req.body.newPassword,
+      
     );
 
     console.log(
       "Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n"
     );
+
+   
 
     // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {
@@ -230,8 +234,7 @@ export default class AuthenticationController {
           type: "POST",
           url: "host/changepassword",
           body: {
-            oldPassword: req.body.oldPassword,
-            newPassword: req.body.newPassword,
+            email: req.body.email,
           },
         },
       });
@@ -245,16 +248,10 @@ export default class AuthenticationController {
         type: "POST",
         url: "host/changepassword",
         body: {
-          oldPassword: req.body.oldPassword,
-          newPassword: req.body.newPassword,
+          email: req.body.email,
         },
       },
     });
-
-
-   
-
-
   }
 
   static async forgotPassword(req, res, next) {
