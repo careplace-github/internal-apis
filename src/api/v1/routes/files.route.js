@@ -6,6 +6,9 @@ import express from "express"
 import validateAuth from "../middlewares/auth.middleware.js"
 import validateRole from "../middlewares/role.middleware.js"
 import validateAccess from "../middlewares/access.middleware.js"
+import multer from "multer"
+const upload = multer({ dest: "src/api/v1/uploads/" })
+
 
 // Import controllers
 import FilesController from "../controllers/files.controller.js"
@@ -16,7 +19,7 @@ const router = express.Router()
 
 router.route("/files")
     .get(validateAuth, validateRole(["admin"]), FilesController.getFiles)
-    .post(validateAuth, FilesController.uploadFile )
+    .post(validateAuth,  upload.single('file'), FilesController.uploadFile )
 
 
 // router to get user information by id
