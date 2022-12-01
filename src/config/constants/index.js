@@ -33,13 +33,20 @@ export const COLLECTION_companies_ns = process.env.COLLECTION_COMPANIES_NS
 export const JWT_secret = process.env.JWT_SECRET
 
 
-// AWS credentials
+// AWS Cognito Credentials
 export const AWS_user_pool_id = process.env.AWS_COGNITO_USER_POOL_ID
 export const AWS_client_id = process.env.AWS_COGNITO_CLIENT_ID
 export const AWS_region = process.env.AWS_COGNITO_REGION
 export const AWS_identity_pool_id = process.env.AWS_COGNITO_IDENTITY_POOL_ID
 export const AWS_access_key_id = process.env.AWS_ACCESS_KEY_ID
 export const AWS_secret_access_key = process.env.AWS_SECRET_ACCESS_KEY
+
+// AWS S3 Credentials
+export const AWS_s3_bucket_name = process.env.AWS_S3_BUCKET_NAME
+export const AWS_s3_region = process.env.AWS_S3_REGION
+export const AWS_s3_access_key_id = process.env.AWS_S3_ACCESS_KEY_ID
+export const AWS_s3_secret_access_key = process.env.AWS_S3_SECRET_ACCESS_KEY
+
 
 
 

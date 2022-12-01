@@ -1,6 +1,3 @@
-import AWS from "aws-sdk";
-import jwt_decode from "jwt-decode";
-import AmazonCognitoIdentity from "amazon-cognito-identity-js";
 import AwsConfig from "../helpers/cognito.helper.js";
 
 import { AWS_user_pool_id } from "../../../config/constants/index.js";
@@ -166,29 +163,37 @@ export default class CognitoService {
   }
 
   // Function to change the password of a user
-  static async changePassword(token, oldPassword, newPassword) {
+  static async changePassword(token, email, oldPassword, newPassword) {
     const payload = {
-      AccessToken: token,
+      token: token,
+      email: email,
       PreviousPassword: oldPassword,
       ProposedPassword: newPassword,
     };
 
-    return new Promise((resolve) => {
-      //AwsConfig.initAWS();
-
-      AwsConfig.adminAuthenticateUser(null, null, token, "REFRESH_TOKEN").then(
-        (result) => {
-          AwsConfig.getCognitoIdentityServiceProvider().changePassword(
-            payload,
-            (err, data) => {
-              if (err) {
-                return resolve({ statusCode: 400, error: err });
+    return new Promise((resolve, reject) => {
+      const currentUser = AwsConfig.getCurrentUser();
+      if (currentUser) {
+        currentUser.getSession(function (err, session) {
+          if (err) {
+            reject(err);
+          } else {
+            currentUser.changePassword(
+              data.old_password,
+              data.password,
+              function (err, res) {
+                if (err) {
+                  reject(GetCognitoError(err.code + "_ChangePassword"));
+                } else {
+                  resolve(res);
+                }
               }
-              return resolve({ statusCode: 200, response: data });
-            }
-          );
-        }
-      );
+            );
+          }
+        });
+      } else {
+        reject("User is not authenticated");
+      }
     });
   }
 

@@ -1,4 +1,5 @@
 import AWS from "aws-sdk";
+import AWSCognito from "amazon-cognito-identity-js";
 import jwt_decode from "jwt-decode";
 import AmazonCognitoIdentity from "amazon-cognito-identity-js";
 
@@ -32,11 +33,55 @@ export default class AuthenticationService {
     return poolData;
   }
 
-  static getCognitoIdentityServiceProvider() {
-    return new AWS.CognitoIdentityServiceProvider();
+  static setCredentials(AWS) {
+    AWS.config.region = AWS_region;
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: AWS_identity_pool_id,
+    });
   }
 
+  static initAWS(
+    region = AWS_region,
+    identityPoolId = AWS_identity_pool_id,
+    userPoolId = AWS_user_pool_id,
+    clientId = AWS_client_id,
+    accessKeyId = AWS_access_key_id,
+    secretAccessKey = AWS_secret_access_key
+  ) {
+    AWS.config.region = region; // Region
 
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      IdentityPoolId: identityPoolId,
+
+      // add credentials here
+      accessSecretKey: AWS_secret_access_key,
+      accessKeyId: AWS_access_key_id,
+    });
+
+    AWS.CognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider(
+      {
+        apiVersion: "2016-04-18",
+        region: AWS_region,
+        accessKeyId: AWS_access_key_id,
+        secretAccessKey: AWS_secret_access_key,
+      }
+    );
+  }
+
+  // function to get the user pool
+  // What is User Pool?
+  // A user pool is a user directory in Amazon Cognito. It provides sign-up and sign-in options for your app users.
+  //
+  static getUserPool() {
+    return new AmazonCognitoIdentity.CognitoUserPool(poolData);
+  }
+
+  // function to get the current user
+  // how does it work?
+  // https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html
+  static getCurrentUser() {
+    return this.getUserPool().getCurrentUser();
+  }
 
   static setCognitoAttributeList(email, agent) {
     let attributeList = [];
@@ -52,10 +97,6 @@ export default class AuthenticationService {
     return cognitoAttributeList;
   }
 
-  static getUserPool() {
-    return new AmazonCognitoIdentity.CognitoUserPool(poolData);
-  }
-
   static getCognitoUser(email) {
     const userData = {
       Username: email,
@@ -65,9 +106,10 @@ export default class AuthenticationService {
     return new AmazonCognitoIdentity.CognitoUser(userData);
   }
 
+  // Return a Cognito User from the token
   static getCognitoUserFromToken(token) {
-    const { email } = this.decodeJWTToken(token);
-    return this.getCognitoUser(email);
+    var cognitoUser = this.getUserPool().getCurrentUser();
+    return cognitoUser;
   }
 
   static getAuthDetails(email, password) {
@@ -76,53 +118,6 @@ export default class AuthenticationService {
       Password: password,
     };
     return new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-  }
-
-  static setCredentials(AWS) {
-    AWS.config.region = AWS_region;
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: AWS_identity_pool_id,
-    });
-  }
-
-
-static async adminSetUserPassword(email, password) {
-    const cognitoUser = this.getCognitoUser(email);
-    const params = {
-      Password: password,
-      Permanent: true,
-    };
-    return new Promise((resolve, reject) => {
-      cognitoUser.adminSetUserPassword(params, (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
-      });
-    });
-  }
-
-
-
-  // functio to
-  static initAWS(
-    region = AWS_region,
-    identityPoolId = AWS_identity_pool_id,
-    userPoolId = AWS_user_pool_id,
-    clientId = AWS_client_id,
-    accessKeyId = AWS_access_key_id,
-    secretAccessKey = AWS_secret_access_key
-  ) {
-    AWS.config.region = region; // Region
-
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: identityPoolId,
-      // add credentials here
-      accessSecretKey: AWS_secret_access_key,
-      accessKeyId: AWS_access_key_id,
-    });
-
-
   }
 
   // function to decode the token
@@ -138,74 +133,38 @@ static async adminSetUserPassword(email, password) {
     return AWS_user_pool_id;
   }
 
-  // function to add a user to a group
-  // it's giving error in the console
-  // 'Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1'
-  static adminAddUserToGroup(email, groupname) {
-    var params = {
-      GroupName: groupname /* required */,
-      UserPoolId: AWS_user_pool_id /* required */,
-      Username: email /* required */,
-    };
+  static adminAuthenticateUser(
+    cognitoidentityserviceprovider,
+    token,
+    authFlow
+  ) {
+    let email;
+    let password;
 
-    var cognitoidentityserviceprovider =
-      new AWS.CognitoIdentityServiceProvider();
-
-    console.log(AWS.cognitoidentityserviceprovider.credentials.accessKeyId);
-    console.log(AWS.cognitoidentityserviceprovider.credentials.secretAccessKey);
-
-    cognitoidentityserviceprovider.adminAddUserToGroup(
-      params,
-      function (err, data) {
-        if (err) {
-          console.log(err, err.stack); // an error occurred
-          reject(err);
-        } else {
-          console.log(data); // successful response
-          resolve(data);
-        }
-      }
-    );
-  }
-
-  static adminAuthenticateUser(email, password, token, authFlow) {
-if (token == null) {token = "";}
-if (!password) {
-  password = "";
-}
-
-this.initAWS();
-
-
-
-   
-
-    AWS.config.region = AWS_region; // Region
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-      IdentityPoolId: AWS_identity_pool_id,
-      accessSecretKey: AWS_secret_access_key,
-      accessKeyId: AWS_access_key_id,
-    });
+    console.log("ClientId: " + AWS_client_id);
+    console.log("UserPoolId: " + AWS_user_pool_id);
 
     const payload = {
       ClientId: AWS_client_id,
       AuthFlow: authFlow || "ADMIN_NO_SRP_AUTH",
       UserPoolId: AWS_user_pool_id,
       AuthParameters: {
-        'REFRESH_TOKEN': token,
-        USERNAME: email,
-        PASSWORD: password,
-
+        REFRESH_TOKEN: token,
+        USERNAME: email || "crm@carely.pt",
+        PASSWORD: password || "Password123",
       },
     };
 
-    var cognitoidentityserviceprovider =
-      new AWS.CognitoIdentityServiceProvider();
-
-
-     this.initAWS() 
-
-
-    return cognitoidentityserviceprovider.adminInitiateAuth(payload).promise();
+    return new Promise((resolve, reject) => {
+      cognitoidentityserviceprovider.adminInitiateAuth(payload, (err, data) => {
+        if (err) {
+          console.log("ERRO DENTRO HELPER AUTHENTICATE: " + err, err.stack); // an error occurred
+          reject(err);
+        } else {
+          console.log("ERRO DENTRO HELPER AUTHENTICATE: " + data); // successful response
+          resolve(data);
+        }
+      });
+    });
   }
 }
