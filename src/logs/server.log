@@ -1,0 +1,98 @@
+2022-12-02T15:57:42.318Z | [INFO   ]: Attempting to login user 'henrique.efonseca@gmail.com': 
+
+2022-12-02T16:00:24.677Z | [INFO   ]: Attempting to login user 'henrique.efonseca@gmail.com': 
+
+2022-12-02T16:01:03.704Z | [INFO   ]: Attempting to login user 'henrique.efonseca@gmail.com': 
+
+2022-12-02T16:31:21.779Z | [INFO   ]: Attempting to login user 'henrique.efonseca@gmail.com': 
+
+2022-12-02T16:31:22.448Z | [INFO   ]: Cognito Response: {"ChallengeParameters":{},"AuthenticationResult":{"AccessToken":"eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2JmZjM2NGQxLTViOTgtNGYzNi04NDBlLWQ0NmRmYjc2MDVlOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImM0NWQ3NjcwLTA3MWItNDM5Zi1iZGU1LTE0ODAzMTIxNTNlNSIsImV2ZW50X2lkIjoiNjFiMGEzZjEtN2I2ZS00Yjk2LWJhNDMtNDg3OWNlY2M2NTg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY2OTk5ODY4MiwiZXhwIjoxNjcwMDAyMjgyLCJpYXQiOjE2Njk5OTg2ODIsImp0aSI6ImEzMGE2ZGJjLTNiNTEtNGJjOS05NzI2LTUxNWJkYjhkZmZkMSIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.TM1z4TMJkRsSn8S5ThW5u6SLvmVJXSFGblQKf22ycoZCV8A5DFAAW-ytoumGO4PCy3YWrhaZrDd_ak5H1lSMp93QbbxXmq0D7JComRKlna7pWfzUwAqJ9zUdONw0g_Q-AWRFfCh1gkzvCcZc-83iiIPosJs5Xf7Uuo_1A4GcI_mm0lKRqpfsNefEA1MfNwn1N-myBGLeFAca_TkGwBueM7mf82NSTLe2bPKqXiKPr8AL3e0vF0lzWvTHumIsFZD-MoyjaEzq-94_rovNOJgDjEfdnTMiKqaqx-ZQ0gYEiF7D4BFbFe4iyLPtn-jNANID1r389m6gAzTYaJdUNqc8bg","ExpiresIn":3600,"TokenType":"Bearer","RefreshToken":"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.pL2LJABBnXtydnrAr12kDimzn7toSwczUs3YTXYTCuQ9zCrL4kuA5nC6KqNKvCWxBzfmJ8WujHz_da9NubatJCoc2X_N4Yfxn729J_RZPMvcLOcwJBuPLPuN1Lth8Tw4BQ-FOp3gXc1yU83BxDBdpgkhz77LETZ8cocglN1ydLPwtVJEaYwFn_6O9Q3zeeXuzpslnwIzDJwu3UG06TUbg7TAkE5W5NE_DA7GXoonaWszDAfATMU68JL2m8kbdSutHJgSHjBFFaVMZxLeqX-kr2wfIkIhUd3JEsPy406mN8d1FgeGKwmTOb-Jm7D71D3rqersclpNXLkaGhwJtZ04Mw.3-FeIp9_0OGGHCsg.55a92VIBE8sygzrPx3nd6PpI_X7Tl-4X4IPDlmzOuHHuhGoJiTOOvyC8FQJ7ENSZkQEf4g2aSXGTOPTS2qJ97n92gKD0_IxOBWvgJFnbkOQxOVOiKIn5plXwEi9FrKjtUHK0ONyy5hs5wpLtEQOU30GOvnJYthLkHhLkrLNWJS5pKEnrN0RQdDrTfvMYUuuWG2GtxccHw0HtjW6CFLO-ECDSKC_XghbCjStF_zp0VEd4Fx9ZCyB_21EUyMUrOXChD1okzqhinKNeX3C6VSd8ZHDZ9-lVPvi7nO01dNvCNxOsb1QyVGiEuEyxZSUaq1f2N282rsa_OB4VjX3Vxk-0mqVd-y60759qIFMXjh5VFpSI_Kg6rzTvKH6NOgYMBnLVeU12U8cCuoUyzGLzioYAPw9tmUzBgQkhf_2NAciUVeisVHxPpnIc6zJJzRGX04IYq_TqL94QxU-uY52cGFI9xhy8SMqUgEEKD7fS6hnV3onkjpmeSHQFh-Y-52dqD9U5RYtPwY6UesI-wlxMZ5dKxE2NqvHw3CEZLYKjDFscr1jH-L4rqHZFCTYQZb7VhrsJj4bLFFfLWQpr3NP-LaWBwo12aB5bQvOr1uEvV-KmQycE6NcH-4h0qPo81I_g83gi4yPjdWDX-7KFLuu1bEBmMMnyG4hAkkf8fL7r97oiV1yqHacKcIAg2_-2K4jj2qdxJIZR6ZtaWoen0dXzmsJpysDVBYXo6PF_Mha2VrHx78d8jiFoa4NWYvXIe8oj-tGmgt5Y00tE0YeDZtzZ_A0EuMt7lRwD3e6cL3Wa4e69dQo5Cd_SFil2BKkNVN_2QZmokpzWyosXFNOlX54FJX-AnqvYKivmR8H00ZrI6hUB3cLI2H3ygWORpxWl5a2AagybzwsuuVG55yr8ZxMmr1zjvqUNOiJ5GwDZMMTi2PoN4-UDxBvI9Xfo1pXiBfGC1W4bpPKkMK7GgDpEW8oRfquDOUYm8LxW3iToMYEFuWoUweEpJaHFM6RKCg4TYH8cQ0K4wixg5GjSxazLajaEfsWXhjydKEE9QvfB3q-JJRxg-PRPKJrnuWYr7Xt3xfEXJjVVKGkic0X18D64qa54cQ331ufOe_pTtWBG7DRSb3fc5fBv3xMCQV6W3bxE0OuYOuJgCK9Aqh_KjNMo5VqKqlrzGAzx208TTPagC5EfzShVUJIWiuq3uqRzVNZjgpYIwWh0sWgvO9_JL5IMir6UwFgGv_Tw9irZ0u5OwaS4sKdAqpOQmScMSYTain1BgVkviCo8z321L2q1SswQrFakztCNwHrYrHvEIq-RgdIZOOKIfuuS6xe0YCR4Q0dIuBgrWeOda5cXW6hNm4f6nxBN_wpprPzo8WepDs8Ot_3cEMuzVNY74Vd3HrOk-rh4hKfGyzEh1s8VgnT907NHcpbdt-Or5de6AA.D_xV5FX3kz2fl0e8wuLfdQ","IdToken":"eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiJjNDVkNzY3MC0wNzFiLTQzOWYtYmRlNS0xNDgwMzEyMTUzZTUiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiNjFiMGEzZjEtN2I2ZS00Yjk2LWJhNDMtNDg3OWNlY2M2NTg0IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2Njk5OTg2ODIsImV4cCI6MTY3MDAwMjI4MiwiaWF0IjoxNjY5OTk4NjgyLCJqdGkiOiI5ZDRjZTAzNC02MzFjLTQ0MGQtYjM2Yi05OGNlNzg0MTkzYjkiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.yC0KTTh5WCiETaZhKqifEWsPUrO3woyFjzDSCp9cxQ6qbV5uUiL9SDW2MRiB-EbWJEH0Odk5-9VwlaUGUjXz03uRLOB-aQ0Ha37UXoBrQIFy16F9D6CKJMQ33H1FCEbsIU7-M1qO16B1I6z0-NBxIqKcHEGnI3g82U95G4hV6qvcKkDAopHMYNRZdDqP4fVGArCa1V-EdUMc0wmYloO7WGzGxFkuxzBOT4dtrMsHCR30j2dF4Xme9eOfmRYWvrtqcATbWIfu1FP9G60cpWHMhOahDLm962o4SP2J064uUkbDrhUHGaswJ4w3wyTWNHR2Mc0IGln8N6YLLZowDwkXsg","NewDeviceMetadata":{"DeviceKey":"eu-west-3_bff364d1-5b98-4f36-840e-d46dfb7605e8","DeviceGroupKey":"-TWjbXfEA"}}}
+
+2022-12-02T16:31:22.722Z | [INFO   ]: Cognito User: {
+  "Username": "henrique.efonseca@gmail.com",
+  "UserAttributes": [
+    {
+      "Name": "sub",
+      "Value": "0e4e0e38-0d97-4795-b4bb-a62e273b725e"
+    },
+    {
+      "Name": "email_verified",
+      "Value": "true"
+    },
+    {
+      "Name": "email",
+      "Value": "henrique.efonseca@gmail.com"
+    }
+  ]
+}
+
+2022-12-02T16:31:22.767Z | [INFO   ]: MongoDB User: {
+  "_id": "62e121517e4bc532d6343a7e",
+  "cognitoId": "0e4e0e38-0d97-4795-b4bb-a62e273b725e",
+  "name": "Henrique",
+  "email": "henrique.efonseca@gmail.com",
+  "verified": false,
+  "role": "admin"
+}
+
+2022-12-02T16:31:22.806Z | [INFO   ]: MongoDB Company: {
+  "_id": "636c3e997a9b3b62ef0f99e6",
+  "userId": "62e121517e4bc532d6343a7e",
+  "name": "beSeniorss",
+  "photoURL": "https://besenior.pt/wp-content/uploads/2022/08/cropped-logo-removebg-preview-1.png",
+  "team": [
+    "ObjectId('63582804d26cb8714fda5ede')"
+  ],
+  "email": "texdxstd@company.com",
+  "phoneNumber": "210123456",
+  "address": "Rua Adriano Correia n4, A",
+  "zipCode": "1600-312",
+  "city": "Lisbon",
+  "country": "Portugal",
+  "id": "636c3e997a9b3b62ef0f99e6"
+}
+
+2022-12-02T16:31:22.806Z | [INFO   ]: User: {
+  "_id": "62e121517e4bc532d6343a7e",
+  "cognitoId": "0e4e0e38-0d97-4795-b4bb-a62e273b725e",
+  "name": "Henrique",
+  "email": "henrique.efonseca@gmail.com",
+  "verified": false,
+  "role": "admin",
+  "company": {
+    "_id": "636c3e997a9b3b62ef0f99e6",
+    "userId": "62e121517e4bc532d6343a7e",
+    "name": "beSeniorss",
+    "photoURL": "https://besenior.pt/wp-content/uploads/2022/08/cropped-logo-removebg-preview-1.png",
+    "team": [
+      "ObjectId('63582804d26cb8714fda5ede')"
+    ],
+    "email": "texdxstd@company.com",
+    "phoneNumber": "210123456",
+    "address": "Rua Adriano Correia n4, A",
+    "zipCode": "1600-312",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "id": "636c3e997a9b3b62ef0f99e6"
+  }
+}
+
+2022-12-02T16:39:13.309Z | [INFO   ]: Server started on port: 8080
+2022-12-02T16:39:13.312Z | [INFO   ]: Server environment mode: development
+2022-12-02T16:39:13.312Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T16:39:13.313Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T16:40:24.617Z | [INFO   ]: Connected to database: users
+2022-12-02T16:40:24.620Z | [INFO   ]: Connected to collection: users
+2022-12-02T16:40:24.622Z | [INFO   ]: Connected to collection: companies
+2022-12-02T16:40:24.624Z | [INFO   ]: Server started on port: 8080
+2022-12-02T16:40:24.624Z | [INFO   ]: Server environment mode: development
+2022-12-02T16:40:24.625Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T16:40:24.625Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T16:40:54.127Z | [INFO   ]: Attempting to find user by cognitoId: d6c9209e-14a5-4f0e-ab04-9fe73a58f2a1
+
+2022-12-02T16:40:54.241Z | [INFO   ]: Attempting to find company by userId: 63582804d26cb8714fda5ede
+
+2022-12-02T16:40:54.280Z | [INFO   ]: Attempting to find user by cognitoId: d6c9209e-14a5-4f0e-ab04-9fe73a58f2a1
+
