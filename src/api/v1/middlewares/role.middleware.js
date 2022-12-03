@@ -1,14 +1,5 @@
-import AWS from "aws-sdk";
-import jwt_decode from "jwt-decode";
-import AmazonCognitoIdentity from "amazon-cognito-identity-js";
-import cognitoExpress from "cognito-express";
 
-import CognitoService from "../services/cognito.service.js";
 
-import { AWS_user_pool_id } from "../../../config/constants/index.js";
-import { AWS_client_id } from "../../../config/constants/index.js";
-import { AWS_region } from "../../../config/constants/index.js";
-import { AWS_identity_pool_id } from "../../../config/constants/index.js";
 
 import AwsConfig from "../helpers/cognito.helper.js";
 import usersDAO from "../db/usersDAO.js";

@@ -5,10 +5,22 @@ import {
 import mongodb from "mongodb";
 import User from "../models/auth/user.model.js";
 
+// Import logger
+import logger from "../../../logs/logger.js";
+
 let users;
 const ObjectId = mongodb.ObjectId;
 
+/**
+ * @class Class to manage the users collection.
+ */
 export default class usersDAO {
+
+/**
+ * @description Creates the connection to the MongoDB database.
+ * @param {*} conn 
+ * @returns {Promise<JSON>} - MongoDB response.
+ */
   static async injectDB(conn) {
     if (users) {
       return;
@@ -16,12 +28,18 @@ export default class usersDAO {
     try {
       users = await conn.db(DB_name).collection(COLLECTION_users_ns);
     } catch (e) {
-      console.error(
+      logger.error(
         `Unable to establish a collection handle in usersDAO: ${e}`
       );
     }
   }
 
+  /**
+   * @description Fetches the user information by the authentication provider id. If the user is associated with a company, the company information is also included.
+   * @param {String} authId - Authentication provider id.
+   * @param {String} authProvider - Authentication provider name.
+   * @returns {Promise<JSON>} - User information.
+   */
   static async getUserByAuthId(authId, authProvider) {
     let user;
 
@@ -30,6 +48,9 @@ export default class usersDAO {
       try {
         switch (authProvider) {
           case "cognito":
+
+           logger.info("Attempting to find user by cognitoId: " + authId + "\n");
+
             user = await users.findOne({ cognitoId: authId });
 
             return user;
@@ -38,12 +59,17 @@ export default class usersDAO {
             return user;
         }
       } catch (e) {
-        console.error(`Unable to find user by email, ${e}`);
+        logger.error(`Unable to find user by email, ${e}`);
         return { error: e };
       }
     }
   }
 
+  /**
+   * @description Fetches the user information by the user id. If the user is associated with a company, the company information is also included.
+   * @param {String} userId - User id from the database.
+   * @returns {Promise<JSON>} - User information.
+   */
   static async getUserById(userId) {
     if (userId) {
       try {
@@ -60,6 +86,11 @@ export default class usersDAO {
     }
   }
 
+   /**
+   * @description Inserts a new user in the database.
+   * @param {User} user - User object.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
   static async addUser(user) {
     try {
       const newUser = new User({
@@ -72,7 +103,7 @@ export default class usersDAO {
         address: user.address,
         zipCode: user.zipCode,
         companyId: user.companyId,
-        role: user.role,
+        role: user.role || "user", // Default role is user
       });
 
       await users.insertOne(newUser);
@@ -89,6 +120,12 @@ export default class usersDAO {
     }
   }
 
+  /**
+   * @description Updates the user information in the database.
+   * @param {*} userId - User id from the database.
+   * @param {*} user - User object.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
   static async updateUser(userId, user) {
     try {
       console.log("AQUI");
@@ -105,6 +142,27 @@ export default class usersDAO {
     }
   }
 
+  /**
+   * @description Deletes the user from the database.
+   * @param {*} userId - User id from the database.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */  
+  static async deleteUser(userId) {
+    logger.info("Attempting to delete user with id: " + userId + "\n");
+    try {
+      const deletedUser = await users.deleteOne({ _id: ObjectId(userId) });
+      logger.info("User deleted successfully. MongoDB response: " + deletedUser + "\n");
+      return deletedUser;
+    } catch (e) {
+     logger.error(`Unable to issue find command, ${e}`);
+      return { error: e };
+    }
+  }
+
+  /**
+   * @description Fetches all the users from the database.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
   static async getUsers() {
     try {
       const list = await users.find().toArray();

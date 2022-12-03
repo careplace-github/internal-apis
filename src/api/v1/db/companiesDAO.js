@@ -4,11 +4,15 @@ import {
 } from "../../../config/constants/index.js";
 import mongodb from "mongodb";
 import User from "../models/auth/user.model.js";
+// Import logger
+import logger from "../../../logs/logger.js";
 
 let companies;
 const ObjectId = mongodb.ObjectId;
 
 export default class companiesDAO {
+
+
   static async injectDB(conn) {
     if (companies) {
       return;
@@ -16,7 +20,7 @@ export default class companiesDAO {
     try {
       companies = await conn.db(DB_name).collection(COLLECTION_companies_ns);
     } catch (e) {
-      console.error(
+      logger.error(
         `Unable to establish a collection handle in companiesDAO: ${e}`
       );
     }
@@ -68,12 +72,18 @@ export default class companiesDAO {
   }
 
   // Function to return a company by the user id
-  static async getCompanyByUserId(userId) {
+  static async getCompanyByUserId(id) {
     try {
-      const company = await companies.findOne({ userId: this.userId });
+
+   
+
+      logger.info("Attempting to find company by userId: " + id + "\n");
+
+      const company = await companies.findOne({ userId: `${id}` });
+
       return company;
     } catch (e) {
-      console.error(`Unable to find company by user id, ${e}`);
+      logger.error(`Unable to find company by user id, ${e}`);
       return { error: e };
     }
   }
