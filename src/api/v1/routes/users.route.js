@@ -16,7 +16,7 @@ router
   .route("/users")
   // Test route
   .get(validateAuth, validateRole(["admin"]), UsersController.getUsers)
-  .post(validateAuth, validateRole(["admin"]), UsersController.createUser);
+  .post(validateAuth, validateRole(["admin","companyOwner","companyBoard"]), UsersController.createUser);
   
 
   router.route("/users/account").get(validateAuth, UsersController.getAccount);

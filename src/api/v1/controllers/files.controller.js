@@ -31,6 +31,17 @@ export default class FilesController {
     }
   }
 
+  static async getFile(req, res, next) {
+    try {
+      const key = req.params.key;
+      
+      const getResponse = await BucketService.getFile(key, bucketName);
+      res.status(200).json(getResponse);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async deleteFile(req, res, next) {
     try {
       const key = req.params.key;
@@ -52,14 +63,5 @@ export default class FilesController {
     }
   }
 
-  static async getFile(req, res, next) {
-    try {
-      const key = req.params.key;
-      const bucketName = BUCKET_NAME;
-      const getResponse = await BucketService.getFile(key, bucketName);
-      res.status(200).json(getResponse);
-    } catch (error) {
-      next(error);
-    }
-  }
+  
 }

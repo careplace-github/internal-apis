@@ -3,21 +3,22 @@ import AWS from "aws-sdk";
 import fs from "fs";
 
 import {
-    AWS_s3_bucket_name,
-    AWS_s3_region,
-    AWS_s3_access_key_id,
-    AWS_s3_secret_access_key
+  AWS_s3_bucket_name,
+  AWS_s3_region,
+  AWS_s3_access_key_id,
+  AWS_s3_secret_access_key,
 } from "../../../config/constants/index.js";
 
+const s3 = new AWS.S3({
+  accessKeyId: AWS_s3_access_key_id,
+  secretAccessKey: AWS_s3_secret_access_key,
+  region: AWS_s3_region,
+});
 export default class BucketService {
+
+  
   // Function to upload a file to S3
   static async uploadFile(file) {
-    const s3 = new AWS.S3({
-      accessKeyId: AWS_s3_access_key_id,
-      secretAccessKey: AWS_s3_secret_access_key,
-      region: AWS_s3_region,
-    });
-
     // New promise that catches the error
     try {
       // Read content from the file
@@ -34,7 +35,7 @@ export default class BucketService {
         // ACL: "public-read",
       };
 
-     const response = await s3.upload(params).promise();
+      const response = await s3.upload(params).promise();
 
       // Delete the file from the uploads folder
       fs.unlink(file.path, (err) => {
