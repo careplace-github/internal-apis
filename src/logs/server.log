@@ -96,3 +96,428 @@
 
 2022-12-02T16:40:54.280Z | [INFO   ]: Attempting to find user by cognitoId: d6c9209e-14a5-4f0e-ab04-9fe73a58f2a1
 
+2022-12-02T18:33:08.783Z | [INFO   ]: Connected to database: users
+2022-12-02T18:33:08.786Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:33:08.787Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:33:08.790Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:33:08.790Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:33:08.791Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:33:08.791Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:33:50.975Z | [INFO   ]: Connected to database: users
+2022-12-02T18:33:50.978Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:33:50.979Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:33:50.982Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:33:50.982Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:33:50.982Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:33:50.983Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:35:44.664Z | [INFO   ]: Connected to database: users
+2022-12-02T18:35:44.672Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:35:44.673Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:35:44.677Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:35:44.677Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:35:44.677Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:35:44.677Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:40:21.154Z | [INFO   ]: Connected to database: users
+2022-12-02T18:40:21.158Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:40:21.159Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:40:21.165Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:40:21.165Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:40:21.165Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:40:21.166Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:42:00.084Z | [INFO   ]: Connected to database: users
+2022-12-02T18:42:00.087Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:42:00.088Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:42:00.091Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:42:00.091Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:42:00.092Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:42:00.092Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:42:44.029Z | [INFO   ]: Connected to database: users
+2022-12-02T18:42:44.031Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:42:44.032Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:42:44.035Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:42:44.036Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:42:44.036Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:42:44.036Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:44:45.608Z | [INFO   ]: Connected to database: users
+2022-12-02T18:44:45.613Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:44:45.613Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:44:45.623Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:44:45.624Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:44:45.627Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:44:45.628Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:45:09.127Z | [INFO   ]: Connected to database: users
+2022-12-02T18:45:09.134Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:45:09.136Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:45:09.140Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:45:09.140Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:45:09.140Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:45:09.141Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:52:22.602Z | [INFO   ]: Connected to database: users
+2022-12-02T18:52:22.605Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:52:22.605Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:52:22.607Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:52:22.608Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:52:22.608Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:52:22.608Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:53:25.132Z | [INFO   ]: Connected to database: users
+2022-12-02T18:53:25.135Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:53:25.136Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:53:25.139Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:53:25.140Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:53:25.140Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:53:25.140Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:53:44.747Z | [INFO   ]: Connected to database: users
+2022-12-02T18:53:44.750Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:53:44.751Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:53:44.754Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:53:44.755Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:53:44.755Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:53:44.756Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:55:31.877Z | [INFO   ]: Connected to database: users
+2022-12-02T18:55:31.884Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:55:31.886Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:55:31.891Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:55:31.892Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:55:31.893Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:55:31.895Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T18:58:50.678Z | [INFO   ]: Connected to database: users
+2022-12-02T18:58:50.684Z | [INFO   ]: Connected to collection: users
+2022-12-02T18:58:50.684Z | [INFO   ]: Connected to collection: companies
+2022-12-02T18:58:50.688Z | [INFO   ]: Server started on port: 8080
+2022-12-02T18:58:50.689Z | [INFO   ]: Server environment mode: development
+2022-12-02T18:58:50.689Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T18:58:50.691Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:05:40.149Z | [INFO   ]: Connected to database: users
+2022-12-02T19:05:40.152Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:05:40.152Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:05:40.155Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:05:40.155Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:05:40.155Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:05:40.155Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:13:17.209Z | [INFO   ]: Connected to database: users
+2022-12-02T19:13:17.216Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:13:17.217Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:13:17.221Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:13:17.222Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:13:17.223Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:13:17.223Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:14:48.721Z | [INFO   ]: Connected to database: users
+2022-12-02T19:14:48.733Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:14:48.736Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:14:48.739Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:14:48.740Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:14:48.742Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:14:48.742Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:15:18.936Z | [INFO   ]: Connected to database: users
+2022-12-02T19:15:18.938Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:15:18.939Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:15:18.944Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:15:18.945Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:15:18.946Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:15:18.946Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:16:50.223Z | [INFO   ]: Connected to database: users
+2022-12-02T19:16:50.229Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:16:50.235Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:16:50.244Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:16:50.251Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:16:50.254Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:16:50.258Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:19:45.702Z | [INFO   ]: Connected to database: users
+2022-12-02T19:19:45.705Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:19:45.706Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:19:45.708Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:19:45.709Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:19:45.709Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:19:45.709Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:20:40.146Z | [INFO   ]: Connected to database: users
+2022-12-02T19:20:40.150Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:20:40.150Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:20:40.153Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:20:40.153Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:20:40.153Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:20:40.153Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:21:12.645Z | [INFO   ]: Connected to database: users
+2022-12-02T19:21:12.649Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:21:12.649Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:21:12.652Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:21:12.653Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:21:12.653Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:21:12.653Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:21:38.187Z | [INFO   ]: Connected to database: users
+2022-12-02T19:21:38.190Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:21:38.191Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:21:38.193Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:21:38.194Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:21:38.194Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:21:38.194Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:21:48.134Z | [INFO   ]: Connected to database: users
+2022-12-02T19:21:48.139Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:21:48.140Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:21:48.142Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:21:48.143Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:21:48.143Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:21:48.143Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:27:45.321Z | [INFO   ]: Connected to database: users
+2022-12-02T19:27:45.325Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:27:45.325Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:27:45.331Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:27:45.331Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:27:45.331Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:27:45.331Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:27:45.616Z | [INFO   ]: Connected to database: users
+2022-12-02T19:28:57.118Z | [INFO   ]: Connected to database: users
+2022-12-02T19:28:57.123Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:28:57.123Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:28:57.125Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:28:57.126Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:28:57.126Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:28:57.127Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:28:57.318Z | [INFO   ]: Connected to database: users
+2022-12-02T19:31:39.114Z | [INFO   ]: Connected to database: users
+2022-12-02T19:31:39.161Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:31:39.164Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:31:39.170Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:31:39.181Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:31:39.194Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:31:39.197Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:31:39.357Z | [INFO   ]: Connected to database: users
+2022-12-02T19:51:26.339Z | [INFO   ]: Connected to database: users
+2022-12-02T19:51:26.348Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:51:26.504Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:51:26.525Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:51:26.542Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:51:26.551Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:51:26.556Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:51:27.522Z | [INFO   ]: Connected to database: users
+2022-12-02T19:53:09.170Z | [INFO   ]: Connected to database: users
+2022-12-02T19:53:09.174Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:53:09.175Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:53:09.177Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:53:09.178Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:53:09.178Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:53:09.179Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:53:09.296Z | [INFO   ]: Connected to database: users
+2022-12-02T19:55:04.847Z | [INFO   ]: Connected to database: users
+2022-12-02T19:55:04.862Z | [INFO   ]: Connected to database: users
+2022-12-02T19:55:04.851Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:55:04.851Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:55:04.854Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:55:04.854Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:55:04.855Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:55:04.855Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:56:39.079Z | [INFO   ]: Connected to database: users
+2022-12-02T19:56:39.082Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:56:39.083Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:56:39.086Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:56:39.086Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:56:39.086Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:56:39.088Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:56:39.317Z | [INFO   ]: Connected to database: users
+2022-12-02T19:56:54.196Z | [INFO   ]: Connected to database: users
+2022-12-02T19:56:54.199Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:56:54.200Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:56:54.202Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:56:54.202Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:56:54.203Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:56:54.203Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:56:54.436Z | [INFO   ]: Connected to database: users
+2022-12-02T19:58:00.361Z | [INFO   ]: Connected to database: users
+2022-12-02T19:58:00.364Z | [INFO   ]: Connected to collection: users
+2022-12-02T19:58:00.365Z | [INFO   ]: Connected to collection: companies
+2022-12-02T19:58:00.367Z | [INFO   ]: Server started on port: 8080
+2022-12-02T19:58:00.367Z | [INFO   ]: Server environment mode: development
+2022-12-02T19:58:00.367Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T19:58:00.368Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T19:58:01.207Z | [INFO   ]: Connected to database: users
+2022-12-02T20:00:03.429Z | [INFO   ]: Connected to database: users
+2022-12-02T20:00:03.433Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:00:03.434Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:00:03.436Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:00:03.437Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:00:03.437Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:00:03.437Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:02:26.220Z | [INFO   ]: Connected to database: users
+2022-12-02T20:02:26.223Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:02:26.224Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:02:26.226Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:02:26.226Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:02:26.227Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:02:26.227Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:02:37.924Z | [INFO   ]: Connected to database: users
+2022-12-02T20:02:37.927Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:02:37.927Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:02:37.930Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:02:37.930Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:02:37.930Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:02:37.930Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:03:09.247Z | [INFO   ]: Connected to database: users
+2022-12-02T20:03:09.252Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:03:09.253Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:03:09.261Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:03:09.261Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:03:09.262Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:03:09.262Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:04:41.389Z | [INFO   ]: Connected to database: users
+2022-12-02T20:04:41.392Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:04:41.393Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:04:41.395Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:04:41.395Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:04:41.396Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:04:41.396Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:06:54.692Z | [INFO   ]: Connected to database: users
+2022-12-02T20:06:54.696Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:06:54.697Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:06:54.699Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:06:54.699Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:06:54.699Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:06:54.700Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:07:09.507Z | [INFO   ]: Connected to database: users
+2022-12-02T20:07:09.509Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:07:09.510Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:07:09.512Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:07:09.512Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:07:09.512Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:07:09.512Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:07:35.102Z | [INFO   ]: Connected to database: users
+2022-12-02T20:07:35.104Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:07:35.105Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:07:35.107Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:07:35.108Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:07:35.108Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:07:35.108Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:07:47.027Z | [INFO   ]: Connected to database: users
+2022-12-02T20:07:47.033Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:07:47.034Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:07:47.038Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:07:47.039Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:07:47.040Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:07:47.044Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:08:25.234Z | [INFO   ]: Connected to database: users
+2022-12-02T20:08:25.240Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:08:25.241Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:08:25.246Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:08:25.246Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:08:25.250Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:08:25.251Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:09:27.181Z | [INFO   ]: Connected to database: users
+2022-12-02T20:09:27.186Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:09:27.188Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:09:27.191Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:09:27.192Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:09:27.195Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:09:27.195Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:10:02.979Z | [INFO   ]: Connected to database: users
+2022-12-02T20:10:02.983Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:10:02.983Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:10:02.986Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:10:02.986Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:10:02.986Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:10:02.986Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:10:28.496Z | [INFO   ]: Connected to database: users
+2022-12-02T20:10:28.500Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:10:28.500Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:10:28.503Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:10:28.503Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:10:28.504Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:10:28.504Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:10:44.376Z | [INFO   ]: Connected to database: users
+2022-12-02T20:10:44.379Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:10:44.379Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:10:44.381Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:10:44.382Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:10:44.382Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:10:44.382Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:10:52.838Z | [INFO   ]: Connected to database: users
+2022-12-02T20:10:52.841Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:10:52.842Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:10:52.844Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:10:52.844Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:10:52.844Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:10:52.844Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:14:31.456Z | [INFO   ]: Connected to database: users
+2022-12-02T20:14:31.465Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:14:31.468Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:14:31.472Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:14:31.474Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:14:31.474Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:14:31.476Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:14:40.779Z | [INFO   ]: Connected to database: users
+2022-12-02T20:14:40.783Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:14:40.784Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:14:40.788Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:14:40.788Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:14:40.789Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:14:40.790Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:14:55.396Z | [INFO   ]: Connected to database: users
+2022-12-02T20:14:55.399Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:14:55.400Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:14:55.402Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:14:55.402Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:14:55.403Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:14:55.403Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:18:24.630Z | [INFO   ]: Connected to database: users
+2022-12-02T20:18:24.634Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:18:24.635Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:18:24.637Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:18:24.637Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:18:24.638Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:18:24.638Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-02T20:19:14.918Z | [INFO   ]: Connected to database: users
+2022-12-02T20:19:14.932Z | [INFO   ]: Connected to collection: users
+2022-12-02T20:19:14.935Z | [INFO   ]: Connected to collection: companies
+2022-12-02T20:19:14.937Z | [INFO   ]: Server started on port: 8080
+2022-12-02T20:19:14.937Z | [INFO   ]: Server environment mode: development
+2022-12-02T20:19:14.938Z | [INFO   ]: HTTP requests API version: v1
+2022-12-02T20:19:14.938Z | [INFO   ]: API route: http://localhost:8080/api/v1
+

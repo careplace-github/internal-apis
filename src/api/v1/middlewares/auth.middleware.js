@@ -1,3 +1,4 @@
+import logger from "../../../logs/logger.js";
 import AuthHelper from "../helpers/auth.helper.js";
 
 /**
@@ -8,6 +9,7 @@ import AuthHelper from "../helpers/auth.helper.js";
  * If the token is invalid, a 401 Unauthorized is returned
  */
 export default function validateAuth(req, res, next) {
+  logger.info("Authentication Validation Middleware");
   try {
     // Check that the request contains a token
     if (
@@ -18,29 +20,30 @@ export default function validateAuth(req, res, next) {
       const token = req.headers.authorization.split(" ")[1];
 
       // Token provided
+      logger.info("Token provided: " + token);
+
       if (token) {
         const response = AuthHelper.isLoggedIn(token);
 
         if (response) {
           // Token is valid
 
-          console.log("User authenticated");
+          logger.info("User authenticated");
 
           // Pass the request to the next middleware
           next();
         } else {
           // Token is invalid
           // Return a 401 Unauthorized
-          console.log("User not authenticated");
+          logger.log("User not authenticated");
           res.status(401).send("Unauthorized");
         }
+      } else {
+        // If there is no token, respond appropriately
+        logger.warn("Bad request 404. No token provided");
+        res.status(404).send("No token provided.");
       }
-     else {
-      // If there is no token, respond appropriately
-      console.log("No token provided");
-      res.status(404).send("No token provided.");
     }
-  }
   } catch (error) {
     console.log(error);
   }

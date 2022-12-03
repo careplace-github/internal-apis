@@ -21,9 +21,12 @@
  * © 2022 Carely. Todos os direitos reservados. 
  */
 
-
+// Import the express module
 import express from "express"
 import cors from "cors"
+
+// Import logger
+import logger from "./logs/logger.js"
 
 import mongodb from "mongodb"
 import dotenv from "dotenv"
@@ -38,6 +41,8 @@ import filesAPI from "./api/v1/routes/files.route.js"
 
 import usersAPI from "./api/v1/routes/users.route.js"
 import companiesAPI from "./api/v1/routes/companies.route.js"
+
+
 
 
 
@@ -84,31 +89,32 @@ const main = async () => {
         await MongoClient.connect(DB_uri)
             .catch(err => {
                // console.log(DB_users_uri)
+               logger.error(`Unable to connect to MongoDB Cluster: ${err}`)
                 console.error(err.stack)
                 process.exit(1)
                 
             })
             
             .then(async client => {
-                console.log(`Connected to database: ${DB_name}`)
+                logger.info(`Connected to database: ${DB_name}`)
                 
                 // Connects to MongoDB Collections
                 await usersDAO.injectDB(client) 
-                console.log(`Connected to collection: ${COLLECTION_users_ns}`)
+                logger.info(`Connected to collection: ${COLLECTION_users_ns}`)
                 await companiesDAO.injectDB(client)
-                console.log(`Connected to collection: ${COLLECTION_companies_ns}`)
+                logger.info(`Connected to collection: ${COLLECTION_companies_ns}`)
             })
         
         // Starts server
         app.listen(SERVER_Port, () => {
-        console.log(`Server started on port: ${SERVER_Port}`)
-        console.log(`Server environment mode: ${env}`)
-        console.log(`HTTP requests API version: ${api_version}`)
-        console.log(`API route: http://localhost:${SERVER_Port}${api_url}` + "\n")
+        logger.info(`Server started on port: ${SERVER_Port}`)
+        logger.info(`Server environment mode: ${env}`)
+        logger.info(`HTTP requests API version: ${api_version}`)
+        logger.info(`API route: http://localhost:${SERVER_Port}${api_url}` + "\n")
         })
         
     } catch (err) {
-        console.log(`Unable to start the server: ${err}`)
+        logger.error(`Unable to start the server: ${err}`)
     }
     
     }

@@ -1,24 +1,34 @@
-import AWS from "aws-sdk";
 import jwt_decode from "jwt-decode";
-import AmazonCognitoIdentity from "amazon-cognito-identity-js";
-
 import CognitoService from "../services/cognito.service.js";
-
-import { AWS_user_pool_id } from "../../../config/constants/index.js";
-import { AWS_client_id } from "../../../config/constants/index.js";
-import { AWS_region } from "../../../config/constants/index.js";
-import { AWS_identity_pool_id } from "../../../config/constants/index.js";
-import { AWS_access_key_id } from "../../../config/constants/index.js";
-import { AWS_secret_access_key } from "../../../config/constants/index.js";
 
 import usersDAO from "../db/usersDAO.js";
 import companiesDAO from "../db/companiesDAO.js";
 
+/**
+ * Class to manage the authentication process from all the Auth Providers.
+ * @class AuthHelper
+ * @static
+ * @memberof module:helpers
+ * @requires module:jwt-decode
+ * @requires module:services/cognito.service
+ * @requires module:db/usersDAO
+ * @requires module:db/companiesDAO
+ */
 export default class AuthHelper {
+  /**
+   * @description Decodes a JWT token.
+   * @param {String} token - JWT token.
+   * @returns {Promise<JSON>} A JSON object containing the decoded token.
+   * */
   static async decodeToken(token) {
     return jwt_decode(token);
   }
 
+  /**
+   * @description Checks if a user is logged in by checking if the access token is valid. If the token is valid, the user information is fetched from the database. If the user is associated with a company, the company information is also included.
+   * @param {String} token - JWT token.
+   * @returns {Boolean} True if the user is logged in, false otherwise.
+   */
   static async isLoggedIn(token) {
     try {
       const decodedToken = this.decodeToken(token);
@@ -31,33 +41,50 @@ export default class AuthHelper {
     }
   }
 
-  static async getUserId(token, authProvider) {
+  /**
+   * @description Returns the id from the authentication provider that is extracted from the access token.
+   * @param {String} token - JWT token.
+   * @param {String} authProvider - Authentication provider.
+   * @returns {Promise<String>} The id from the authentication provider that is extracted from the access token.
+   */
+  static async getAuthId(token, authProvider) {
     try {
-      let user;
-      let userId;
+      switch (authProvider) {
+        case "cognito":
+          return this.decodeToken(token).sub;
+      }
+    } catch (err) {
+      return err;
+    }
+  }
 
+/**
+ * @description Fetches the user details from the authentication provider.
+ * @param {String} token - JWT token.
+ * @param {String} authProvider - Authentication provider.
+ * @returns {Promise<JSON>} A JSON object containing the user details from the authentication provider.
+ */
+  static async getAuthUser(token, authProvider) {
+    try {
       const decodedToken = await this.decodeToken(token);
 
       switch (authProvider) {
         case "cognito":
-          user = await usersDAO.getUserByAuthId(decodedToken.sub, "cognito");
+          const user = await CognitoService.getUserDetails(token);
+          return user;
 
-          userId = user._id;
-
-          return userId;
-
-        default:
-          user = await usersDAO.getUserByAuthId(decodedToken.sub, "cognito");
-
-          userId = user._id;
-
-          return userId;
       }
     } catch (e) {
-      return null;
+      return e;
     }
   }
 
+  /**
+   * @description Fetches a user information from the database. The query is made by the id from the authentication provider that is extracted from the access token. If the user is associated with a company, the company information is also included.
+   * @param {String} token - JWT token.
+   * @param {String} authProvider - Authentication provider.
+   * @returns {Promise<JSON>} A JSON object containing the user information. If the user is associated with a company, the company information is also included.
+   * */
   static async getUser(token, authProvider) {
     try {
       let user;
@@ -91,38 +118,6 @@ export default class AuthHelper {
     }
   }
 
-  static async getUserById(userId) {
-    try {
-      let user;
-
-      user = await usersDAO.getUserById(userId);
-
-      if (user.role != "user") {
-        const company = await companiesDAO.getCompanyByUserId(user._id);
-        user.company = company;
-      }
-      return user;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  static async decodeToken(token) {
-    return jwt_decode(token);
-  }
-
-  static async getAuthIdFromToken(token) {
-    const decodedToken = await this.decodeToken(token);
-
-    return decodedToken.sub;
-  }
-
- static async getEmailFromToken(token) {
-    const decodedToken = await this.decodeToken(token);
-
-    return decodedToken.username;
-  }
+}
 
   
-
-}
