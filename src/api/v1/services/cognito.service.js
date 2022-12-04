@@ -12,8 +12,6 @@ import {
 // Import logger
 import logger from "../../../logs/logger.js";
 
-// Class to manage the AWS Cognito service
-
 const cognito = new AWS.CognitoIdentityServiceProvider({
   region: AWS_cognito_region,
   accessKeyId: AWS_cognito_access_key_id,
@@ -31,38 +29,42 @@ export default class Cognito {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   static async addUser(email, password) {
-    const params = {
-      ClientId: AWS_cognito_client_id,
-      // UserPoolId: AWS_cognito_user_pool_id,
-      Password: password,
-      Username: email,
-
-      UserAttributes: [
-        {
-          Name: "email",
-          Value: email,
-        },
-      ],
-    };
-
     // Catch the error if the user already exists
     try {
-      const response = await cognito.signUp(params).promise();
+      const params = {
+        ClientId: AWS_cognito_client_id,
+        // UserPoolId: AWS_cognito_user_pool_id,
+        Password: password,
+        Username: email,
+
+        UserAttributes: [
+          {
+            Name: "email",
+            Value: email,
+          },
+        ],
+      };
+
+      let response = {};
+
+      response.cognitoResponse = await cognito.signUp(params).promise();
+      response.message = "Cognito user created successfully";
+
+      logger.info(
+        "COGNITO SERVICE SIGN_UP SUCESS:" +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
       return response;
     } catch (error) {
-      if (error.code === "UsernameExistsException") {
-        logger.error("ERROR SIGN_UP: " + JSON.stringify(error));
-        return {
-          statusCode: 400,
-          error: error.message || JSON.stringify(error),
-        };
-      } else {
-        logger.error("ERROR SIGN_UP: " + JSON.stringify(error));
-        return {
-          statusCode: 500,
-          error: error.message || JSON.stringify(error),
-        };
-      }
+      logger.error(
+        "COGNITO SERVICE SIGN_UP ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
     }
   }
 
@@ -71,15 +73,36 @@ export default class Cognito {
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  static async resendConfirmationCode(email) {
-    const params = {
-      ClientId: AWS_cognito_client_id,
-      Username: email,
-    };
+  static async resendVerificationCode(email) {
+    try {
+      const params = {
+        ClientId: AWS_cognito_client_id,
+        Username: email,
+      };
 
-    const response = await cognito.resendConfirmationCode(params).promise();
+      let response = {};
 
-    return response;
+      response.cognitoResponse = await cognito
+        .resendConfirmationCode(params)
+        .promise();
+      response.message = "Cognito confirmation code sent successfully";
+
+      logger.info(
+        "COGNITO SERVICE RESEND_CONFIRMATION_CODE SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE RESEND_CONFIRMATION_CODE ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -89,16 +112,35 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async confirmUser(email, code) {
-    const params = {
-      ClientId: AWS_cognito_client_id,
+    try {
+      const params = {
+        ClientId: AWS_cognito_client_id,
 
-      ConfirmationCode: code,
-      Username: email,
-    };
+        ConfirmationCode: code,
+        Username: email,
+      };
 
-    const response = await cognito.confirmSignUp(params).promise();
+      let response = {};
 
-    return response;
+      response.cognitoResponse = await cognito.confirmSignUp(params).promise();
+      response.message = "Cognito user confirmed successfully";
+
+      logger.info(
+        "COGNITO SERVICE CONFIRM_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE ERROR CONFIRM_USER: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -107,12 +149,33 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async sendForgotPasswordCode(email) {
-    const params = {
-      ClientId: AWS_cognito_client_id,
-      Username: email,
-    };
+    try {
+      const params = {
+        ClientId: AWS_cognito_client_id,
+        Username: email,
+      };
 
-    return cognito.forgotPassword(params).promise();
+      let response = {};
+
+      response.cognitoResponse = await cognito.forgotPassword(params).promise();
+      response.message = "Cognito forgot password code sent successfully";
+
+      logger.info(
+        "COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -121,8 +184,27 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async resendForgotPasswordCode(email) {
-    // AWS Cognito doesn't have a resendForgotPasswordCode function, so we have to call the forgotPassword function again
-    this.sendForgotPasswordCode(email);
+    try {
+      // AWS Cognito doesn't have a resendForgotPasswordCode function, so we have to call the forgotPassword function again
+
+      response = this.sendForgotPasswordCode(email);
+
+      logger.info(
+        "COGNITO SERVICE RESEND_FORGOT_PASSWORD_CODE SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE RESEND_FORGOT_PASSWORD_CODE ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -133,16 +215,39 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async changeUserPasswordWithCode(email, code, password) {
-    const params = {
-      ClientId: AWS_cognito_client_id,
-      ConfirmationCode: code,
-      Password: password,
-      Username: email,
-    };
+    try {
+      const params = {
+        ClientId: AWS_cognito_client_id,
+        ConfirmationCode: code,
+        Password: password,
+        Username: email,
+      };
 
-    const response = await cognito.confirmForgotPassword(params).promise();
+      let response = {};
 
-    return response;
+      response.cognitoResponse = await cognito
+        .confirmForgotPassword(params)
+        .promise();
+      response.message = "Cognito user password changed successfully";
+
+      logger.info(
+        "COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+
+    } catch (error) {
+
+      logger.error(
+        "COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -152,26 +257,39 @@ export default class Cognito {
    * @returns {Promise<JSON>} - JWT token.
    */
   static async authenticateUser(email, password) {
-    const params = {
-      AuthFlow: "USER_PASSWORD_AUTH",
-
-      AuthParameters: {
-        USERNAME: email,
-        PASSWORD: password,
-      },
-
-      ClientId: AWS_cognito_client_id,
-    };
-
     try {
-      const response = await cognito.initiateAuth(params).promise();
+      const params = {
+        AuthFlow: "USER_PASSWORD_AUTH",
+
+        AuthParameters: {
+          USERNAME: email,
+          PASSWORD: password,
+        },
+
+        ClientId: AWS_cognito_client_id,
+      };
+
+      let response = {};
+
+      response.cognitoResponse = await cognito.initiateAuth(params).promise();
+      response.message = "Cognito user authenticated successfully";
+
+      logger.info(
+        "COGNITO SERVICE AUTHENTICATE_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
 
       return response;
     } catch (error) {
-      logger.error("ERROR AUTHENTICATE_USER: " + JSON.stringify(error));
+      logger.error(
+        "COGNITO SERVICE AUTHENTICATE_USER ERROR: " +
+          JSON.stringify(error) +
+          "\n"
+      );
+
       return {
-        statusCode: 500,
-        error: error.message || JSON.stringify(error),
+        error: error,
       };
     }
   }
@@ -184,55 +302,38 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async changeUserPassword(accessToken, oldPassword, newPassword) {
-    try {
-      const test = await this.getUserDetails(accessToken);
-      console.log("TESTE: " + JSON.stringify(test));
-
-      const user = await this.getUserDetails(accessToken);
-
-      console.log("User email: " + user.Username);
-
-      // First we need to authenticate the user with the old password
-      const authResponse = await this.authenticateUser(
-        user.Username,
-        oldPassword
-      );
-    } catch (error) {
-      if (error.code === "NotAuthorizedException") {
-        return {
-          statusCode: 400,
-          error: error.message || JSON.stringify(error),
-        };
-      } else {
-        return {
-          statusCode: 500,
-          error: error.message || JSON.stringify(error),
-        };
-      }
-    }
 
     try {
-      // Then we can change the password
+      let response = {};
+      let authResponse = "access";
+
       const params = {
         AccessToken: accessToken,
         PreviousPassword: oldPassword,
         ProposedPassword: newPassword,
       };
 
-      const response = await cognito.changePassword(params).promise();
+      response.cognitoResponse = await cognito.changePassword(params).promise();
+
+      response.message = "Cognito user password changed successfully";
+
+      logger.info(
+        "COGNITO SERVICE CHANGE_USER_PASSWORD SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
       return response;
     } catch (error) {
-      if (error.code === "InvalidParameterException") {
-        return {
-          statusCode: 400,
-          error: error.message || JSON.stringify(error),
-        };
-      } else {
-        return {
-          statusCode: 500,
-          error: error.message || JSON.stringify(error),
-        };
-      }
+      logger.error(
+        "COGNITO SERVICE CHANGE_USER_PASSWORD ERROR: " +
+          JSON.stringify(error,null,2) +
+          "\n"
+      );
+
+      return {
+        error: error,
+      };
     }
   }
 
@@ -242,30 +343,71 @@ export default class Cognito {
    * @returns {Promise<JSON>} - JWT token.
    */
   static async refreshUserToken(refreshToken) {
-    const params = {
-      AuthFlow: "REFRESH_TOKEN_AUTH",
-      ClientId: AWS_cognito_client_id,
-      UserPoolId: AWS_cognito_user_pool_id,
-      AuthParameters: {
-        REFRESH_TOKEN: refreshToken,
-      },
-    };
+    try {
+      const params = {
+        AuthFlow: "REFRESH_TOKEN_AUTH",
+        ClientId: AWS_cognito_client_id,
+        UserPoolId: AWS_cognito_user_pool_id,
+        AuthParameters: {
+          REFRESH_TOKEN: refreshToken,
+        },
+      };
 
-    return cognito.initiateAuth(params).promise();
+      let response = {};
+
+      response.cognitoResponse = cognito.initiateAuth(params).promise();
+      response.message = "Cognito user token refreshed successfully";
+
+      logger.info(
+        "COGNITO SERVICE REFRESH_USER_TOKEN SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE REFRESH_USER_TOKEN ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
    * @description Logs out the user in the Cognito service.
+   * @param {String} accessToken - User access token.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  static async logoutUser() {
-    const params = {
-      AccessToken: accessToken,
-    };
+  static async logoutUser(accessToken) {
+    try {
+      const params = {
+        AccessToken: accessToken,
+      };
 
-    const response = cognito.globalSignOut(params).promise();
+      let response = {};
 
-    return response;
+      response.cognitoResponse = await cognito.globalSignOut(params).promise();
+      response.message = "Cognito user logged out successfully";
+
+      logger.info(
+        "COGNITO SERVICE LOGOUT_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE LOGOUT_USER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -274,11 +416,30 @@ export default class Cognito {
    * @returns {Promise<JSON>} - Cognito user details.
    */
   static async getUser(accessToken) {
-    const params = {
-      AccessToken: accessToken,
-    };
+    try {
+      const params = {
+        AccessToken: accessToken,
+      };
 
-    return cognito.getUser(params).promise();
+      let response = {};
+
+      response.cognitoResponse = cognito.getUser(params).promise();
+      response.message = "Cognito user details retrieved successfully";
+
+      logger.info(
+        "COGNITO SERVICE GET_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE GET_USER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -288,12 +449,31 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async updateUser(accessToken, attributes) {
-    const params = {
-      AccessToken: accessToken,
-      UserAttributes: attributes,
-    };
+    try {
+      const params = {
+        AccessToken: accessToken,
+        UserAttributes: attributes,
+      };
 
-    return cognito.updateUserAttributes(params).promise();
+      let response = {};
+
+      response.cognitoResponse = cognito.updateUserAttributes(params).promise();
+      response.message = "Cognito user updated successfully";
+
+      logger.info(
+        "COGNITO SERVICE UPDATE_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE UPDATE_USER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 
   /**
@@ -302,12 +482,31 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async deleteUser(accessToken) {
-    const params = {
-      AccessToken: accessToken,
-    };
+    try {
+      const params = {
+        AccessToken: accessToken,
+      };
 
-    const response = await cognito.deleteUser(params).promise();
+      let response = {};
 
-    return response;
+      response.cognitoResponse = await cognito.deleteUser(params).promise();
+      response.message = "Cognito user deleted successfully";
+
+      logger.info(
+        "COGNITO SERVICE DELETE_USER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE DELETE_USER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
   }
 }

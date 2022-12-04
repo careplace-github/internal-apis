@@ -5,11 +5,10 @@ import logger from "../../../logs/logger.js";
 let cognitoAttributeList = [];
 
 /**
- * Middleware that only allows a user to change information about themselves
- * The user's id is passed in the request parameters
- * The user's id is extracted from the token
- * If the user's id in the token matches the user's id in the request parameters, the request is passed to the next middleware
- * If the user's id in the token does not match the user's id in the request parameters, a 403 Forbidden is returned
+ * @description Middleware that only allows a user to access information about themselves. If the user that is trying to access the information is not the same as the user that is trying to access the information, but the user is an admin, or company owner or company board member (from the same company that the user that is trying to access the information), then the user is allowed to access the information.
+ * 
+ * The id of the user that the information is trying to be access is passed in the request parameters
+ * The id of the user that is trying to access the information is extracted from the access token.
  * @param {*} req - The request object.
  * @param {*} res - The response object.
  * @param {*} next - The next middleware function.

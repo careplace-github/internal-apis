@@ -13,7 +13,7 @@ const ses = new AWS.SES({
     secretAccessKey: AWS_ses_secret_access_key,
 });
 
-export default class SesService {
+export default class SES {
 
     // Function to send an email
     static async sendEmail(email, subject, body) {
