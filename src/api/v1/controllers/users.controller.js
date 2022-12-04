@@ -6,6 +6,12 @@ import companiesDAO from "../db/companiesDAO.js";
 
 import AuthHelper from "../helpers/auth.helper.js";
 
+import logger from "../../../logs/logger.js";
+
+import { api_url } from "../../../config/constants/index.js";
+
+const host = api_url || "http://localhost:3000/api/v1";
+
 export default class UsersController {
   static async createUser(req, res, next) {
     try {
@@ -41,8 +47,11 @@ export default class UsersController {
     }
   }
 
-  // Get's the user by the email from the request
-
+  
+/**
+ * @debug
+ * @description 
+ */
   static async getAccount(req, res, next) {
     console.log("getAccount");
 
@@ -60,6 +69,11 @@ export default class UsersController {
     }
   }
 
+
+/**
+ * @debug
+ * @description 
+ */
   static async getUser(req, res, next) {
     try {
       const userId = req.params.id;
@@ -80,6 +94,11 @@ export default class UsersController {
     }
   }
 
+
+/**
+ * @debug
+ * @description 
+ */
   static async updateUser(req, res, next) {
     try {
       const userId = req.params.id;
@@ -99,6 +118,10 @@ export default class UsersController {
     }
   }
 
+/**
+ * @debug
+ * @description 
+ */
   static async deleteUser(req, res, next) {
     try {
       const userId = req.params.userId;
@@ -117,11 +140,83 @@ export default class UsersController {
     }
   }
 
-  static async getUsers(req, res, next) {
-    const users = await usersDAO.getUsers();
-    res.status(200).json(users);
-  }
 
+/**
+ * @debug
+ * @description 
+ */
+  static async getUsers(req, res, next) {
+    try {
+
+      var request = {
+        request: {
+          type: "POST",
+          url: `${host}/auth/signup`,
+          headers: req.headers,
+          body: {
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+          },
+        },
+        statusCode: 100,
+      };
+
+      let mongodbResponse;
+
+      logger.info(
+        "Attempting to get users from MongoDB: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
+
+    
+     mongodbResponse = await usersDAO.getUsers();
+
+     if(mongodbResponse.error != null){
+      request.statusCode = 400;
+        request.response = { error: mongodbResponse.error.message };
+
+        logger.error(
+          "Error fetching users from MongoDB: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        return res.status(400).json({ error: mongodbResponse.error.message });
+      }
+      else {
+        request.statusCode = 200;
+        request.response = mongodbResponse;
+
+        logger.info(
+          "Successfully fetched users from MongoDB: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        return res.status(200).json(mongodbResponse);
+
+      }
+     }
+
+   
+     catch (error) {
+      request.statusCode = 500;
+      request.response = { error: error };
+
+      logger.error(
+        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
+  }
+}
+
+
+/**
+ * @debug
+ * @description 
+ */
   static async getUsersByCompanyId(req, res, next) {
   }
 
