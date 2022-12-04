@@ -6867,3 +6867,870 @@
   }
 }
 
+2022-12-04T03:16:31.165Z | [INFO   ]: Connected to database: users
+2022-12-04T03:16:31.169Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:16:31.169Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:16:31.172Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:16:31.173Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:16:31.173Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:16:31.174Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:16:35.246Z | [INFO   ]: Attempting to reset the user password with the code sent to the user's email: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password-code",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "493515",
+      "newPassword": "Password123"
+    },
+    "statusCode": 100
+  }
+}
+
+2022-12-04T03:16:35.594Z | [ERROR  ]: COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE ERROR: {
+  "message": "Invalid code provided, please request a code again.",
+  "code": "ExpiredCodeException",
+  "time": "2022-12-04T03:16:35.592Z",
+  "requestId": "3b11bfab-1489-4366-8927-9ef4e5d6c387",
+  "statusCode": 400,
+  "retryable": false,
+  "retryDelay": 19.340605992041727
+}
+
+2022-12-04T03:16:35.594Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password-code",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "493515",
+      "newPassword": "Password123"
+    },
+    "statusCode": 100
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Invalid code provided, please request a code again."
+  }
+}
+
+2022-12-04T03:16:40.921Z | [INFO   ]: Attempting to send the forgot password code to the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/forgot-password",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "43"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com"
+    },
+    "statusCode": 100
+  }
+}
+
+2022-12-04T03:16:41.399Z | [INFO   ]: COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE SUCESS: {
+  "cognitoResponse": {
+    "CodeDeliveryDetails": {
+      "Destination": "h***@g***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    }
+  },
+  "message": "Cognito forgot password code sent successfully"
+}
+
+2022-12-04T03:16:41.399Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/forgot-password",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "43"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com"
+    },
+    "statusCode": 100
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "Password reset email sent successfully."
+  }
+}
+
+2022-12-04T03:16:52.921Z | [INFO   ]: Attempting to reset the user password with the code sent to the user's email: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password-code",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "163047",
+      "newPassword": "Password123"
+    },
+    "statusCode": 100
+  }
+}
+
+2022-12-04T03:16:53.309Z | [INFO   ]: COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE SUCESS: {
+  "cognitoResponse": {},
+  "message": "Cognito user password changed successfully"
+}
+
+2022-12-04T03:16:53.310Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password-code",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "163047",
+      "newPassword": "Password123"
+    },
+    "statusCode": 100
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "Password reset successfully."
+  }
+}
+
+2022-12-04T03:16:57.127Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "70"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password12"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:16:57.655Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-04T03:16:57.654Z","requestId":"5ecd17c9-aee1-44f1-b250-cf3377cda078","statusCode":400,"retryable":false,"retryDelay":63.453315642545505}
+
+2022-12-04T03:16:57.655Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "70"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password12"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-04T03:17:00.138Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:17:00.690Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.bGU_DKlBXdp4Ac9RHT1SS318pqEOrxvDkGTBE87N_IN95IH1Xk-XfKZqd2sa1EAVIcQt5oqHi34yA8H81NDmO2w2fI0kTBpdyTSZ0neO83SPrrPlTuxTARFoDRMRgNl1WhsVW8sBQt0XxI_7rVMz_X2cAAesI6yTxF60CJyS4eHTqnuoBgCbGtAt_MK9A_OL3HxnmhDXjUpxdFtKEG-X9ZMKlfFrsbmWYIMicfkG96BQNbSdl3k-YWxGxBDjvHpfqlyU1dAkNZxk6_PHdu-T0yMZdCm50eQuO98JFld3AidlaqiDczUZb3hmnRe-1TmkwC3_wO7jZg0rjvy87UUasw.7OypMPzkB81T3ktZ.txYjm63UQ5g4YNra2N9vjj-bN4r-sG8u422b6FQogveP2WkzY6egesKgIBEwIqUCytQfhkSZfJmwUljikQTdo40YSTYNwpuooSOskUpmyLeSHxh2gBMFdTV7aU9AQAxVgmlmYPvT6ribZg0IIOsSRW-yVtSZLAR8kBBX-QC5BPD1fYl3y4eekXNH_MlbD0NYz3HdHQc35Ka-sJOhe8I8ItUgKmpcjgzQpOyf_qAzbsJ8TS3gzgr1Phh-EmE2ST0gUwOgNAsKX84KqzMUEH00XsTkiL_59qyQz4WXPRG_XAbmVlhYYiTMQ197NB1cuO8MHaNYJ_oedk-s7SoxIlq76nLfH9tpUHdb_FqkM14Sgh1cDByryehR_2cwptqReyeHngLOmtYS-xqRycso8OJI-KR6yugrYPQGh3Jtp4peiVqBUXs6bHQQB5dB9pWfQwgWF7TX-cRXVlr1qXsjAvSIxmQygUAwQXCCTuV6zBGE9jMDKvYIt0aMDzl-ee9U-J9cKWyam-3IHN9L0HsNLDZ69Stb7_fBAN0hBnkYZD_AePbR4Eb9oJBJoai0PzWcpRObmYCKc37Fk3kZhoC18XM7Y9mYCcyQtLHqHeU4WIuHG05otkZb8oV9g3XGJTfka9CFnuOkO_aOc992Vy17FudLx7Ne_6WySiulguLYbcC6GV7GrUGWnDmViKwY2sYiRF-DwJa9uPnQ4texsGXx4TMwcqFN0J85BKsBpXnlrINVFnOU1mIV_3I32IajxcsWO8CQVUxY6v2WxvF0Q-9S5htFDV-_YYdhqtt43wG1_jjjc_l9Tm9h425dvivcLZJVG28vDC-jdZ0_KXmVZik4-USuOd5n_lzFSWdOsyld6s2XKXFvLPIcwteBedl2H8f55tM6ax8mL-EcAyYaOYDaxkxEU-gwWdEGoV-T9jA7lgltssG8WzQj1trHPR20Rj9R3cMUM7Jn6LhRlpI2S82kNbaxuasK1xeJ4hOPbLp2BK-SoOPcuvHu3omBR3zcw-v9l_d5037WQ44AESeobNrkr6yaaqJtnolaiKsq2ij4IvZEWcYbODPeANMvZCR5eXOFmph3LNPKEVBxPMG4N3AxsZJSfK4rb46aylwlOxc458nwZgXS5RnN7ScgsELbIptNUOfuneuSSATeMCB8Dd_ZVyNgl6VDLwHrLPOguFnVaBKFP0Fq7kJZBlMS8wlFQg8DmfIeblF8qyVWNSCJldk-LaX2lxlIqbvCz1XzpKucdjKuSb-Y9NrxmHfyYFVO-KK-eo0F0K_3Fojs2e-3VHdvm_BJ1d5g-AUp5iz0tdUT682B08X0UM47pXgA7uZBmFwEylgiQG3_PsZY11eiDw8BSSb_VOBZzNlEdNur8yB_nokI88Zr8x-j0Dc8fCI_I_Fpxe1GU9gyIG69nOOY-LgLjUVP-6BEaQ.qVbWXlICi6Q0RyIP7AMqOg",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiJlNDBlNzUzOC02ZDNiLTQ1ODctOWNkZi0xM2YzOTkyNmUyMzkiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjM4MjAsImV4cCI6MTY3MDEyNzQyMCwiaWF0IjoxNjcwMTIzODIwLCJqdGkiOiJlOGQyODQ2Yi1jZjZhLTQxNGMtOTExNC0wZjY2NGRmMmY5YmMiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.nXARDPg_HEwHbPPw65R3-G0keeBfieZoL6s0Upcjs6VZMGwl_TpSiL3C5Rc_8sMEbif03hS6xoFSZGP2tm8FINbp7B0otIJQMkGUKsv98gTxSnY_r-IJjnqNsVXwioa7LJs8x0t88QRbTOenDgP5VhTshmqWulVbAdZlIDiCd2soOuZkpVqxQQfRW7mLzsTIS55Am6r160i8arakXFq2TOHRTkrGodOwX-T7ogn77zxR4Bo8OuIQjbaLaqWV_5_z0Lfgk2Wrrzd8nq4FNvAETARBxbfCgll4eLjukUKSlRfcMzzMoccT6FvSF_o1kZUD6J4tFbTDVHrtiHLvxQUrKw",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_952c797b-5b88-4d33-9510-d7e03bdcfa51",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T03:17:00.692Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.bGU_DKlBXdp4Ac9RHT1SS318pqEOrxvDkGTBE87N_IN95IH1Xk-XfKZqd2sa1EAVIcQt5oqHi34yA8H81NDmO2w2fI0kTBpdyTSZ0neO83SPrrPlTuxTARFoDRMRgNl1WhsVW8sBQt0XxI_7rVMz_X2cAAesI6yTxF60CJyS4eHTqnuoBgCbGtAt_MK9A_OL3HxnmhDXjUpxdFtKEG-X9ZMKlfFrsbmWYIMicfkG96BQNbSdl3k-YWxGxBDjvHpfqlyU1dAkNZxk6_PHdu-T0yMZdCm50eQuO98JFld3AidlaqiDczUZb3hmnRe-1TmkwC3_wO7jZg0rjvy87UUasw.7OypMPzkB81T3ktZ.txYjm63UQ5g4YNra2N9vjj-bN4r-sG8u422b6FQogveP2WkzY6egesKgIBEwIqUCytQfhkSZfJmwUljikQTdo40YSTYNwpuooSOskUpmyLeSHxh2gBMFdTV7aU9AQAxVgmlmYPvT6ribZg0IIOsSRW-yVtSZLAR8kBBX-QC5BPD1fYl3y4eekXNH_MlbD0NYz3HdHQc35Ka-sJOhe8I8ItUgKmpcjgzQpOyf_qAzbsJ8TS3gzgr1Phh-EmE2ST0gUwOgNAsKX84KqzMUEH00XsTkiL_59qyQz4WXPRG_XAbmVlhYYiTMQ197NB1cuO8MHaNYJ_oedk-s7SoxIlq76nLfH9tpUHdb_FqkM14Sgh1cDByryehR_2cwptqReyeHngLOmtYS-xqRycso8OJI-KR6yugrYPQGh3Jtp4peiVqBUXs6bHQQB5dB9pWfQwgWF7TX-cRXVlr1qXsjAvSIxmQygUAwQXCCTuV6zBGE9jMDKvYIt0aMDzl-ee9U-J9cKWyam-3IHN9L0HsNLDZ69Stb7_fBAN0hBnkYZD_AePbR4Eb9oJBJoai0PzWcpRObmYCKc37Fk3kZhoC18XM7Y9mYCcyQtLHqHeU4WIuHG05otkZb8oV9g3XGJTfka9CFnuOkO_aOc992Vy17FudLx7Ne_6WySiulguLYbcC6GV7GrUGWnDmViKwY2sYiRF-DwJa9uPnQ4texsGXx4TMwcqFN0J85BKsBpXnlrINVFnOU1mIV_3I32IajxcsWO8CQVUxY6v2WxvF0Q-9S5htFDV-_YYdhqtt43wG1_jjjc_l9Tm9h425dvivcLZJVG28vDC-jdZ0_KXmVZik4-USuOd5n_lzFSWdOsyld6s2XKXFvLPIcwteBedl2H8f55tM6ax8mL-EcAyYaOYDaxkxEU-gwWdEGoV-T9jA7lgltssG8WzQj1trHPR20Rj9R3cMUM7Jn6LhRlpI2S82kNbaxuasK1xeJ4hOPbLp2BK-SoOPcuvHu3omBR3zcw-v9l_d5037WQ44AESeobNrkr6yaaqJtnolaiKsq2ij4IvZEWcYbODPeANMvZCR5eXOFmph3LNPKEVBxPMG4N3AxsZJSfK4rb46aylwlOxc458nwZgXS5RnN7ScgsELbIptNUOfuneuSSATeMCB8Dd_ZVyNgl6VDLwHrLPOguFnVaBKFP0Fq7kJZBlMS8wlFQg8DmfIeblF8qyVWNSCJldk-LaX2lxlIqbvCz1XzpKucdjKuSb-Y9NrxmHfyYFVO-KK-eo0F0K_3Fojs2e-3VHdvm_BJ1d5g-AUp5iz0tdUT682B08X0UM47pXgA7uZBmFwEylgiQG3_PsZY11eiDw8BSSb_VOBZzNlEdNur8yB_nokI88Zr8x-j0Dc8fCI_I_Fpxe1GU9gyIG69nOOY-LgLjUVP-6BEaQ.qVbWXlICi6Q0RyIP7AMqOg",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T03:17:19.587Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:17:19.587Z | [INFO   ]: Token provided: eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzQ2MzY3YzU1LWUyMDEtNDEyNS1iNjdlLTZiMDY3ZTcwNTIyZiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjE4YTI5NDYxLTQ3N2QtNDU2ZC04ZmVmLWRjNTc0YjcxZjAzZCIsImV2ZW50X2lkIjoiZjg2N2M4YmYtYzJjNS00Y2Y5LWFiY2YtNjdjZmMyZDRhNjM3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMTI3MCwiZXhwIjoxNjcwMTI0ODcwLCJpYXQiOjE2NzAxMjEyNzAsImp0aSI6IjNhOWRhYmE2LWNmMTctNDk1My1hMmRmLWU3ZThhNmVlMWFlMyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.H1XLXLyvrtI1n_Qfps7j7TZkpMESoDsuqditYCQm9C5_eleWTk1HEJu8dcfZ8TtQMZ6DigtjYHzaJ-aDZVrHsS1YY3ihb1Io-lreVvFMRKQhSy7yq-Z9Kapwm7pnyFXkmOIz8Ov-xQBNTIPKNgpPSXWq8kR9Pp703ZdBc4tXczzp1eSvPpSQciT5ZosxHoZmkQ9YswCMbsPioeSkWfrv7KRedWRL0RtGgcknWTX5P9flnTzE1Ei_wZ0h2yl-vZom0Ft70_07zq4Zdj7lEbmk_8GpWaN0-Ol5D0ZXDnWd49mjsXCW66dbPRJpYJ7GgjnAdIAFQvHmSU36fajzphIFvQ
+2022-12-04T03:17:19.589Z | [INFO   ]: User authenticated
+2022-12-04T03:17:19.589Z | [INFO   ]: Attempting to logout the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzQ2MzY3YzU1LWUyMDEtNDEyNS1iNjdlLTZiMDY3ZTcwNTIyZiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjE4YTI5NDYxLTQ3N2QtNDU2ZC04ZmVmLWRjNTc0YjcxZjAzZCIsImV2ZW50X2lkIjoiZjg2N2M4YmYtYzJjNS00Y2Y5LWFiY2YtNjdjZmMyZDRhNjM3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMTI3MCwiZXhwIjoxNjcwMTI0ODcwLCJpYXQiOjE2NzAxMjEyNzAsImp0aSI6IjNhOWRhYmE2LWNmMTctNDk1My1hMmRmLWU3ZThhNmVlMWFlMyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.H1XLXLyvrtI1n_Qfps7j7TZkpMESoDsuqditYCQm9C5_eleWTk1HEJu8dcfZ8TtQMZ6DigtjYHzaJ-aDZVrHsS1YY3ihb1Io-lreVvFMRKQhSy7yq-Z9Kapwm7pnyFXkmOIz8Ov-xQBNTIPKNgpPSXWq8kR9Pp703ZdBc4tXczzp1eSvPpSQciT5ZosxHoZmkQ9YswCMbsPioeSkWfrv7KRedWRL0RtGgcknWTX5P9flnTzE1Ei_wZ0h2yl-vZom0Ft70_07zq4Zdj7lEbmk_8GpWaN0-Ol5D0ZXDnWd49mjsXCW66dbPRJpYJ7GgjnAdIAFQvHmSU36fajzphIFvQ"
+    }
+  }
+}
+
+2022-12-04T03:17:19.899Z | [ERROR  ]: COGNITO SERVICE LOGOUT_USER ERROR: {
+  "message": "Invalid access token.",
+  "code": "NotAuthorizedException",
+  "time": "2022-12-04T03:17:19.899Z",
+  "requestId": "68901df7-077a-4d9b-839e-1f55eee0cd80",
+  "statusCode": 400,
+  "retryable": false,
+  "retryDelay": 94.26403504974556
+}
+
+2022-12-04T03:17:19.900Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzQ2MzY3YzU1LWUyMDEtNDEyNS1iNjdlLTZiMDY3ZTcwNTIyZiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjE4YTI5NDYxLTQ3N2QtNDU2ZC04ZmVmLWRjNTc0YjcxZjAzZCIsImV2ZW50X2lkIjoiZjg2N2M4YmYtYzJjNS00Y2Y5LWFiY2YtNjdjZmMyZDRhNjM3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMTI3MCwiZXhwIjoxNjcwMTI0ODcwLCJpYXQiOjE2NzAxMjEyNzAsImp0aSI6IjNhOWRhYmE2LWNmMTctNDk1My1hMmRmLWU3ZThhNmVlMWFlMyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.H1XLXLyvrtI1n_Qfps7j7TZkpMESoDsuqditYCQm9C5_eleWTk1HEJu8dcfZ8TtQMZ6DigtjYHzaJ-aDZVrHsS1YY3ihb1Io-lreVvFMRKQhSy7yq-Z9Kapwm7pnyFXkmOIz8Ov-xQBNTIPKNgpPSXWq8kR9Pp703ZdBc4tXczzp1eSvPpSQciT5ZosxHoZmkQ9YswCMbsPioeSkWfrv7KRedWRL0RtGgcknWTX5P9flnTzE1Ei_wZ0h2yl-vZom0Ft70_07zq4Zdj7lEbmk_8GpWaN0-Ol5D0ZXDnWd49mjsXCW66dbPRJpYJ7GgjnAdIAFQvHmSU36fajzphIFvQ"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Invalid access token."
+  }
+}
+
+2022-12-04T03:17:23.139Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:17:23.139Z | [INFO   ]: Token provided: eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg
+2022-12-04T03:17:23.140Z | [INFO   ]: User authenticated
+2022-12-04T03:17:23.140Z | [INFO   ]: Attempting to logout the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg"
+    }
+  }
+}
+
+2022-12-04T03:17:23.429Z | [INFO   ]: COGNITO SERVICE LOGOUT_USER SUCESS: {
+  "cognitoResponse": {},
+  "message": "Cognito user logged out successfully"
+}
+
+2022-12-04T03:17:23.429Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User logged out successfully"
+  }
+}
+
+2022-12-04T03:17:26.562Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:17:26.562Z | [INFO   ]: Token provided: eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg
+2022-12-04T03:17:26.563Z | [INFO   ]: User authenticated
+2022-12-04T03:17:26.563Z | [INFO   ]: Attempting to logout the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg"
+    }
+  }
+}
+
+2022-12-04T03:17:26.837Z | [ERROR  ]: COGNITO SERVICE LOGOUT_USER ERROR: {
+  "message": "Access Token has been revoked",
+  "code": "NotAuthorizedException",
+  "time": "2022-12-04T03:17:26.837Z",
+  "requestId": "367ea986-bb49-4fd1-9d0e-82c96f9f8676",
+  "statusCode": 400,
+  "retryable": false,
+  "retryDelay": 23.86706388671085
+}
+
+2022-12-04T03:17:26.838Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/logout",
+    "headers": {
+      "Authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Access Token has been revoked"
+  }
+}
+
+2022-12-04T03:18:58.024Z | [INFO   ]: Connected to database: users
+2022-12-04T03:18:58.028Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:18:58.028Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:18:58.031Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:18:58.031Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:18:58.031Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:18:58.032Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:19:02.103Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:19:02.103Z | [INFO   ]: Token provided: eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzVjNTdiODJiLWY5YjMtNDhhOC04ZGE2LTBhZmFjNTJiYWU1ZiIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiZWYwM2NmYzktMjA0Yi00ZGQwLTgxNzAtYTZmZjViZmRiNDQyIiwiZXZlbnRfaWQiOiI0YmU3MjYwYy0yZmU2LTQ4YjItOGE1Mi05YjFkNDVlYzJhNzQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTc0MDk2LCJleHAiOjE2NjY5Nzc2OTYsImlhdCI6MTY2Njk3NDA5NiwianRpIjoiNGEzNjZlMzMtYjNjOC00OGU4LWJhMDUtMjQxMzgzMzc4MzU3IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.PrvHUAmybeQFYV0vU3UdGCeO5P5U4lIPUzz5GtHhaer6VmtuDPzSeJM4EJeAeO0dJMxTmDZVPLaOucJyO3fN9de2P0lWDDN_tJ5wzphy7pB3wns3fmSZbf3du3FPDzt-OrNHdKIoaI_YlYbKWUH6-6D4tkE8vhKq620OljqmLRb8PdjHnRE30BlLeQpnDjVeY9LkCBZOAnt5MdXc4ZErBXAZvR7yezN34h7OhbRnYBrdQVU9gSvadXbeVDBp3kmjSZ2NHVbCl0Gc0zJHLlcS9GgXiEDiYCkhDwH_K_n1Yn6xsMogXYHY5g8X6fTRDkBzHJ5Tm8SQ5bTFmyjrrUSGbQ
+2022-12-04T03:19:02.105Z | [INFO   ]: User authenticated
+2022-12-04T03:19:02.105Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:19:02.106Z | [INFO   ]: Token provided
+2022-12-04T03:19:02.106Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:19:02.107Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:19:02.169Z | [INFO   ]: User role: undefined
+2022-12-04T03:19:02.169Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:24:19.398Z | [INFO   ]: Connected to database: users
+2022-12-04T03:24:19.401Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:24:19.401Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:24:19.404Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:24:19.404Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:24:19.405Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:24:19.405Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:27:10.610Z | [INFO   ]: Connected to database: users
+2022-12-04T03:27:10.620Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:27:10.621Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:27:10.627Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:27:10.627Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:27:10.628Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:27:10.629Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:27:39.363Z | [INFO   ]: Connected to database: users
+2022-12-04T03:27:39.372Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:27:39.372Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:27:39.375Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:27:39.375Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:27:39.375Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:27:39.376Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:29:58.309Z | [INFO   ]: Connected to database: users
+2022-12-04T03:29:58.313Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:29:58.313Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:29:58.316Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:29:58.316Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:29:58.319Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:29:58.319Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:37:14.815Z | [INFO   ]: Connected to database: users
+2022-12-04T03:37:14.818Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:37:14.818Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:37:14.821Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:37:14.821Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:37:14.821Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:37:14.821Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:37:34.473Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:39:02.033Z | [INFO   ]: Connected to database: users
+2022-12-04T03:39:02.037Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:39:02.038Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:39:02.041Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:39:02.041Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:39:02.042Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:39:02.043Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:39:08.205Z | [INFO   ]: Authentication Validation Middleware
+2022-12-04T03:41:14.101Z | [INFO   ]: Connected to database: users
+2022-12-04T03:41:14.104Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:41:14.105Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:41:14.116Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:41:14.117Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:41:14.117Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:41:14.117Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:41:35.043Z | [INFO   ]: Connected to database: users
+2022-12-04T03:41:35.046Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:41:35.048Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:41:35.053Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:41:35.053Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:41:35.053Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:41:35.054Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:42:05.203Z | [INFO   ]: Connected to database: users
+2022-12-04T03:42:05.206Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:42:05.207Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:42:05.210Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:42:05.210Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:42:05.210Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:42:05.211Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:43:54.415Z | [INFO   ]: Connected to database: users
+2022-12-04T03:43:54.418Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:43:54.418Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:43:54.421Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:43:54.421Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:43:54.421Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:43:54.422Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:43:57.632Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzVjNTdiODJiLWY5YjMtNDhhOC04ZGE2LTBhZmFjNTJiYWU1ZiIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiZWYwM2NmYzktMjA0Yi00ZGQwLTgxNzAtYTZmZjViZmRiNDQyIiwiZXZlbnRfaWQiOiI0YmU3MjYwYy0yZmU2LTQ4YjItOGE1Mi05YjFkNDVlYzJhNzQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTc0MDk2LCJleHAiOjE2NjY5Nzc2OTYsImlhdCI6MTY2Njk3NDA5NiwianRpIjoiNGEzNjZlMzMtYjNjOC00OGU4LWJhMDUtMjQxMzgzMzc4MzU3IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.PrvHUAmybeQFYV0vU3UdGCeO5P5U4lIPUzz5GtHhaer6VmtuDPzSeJM4EJeAeO0dJMxTmDZVPLaOucJyO3fN9de2P0lWDDN_tJ5wzphy7pB3wns3fmSZbf3du3FPDzt-OrNHdKIoaI_YlYbKWUH6-6D4tkE8vhKq620OljqmLRb8PdjHnRE30BlLeQpnDjVeY9LkCBZOAnt5MdXc4ZErBXAZvR7yezN34h7OhbRnYBrdQVU9gSvadXbeVDBp3kmjSZ2NHVbCl0Gc0zJHLlcS9GgXiEDiYCkhDwH_K_n1Yn6xsMogXYHY5g8X6fTRDkBzHJ5Tm8SQ5bTFmyjrrUSGbQ",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:43:57.635Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzVjNTdiODJiLWY5YjMtNDhhOC04ZGE2LTBhZmFjNTJiYWU1ZiIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiZWYwM2NmYzktMjA0Yi00ZGQwLTgxNzAtYTZmZjViZmRiNDQyIiwiZXZlbnRfaWQiOiI0YmU3MjYwYy0yZmU2LTQ4YjItOGE1Mi05YjFkNDVlYzJhNzQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTc0MDk2LCJleHAiOjE2NjY5Nzc2OTYsImlhdCI6MTY2Njk3NDA5NiwianRpIjoiNGEzNjZlMzMtYjNjOC00OGU4LWJhMDUtMjQxMzgzMzc4MzU3IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.PrvHUAmybeQFYV0vU3UdGCeO5P5U4lIPUzz5GtHhaer6VmtuDPzSeJM4EJeAeO0dJMxTmDZVPLaOucJyO3fN9de2P0lWDDN_tJ5wzphy7pB3wns3fmSZbf3du3FPDzt-OrNHdKIoaI_YlYbKWUH6-6D4tkE8vhKq620OljqmLRb8PdjHnRE30BlLeQpnDjVeY9LkCBZOAnt5MdXc4ZErBXAZvR7yezN34h7OhbRnYBrdQVU9gSvadXbeVDBp3kmjSZ2NHVbCl0Gc0zJHLlcS9GgXiEDiYCkhDwH_K_n1Yn6xsMogXYHY5g8X6fTRDkBzHJ5Tm8SQ5bTFmyjrrUSGbQ",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:43:57.636Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:43:57.636Z | [INFO   ]: Token provided
+2022-12-04T03:43:57.637Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:43:57.637Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:43:57.680Z | [INFO   ]: User role: undefined
+2022-12-04T03:43:57.680Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:44:34.552Z | [INFO   ]: Connected to database: users
+2022-12-04T03:44:34.555Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:44:34.556Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:44:34.558Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:44:34.559Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:44:34.559Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:44:34.559Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:44:38.248Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzVjNTdiODJiLWY5YjMtNDhhOC04ZGE2LTBhZmFjNTJiYWU1ZiIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiZWYwM2NmYzktMjA0Yi00ZGQwLTgxNzAtYTZmZjViZmRiNDQyIiwiZXZlbnRfaWQiOiI0YmU3MjYwYy0yZmU2LTQ4YjItOGE1Mi05YjFkNDVlYzJhNzQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTc0MDk2LCJleHAiOjE2NjY5Nzc2OTYsImlhdCI6MTY2Njk3NDA5NiwianRpIjoiNGEzNjZlMzMtYjNjOC00OGU4LWJhMDUtMjQxMzgzMzc4MzU3IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.PrvHUAmybeQFYV0vU3UdGCeO5P5U4lIPUzz5GtHhaer6VmtuDPzSeJM4EJeAeO0dJMxTmDZVPLaOucJyO3fN9de2P0lWDDN_tJ5wzphy7pB3wns3fmSZbf3du3FPDzt-OrNHdKIoaI_YlYbKWUH6-6D4tkE8vhKq620OljqmLRb8PdjHnRE30BlLeQpnDjVeY9LkCBZOAnt5MdXc4ZErBXAZvR7yezN34h7OhbRnYBrdQVU9gSvadXbeVDBp3kmjSZ2NHVbCl0Gc0zJHLlcS9GgXiEDiYCkhDwH_K_n1Yn6xsMogXYHY5g8X6fTRDkBzHJ5Tm8SQ5bTFmyjrrUSGbQ",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:44:38.253Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzVjNTdiODJiLWY5YjMtNDhhOC04ZGE2LTBhZmFjNTJiYWU1ZiIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiZWYwM2NmYzktMjA0Yi00ZGQwLTgxNzAtYTZmZjViZmRiNDQyIiwiZXZlbnRfaWQiOiI0YmU3MjYwYy0yZmU2LTQ4YjItOGE1Mi05YjFkNDVlYzJhNzQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTc0MDk2LCJleHAiOjE2NjY5Nzc2OTYsImlhdCI6MTY2Njk3NDA5NiwianRpIjoiNGEzNjZlMzMtYjNjOC00OGU4LWJhMDUtMjQxMzgzMzc4MzU3IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.PrvHUAmybeQFYV0vU3UdGCeO5P5U4lIPUzz5GtHhaer6VmtuDPzSeJM4EJeAeO0dJMxTmDZVPLaOucJyO3fN9de2P0lWDDN_tJ5wzphy7pB3wns3fmSZbf3du3FPDzt-OrNHdKIoaI_YlYbKWUH6-6D4tkE8vhKq620OljqmLRb8PdjHnRE30BlLeQpnDjVeY9LkCBZOAnt5MdXc4ZErBXAZvR7yezN34h7OhbRnYBrdQVU9gSvadXbeVDBp3kmjSZ2NHVbCl0Gc0zJHLlcS9GgXiEDiYCkhDwH_K_n1Yn6xsMogXYHY5g8X6fTRDkBzHJ5Tm8SQ5bTFmyjrrUSGbQ",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:44:38.255Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:44:38.255Z | [INFO   ]: Token provided
+2022-12-04T03:44:38.256Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:44:38.256Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:44:38.312Z | [INFO   ]: User role: undefined
+2022-12-04T03:44:38.313Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:45:19.675Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:45:19.678Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:45:19.678Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:45:19.678Z | [INFO   ]: Token provided
+2022-12-04T03:45:19.680Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:45:19.680Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:45:19.755Z | [INFO   ]: User role: undefined
+2022-12-04T03:45:19.755Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:46:08.648Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:46:08.651Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:46:08.651Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:46:08.651Z | [INFO   ]: Token provided
+2022-12-04T03:46:08.652Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:46:08.652Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:46:08.693Z | [INFO   ]: User role: undefined
+2022-12-04T03:46:08.693Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:47:11.377Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzNlMjBjYzE4LWUyMmUtNDQ5My1hNTMzLWIwZTEzNTI4OTYyMCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiMzcxZjJkNzMtNjdlMC00ZjVjLTllZGQtZDA2N2MxNDhiZmFiIiwiZXZlbnRfaWQiOiI5NjRlZWIyMC0zMmQ5LTQ5ZTgtODUyNi02ZDk0YjZjNDQwOGIiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTA3ODIyLCJleHAiOjE2NjY5MTE0MjIsImlhdCI6MTY2NjkwNzgyMiwianRpIjoiODIxOTg1N2YtMzhmZC00ZWNlLTllZGQtMzhlMDhiZTUzNTk5IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.Fv3iXyA8_oP_EmdmE99DR59Qsl-3Pd_CLT5zGPDdZqgEumwBoUkJDC5d84zHlXc7bf-z_LXUGH4ouPGujwZ03qCu3Qu71QQgA5z07JWdyLJjxDLHUj6Khy3_Dh5zlZHRvb0J0bMVcPWY3gQlq8nRN7zeHiPMKSS88arzhpLkajfrogu88MpwhIcGP2nncDtbvE6F7OnXbzvEnkQjN_wPOTq0aLDHhCinF58ZWkjieY4K7qN_S7dJSrc9ILD2JhGHEZRcbLV1gAdKdgNRwkXPrJW6sOqCE-0tH3m_tdqJ71ArWei5m2oCwNDl-79ijjr2KMClzOg0V7hKKpF3EM5QHA",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:47:11.378Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzNlMjBjYzE4LWUyMmUtNDQ5My1hNTMzLWIwZTEzNTI4OTYyMCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiMzcxZjJkNzMtNjdlMC00ZjVjLTllZGQtZDA2N2MxNDhiZmFiIiwiZXZlbnRfaWQiOiI5NjRlZWIyMC0zMmQ5LTQ5ZTgtODUyNi02ZDk0YjZjNDQwOGIiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2OTA3ODIyLCJleHAiOjE2NjY5MTE0MjIsImlhdCI6MTY2NjkwNzgyMiwianRpIjoiODIxOTg1N2YtMzhmZC00ZWNlLTllZGQtMzhlMDhiZTUzNTk5IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.Fv3iXyA8_oP_EmdmE99DR59Qsl-3Pd_CLT5zGPDdZqgEumwBoUkJDC5d84zHlXc7bf-z_LXUGH4ouPGujwZ03qCu3Qu71QQgA5z07JWdyLJjxDLHUj6Khy3_Dh5zlZHRvb0J0bMVcPWY3gQlq8nRN7zeHiPMKSS88arzhpLkajfrogu88MpwhIcGP2nncDtbvE6F7OnXbzvEnkQjN_wPOTq0aLDHhCinF58ZWkjieY4K7qN_S7dJSrc9ILD2JhGHEZRcbLV1gAdKdgNRwkXPrJW6sOqCE-0tH3m_tdqJ71ArWei5m2oCwNDl-79ijjr2KMClzOg0V7hKKpF3EM5QHA",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:47:11.379Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:47:11.379Z | [INFO   ]: Token provided
+2022-12-04T03:47:11.380Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:47:11.380Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:47:11.427Z | [INFO   ]: User role: undefined
+2022-12-04T03:47:11.427Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:47:15.662Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:47:15.663Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:47:15.664Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:47:15.664Z | [INFO   ]: Token provided
+2022-12-04T03:47:15.664Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:47:15.664Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:47:15.747Z | [INFO   ]: User role: undefined
+2022-12-04T03:47:15.748Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:48:44.362Z | [INFO   ]: Connected to database: users
+2022-12-04T03:48:44.365Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:48:44.365Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:48:44.367Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:48:44.368Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:48:44.368Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:48:44.368Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:48:47.182Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:48:47.185Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:48:47.187Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:48:47.188Z | [INFO   ]: Token provided
+2022-12-04T03:48:47.189Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:48:47.189Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:48:47.231Z | [INFO   ]: User role: undefined
+2022-12-04T03:48:47.232Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:50:24.260Z | [INFO   ]: Connected to database: users
+2022-12-04T03:50:24.264Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:50:24.264Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:50:24.267Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:50:24.267Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:50:24.268Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:50:24.268Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:50:55.664Z | [INFO   ]: Connected to database: users
+2022-12-04T03:50:55.668Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:50:55.668Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:50:55.671Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:50:55.671Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:50:55.671Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:50:55.672Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:50:57.713Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:50:57.717Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJkNmM5MjA5ZS0xNGE1LTRmMGUtYWIwNC05ZmU3M2E1OGYyYTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzcwNzgwNTBjLTM1ZmEtNDM4YS1hZTg4LWE2Y2U0N2I2NTQwOCIsImNvZ25pdG86Z3JvdXBzIjpbInVzZXIiXSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY2xpZW50X2lkIjoiNWpmMWo5amlvajNjZm92MTRqZ2lnM3EzYTAiLCJvcmlnaW5fanRpIjoiOWU1OTYwODMtMzNhMS00ZWI0LWIyN2ItODljMWE0NjRlNTA5IiwiZXZlbnRfaWQiOiJiNjU0OTAyZC01ZDA2LTRkZjMtYTRmMS05YWUyMjVmNGRiYmQiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjY2ODI3OTk3LCJleHAiOjE2NjY4MzE1OTYsImlhdCI6MTY2NjgyNzk5NywianRpIjoiY2FhNTRkZjQtYmUwYy00N2VmLWI1YTAtYjIzNTUxOTJlN2Q0IiwidXNlcm5hbWUiOiJjcm1AY2FyZWx5LnB0In0.lHP0LaXZI9iptdoVfD3ueq8a2kRb6Nh4wmq23ReCWf9XCeClSN91zXL3qeIM6qAXicjY_jhZqUdAtIvTjyt6jUjvhCUPl_b764nobkvERJfNnzJUy8VRGrI52EL0P0M_dwWQJ7EdLLC4SfxPiwlw5CxbfiTd3NvmTWfn-dzx8SczHoI2KjBQMFZwEfYbETDLl8plHi0z44r3A7RUVuNmgmUQNG2JiTGU0y7o0m9GfUW1bCX_dxpd3I_le8538Elzayzd-OrmO7VY4s-2g2o26ywduIVkYD2uKgt-bF5PT6KfpbfzibLOvG0u-1Rf8vUGcHdQrZUUV_IKa-mkUDb8sw",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 401,
+  "response": {
+    "message": "Invalid token"
+  }
+}
+
+2022-12-04T03:51:25.533Z | [INFO   ]: Connected to database: users
+2022-12-04T03:51:25.537Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:51:25.538Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:51:25.540Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:51:25.541Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:51:25.541Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:51:25.541Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:51:29.094Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:51:29.097Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:51:29.098Z | [INFO   ]: Role Validation Middleware
+2022-12-04T03:51:29.098Z | [INFO   ]: Token provided
+2022-12-04T03:51:29.099Z | [INFO   ]: decodedToken: {}
+2022-12-04T03:51:29.099Z | [INFO   ]: Attempting to find user by cognitoId: undefined
+
+2022-12-04T03:51:29.142Z | [INFO   ]: User role: undefined
+2022-12-04T03:51:29.143Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource

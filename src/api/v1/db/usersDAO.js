@@ -16,11 +16,12 @@ const ObjectId = mongodb.ObjectId;
  */
 export default class usersDAO {
 
-/**
- * @description Creates the connection to the MongoDB database.
- * @param {*} conn 
- * @returns {Promise<JSON>} - MongoDB response.
- */
+  
+  /**
+   * @description Creates the connection to the MongoDB database.
+   * @param {*} conn
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
   static async injectDB(conn) {
     if (users) {
       return;
@@ -28,9 +29,7 @@ export default class usersDAO {
     try {
       users = await conn.db(DB_name).collection(COLLECTION_users_ns);
     } catch (e) {
-      logger.error(
-        `Unable to establish a collection handle in usersDAO: ${e}`
-      );
+      logger.error(`Unable to establish a collection handle in usersDAO: ${e}`);
     }
   }
 
@@ -48,8 +47,9 @@ export default class usersDAO {
       try {
         switch (authProvider) {
           case "cognito":
-
-           logger.info("Attempting to find user by cognitoId: " + authId + "\n");
+            logger.info(
+              "Attempting to find user by cognitoId: " + authId + "\n"
+            );
 
             user = await users.findOne({ cognitoId: authId });
 
@@ -86,7 +86,7 @@ export default class usersDAO {
     }
   }
 
-   /**
+  /**
    * @description Inserts a new user in the database.
    * @param {User} user - User object.
    * @returns {Promise<JSON>} - MongoDB response.
@@ -112,7 +112,6 @@ export default class usersDAO {
         response: response,
         userCreated: newUser,
       };
-      
     } catch (error) {
       logger.error(`Unable to add user to MongoDB, ${error}`);
 
@@ -129,12 +128,12 @@ export default class usersDAO {
   static async updateUser(userId, user) {
     try {
       console.log("AQUI");
-      console.log(user)
+      console.log(user);
       const updatedUser = await users.updateOne(
         { _id: ObjectId(userId) },
         { $set: user }
       );
-      console.log(updatedUser)
+      console.log(updatedUser);
       return updatedUser;
     } catch (e) {
       console.error(`Unable to issue find command, ${e}`);
@@ -146,15 +145,17 @@ export default class usersDAO {
    * @description Deletes the user from the database.
    * @param {*} userId - User id from the database.
    * @returns {Promise<JSON>} - MongoDB response.
-   */  
+   */
   static async deleteUser(userId) {
     logger.info("Attempting to delete user with id: " + userId + "\n");
     try {
       const deletedUser = await users.deleteOne({ _id: ObjectId(userId) });
-      logger.info("User deleted successfully. MongoDB response: " + deletedUser + "\n");
+      logger.info(
+        "User deleted successfully. MongoDB response: " + deletedUser + "\n"
+      );
       return deletedUser;
     } catch (e) {
-     logger.error(`Unable to issue find command, ${e}`);
+      logger.error(`Unable to issue find command, ${e}`);
       return { error: e };
     }
   }
@@ -165,11 +166,21 @@ export default class usersDAO {
    */
   static async getUsers() {
     try {
-      const list = await users.find().toArray();
-      return list;
+      let response = {};
+      response.mongodbResponse = await users.find().toArray();
+      response.message = "Users fetched successfully";
+
+      logger.info(
+        "MONGODB GET_USERS SUCESS: " + JSON.stringify(response, null, 2) + "\n"
+      );
+
+      return response;
     } catch (e) {
-      console.error(`Unable to find users, ${e}`);
-      return { error: e };
+      logger.error(
+        "MONGODB GET_USERS ERROR:" + JSON.stringify(error, null, 2) + "\n"
+      );
+
+      return { error: error };
     }
   }
 }
