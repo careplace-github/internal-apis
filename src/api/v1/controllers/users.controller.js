@@ -121,4 +121,8 @@ export default class UsersController {
     const users = await usersDAO.getUsers();
     res.status(200).json(users);
   }
+
+  static async getUsersByCompanyId(req, res, next) {
+  }
+
 }

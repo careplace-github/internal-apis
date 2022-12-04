@@ -14,7 +14,7 @@ const s3 = new AWS.S3({
   secretAccessKey: AWS_s3_secret_access_key,
   region: AWS_s3_region,
 });
-export default class BucketService {
+export default class S3 {
 
   
   // Function to upload a file to S3
