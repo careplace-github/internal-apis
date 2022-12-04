@@ -7734,3 +7734,2699 @@
 
 2022-12-04T03:51:29.142Z | [INFO   ]: User role: undefined
 2022-12-04T03:51:29.143Z | [INFO   ]: The user's role is not in the list of roles that are allowed to access the resource
+2022-12-04T03:55:28.718Z | [INFO   ]: Connected to database: users
+2022-12-04T03:55:28.722Z | [INFO   ]: Connected to collection: users
+2022-12-04T03:55:28.722Z | [INFO   ]: Connected to collection: companies
+2022-12-04T03:55:28.726Z | [INFO   ]: Server started on port: 8080
+2022-12-04T03:55:28.726Z | [INFO   ]: Server environment mode: development
+2022-12-04T03:55:28.727Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T03:55:28.727Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T03:55:40.121Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:55:40.123Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "User authenticated"
+  }
+}
+
+2022-12-04T03:55:40.124Z | [INFO   ]: Attempting to get users from MongoDB: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-04T03:55:40.269Z | [INFO   ]: MONGODB GET_USERS SUCESS: {
+  "mongodbResponse": [
+    {
+      "_id": "62cf1dc9bf1d77512275c14e",
+      "verified": false
+    },
+    {
+      "_id": "62cf1e2aea20e7b1bd4ae8a2",
+      "verified": false
+    },
+    {
+      "_id": "62cf1e8d2af7a4e79e5f2cc9",
+      "verified": false
+    },
+    {
+      "_id": "62cf1ee3bba643c88c372bc4",
+      "verified": false
+    },
+    {
+      "_id": "62cf1ef384d7ce1d3b60aea0",
+      "verified": false
+    },
+    {
+      "_id": "62cf396a56ee2e9c92d201df",
+      "verified": false
+    },
+    {
+      "_id": "62cf399c56ee2e9c92d201e0",
+      "name": "teste",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf39b856ee2e9c92d201e1",
+      "name": "nome top",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf3a05271a1e1223a76ca1",
+      "cognitoId": "",
+      "name": "nome top",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf3a2dc790632c56f0f2bb",
+      "cognitoId": "",
+      "name": "nome top",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf3a40637633f64b02b222",
+      "cognitoId": "",
+      "name": "nome top",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf3cbeffee4b2fa234842e",
+      "cognitoId": "",
+      "name": "nome top",
+      "email": "teste@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf3cd5ffee4b2fa234842f",
+      "cognitoId": "",
+      "name": "n",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf3d794ab1350d5803c22b",
+      "cognitoId": "",
+      "name": "n",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf3dc9aa25a2be75232dec",
+      "cognitoId": "",
+      "name": "n",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf3e357a08a6dbd59a4ff5",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf420860432bcd96728b66",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf4234284c3b226f885652",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf4608fe5ab82f4155bedb",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf56245d35a92dd1c5471b",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf5638cadc0daee77d6b69",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeom",
+      "verified": false
+    },
+    {
+      "_id": "62cf5642cadc0daee77d6b6a",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeomss",
+      "verified": false
+    },
+    {
+      "_id": "62cf56e6555642fd72ae699f",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeomss",
+      "verified": false
+    },
+    {
+      "_id": "62cf5711459e0c2e3d64bed3",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeomss",
+      "verified": false
+    },
+    {
+      "_id": "62cf572dbc4b165fa43548ab",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeomss",
+      "verified": false
+    },
+    {
+      "_id": "62cf5731bc4b165fa43548ac",
+      "cognitoId": "",
+      "name": "",
+      "email": "testeomss",
+      "verified": false
+    },
+    {
+      "_id": "62cf6aeac5905e39f3c1a53d",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@",
+      "verified": false
+    },
+    {
+      "_id": "62cf6aeec5905e39f3c1a53e",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf6c7bbee8fc361b3c2dae",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf6ccddcbbfaef4da77289",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf6cf914a2c4cc2367133f",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf6d0e14a2c4cc23671340",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62cf6d1814a2c4cc23671341",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02192378b893735be5dd1",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02196378b893735be5dd2",
+      "cognitoId": "",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d027ab4c68107c391a05a0",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d027b14c68107c391a05a1",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d027cac6a6fe06085c5ee2",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d027ed5e8a40aaf8d39973",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d027f05e8a40aaf8d39974",
+      "name": "henrique",
+      "email": "testeomss@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0283c5e8a40aaf8d39975",
+      "name": "henrique",
+      "email": "testeomss@hha.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0283f5e8a40aaf8d39976",
+      "name": "henrique",
+      "email": "testeomss@hha.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0287c5e8a40aaf8d39977",
+      "name": "henrique",
+      "email": "testeomss@hhdda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d028835e8a40aaf8d39978",
+      "name": "henrique",
+      "email": "testeomss@hhdda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d028855e8a40aaf8d39979",
+      "name": "henrique",
+      "email": "testeomss@hhdda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d028875e8a40aaf8d3997a",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d028f0394745821d147f35",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d029e4a26cbcb11aa313ee",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02a171da17c9b22fcd031",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02bdf9bb41390b5662ed7",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02be09bb41390b5662ed8",
+      "name": "henrique",
+      "email": "testeomss@hhdddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02c039bb41390b5662ed9",
+      "name": "s",
+      "email": "testeomss@hhddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02c099bb41390b5662eda",
+      "name": "s",
+      "email": "testeomss@hhddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d02e2232399103269ec7f5",
+      "name": "s",
+      "email": "testeomss@hhddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d039bcadf4b2231412f8ff",
+      "name": "s",
+      "email": "testeomss@hhddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03a13ff31284ed169d631",
+      "name": "s",
+      "email": "testeomss@hhddda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03a1dff31284ed169d632",
+      "name": "s",
+      "email": "testeomss@hhdd12da.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03a81a2d9763e57bd3595",
+      "name": "s",
+      "email": "testeomss@hhdd12da.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03a84a2d9763e57bd3596",
+      "name": "s",
+      "email": "testeomss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03aad20305438fccde294",
+      "name": "s",
+      "email": "testeomss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03b36d284309e174140fe",
+      "name": "s",
+      "email": "testeomss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03b3dd284309e174140ff",
+      "name": "s",
+      "email": "testeokmss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03cc3b96ef756f65058d5",
+      "name": "s",
+      "email": "testeokmss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03d721e7646f7c11bf137",
+      "name": "s",
+      "email": "testeokmss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03dec698cd5c778f134e7",
+      "name": "s",
+      "email": "testeoksmss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03e1928057afe58101cdc",
+      "name": "s",
+      "email": "testeokwsmss@hhdd12sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03e50366a5735e19d8794",
+      "name": "s",
+      "email": "testeokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03ebd99686d56d5a31ede",
+      "name": "s",
+      "email": "teasteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03ee609c8591a39bc8fca",
+      "name": "s",
+      "email": "teamsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03f0457fa851771f935c8",
+      "name": "s",
+      "email": "team22steokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03f1de7fe4830dba3515c",
+      "name": "s",
+      "email": "team22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03fb69a33665ebab237ce",
+      "name": "s",
+      "email": "teaam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d03fe2dd3bd2655949aa69",
+      "name": "s",
+      "email": "teaeeam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0400823c1cc4fe279b079",
+      "name": "s",
+      "email": "teaeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d043ea1148590d3c0df9fc",
+      "name": "s",
+      "email": "teakeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0443d9e0c7fc2fd4fc211",
+      "name": "s",
+      "email": "teakfeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d044549e0c7fc2fd4fc212",
+      "name": "s",
+      "email": "teakfdeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0451056cfab5ca99da510",
+      "name": "s",
+      "email": "teakfdeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0452c56cfab5ca99da511",
+      "name": "s",
+      "email": "teakfdweeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0458cf30d73487ec8153d",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0459af30d73487ec8153e",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d045a5f30d73487ec8153f",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d045a6f30d73487ec81540",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d045a8f30d73487ec81541",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d045a9f30d73487ec81542",
+      "name": "s",
+      "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d045adf30d73487ec81543",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0485c4966370c9397ce13",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048674966370c9397ce14",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048694966370c9397ce15",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048a0a52f1b01c1049d2c",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048be971d205b6bbcd7d1",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048d0971d205b6bbcd7d2",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048d5971d205b6bbcd7d3",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d048f55096a3969e268635",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0490b5096a3969e268636",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d04911d82d55ba334994a5",
+      "name": "s",
+      "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d050fa21e16bf4d20aff57",
+      "name": "s",
+      "email": "teakfdwdcmeeqasm22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d051318e8d88386eb053c0",
+      "name": "s",
+      "email": "teakfdwdcmeeqasm22hsteokwssamss@hhdd12222sda.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0513e8e8d88386eb053c1",
+      "name": "s",
+      "email": "a@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0514e8e8d88386eb053c2",
+      "name": "s",
+      "email": "a@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d051c8637508de072fc331",
+      "name": "s",
+      "email": "a@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d051d3637508de072fc332",
+      "name": "s",
+      "email": "aa@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0520049ad15303ecd287a",
+      "name": "s",
+      "email": "aa@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0520349ad15303ecd287b",
+      "name": "s",
+      "email": "aa@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0523e519fcb9b00c659dd",
+      "name": "2s",
+      "email": "a2a@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d05255519fcb9b00c659de",
+      "name": "2s",
+      "email": "a2as@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0526e519fcb9b00c659df",
+      "name": "2s",
+      "email": "a2jas@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d05299519fcb9b00c659e0",
+      "name": "2s",
+      "email": "a2jnas@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d052ae3c01219a7651dd06",
+      "name": "2s",
+      "email": "a2jnams@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d052dae1745e4295dc5cd8",
+      "name": "2s",
+      "email": "a2jnamns@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d05300e1745e4295dc5cd9",
+      "name": "2s",
+      "email": "test@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d053b7cdb9f06c9d7b961c",
+      "name": "2s",
+      "email": "tesjt@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d05870739caf027f367a57",
+      "name": "2s",
+      "email": "tesjst@a.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0721dbd3a02b48e1580b1",
+      "cognitoId": "77396c65-6a5b-4a33-8322-767ce7b47530",
+      "name": "HENRIQUES",
+      "email": "henrisqdgg2sgue.ehfonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0725ab6f7d503e975a92b",
+      "cognitoId": "8e832102-db3c-43c2-842e-96081921207d",
+      "name": "HENRIQUES",
+      "email": "henrisqdgg2s2gue.ehfonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d072954fdaa7dfb4446ab1",
+      "cognitoId": "4672ae9c-c823-441d-9fbf-c4aaa558618e",
+      "name": "HENRIQUES",
+      "email": "henrissqdgg2s2gue.ehfonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d095b0d842cd9b4805e5a0",
+      "name": "Henrique",
+      "email": "henrimque.efonsehwca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097bbd842cd9b4805e5a1",
+      "name": "Henrique",
+      "email": "henrimque.efonsehwca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097bfd842cd9b4805e5a2",
+      "name": "Henrique",
+      "email": "henrimque.efonsehwca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097c0d842cd9b4805e5a3",
+      "name": "Henrique",
+      "email": "henrimque.efonsehwca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097d2d842cd9b4805e5a4",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097d3d842cd9b4805e5a5",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097d7d842cd9b4805e5a6",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d097d8d842cd9b4805e5a7",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d098558d037f5fd2d114f7",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0987d05f2bd6c1a38274f",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0988acab876e2c33ae357",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0988ccab876e2c33ae358",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d098c0f7fe0148409611a4",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d098e6bae9bb2ed479c89c",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d0993416e020cd8fa86a0c",
+      "name": "Henrique",
+      "email": "test@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d09a2916276220c82e08ec",
+      "name": "Henrique",
+      "email": "testffffff@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d09a77cfbb11e3ce109658",
+      "name": "Henrique",
+      "email": "testffffff@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d09a90e3bec4c5815baae7",
+      "name": "Henrique",
+      "email": "testffffff@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d09a91e3bec4c5815baae8",
+      "name": "Henrique",
+      "email": "testffffff@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62d09d6b4796b580dfcf656d",
+      "name": "Henrique",
+      "email": "henriquefonseca@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "62d09ec6f5b75b3ca713e714",
+      "name": "Henrique",
+      "email": "henriqussssefonsecad@carely.pts",
+      "verified": false
+    },
+    {
+      "_id": "62d09ecff5b75b3ca713e715",
+      "name": "Henrique",
+      "email": "henriqussssefonsecad@carely.pts",
+      "verified": false
+    },
+    {
+      "_id": "62d09ed0f5b75b3ca713e716",
+      "name": "Henrique",
+      "email": "henriqussssefonsecad@carely.pts",
+      "verified": false
+    },
+    {
+      "_id": "62dff6070ca6bac326bdba13",
+      "name": "Henrique",
+      "email": "6mmsshlmm9@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "62dff6578e9861600b92f427",
+      "name": "Henrique",
+      "email": "6mmsshlsmm9@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "62dff711ead39f1962bb08ba",
+      "name": "Henrique",
+      "email": "6mmsshlssmm9@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "62dff73746621286fe7acb99",
+      "name": "Henrique",
+      "email": "6mmsshlsssmm9@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "62e031714d0802f615828817",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e031fc30e775a24f60b324",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e03aaf7d97d33aed2c1c77",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e03be6079fc9c9b4edf151",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e03cbaa6e92d03e6ec3acc",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e03d1984c6e6020410fae5",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e03d4ec68b0ef2315c979b",
+      "name": "Henrique",
+      "email": "1244@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e120647e4bc532d6343a7d",
+      "cognitoId": "b2f9ea54-36dc-4688-bf54-7bae87cd1e10",
+      "name": "Henrique",
+      "email": "12dssukyf44@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e121517e4bc532d6343a7e",
+      "cognitoId": "0e4e0e38-0d97-4795-b4bb-a62e273b725e",
+      "name": "Henrique",
+      "email": "henrique.efonseca@gmail.com",
+      "verified": false,
+      "role": "admin"
+    },
+    {
+      "_id": "62e12632c516e9732857cc5e",
+      "cognitoId": "32866968-d2f9-4dd0-9a18-53181cb64d66",
+      "name": "Henrique",
+      "email": "henrissque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e129301429e8608e2ede14",
+      "cognitoId": "2ae58111-a456-4af1-9352-ea418f87232f",
+      "name": "Henrique",
+      "email": "henrissggque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12a421db9567ec269b19c",
+      "cognitoId": "5f4db038-2ef4-46c7-98d3-8532b139e58b",
+      "name": "Henrique",
+      "email": "henrissggfque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12a579982cd5ffa7bda73",
+      "cognitoId": "1f2b5514-b9ec-4c8b-8e5e-40f14dbc6cf4",
+      "name": "Henrique",
+      "email": "henrissggfsssque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12aa316865bb6bd642027",
+      "cognitoId": "8160943f-349e-4bac-901d-d00e3882bd57",
+      "name": "Henrique",
+      "email": "henrissggfssssque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12ac67ea3e931e72f14e1",
+      "cognitoId": "3a25893d-37c7-49cd-b6d3-b3cea95468a6",
+      "name": "Henrique",
+      "email": "henrissggfssssaque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12b2bb73cf8422051181a",
+      "cognitoId": "e303359d-192b-4d78-b71b-3943f8e35b08",
+      "name": "Henrique",
+      "email": "henrissggfssssaaque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12b48a42a644635f1bc25",
+      "cognitoId": "6a4534b5-6495-432f-85c1-50e516e75410",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12b8d1fd3af97ae2e417c",
+      "cognitoId": "d7fc08d0-2554-404a-8ca1-3908f2060236",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaaque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12bac5055579810ffe4b1",
+      "cognitoId": "d7b6d429-6ceb-4996-9916-16a0052727b2",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaazque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12bfe2a091202a304d86a",
+      "cognitoId": "a0a85253-49d3-4970-9d42-aedaddb763c3",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaazdsque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12c166f22ff6d532cba6b",
+      "cognitoId": "f5022c92-77e5-42d2-aa41-851d0b7c9f46",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaazdszque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12d6cda772ef5f37c93d3",
+      "cognitoId": "7f321767-3aa4-44f3-8c3b-0019a19b41c7",
+      "name": "Henrique",
+      "email": "henrissggfssssaaaazdszsque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e12f6d9e228b2177bd456c",
+      "cognitoId": "6424820c-8d0f-4f0d-adc1-ec8fc53d1074",
+      "name": "Henrique",
+      "email": "henrissggffssssaaaazdszsque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e131af7e24538c74c333a8",
+      "cognitoId": "259588c1-5169-43de-a7b6-6ca25b7a13d2",
+      "name": "Henriaque",
+      "email": "henrissggffssssaaazdszsque.efonseca@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e133cb165588bfd6fb9b73",
+      "cognitoId": "5713d5a8-9265-4bfa-b386-450eea36b60f",
+      "name": "Henriaque",
+      "email": "testecarely123@gmail.com",
+      "verified": false
+    },
+    {
+      "_id": "62e17b0a498e28edd4c26cdc",
+      "cognitoId": "b13594a4-e85c-4fae-ac96-4fc84bcaa42b",
+      "name": "Henrique",
+      "email": "henrique.fonseca@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "63582804d26cb8714fda5ede",
+      "cognitoId": "d6c9209e-14a5-4f0e-ab04-9fe73a58f2a1",
+      "name": "Miguel Roxo",
+      "email": "crm@carely.pt",
+      "verified": false,
+      "address": "morada top xuxa",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "phoneNumber": "123456789",
+      "role": "admin",
+      "photoURL": "https://careplace-staging.s3.eu-west-3.amazonaws.com/Screenshot%202022-10-29%20at%2016.31.22.png",
+      "zipCode": "2735-656",
+      "gender": "female",
+      "about": "",
+      "isPublic": false,
+      "state": ""
+    },
+    {
+      "_id": "635828ac803bf5ab57eb92cf",
+      "name": "Henrique CRM2",
+      "email": "crm2@carely.pt",
+      "verified": false
+    },
+    {
+      "_id": "6359b086e0109b3c8daecf3a",
+      "cognitoId": "f6af5b73-37da-4c93-95d2-b53bcb231db2",
+      "verified": false,
+      "role": "user",
+      "email": "crm7@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "6359b73d4363ff3223334a3b",
+      "cognitoId": "6e044f48-945b-40fb-ba2e-ab43693fec93",
+      "verified": false,
+      "role": "user",
+      "email": "crm9222332@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "6359b84ea2a364577ef06953",
+      "cognitoId": "1119bddb-f063-4403-80fe-a73122612ebc",
+      "verified": false,
+      "role": "user",
+      "email": "crm9222226332@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "6359b91c1bfd36b01162d341",
+      "cognitoId": "14604d64-b81a-4356-baeb-a36b59ff7f41",
+      "verified": false,
+      "role": "user",
+      "email": "crmm9222226332@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "6359ba41e3a1dfe1a7248d77",
+      "cognitoId": "f2803613-111a-441a-b0e4-2bcf880b10ee",
+      "verified": false,
+      "role": "user",
+      "email": "c122rrmmm9222226332@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "6359cc938ea5dadd2274bde5",
+      "cognitoId": "d1aefdbb-8f96-415a-8456-f7c742c0fc20",
+      "verified": false,
+      "role": "user",
+      "email": "12cwww221s32wwws2223e22rwsaafw2rmmmg922s2ed226332@carely.pt",
+      "name": "Henrique CRM"
+    },
+    {
+      "_id": "636bc28053714c6d3a7fef33",
+      "verified": false,
+      "role": "caregiver",
+      "email": "caregivers@carely.pt",
+      "name": "Colaborador Bacano",
+      "phoneNumber": "",
+      "address": "",
+      "city": "",
+      "country": "",
+      "zipCode": ""
+    },
+    {
+      "_id": "636c369e2207b85da1c01ae9",
+      "cognitoId": "b724a72b-1a80-475b-988a-c444cd75b288",
+      "verified": false,
+      "role": "caregiver",
+      "email": "caregivers@carely.pt",
+      "name": "Colaborador Bacano",
+      "phoneNumber": "",
+      "address": "",
+      "city": "",
+      "country": "",
+      "zipCode": ""
+    },
+    {
+      "_id": "636c3853bbdeeb884d17f19e",
+      "cognitoId": "0b5f48f0-477b-46ea-bd31-9dd6d4c29ad2",
+      "verified": false,
+      "role": "caregiver",
+      "email": "care2givers@carely.pt",
+      "name": "Colaborador Bacano",
+      "phoneNumber": "",
+      "address": "",
+      "city": "",
+      "country": "",
+      "zipCode": ""
+    },
+    {
+      "_id": "6389d28d105b69e14a8ad547",
+      "verified": false,
+      "role": "user"
+    },
+    {
+      "_id": "6389df5380df285b54214360",
+      "verified": false,
+      "role": "user"
+    },
+    {
+      "_id": "6389dfce87edf0405cbeb9ef",
+      "verified": false,
+      "role": "user"
+    },
+    {
+      "_id": "638a038a5e0f02997c6c68c1",
+      "verified": false,
+      "role": "user"
+    },
+    {
+      "_id": "638a051acbf1a036471d107c",
+      "verified": false,
+      "role": "user"
+    },
+    {
+      "_id": "638a05f1e17c5bb902dbb23d",
+      "cognitoId": "a94fd232-1833-46e2-9a6b-88ce9c22b3d8",
+      "verified": false,
+      "role": "user",
+      "email": "henrique2.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638a0df59eed23ba96654725",
+      "cognitoId": "79791a46-f4c0-4435-b44a-d368bb0e67ca",
+      "verified": false,
+      "role": "user",
+      "email": "henrique3.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638a18fa8d5170185054584f",
+      "cognitoId": "f2f3db19-9438-4db9-9091-9aeedbfef5c1",
+      "verified": false,
+      "role": "user",
+      "email": "henrique4.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bea21c522f9dd0e9def03",
+      "cognitoId": "2a2870e2-70cb-4be0-a1bf-7e4b92935fc5",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew24.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638beadee20629d6fa1f94fe",
+      "cognitoId": "4c9e1dcb-9d08-42cf-93c3-2be72681e630",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638beb5719a2db3707ab25dc",
+      "cognitoId": "bdad2866-4bf4-4726-9454-56ae20fb7458",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew2224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bebbf4db7f164312924c0",
+      "cognitoId": "e1b8482c-6265-4f17-8188-becfb3cc0d21",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew22224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638becd42baffab820ed1479",
+      "cognitoId": "b10f5dc0-d145-4885-808f-3334030d4f3d",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew222224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bef62ebbfe9e589b47d1d",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew222224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bef68ebbfe9e589b47d1e",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew222224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638befac66d728cc01b9756a",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew222224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bf00966d728cc01b9756b",
+      "verified": false,
+      "role": "user",
+      "email": "henriquew222224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bf7c9594a8a951fc39299",
+      "verified": false,
+      "role": "user",
+      "email": "henriqwueww22222w224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bf7eda04fd3ffedc48281",
+      "verified": false,
+      "role": "user",
+      "email": "henriqwueww222222w224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638bfa0ea597a7ae75075eef",
+      "verified": false,
+      "role": "user",
+      "email": "henriqwueww222r222w224.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    },
+    {
+      "_id": "638c0ca0f82ae3d1fa6cf3d1",
+      "verified": false,
+      "role": "user",
+      "email": "henrique.efonseca@gmail.com",
+      "name": "Henrique sCRM"
+    }
+  ],
+  "message": "Users fetched successfully"
+}
+
+2022-12-04T03:55:40.305Z | [INFO   ]: Successfully fetched users from MongoDB: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 200,
+  "response": {
+    "mongodbResponse": [
+      {
+        "_id": "62cf1dc9bf1d77512275c14e",
+        "verified": false
+      },
+      {
+        "_id": "62cf1e2aea20e7b1bd4ae8a2",
+        "verified": false
+      },
+      {
+        "_id": "62cf1e8d2af7a4e79e5f2cc9",
+        "verified": false
+      },
+      {
+        "_id": "62cf1ee3bba643c88c372bc4",
+        "verified": false
+      },
+      {
+        "_id": "62cf1ef384d7ce1d3b60aea0",
+        "verified": false
+      },
+      {
+        "_id": "62cf396a56ee2e9c92d201df",
+        "verified": false
+      },
+      {
+        "_id": "62cf399c56ee2e9c92d201e0",
+        "name": "teste",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf39b856ee2e9c92d201e1",
+        "name": "nome top",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf3a05271a1e1223a76ca1",
+        "cognitoId": "",
+        "name": "nome top",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf3a2dc790632c56f0f2bb",
+        "cognitoId": "",
+        "name": "nome top",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf3a40637633f64b02b222",
+        "cognitoId": "",
+        "name": "nome top",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf3cbeffee4b2fa234842e",
+        "cognitoId": "",
+        "name": "nome top",
+        "email": "teste@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf3cd5ffee4b2fa234842f",
+        "cognitoId": "",
+        "name": "n",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf3d794ab1350d5803c22b",
+        "cognitoId": "",
+        "name": "n",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf3dc9aa25a2be75232dec",
+        "cognitoId": "",
+        "name": "n",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf3e357a08a6dbd59a4ff5",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf420860432bcd96728b66",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf4234284c3b226f885652",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf4608fe5ab82f4155bedb",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf56245d35a92dd1c5471b",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf5638cadc0daee77d6b69",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeom",
+        "verified": false
+      },
+      {
+        "_id": "62cf5642cadc0daee77d6b6a",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeomss",
+        "verified": false
+      },
+      {
+        "_id": "62cf56e6555642fd72ae699f",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeomss",
+        "verified": false
+      },
+      {
+        "_id": "62cf5711459e0c2e3d64bed3",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeomss",
+        "verified": false
+      },
+      {
+        "_id": "62cf572dbc4b165fa43548ab",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeomss",
+        "verified": false
+      },
+      {
+        "_id": "62cf5731bc4b165fa43548ac",
+        "cognitoId": "",
+        "name": "",
+        "email": "testeomss",
+        "verified": false
+      },
+      {
+        "_id": "62cf6aeac5905e39f3c1a53d",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@",
+        "verified": false
+      },
+      {
+        "_id": "62cf6aeec5905e39f3c1a53e",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf6c7bbee8fc361b3c2dae",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf6ccddcbbfaef4da77289",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf6cf914a2c4cc2367133f",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf6d0e14a2c4cc23671340",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62cf6d1814a2c4cc23671341",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02192378b893735be5dd1",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02196378b893735be5dd2",
+        "cognitoId": "",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d027ab4c68107c391a05a0",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d027b14c68107c391a05a1",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d027cac6a6fe06085c5ee2",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d027ed5e8a40aaf8d39973",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d027f05e8a40aaf8d39974",
+        "name": "henrique",
+        "email": "testeomss@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0283c5e8a40aaf8d39975",
+        "name": "henrique",
+        "email": "testeomss@hha.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0283f5e8a40aaf8d39976",
+        "name": "henrique",
+        "email": "testeomss@hha.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0287c5e8a40aaf8d39977",
+        "name": "henrique",
+        "email": "testeomss@hhdda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d028835e8a40aaf8d39978",
+        "name": "henrique",
+        "email": "testeomss@hhdda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d028855e8a40aaf8d39979",
+        "name": "henrique",
+        "email": "testeomss@hhdda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d028875e8a40aaf8d3997a",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d028f0394745821d147f35",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d029e4a26cbcb11aa313ee",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02a171da17c9b22fcd031",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02bdf9bb41390b5662ed7",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02be09bb41390b5662ed8",
+        "name": "henrique",
+        "email": "testeomss@hhdddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02c039bb41390b5662ed9",
+        "name": "s",
+        "email": "testeomss@hhddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02c099bb41390b5662eda",
+        "name": "s",
+        "email": "testeomss@hhddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d02e2232399103269ec7f5",
+        "name": "s",
+        "email": "testeomss@hhddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d039bcadf4b2231412f8ff",
+        "name": "s",
+        "email": "testeomss@hhddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03a13ff31284ed169d631",
+        "name": "s",
+        "email": "testeomss@hhddda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03a1dff31284ed169d632",
+        "name": "s",
+        "email": "testeomss@hhdd12da.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03a81a2d9763e57bd3595",
+        "name": "s",
+        "email": "testeomss@hhdd12da.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03a84a2d9763e57bd3596",
+        "name": "s",
+        "email": "testeomss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03aad20305438fccde294",
+        "name": "s",
+        "email": "testeomss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03b36d284309e174140fe",
+        "name": "s",
+        "email": "testeomss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03b3dd284309e174140ff",
+        "name": "s",
+        "email": "testeokmss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03cc3b96ef756f65058d5",
+        "name": "s",
+        "email": "testeokmss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03d721e7646f7c11bf137",
+        "name": "s",
+        "email": "testeokmss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03dec698cd5c778f134e7",
+        "name": "s",
+        "email": "testeoksmss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03e1928057afe58101cdc",
+        "name": "s",
+        "email": "testeokwsmss@hhdd12sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03e50366a5735e19d8794",
+        "name": "s",
+        "email": "testeokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03ebd99686d56d5a31ede",
+        "name": "s",
+        "email": "teasteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03ee609c8591a39bc8fca",
+        "name": "s",
+        "email": "teamsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03f0457fa851771f935c8",
+        "name": "s",
+        "email": "team22steokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03f1de7fe4830dba3515c",
+        "name": "s",
+        "email": "team22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03fb69a33665ebab237ce",
+        "name": "s",
+        "email": "teaam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d03fe2dd3bd2655949aa69",
+        "name": "s",
+        "email": "teaeeam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0400823c1cc4fe279b079",
+        "name": "s",
+        "email": "teaeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d043ea1148590d3c0df9fc",
+        "name": "s",
+        "email": "teakeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0443d9e0c7fc2fd4fc211",
+        "name": "s",
+        "email": "teakfeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d044549e0c7fc2fd4fc212",
+        "name": "s",
+        "email": "teakfdeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0451056cfab5ca99da510",
+        "name": "s",
+        "email": "teakfdeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0452c56cfab5ca99da511",
+        "name": "s",
+        "email": "teakfdweeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0458cf30d73487ec8153d",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0459af30d73487ec8153e",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d045a5f30d73487ec8153f",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d045a6f30d73487ec81540",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d045a8f30d73487ec81541",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d045a9f30d73487ec81542",
+        "name": "s",
+        "email": "teakfdwdceeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d045adf30d73487ec81543",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0485c4966370c9397ce13",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048674966370c9397ce14",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwsmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048694966370c9397ce15",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048a0a52f1b01c1049d2c",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048be971d205b6bbcd7d1",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssmss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048d0971d205b6bbcd7d2",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048d5971d205b6bbcd7d3",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d048f55096a3969e268635",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0490b5096a3969e268636",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d04911d82d55ba334994a5",
+        "name": "s",
+        "email": "teakfdwdcmeeqam22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d050fa21e16bf4d20aff57",
+        "name": "s",
+        "email": "teakfdwdcmeeqasm22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d051318e8d88386eb053c0",
+        "name": "s",
+        "email": "teakfdwdcmeeqasm22hsteokwssamss@hhdd12222sda.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0513e8e8d88386eb053c1",
+        "name": "s",
+        "email": "a@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0514e8e8d88386eb053c2",
+        "name": "s",
+        "email": "a@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d051c8637508de072fc331",
+        "name": "s",
+        "email": "a@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d051d3637508de072fc332",
+        "name": "s",
+        "email": "aa@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0520049ad15303ecd287a",
+        "name": "s",
+        "email": "aa@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0520349ad15303ecd287b",
+        "name": "s",
+        "email": "aa@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0523e519fcb9b00c659dd",
+        "name": "2s",
+        "email": "a2a@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d05255519fcb9b00c659de",
+        "name": "2s",
+        "email": "a2as@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0526e519fcb9b00c659df",
+        "name": "2s",
+        "email": "a2jas@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d05299519fcb9b00c659e0",
+        "name": "2s",
+        "email": "a2jnas@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d052ae3c01219a7651dd06",
+        "name": "2s",
+        "email": "a2jnams@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d052dae1745e4295dc5cd8",
+        "name": "2s",
+        "email": "a2jnamns@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d05300e1745e4295dc5cd9",
+        "name": "2s",
+        "email": "test@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d053b7cdb9f06c9d7b961c",
+        "name": "2s",
+        "email": "tesjt@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d05870739caf027f367a57",
+        "name": "2s",
+        "email": "tesjst@a.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0721dbd3a02b48e1580b1",
+        "cognitoId": "77396c65-6a5b-4a33-8322-767ce7b47530",
+        "name": "HENRIQUES",
+        "email": "henrisqdgg2sgue.ehfonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0725ab6f7d503e975a92b",
+        "cognitoId": "8e832102-db3c-43c2-842e-96081921207d",
+        "name": "HENRIQUES",
+        "email": "henrisqdgg2s2gue.ehfonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d072954fdaa7dfb4446ab1",
+        "cognitoId": "4672ae9c-c823-441d-9fbf-c4aaa558618e",
+        "name": "HENRIQUES",
+        "email": "henrissqdgg2s2gue.ehfonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d095b0d842cd9b4805e5a0",
+        "name": "Henrique",
+        "email": "henrimque.efonsehwca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097bbd842cd9b4805e5a1",
+        "name": "Henrique",
+        "email": "henrimque.efonsehwca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097bfd842cd9b4805e5a2",
+        "name": "Henrique",
+        "email": "henrimque.efonsehwca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097c0d842cd9b4805e5a3",
+        "name": "Henrique",
+        "email": "henrimque.efonsehwca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097d2d842cd9b4805e5a4",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097d3d842cd9b4805e5a5",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097d7d842cd9b4805e5a6",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d097d8d842cd9b4805e5a7",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d098558d037f5fd2d114f7",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0987d05f2bd6c1a38274f",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0988acab876e2c33ae357",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0988ccab876e2c33ae358",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d098c0f7fe0148409611a4",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d098e6bae9bb2ed479c89c",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d0993416e020cd8fa86a0c",
+        "name": "Henrique",
+        "email": "test@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d09a2916276220c82e08ec",
+        "name": "Henrique",
+        "email": "testffffff@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d09a77cfbb11e3ce109658",
+        "name": "Henrique",
+        "email": "testffffff@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d09a90e3bec4c5815baae7",
+        "name": "Henrique",
+        "email": "testffffff@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d09a91e3bec4c5815baae8",
+        "name": "Henrique",
+        "email": "testffffff@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62d09d6b4796b580dfcf656d",
+        "name": "Henrique",
+        "email": "henriquefonseca@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "62d09ec6f5b75b3ca713e714",
+        "name": "Henrique",
+        "email": "henriqussssefonsecad@carely.pts",
+        "verified": false
+      },
+      {
+        "_id": "62d09ecff5b75b3ca713e715",
+        "name": "Henrique",
+        "email": "henriqussssefonsecad@carely.pts",
+        "verified": false
+      },
+      {
+        "_id": "62d09ed0f5b75b3ca713e716",
+        "name": "Henrique",
+        "email": "henriqussssefonsecad@carely.pts",
+        "verified": false
+      },
+      {
+        "_id": "62dff6070ca6bac326bdba13",
+        "name": "Henrique",
+        "email": "6mmsshlmm9@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "62dff6578e9861600b92f427",
+        "name": "Henrique",
+        "email": "6mmsshlsmm9@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "62dff711ead39f1962bb08ba",
+        "name": "Henrique",
+        "email": "6mmsshlssmm9@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "62dff73746621286fe7acb99",
+        "name": "Henrique",
+        "email": "6mmsshlsssmm9@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "62e031714d0802f615828817",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e031fc30e775a24f60b324",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e03aaf7d97d33aed2c1c77",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e03be6079fc9c9b4edf151",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e03cbaa6e92d03e6ec3acc",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e03d1984c6e6020410fae5",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e03d4ec68b0ef2315c979b",
+        "name": "Henrique",
+        "email": "1244@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e120647e4bc532d6343a7d",
+        "cognitoId": "b2f9ea54-36dc-4688-bf54-7bae87cd1e10",
+        "name": "Henrique",
+        "email": "12dssukyf44@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e121517e4bc532d6343a7e",
+        "cognitoId": "0e4e0e38-0d97-4795-b4bb-a62e273b725e",
+        "name": "Henrique",
+        "email": "henrique.efonseca@gmail.com",
+        "verified": false,
+        "role": "admin"
+      },
+      {
+        "_id": "62e12632c516e9732857cc5e",
+        "cognitoId": "32866968-d2f9-4dd0-9a18-53181cb64d66",
+        "name": "Henrique",
+        "email": "henrissque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e129301429e8608e2ede14",
+        "cognitoId": "2ae58111-a456-4af1-9352-ea418f87232f",
+        "name": "Henrique",
+        "email": "henrissggque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12a421db9567ec269b19c",
+        "cognitoId": "5f4db038-2ef4-46c7-98d3-8532b139e58b",
+        "name": "Henrique",
+        "email": "henrissggfque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12a579982cd5ffa7bda73",
+        "cognitoId": "1f2b5514-b9ec-4c8b-8e5e-40f14dbc6cf4",
+        "name": "Henrique",
+        "email": "henrissggfsssque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12aa316865bb6bd642027",
+        "cognitoId": "8160943f-349e-4bac-901d-d00e3882bd57",
+        "name": "Henrique",
+        "email": "henrissggfssssque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12ac67ea3e931e72f14e1",
+        "cognitoId": "3a25893d-37c7-49cd-b6d3-b3cea95468a6",
+        "name": "Henrique",
+        "email": "henrissggfssssaque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12b2bb73cf8422051181a",
+        "cognitoId": "e303359d-192b-4d78-b71b-3943f8e35b08",
+        "name": "Henrique",
+        "email": "henrissggfssssaaque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12b48a42a644635f1bc25",
+        "cognitoId": "6a4534b5-6495-432f-85c1-50e516e75410",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12b8d1fd3af97ae2e417c",
+        "cognitoId": "d7fc08d0-2554-404a-8ca1-3908f2060236",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaaque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12bac5055579810ffe4b1",
+        "cognitoId": "d7b6d429-6ceb-4996-9916-16a0052727b2",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaazque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12bfe2a091202a304d86a",
+        "cognitoId": "a0a85253-49d3-4970-9d42-aedaddb763c3",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaazdsque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12c166f22ff6d532cba6b",
+        "cognitoId": "f5022c92-77e5-42d2-aa41-851d0b7c9f46",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaazdszque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12d6cda772ef5f37c93d3",
+        "cognitoId": "7f321767-3aa4-44f3-8c3b-0019a19b41c7",
+        "name": "Henrique",
+        "email": "henrissggfssssaaaazdszsque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e12f6d9e228b2177bd456c",
+        "cognitoId": "6424820c-8d0f-4f0d-adc1-ec8fc53d1074",
+        "name": "Henrique",
+        "email": "henrissggffssssaaaazdszsque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e131af7e24538c74c333a8",
+        "cognitoId": "259588c1-5169-43de-a7b6-6ca25b7a13d2",
+        "name": "Henriaque",
+        "email": "henrissggffssssaaazdszsque.efonseca@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e133cb165588bfd6fb9b73",
+        "cognitoId": "5713d5a8-9265-4bfa-b386-450eea36b60f",
+        "name": "Henriaque",
+        "email": "testecarely123@gmail.com",
+        "verified": false
+      },
+      {
+        "_id": "62e17b0a498e28edd4c26cdc",
+        "cognitoId": "b13594a4-e85c-4fae-ac96-4fc84bcaa42b",
+        "name": "Henrique",
+        "email": "henrique.fonseca@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "63582804d26cb8714fda5ede",
+        "cognitoId": "d6c9209e-14a5-4f0e-ab04-9fe73a58f2a1",
+        "name": "Miguel Roxo",
+        "email": "crm@carely.pt",
+        "verified": false,
+        "address": "morada top xuxa",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "phoneNumber": "123456789",
+        "role": "admin",
+        "photoURL": "https://careplace-staging.s3.eu-west-3.amazonaws.com/Screenshot%202022-10-29%20at%2016.31.22.png",
+        "zipCode": "2735-656",
+        "gender": "female",
+        "about": "",
+        "isPublic": false,
+        "state": ""
+      },
+      {
+        "_id": "635828ac803bf5ab57eb92cf",
+        "name": "Henrique CRM2",
+        "email": "crm2@carely.pt",
+        "verified": false
+      },
+      {
+        "_id": "6359b086e0109b3c8daecf3a",
+        "cognitoId": "f6af5b73-37da-4c93-95d2-b53bcb231db2",
+        "verified": false,
+        "role": "user",
+        "email": "crm7@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "6359b73d4363ff3223334a3b",
+        "cognitoId": "6e044f48-945b-40fb-ba2e-ab43693fec93",
+        "verified": false,
+        "role": "user",
+        "email": "crm9222332@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "6359b84ea2a364577ef06953",
+        "cognitoId": "1119bddb-f063-4403-80fe-a73122612ebc",
+        "verified": false,
+        "role": "user",
+        "email": "crm9222226332@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "6359b91c1bfd36b01162d341",
+        "cognitoId": "14604d64-b81a-4356-baeb-a36b59ff7f41",
+        "verified": false,
+        "role": "user",
+        "email": "crmm9222226332@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "6359ba41e3a1dfe1a7248d77",
+        "cognitoId": "f2803613-111a-441a-b0e4-2bcf880b10ee",
+        "verified": false,
+        "role": "user",
+        "email": "c122rrmmm9222226332@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "6359cc938ea5dadd2274bde5",
+        "cognitoId": "d1aefdbb-8f96-415a-8456-f7c742c0fc20",
+        "verified": false,
+        "role": "user",
+        "email": "12cwww221s32wwws2223e22rwsaafw2rmmmg922s2ed226332@carely.pt",
+        "name": "Henrique CRM"
+      },
+      {
+        "_id": "636bc28053714c6d3a7fef33",
+        "verified": false,
+        "role": "caregiver",
+        "email": "caregivers@carely.pt",
+        "name": "Colaborador Bacano",
+        "phoneNumber": "",
+        "address": "",
+        "city": "",
+        "country": "",
+        "zipCode": ""
+      },
+      {
+        "_id": "636c369e2207b85da1c01ae9",
+        "cognitoId": "b724a72b-1a80-475b-988a-c444cd75b288",
+        "verified": false,
+        "role": "caregiver",
+        "email": "caregivers@carely.pt",
+        "name": "Colaborador Bacano",
+        "phoneNumber": "",
+        "address": "",
+        "city": "",
+        "country": "",
+        "zipCode": ""
+      },
+      {
+        "_id": "636c3853bbdeeb884d17f19e",
+        "cognitoId": "0b5f48f0-477b-46ea-bd31-9dd6d4c29ad2",
+        "verified": false,
+        "role": "caregiver",
+        "email": "care2givers@carely.pt",
+        "name": "Colaborador Bacano",
+        "phoneNumber": "",
+        "address": "",
+        "city": "",
+        "country": "",
+        "zipCode": ""
+      },
+      {
+        "_id": "6389d28d105b69e14a8ad547",
+        "verified": false,
+        "role": "user"
+      },
+      {
+        "_id": "6389df5380df285b54214360",
+        "verified": false,
+        "role": "user"
+      },
+      {
+        "_id": "6389dfce87edf0405cbeb9ef",
+        "verified": false,
+        "role": "user"
+      },
+      {
+        "_id": "638a038a5e0f02997c6c68c1",
+        "verified": false,
+        "role": "user"
+      },
+      {
+        "_id": "638a051acbf1a036471d107c",
+        "verified": false,
+        "role": "user"
+      },
+      {
+        "_id": "638a05f1e17c5bb902dbb23d",
+        "cognitoId": "a94fd232-1833-46e2-9a6b-88ce9c22b3d8",
+        "verified": false,
+        "role": "user",
+        "email": "henrique2.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638a0df59eed23ba96654725",
+        "cognitoId": "79791a46-f4c0-4435-b44a-d368bb0e67ca",
+        "verified": false,
+        "role": "user",
+        "email": "henrique3.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638a18fa8d5170185054584f",
+        "cognitoId": "f2f3db19-9438-4db9-9091-9aeedbfef5c1",
+        "verified": false,
+        "role": "user",
+        "email": "henrique4.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bea21c522f9dd0e9def03",
+        "cognitoId": "2a2870e2-70cb-4be0-a1bf-7e4b92935fc5",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew24.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638beadee20629d6fa1f94fe",
+        "cognitoId": "4c9e1dcb-9d08-42cf-93c3-2be72681e630",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638beb5719a2db3707ab25dc",
+        "cognitoId": "bdad2866-4bf4-4726-9454-56ae20fb7458",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew2224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bebbf4db7f164312924c0",
+        "cognitoId": "e1b8482c-6265-4f17-8188-becfb3cc0d21",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew22224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638becd42baffab820ed1479",
+        "cognitoId": "b10f5dc0-d145-4885-808f-3334030d4f3d",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew222224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bef62ebbfe9e589b47d1d",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew222224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bef68ebbfe9e589b47d1e",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew222224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638befac66d728cc01b9756a",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew222224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bf00966d728cc01b9756b",
+        "verified": false,
+        "role": "user",
+        "email": "henriquew222224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bf7c9594a8a951fc39299",
+        "verified": false,
+        "role": "user",
+        "email": "henriqwueww22222w224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bf7eda04fd3ffedc48281",
+        "verified": false,
+        "role": "user",
+        "email": "henriqwueww222222w224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638bfa0ea597a7ae75075eef",
+        "verified": false,
+        "role": "user",
+        "email": "henriqwueww222r222w224.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      },
+      {
+        "_id": "638c0ca0f82ae3d1fa6cf3d1",
+        "verified": false,
+        "role": "user",
+        "email": "henrique.efonseca@gmail.com",
+        "name": "Henrique sCRM"
+      }
+    ],
+    "message": "Users fetched successfully"
+  }
+}
+

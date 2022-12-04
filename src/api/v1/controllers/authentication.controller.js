@@ -12,8 +12,6 @@ import { api_url } from "../../../config/constants/index.js";
 const host = api_url || "http://localhost:3000/api/v1";
 
 export default class AuthenticationController {
-
-
   /**
    * @description Creates a new user in Cognito and MongoDB
    */
@@ -25,11 +23,7 @@ export default class AuthenticationController {
           type: "POST",
           url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            password: req.body.password,
-            confirmPassword: req.body.confirmPassword,
-          },
+          body: req.body,
         },
         statusCode: 100,
       };
@@ -131,12 +125,9 @@ export default class AuthenticationController {
       var request = {
         request: {
           type: "POST",
-          url: `${host}/auth/login`,
+          url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            password: req.body.password,
-          },
+          body: req.body,
         },
         statusCode: 100,
       };
@@ -207,18 +198,11 @@ export default class AuthenticationController {
       var request = {
         request: {
           type: "POST",
-          url: `${host}/auth/change-password`,
-          headers: {
-            Authorization: req.headers.authorization,
-          },
+          url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            oldPassword: req.body.oldPassword,
-            newPassword: req.body.newPassword,
-          },
-          statusCode: 100,
+          body: req.body,
         },
+        statusCode: 100,
       };
 
       logger.info(
@@ -278,11 +262,11 @@ export default class AuthenticationController {
     var request = {
       request: {
         type: "POST",
-        url: `${host}/auth/logout`,
-        headers: {
-          Authorization: req.headers.authorization,
-        },
+        url: `${host}/auth/signup`,
+        headers: req.headers,
+        body: req.body,
       },
+      statusCode: 100,
     };
 
     logger.info(
@@ -330,13 +314,11 @@ export default class AuthenticationController {
     var request = {
       request: {
         type: "POST",
-        url: `${host}/auth/forgot-password`,
+        url: `${host}/auth/signup`,
         headers: req.headers,
-        body: {
-          email: req.body.email,
-        },
-        statusCode: 100,
+        body: req.body,
       },
+      statusCode: 100,
     };
 
     logger.info(
@@ -390,15 +372,11 @@ export default class AuthenticationController {
       var request = {
         request: {
           type: "POST",
-          url: `${host}/auth/verify/forgot-password-code`,
+          url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            code: req.body.code,
-            newPassword: req.body.newPassword,
-          },
-          statusCode: 100,
+          body: req.body,
         },
+        statusCode: 100,
       };
 
       logger.info(
@@ -456,13 +434,11 @@ export default class AuthenticationController {
       var request = {
         request: {
           type: "POST",
-          url: `${host}/auth/resend/verification-code`,
+          url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-          },
-          statusCode: 100,
+          body: req.body,
         },
+        statusCode: 100,
       };
 
       logger.info(
@@ -518,14 +494,11 @@ export default class AuthenticationController {
       var request = {
         request: {
           type: "POST",
-          url: `${host}/auth/verify/user`,
+          url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            code: req.body.code,
-          },
-          statusCode: 100,
+          body: req.body,
         },
+        statusCode: 100,
       };
 
       logger.info(
