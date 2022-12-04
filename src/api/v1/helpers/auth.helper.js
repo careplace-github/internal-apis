@@ -30,8 +30,9 @@ export default class AuthHelper {
    * @returns {Boolean} True if the user is logged in, false otherwise.
    */
   static async isLoggedIn(token) {
+    
     try {
-      const decodedToken = this.decodeToken(token);
+      const decodedToken = await this.decodeToken(token);
 
       const currentTime = new Date().getTime() / 1000;
 
