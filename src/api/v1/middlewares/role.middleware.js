@@ -9,6 +9,7 @@ import logger from "../../../logs/logger.js";
  */
 export default function validateRole(roles) {
   return function (req, res, next) {
+    async function handleRequest() {
     logger.info("Role Validation Middleware");
     // Check that the request contains a token
     if (
@@ -49,4 +50,6 @@ export default function validateRole(roles) {
       res.status(401).send("No token provided.");
     }
   };
+  // Call the handle function
+  handleRequest();}
 }

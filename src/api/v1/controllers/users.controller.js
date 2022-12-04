@@ -153,11 +153,8 @@ export default class UsersController {
           type: "POST",
           url: `${host}/auth/signup`,
           headers: req.headers,
-          body: {
-            email: req.body.email,
-            password: req.body.password,
-            confirmPassword: req.body.confirmPassword,
-          },
+          body: req.body,
+          
         },
         statusCode: 100,
       };
