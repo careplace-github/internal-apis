@@ -14,24 +14,35 @@ const router = express.Router();
 
 router
   .route("/users")
-  // Test route
-  .get(validateAuth, validateRole(["admin"]), UsersController.getUsers)
-  .post(validateAuth, validateRole(["admin","companyOwner","companyBoard"]), UsersController.createUser);
-  
+  .get(validateAuth, validateRole(["admin"]), UsersController.getUsers);
+//.post(validateAuth, validateRole(["admin","companyOwner","companyBoard"]), UsersController.createUser);
 
-  router.route("/users/account").get(validateAuth, UsersController.getAccount);
+router.route("/users/account").get(validateAuth, UsersController.getAccount);
 
-// router to get user information by id
 router
   .route("/users/:id")
-  .get(validateAuth, validateAccess, UsersController.getUser)
-  .put(validateAuth, validateAccess, UsersController.updateUser)
+  .get(
+    validateAuth,
+    validateAccess,
+    validateRole(["admin", "companyOwner", "comoanyBoard"]),
+    UsersController.getUser
+  )
+  .put(
+    validateAuth,
+    validateAccess,
+    validateRole(["admin", "companyOwner", "comoanyBoard"]),
+    UsersController.updateUser
+  )
   .delete(
     validateAuth,
-    validateRole(["admin", "companyOwner"]),
+    validateAccess,
+    validateRole(["admin", "companyOwner", "comoanyBoard"]),
     UsersController.deleteUser
-  );
+  )
 
-
+router
+  .route("/users/:companyId")
+  .get(validateAuth, UsersController.getUsersByCompanyId)
+  .post(validateAuth, UsersController.createUser);
 
 export default router;

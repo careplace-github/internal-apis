@@ -106,17 +106,17 @@ export default class usersDAO {
         role: user.role || "user", // Default role is user
       });
 
-      await users.insertOne(newUser);
+      const response = await users.insertOne(newUser);
 
       return {
-        statusCode: 200,
-        message: "Added user to the MongoDB database successfuly",
+        response: response,
         userCreated: newUser,
       };
-    } catch (e) {
-      console.error(`Unable to POST user: ${e}`);
+      
+    } catch (error) {
+      logger.error(`Unable to add user to MongoDB, ${error}`);
 
-      return { statusCode: e.code, error: e.message };
+      return { error: error };
     }
   }
 

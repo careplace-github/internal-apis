@@ -2,10 +2,7 @@ import express from "express";
 import AuthenticationController from "../controllers/authentication.controller.js";
 
 import validateAuth from "../middlewares/auth.middleware.js";
-import validateAccess from "../middlewares/access.middleware.js";
 
-import { registerUserValidation } from "../validators/signup.validator.js";
-import validatorMiddleware from "../middlewares/validator.middleware.js";
 
 const router = express.Router();
 
@@ -28,7 +25,7 @@ router
 
 router
   .route("/auth/forgot-password")
-  .post(AuthenticationController.forgotPassword);
+  .post(AuthenticationController.sendForgotPasswordCode);
 
 // Resend code routes
 
@@ -38,14 +35,13 @@ router
 
 router
   .route("/auth/resend/forgot-password-code")
-  .post(AuthenticationController.resendForgotPasswordCode);
+  .post(AuthenticationController.sendForgotPasswordCode);
 
 // Verification Routes
 
 router.route("/auth/verify/user").post(AuthenticationController.verifyUser);
 
-router
-  .route("/auth/verify/forgot-password")
+router.route("/auth/verify/forgot-password")
   .post(AuthenticationController.verifyForgotPasswordCode);
 
 export default router;
