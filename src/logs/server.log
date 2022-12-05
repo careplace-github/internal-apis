@@ -10430,3 +10430,857 @@
   }
 }
 
+2022-12-04T04:08:59.943Z | [INFO   ]: Connected to database: users
+2022-12-04T04:08:59.955Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:08:59.956Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:08:59.963Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:08:59.964Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:08:59.964Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:08:59.966Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:09:01.755Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:09:02.603Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2RlOTg5YWVmLTYwZjktNGU4Yy04YTg3LTMwNjAxN2E4NjdlNyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImY3OWYxYmNiLTZhMDgtNDA5OS1iY2M0LWM2YTUwMjY1OTQ0NyIsImV2ZW50X2lkIjoiMWNkYzJmN2YtODc0Yi00YzNlLTg0MjctYWU1MmU1NWJjNTU4IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNjk0MiwiZXhwIjoxNjcwMTMwNTQyLCJpYXQiOjE2NzAxMjY5NDIsImp0aSI6IjBkNzQ4NzlkLWVmNWEtNDE3Yy1hOTg2LWY2M2NkZjg1YmIxYyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.p1g-yjaFyc6y6aAE-0VDb6gBz7UQuf8s30WqYVX7I_6kA5jsQtarrJis-BRT24JSOOxyhRLwbuYhIkZWiGUF3stYQZMed3c1vUOEv9n7RG_J0yDybNTdurOfVrbHvHnzeC1fnxfOjq1v3Vrxtn-LyzqRVWOTRCh3a3BtFNR7ONRAS_oQItqTtDM84ZDtddZXuPUbsYepo7oVpB3R96pvkssWrP-ETW-BeyrPVH_F-wGdvJbC7Gpz_rSJI5140bNIMUk2jiT1xQrZBDc9cFnl-1fBri3Yw5jPYkOi-fQpKXYHRYNZvpSUMn464tHiXWhYDy_yO2W_CRc2TInF2a1bag",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.CFy0r8LLFSU5d0PFJd-t2g8zgf3pbfV3MUdWSmxBgsN5FsT6hc85tNUTLr-V9-SnrPwzfpe-qj7lAnxVCNjkUX6zktMEUqJAl3l0P_aXSpPTDvhSEXD02mpCZ2YUVdeGNQs5KKlcWeAmuMQsvVl0HhLWyl71GG1i06ShcB2s23cBPg1gteto3U-Rm2MuD36eheMT4zPUV9jXt_Jy78WnN4BBWADlq2aCUgufqDYBhJMZfhSve5rGn_5mzpli6GsPysFs5iNBIm9V6DJNaPsDNZmsOlEoYJ3hhpAk4ypqdHb8-sEEDe2CmGjoI-svQzb1q-WeIQMt1lsgAac57NFQ7w.rebYtD_yXdzICYbR.x7F2qtd8_FusbZnxQ_fHw_c-VuFexLATlgAn7i09zNK6wH-mp8njiAe9T42xaBGl51wY6kG_W6cEvVtcwCig_k6MlRJWgmGxUIJr2s-4RLo34wHJe1Ioc4feyKLjJ-N4qG-b3ywJfwXvWSBXiYM2LL2_WPbvVE4Hfw3bcmQrn8GJ_8lOznjSNWA-HcGbcausNdWp4ACTxPjzKWVHvYu3VeFCJhJpeyOg2AeEWCpMfetxU5wVER__KeaDhb9BoKpqvcl6PepdHYApmsofzZUDxjPYDEbvI4lPZyndF3XP9walz5_4hqwzN0F49jHRZreQsoQ5JpCQGIzgqJUHtYmef7wOMVJl8SYG82yNJwPVOOdQOCdazH1xtkNeVkJ09ma8dcusvXLc_FBI14r9gGUB52ddH10dycbK4g5yVWKQXjwZyLWrqjRZSgzFegHaZlE6qyjkMid8RrLhymkj0HOuTL6umtpHUieLLu_qC_0gsClDuhTqj_q1xYPaud85QwxWtad99Vc4aRfFK0WSKdKnfK_gOAM3OYfVVLqOL5xVY3ahZZx65M8FYgBK683FI-a67vKwLp-DKqgTLOHEQOk7oC_1c0z-PIfZwlNDKImAYGCP1xHTvyoLHt7ZgmOsHjUAXyTWOpw_tUBBYvLMNNFqEaziAn6xVjTukP3fV38lPGCRZbjM0lhrphmrUQnVKqT8LyxiiTl-5_qFsNKoyfSmQ9CVuJrZcxR2TTc4fFHLj-gdK07Erl0miLg7qrJdWx4LiHdUDoDI4KiDGbYGVOb7zeQ23b5L9jivDazrqqfX-2Qi0fRQA4Bhl_5Q9yi-t-6hp_7pdadBsHADx0vyg4mMBbawcXbky6p2ax-stXYCF3YIZQK1idnIUTixW2kQnZehKs5PZkOOE79ZPN02lPIh4bqMc4VqXfLFUHjMNAwJ911mOjaIZCDML1TJlxBHKL2Hii8aprBqslSU1WZrpn1JqdA7OfTYlob8_e9Tvf0GXwa95NusyfMNmvkaIRM2oH572xz5rfgh0nfH7tjluu-eyzpcdlXDxNSejd61rwxWzZM7JS3qKXwHYbdSi6RHHhuFpmjRQXFMru6gvxAYfToUtDyfuHsi2rSZLiPzKP3R7op-jkQJGww8LDLoLUnAb9FrFZ-hLHhrx7-qJKhbhDvh58DwQVIeHJ8xsDGphezkyHR2_hh51wI-LhPDHIMjnidIveeEL266vPRlKBY2l6_mT5_glzp0DEjZFZuoN5E5cN1UTW_2VgMJfRVIhVPsR7oxEUYb1yYe4ciUQOGDwSodjGS4FvU1xqCR9Aj47BQTgL8y69tTcRx_ZolzjVDNFdyHPbWHhgIgxRx12cv9uHkOwHvd9elSma1kxNYZf0gZLC86lEow9jD4Ic6UhiEY43WPUZ0BwrqlQ1GBcWMMxKa2kJ6Brw.m1qyOv1-u22KuADVJaWVCA",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiJmNzlmMWJjYi02YTA4LTQwOTktYmNjNC1jNmE1MDI2NTk0NDciLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiMWNkYzJmN2YtODc0Yi00YzNlLTg0MjctYWU1MmU1NWJjNTU4IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjY5NDIsImV4cCI6MTY3MDEzMDU0MiwiaWF0IjoxNjcwMTI2OTQyLCJqdGkiOiJlNjVhMzJhYy03NjNiLTQyOTAtYmRkYy05YTViNjVmNzZhNGEiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.H98dUBqq8Yu6x8Gl7sAraUcxeGqw4O2mvlflZhgWAbKgbpwxAu8waDaT32z2btGYN1qg_dKTmXBaa-cIfNLONxw85rnpBCcrmGNk6lFUKVV4uz-kfaWGagyCbk0wTTbvc57nKsd58cq6AA9xdZTKPXVLLXIog19T2PmVTD5nIbs0xHRHaEEGXJFdNNll7_IAACpdaMfC3ND9yk38qd_cOk8LvOg8hArAFMrBI2_sop3MvtcNAiQDiOXk47QX3JPGMaBX3rCld7Oahkno_zFQKMdRgN_wBxWhapuFUMi757tt7rihXxzGAA6vM1Wv9nyC5iODDB1hXXKjTBKJsYcnSw",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_de989aef-60f9-4e8c-8a87-306017a867e7",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:09:02.606Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2RlOTg5YWVmLTYwZjktNGU4Yy04YTg3LTMwNjAxN2E4NjdlNyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImY3OWYxYmNiLTZhMDgtNDA5OS1iY2M0LWM2YTUwMjY1OTQ0NyIsImV2ZW50X2lkIjoiMWNkYzJmN2YtODc0Yi00YzNlLTg0MjctYWU1MmU1NWJjNTU4IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNjk0MiwiZXhwIjoxNjcwMTMwNTQyLCJpYXQiOjE2NzAxMjY5NDIsImp0aSI6IjBkNzQ4NzlkLWVmNWEtNDE3Yy1hOTg2LWY2M2NkZjg1YmIxYyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.p1g-yjaFyc6y6aAE-0VDb6gBz7UQuf8s30WqYVX7I_6kA5jsQtarrJis-BRT24JSOOxyhRLwbuYhIkZWiGUF3stYQZMed3c1vUOEv9n7RG_J0yDybNTdurOfVrbHvHnzeC1fnxfOjq1v3Vrxtn-LyzqRVWOTRCh3a3BtFNR7ONRAS_oQItqTtDM84ZDtddZXuPUbsYepo7oVpB3R96pvkssWrP-ETW-BeyrPVH_F-wGdvJbC7Gpz_rSJI5140bNIMUk2jiT1xQrZBDc9cFnl-1fBri3Yw5jPYkOi-fQpKXYHRYNZvpSUMn464tHiXWhYDy_yO2W_CRc2TInF2a1bag",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.CFy0r8LLFSU5d0PFJd-t2g8zgf3pbfV3MUdWSmxBgsN5FsT6hc85tNUTLr-V9-SnrPwzfpe-qj7lAnxVCNjkUX6zktMEUqJAl3l0P_aXSpPTDvhSEXD02mpCZ2YUVdeGNQs5KKlcWeAmuMQsvVl0HhLWyl71GG1i06ShcB2s23cBPg1gteto3U-Rm2MuD36eheMT4zPUV9jXt_Jy78WnN4BBWADlq2aCUgufqDYBhJMZfhSve5rGn_5mzpli6GsPysFs5iNBIm9V6DJNaPsDNZmsOlEoYJ3hhpAk4ypqdHb8-sEEDe2CmGjoI-svQzb1q-WeIQMt1lsgAac57NFQ7w.rebYtD_yXdzICYbR.x7F2qtd8_FusbZnxQ_fHw_c-VuFexLATlgAn7i09zNK6wH-mp8njiAe9T42xaBGl51wY6kG_W6cEvVtcwCig_k6MlRJWgmGxUIJr2s-4RLo34wHJe1Ioc4feyKLjJ-N4qG-b3ywJfwXvWSBXiYM2LL2_WPbvVE4Hfw3bcmQrn8GJ_8lOznjSNWA-HcGbcausNdWp4ACTxPjzKWVHvYu3VeFCJhJpeyOg2AeEWCpMfetxU5wVER__KeaDhb9BoKpqvcl6PepdHYApmsofzZUDxjPYDEbvI4lPZyndF3XP9walz5_4hqwzN0F49jHRZreQsoQ5JpCQGIzgqJUHtYmef7wOMVJl8SYG82yNJwPVOOdQOCdazH1xtkNeVkJ09ma8dcusvXLc_FBI14r9gGUB52ddH10dycbK4g5yVWKQXjwZyLWrqjRZSgzFegHaZlE6qyjkMid8RrLhymkj0HOuTL6umtpHUieLLu_qC_0gsClDuhTqj_q1xYPaud85QwxWtad99Vc4aRfFK0WSKdKnfK_gOAM3OYfVVLqOL5xVY3ahZZx65M8FYgBK683FI-a67vKwLp-DKqgTLOHEQOk7oC_1c0z-PIfZwlNDKImAYGCP1xHTvyoLHt7ZgmOsHjUAXyTWOpw_tUBBYvLMNNFqEaziAn6xVjTukP3fV38lPGCRZbjM0lhrphmrUQnVKqT8LyxiiTl-5_qFsNKoyfSmQ9CVuJrZcxR2TTc4fFHLj-gdK07Erl0miLg7qrJdWx4LiHdUDoDI4KiDGbYGVOb7zeQ23b5L9jivDazrqqfX-2Qi0fRQA4Bhl_5Q9yi-t-6hp_7pdadBsHADx0vyg4mMBbawcXbky6p2ax-stXYCF3YIZQK1idnIUTixW2kQnZehKs5PZkOOE79ZPN02lPIh4bqMc4VqXfLFUHjMNAwJ911mOjaIZCDML1TJlxBHKL2Hii8aprBqslSU1WZrpn1JqdA7OfTYlob8_e9Tvf0GXwa95NusyfMNmvkaIRM2oH572xz5rfgh0nfH7tjluu-eyzpcdlXDxNSejd61rwxWzZM7JS3qKXwHYbdSi6RHHhuFpmjRQXFMru6gvxAYfToUtDyfuHsi2rSZLiPzKP3R7op-jkQJGww8LDLoLUnAb9FrFZ-hLHhrx7-qJKhbhDvh58DwQVIeHJ8xsDGphezkyHR2_hh51wI-LhPDHIMjnidIveeEL266vPRlKBY2l6_mT5_glzp0DEjZFZuoN5E5cN1UTW_2VgMJfRVIhVPsR7oxEUYb1yYe4ciUQOGDwSodjGS4FvU1xqCR9Aj47BQTgL8y69tTcRx_ZolzjVDNFdyHPbWHhgIgxRx12cv9uHkOwHvd9elSma1kxNYZf0gZLC86lEow9jD4Ic6UhiEY43WPUZ0BwrqlQ1GBcWMMxKa2kJ6Brw.m1qyOv1-u22KuADVJaWVCA",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:11:11.595Z | [INFO   ]: Connected to database: users
+2022-12-04T04:11:11.598Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:11:11.598Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:11:11.601Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:11:11.601Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:11:11.601Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:11:11.601Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:11:35.866Z | [INFO   ]: Connected to database: users
+2022-12-04T04:11:35.869Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:11:35.869Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:11:35.871Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:11:35.871Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:11:35.872Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:11:35.872Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:11:42.767Z | [ERROR  ]: Internal error: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 500,
+  "response": {
+    "error": {}
+  }
+}
+
+2022-12-04T04:12:23.617Z | [INFO   ]: Connected to database: users
+2022-12-04T04:12:23.623Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:12:23.624Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:12:23.628Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:12:23.630Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:12:23.632Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:12:23.632Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:12:38.281Z | [INFO   ]: Connected to database: users
+2022-12-04T04:12:38.285Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:12:38.286Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:12:38.290Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:12:38.291Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:12:38.292Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:12:38.292Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:12:48.237Z | [INFO   ]: Connected to database: users
+2022-12-04T04:12:48.240Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:12:48.240Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:12:48.243Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:12:48.243Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:12:48.243Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:12:48.243Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:12:54.829Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:12:55.481Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzBjNzQ0YThmLTRlMDEtNDA4My1iZmQ4LTI1OGQ0MDY0M2VkYyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjhlZGJmMmE1LWE4YzktNDU1ZC04NDM3LWVhNzY1ZDg4MzY0ZSIsImV2ZW50X2lkIjoiZTg5MGI2NjEtYjNmYS00NTMzLTgyZmYtNzhlYTljMGE3NTVhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNzE3NSwiZXhwIjoxNjcwMTMwNzc1LCJpYXQiOjE2NzAxMjcxNzUsImp0aSI6ImNmZjFjZDdmLTI0ZWEtNDM2NS1iMDFiLTliMTBkNmY1ZGMzYyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.PoinSjhpZm89sZr3owrw94PJsDs3Tr8d5SOvPPNMG_8j2VmgYlM9urv8kcvgZbByATAbLKXHapr_dW07zcKuEt_z6O_6bEp_hNcrSpkjjowmYdj55Z536Wno_7FhOo1uveuMMEmfg2GeB2S_xzieTSjnNBqxtlPW5Y4MoLNaAUiJQUv69uj9g_qK1sWdHsJmedcruDKyv33LgjNSwPbKL-LyPk4VqmTDqkDWl24jxt-EP-SeScxjrECzf3i_oBRuMQWeybgOcWiAHFNEQnqoCtiRRLIbshsNNUSPLpUEP3yapHUE3fxVm2oSrVV8gyuyw8-Fmm2vRMnr-yFP3z1rdg",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.H2Qb0Hj36G4ubSk-iJfPNn51YSYhOKF4D2iHbOiBZFFNNbQ4_X7eRZq8mffRFwYSLjZOwxaBZwMrYOqngIRXUkh9H2eIihPlyFQsC-ETV1YLhtwixxJ-dYYlitHfWGlDuHO3Lc_wR_Ll418zn_BSnXWjToUO7Sld0fu2CcB6decZjrJcQWtMoKyli67vmWa8850MyUHM1mp5rqWhJR4o9mgN5i5KX6IIeygjHfYzoZP-yHFLuvYQyIpchtOwVCUB-iDYWHrgU9tikDYXRRhZthVCC2l0gpxl04cpHHE-0duWtEPfKDW7VyYZAzhFwM39drWDwPwNVaN-9z1sQ4Edqw.Nq8_-tFJvaOnQaDf.1dZqDnVVl5Gq5u1A8oJtS0O9Q3ISL9bP6JSoJSomeiZDmuMHKHfan0ff5gb5jBJRohvpufjub0U6sOBB75VJKSkjW9zzNPlUad2SX6XOT5wdZ1ZpfEuQnNaYe9fyUmegAxFDrUPcNxCS9BrZmYrL7U7CrgaH8qwXs9jljNSlEJeuLmktSLpQO5s_q63ag9QSfu6h4r5pRURgWwbi5_C0RB_Ax5BPWp6ksqZ0LSa79Fpt8EdiPsRNaNeoPsy0g_yOF6GNmcYfJ1HNJtbdlU0zbu28eEJP7ykKVxJ21Bvf4wu444s9qG-dFEKrc8vDcYvmyxtf7JiFMJ7XEMAKQeQZCbS0SwqXYSfMVMPWIQxC0DixX9MR5rwdXQAfHsw6GWJ7pTNIVBcjg-eYeR6J0rbziqyi_v9W9Llo7vqE2Hm73IM85xGMb1EOU-Cp_6OxFfDRnVV5iMyo1TkgGqXgEd8T-fYAq-AU3qo54Q8S3CikUue1uHglbjl7O69FEDpgV49-Mst55Y0lUlUl1Bcmgxc8Ttoy0dJX8RUfexhQSAycYUXP7JlP_WosHkR9xbsmU_4KUevBtRnwHJsDjLHiM3A1v1LBkqBxRhoapdbjzuGmLhYcCOg9Vlnk92acmiEH2pJ2mMgyXjTw7omeRkvhaWZ84thS70UjUZ-uKVYgO1RsthVDIB7hBbTLbUqTWwUSKlW_oil1HvvCO4bNLUZX1BIcMVd7Uv1JL6fg8-bTA3dV65jty28M37EA2IUmd2WzM8dhq3YHe8eJuYaLDfVr9ev-PcY76mmIWR-GP-oNeVhg4YOM1hrWi0julfuIUD6HA1wGOjv5M2fJNRLMrR6I-hQ-aFmr7_K9CnlJeFyK5Z-tFM2V4KVWltgUah3E01OeEnlCNSCOBtsVKASH3yQG-APer2DKSrNhiPXS-tW3DuMPlfrJjUS7JpL5LrsZ096Z7jzqED7LEF6iicA7SpXA3DWeVF4vRkB7pfnb9hIgCfImwW20hULmByXsSrJsVrHmt0R8uERqpcxNRk9F1KFumYL8BfYxsaMd3QCTQFStAIxfouWtBt4JIRWq-xO0t_rE6RuSzUGS58ReJI7_m11bb58og5gaSBigQvwS3LJ7GsAtEm7laxObLROT34pDM70_H_HF-Jb-VfAE-ZUsvSvqwhiEsL9Ekn_l67DWFCDnWe1CdZ3fNv5RKyQKmXuTsGj-T6fnyan0vvbylugi8UM1zt698_eWOpIA6oYiZ-ZOBui4DZ5dYJFG6kq8S-pXv9v5nmsGGDw1UHviYIrcvKiYCYu17-cunr9FF_X-cUtcUpFbwpiaHJNpKkjPhpIZBdMg9Tywqn6KjQReEaI1D8o1z8ar8-Lty_Lmz4662HN0yp4qSwjf0efW_Jwktx8MK62NIHQfJ9g6-r1tOfbLrSYawX-Yb-wsYw.s5EfvO-IAUvVIjsKJwA2TQ",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiI4ZWRiZjJhNS1hOGM5LTQ1NWQtODQzNy1lYTc2NWQ4ODM2NGUiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiZTg5MGI2NjEtYjNmYS00NTMzLTgyZmYtNzhlYTljMGE3NTVhIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjcxNzUsImV4cCI6MTY3MDEzMDc3NSwiaWF0IjoxNjcwMTI3MTc1LCJqdGkiOiIzNTgwYTgzNC1hNjNiLTRmYWItOWU2Ni1jNmFkNjI5MjFlMGMiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.AsHrzwjAFz3JDgNntmzETa4c-VXLBsU1kkKaf7IJSRNTA5L9m922o_hBVbhttE3UfbLrNNv1KWSFT--C1ZpVhB2WECkAEP0WAD73vRVjxR1WOLZ9VArbtLDPsWS1HVnD_mQrF_-QXg-AD_pfM_Epyge-V14Oqyjc8Rmqq-0x0yJ3S3MNGJpfwOpf1LExP1qe5o6VhY9zoAYYz-cjkNXTNx2S5hogA7PgBhbpJ_f6lEnwcgzTkPjAnrVJJxGViOTkksRe_7BqIIaJJ7QL_9or453j-fj00HyrZuQehAJmw-Tew-jx-lXaKhYb6buuDQGTBDN-aY4ZyOWo4k0ssMn5cA",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_0c744a8f-4e01-4083-bfd8-258d40643edc",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:12:55.482Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzBjNzQ0YThmLTRlMDEtNDA4My1iZmQ4LTI1OGQ0MDY0M2VkYyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjhlZGJmMmE1LWE4YzktNDU1ZC04NDM3LWVhNzY1ZDg4MzY0ZSIsImV2ZW50X2lkIjoiZTg5MGI2NjEtYjNmYS00NTMzLTgyZmYtNzhlYTljMGE3NTVhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNzE3NSwiZXhwIjoxNjcwMTMwNzc1LCJpYXQiOjE2NzAxMjcxNzUsImp0aSI6ImNmZjFjZDdmLTI0ZWEtNDM2NS1iMDFiLTliMTBkNmY1ZGMzYyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.PoinSjhpZm89sZr3owrw94PJsDs3Tr8d5SOvPPNMG_8j2VmgYlM9urv8kcvgZbByATAbLKXHapr_dW07zcKuEt_z6O_6bEp_hNcrSpkjjowmYdj55Z536Wno_7FhOo1uveuMMEmfg2GeB2S_xzieTSjnNBqxtlPW5Y4MoLNaAUiJQUv69uj9g_qK1sWdHsJmedcruDKyv33LgjNSwPbKL-LyPk4VqmTDqkDWl24jxt-EP-SeScxjrECzf3i_oBRuMQWeybgOcWiAHFNEQnqoCtiRRLIbshsNNUSPLpUEP3yapHUE3fxVm2oSrVV8gyuyw8-Fmm2vRMnr-yFP3z1rdg",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.H2Qb0Hj36G4ubSk-iJfPNn51YSYhOKF4D2iHbOiBZFFNNbQ4_X7eRZq8mffRFwYSLjZOwxaBZwMrYOqngIRXUkh9H2eIihPlyFQsC-ETV1YLhtwixxJ-dYYlitHfWGlDuHO3Lc_wR_Ll418zn_BSnXWjToUO7Sld0fu2CcB6decZjrJcQWtMoKyli67vmWa8850MyUHM1mp5rqWhJR4o9mgN5i5KX6IIeygjHfYzoZP-yHFLuvYQyIpchtOwVCUB-iDYWHrgU9tikDYXRRhZthVCC2l0gpxl04cpHHE-0duWtEPfKDW7VyYZAzhFwM39drWDwPwNVaN-9z1sQ4Edqw.Nq8_-tFJvaOnQaDf.1dZqDnVVl5Gq5u1A8oJtS0O9Q3ISL9bP6JSoJSomeiZDmuMHKHfan0ff5gb5jBJRohvpufjub0U6sOBB75VJKSkjW9zzNPlUad2SX6XOT5wdZ1ZpfEuQnNaYe9fyUmegAxFDrUPcNxCS9BrZmYrL7U7CrgaH8qwXs9jljNSlEJeuLmktSLpQO5s_q63ag9QSfu6h4r5pRURgWwbi5_C0RB_Ax5BPWp6ksqZ0LSa79Fpt8EdiPsRNaNeoPsy0g_yOF6GNmcYfJ1HNJtbdlU0zbu28eEJP7ykKVxJ21Bvf4wu444s9qG-dFEKrc8vDcYvmyxtf7JiFMJ7XEMAKQeQZCbS0SwqXYSfMVMPWIQxC0DixX9MR5rwdXQAfHsw6GWJ7pTNIVBcjg-eYeR6J0rbziqyi_v9W9Llo7vqE2Hm73IM85xGMb1EOU-Cp_6OxFfDRnVV5iMyo1TkgGqXgEd8T-fYAq-AU3qo54Q8S3CikUue1uHglbjl7O69FEDpgV49-Mst55Y0lUlUl1Bcmgxc8Ttoy0dJX8RUfexhQSAycYUXP7JlP_WosHkR9xbsmU_4KUevBtRnwHJsDjLHiM3A1v1LBkqBxRhoapdbjzuGmLhYcCOg9Vlnk92acmiEH2pJ2mMgyXjTw7omeRkvhaWZ84thS70UjUZ-uKVYgO1RsthVDIB7hBbTLbUqTWwUSKlW_oil1HvvCO4bNLUZX1BIcMVd7Uv1JL6fg8-bTA3dV65jty28M37EA2IUmd2WzM8dhq3YHe8eJuYaLDfVr9ev-PcY76mmIWR-GP-oNeVhg4YOM1hrWi0julfuIUD6HA1wGOjv5M2fJNRLMrR6I-hQ-aFmr7_K9CnlJeFyK5Z-tFM2V4KVWltgUah3E01OeEnlCNSCOBtsVKASH3yQG-APer2DKSrNhiPXS-tW3DuMPlfrJjUS7JpL5LrsZ096Z7jzqED7LEF6iicA7SpXA3DWeVF4vRkB7pfnb9hIgCfImwW20hULmByXsSrJsVrHmt0R8uERqpcxNRk9F1KFumYL8BfYxsaMd3QCTQFStAIxfouWtBt4JIRWq-xO0t_rE6RuSzUGS58ReJI7_m11bb58og5gaSBigQvwS3LJ7GsAtEm7laxObLROT34pDM70_H_HF-Jb-VfAE-ZUsvSvqwhiEsL9Ekn_l67DWFCDnWe1CdZ3fNv5RKyQKmXuTsGj-T6fnyan0vvbylugi8UM1zt698_eWOpIA6oYiZ-ZOBui4DZ5dYJFG6kq8S-pXv9v5nmsGGDw1UHviYIrcvKiYCYu17-cunr9FF_X-cUtcUpFbwpiaHJNpKkjPhpIZBdMg9Tywqn6KjQReEaI1D8o1z8ar8-Lty_Lmz4662HN0yp4qSwjf0efW_Jwktx8MK62NIHQfJ9g6-r1tOfbLrSYawX-Yb-wsYw.s5EfvO-IAUvVIjsKJwA2TQ",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:13:37.365Z | [INFO   ]: Connected to database: users
+2022-12-04T04:13:37.368Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:13:37.369Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:13:37.371Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:13:37.372Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:13:37.372Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:13:37.372Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:13:39.809Z | [ERROR  ]: Internal error: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 500,
+  "response": {
+    "error": {}
+  }
+}
+
+2022-12-04T04:13:56.815Z | [INFO   ]: Connected to database: users
+2022-12-04T04:13:56.819Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:13:56.820Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:13:56.822Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:13:56.822Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:13:56.822Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:13:56.823Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:14:01.597Z | [ERROR  ]: Internal error: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 500,
+  "response": {
+    "error": {}
+  }
+}
+
+2022-12-04T04:14:30.212Z | [INFO   ]: Connected to database: users
+2022-12-04T04:14:30.215Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:14:30.216Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:14:30.218Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:14:30.219Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:14:30.219Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:14:30.219Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:15:33.840Z | [INFO   ]: Connected to database: users
+2022-12-04T04:15:33.857Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:15:33.859Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:15:33.864Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:15:33.864Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:15:33.865Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:15:33.870Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:19:01.551Z | [INFO   ]: Connected to database: users
+2022-12-04T04:19:01.556Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:19:01.558Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:19:01.565Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:19:01.565Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:19:01.566Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:19:01.568Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:19:04.180Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:19:04.747Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzQ1NTA0NGEzLWNiNzItNDZjMS1hYzMyLWNmM2M3M2FjMzU5MyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjEzYjhmYjU5LTNhY2UtNDQ3MS1iOGM2LTc5Y2E1MTBkNzAxMCIsImV2ZW50X2lkIjoiYmU0MWU3NzQtMTAxZC00YmRjLWE1NmYtNjM0ZGU3ZmNmMjRjIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNzU0NCwiZXhwIjoxNjcwMTMxMTQ0LCJpYXQiOjE2NzAxMjc1NDQsImp0aSI6IjNmNzRmZmZiLWYwZjMtNDc5MS1hMzI5LTcyMzJjN2M0MzdhNiIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.rJu59qHH2tGUlb0Iu_iY9XflssQMdmAP_LWzTvReZ9Tttk1la2nnD_541ibSFBpZUAlt9lFCLkfnfNCrxqvxGkwAs0_oXQ5tD8DVjoTtNV2mGaWKWZyu7-bNm5c3D_mHJUWm1cvJUVdKIvJjeL8dnZZpA7AW48GT7vXgf_Hg16YFCqMRWy9zPmhJy1XfMMAEKmXKb5SzLSGeubEtcN8TyQ_rRI7U3l_HkvawdGidTQ5oAX2lkEzmkBoEHezUO0R5y58_t0-9sGOwOZ4o7g_ZpLt1bzJX3DQTQXcFrt8KIvzIylQWgRco7ifz183rFH4XRsFl5ClyuiGhpCHItIt-sA",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Fn0ecnz9ABy62zlXkWqX1tNI0pkx6zb4awmsruFHYR_f5kgZXbzEpCGfQCTfIdITeUI6L-2TNYQPeXanGEI4sDyv3AWxKfDNwmyDOYpQSq0ofWdpbXsNokdvkBJzk4vSpDxYstbRjxSAyC-8Lg7MNWXQLH0GjavO4D8xkU76BmF5Aa77O9WxAg1ojX3SJKq0YbqTDGfjWLdIsGNn2NNZ7CxJdVQ46216ypmucL7rsVVbw-QomU98bkVJM5Y8_OA_NddPajDmQasDXN2U77GegINrLbIRbBLYQXmblQavYQJk8uhVE3C-ylcEKSjAniAFufrZedH74YT55oV3xsvJFQ.oBeH9t427nfyi9ZD.HwUUxek29Lm9f0CgGvQThgfzzWEoIv1oAqCBh3SvUoRHT9QoVm2RqI_EtkfJsEM6P528-Jkg5ScN-ku4aofdQc3hJTiJkdH25VdfcM_zkZaA1-Q1ny9q7UakMn98pJ2v0O5xP3VQ5kv5iQXwzVHee11cAauAz_3BuokbNNo_bxV5bfKGcKKFHwLc1sx982Iz9r4zgRWOm-vIDv8rzuACjus8rdXXBVj2HqcQuTQn_ZHIP1cg1hD4qMHywB3SUFU_NJK5xp4LIOV27MVJdz5x4xkNggpkqN-3zBKaJT7KiyUKTQFQ2Pl8R9yREB5jP7QWJ4SBy07oXS52_V8vl6OdOgHkt1Q1hMTcfsKIV2FMuqm0SPg0-hOc2lEorGBzZ275Y9cv_6TgiQI3ng1ZWJGSCaVJNpRtss5szCG5-re3rrPnhRXcGejl1IB-0bBYhTOBoDIwrcsoK-AUq473cI83sbuCf_KUb6tX5DG6ehbW0yyjTRdp1y8BUY4IlgSJJDqrC5SE-B__oktH-TekeQXT96B6o8f_Y6FTMZOvqMgGdoCvx3A7HiADMke-NBFcvSBuE2ifk7s0buzypa997m1UC-qy6kPehTcCIplAqTV1pXbYPMpGQVXpqTXOJmyoAzIO2ghXe0wG3b6NHCmfor38t1tfhRRPNuEkZTazysnaSVeYrxDlxZsXVdwvC0-QnZ2iNQO3pBSqMAshzATKE0V_yCHHty17-xwwDA0UizIz7YJSTB9R0ZiG-5amvoLIMn6IX3DfdTACn_yJ3putfwq3yWn1lTy15vrHvRAbXTABCyWzGMJIW47uPFDhzAOkx-lqlJgOcLlWMgaX9-IvN12ltt4kvbF1eadrUQkBzL9AftWJDa7cdzBfjWt3sbf3sPutjdTKIkX5PcJ4gve_yYqlZpJSzMMgfOSiEcxRf3YAIIW0297bO5KCJqiEsDweJO6oB6JgfVNCcMXCWGD6cAk1WiFBEfuPgpNHboMYjiWUq-erBclyDzKiL0wxttxEgZb-kH4h-oG3HiNkDqNDrZWCFCDbeqfiu2H5fmoz4FxF4uGPlZA3UzxzDTs4x0-IxgDYy8PqwgIp6Hat_gwkVEcBV0CPobO-AeNp2D2e6IgWmkpYu5o3WbrOaOlGPELWPJk_F6LdT7pdpDLx7nhPyKYuMC7eSwrlYddzqjy8WJ82-g8qp3QJv4VEyztHQWegZtiPkzuzgGz3nc3YgwRohK7uBdlVrRF5eCG5wioIDMXyHstzovfpiqLv1FwVY2siapthBvPRu3UbMyqVS8fLNGkMujSky5PYAzY8f7jTj3CIWz4Td_4tzHpiVmIIPkJPWMl6CrjBsHHuQeA07UseWDLlzD68pLdrBhUCFc5Wci2tritsTezLGISPyHEE1OHO1mfiommeak6MhMDPraB6rKIcxXUNxg.FmIBxlnx54zBUUGbjXOSXQ",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiIxM2I4ZmI1OS0zYWNlLTQ0NzEtYjhjNi03OWNhNTEwZDcwMTAiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiYmU0MWU3NzQtMTAxZC00YmRjLWE1NmYtNjM0ZGU3ZmNmMjRjIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjc1NDQsImV4cCI6MTY3MDEzMTE0NCwiaWF0IjoxNjcwMTI3NTQ0LCJqdGkiOiIxYWFmZjY0OS1iYWI1LTQ3Y2UtYTdiNy1kYzEzYjM0ZGY0MjQiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.Wdu2aPh6T7hV95DvEJ7XZ8ep-1Idmw-trJbm1B9y6pnfHirasHWs9ar_7ruMS9iojwcr2oS7G-FnHZqmsPpuLiEQvmHP9XvGEo3mOIFH6zIj_5oHecRHk19FvQYBLgaajBASOdqf1xoZ5vhxtfskspOjRBaE0QjcR1SfpN1vGBvfxuybBmznZgJXNMssA4iIPGce7V8dgdCQhRkf_pQcDBKtENAq0DxMBvHiJRKbewZLROqIEzUyR3I7yRtTFVYTUVxaYwRI53lk8GHM_-y3Gc_I1_D9su7E9zC8CnbB7zxd-AOwwZ7F3BHuzQWobKI1AxONm0Jz-y9-xdwqwfb2nA",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_455044a3-cb72-46c1-ac32-cf3c73ac3593",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:19:04.749Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzQ1NTA0NGEzLWNiNzItNDZjMS1hYzMyLWNmM2M3M2FjMzU5MyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjEzYjhmYjU5LTNhY2UtNDQ3MS1iOGM2LTc5Y2E1MTBkNzAxMCIsImV2ZW50X2lkIjoiYmU0MWU3NzQtMTAxZC00YmRjLWE1NmYtNjM0ZGU3ZmNmMjRjIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyNzU0NCwiZXhwIjoxNjcwMTMxMTQ0LCJpYXQiOjE2NzAxMjc1NDQsImp0aSI6IjNmNzRmZmZiLWYwZjMtNDc5MS1hMzI5LTcyMzJjN2M0MzdhNiIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.rJu59qHH2tGUlb0Iu_iY9XflssQMdmAP_LWzTvReZ9Tttk1la2nnD_541ibSFBpZUAlt9lFCLkfnfNCrxqvxGkwAs0_oXQ5tD8DVjoTtNV2mGaWKWZyu7-bNm5c3D_mHJUWm1cvJUVdKIvJjeL8dnZZpA7AW48GT7vXgf_Hg16YFCqMRWy9zPmhJy1XfMMAEKmXKb5SzLSGeubEtcN8TyQ_rRI7U3l_HkvawdGidTQ5oAX2lkEzmkBoEHezUO0R5y58_t0-9sGOwOZ4o7g_ZpLt1bzJX3DQTQXcFrt8KIvzIylQWgRco7ifz183rFH4XRsFl5ClyuiGhpCHItIt-sA",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Fn0ecnz9ABy62zlXkWqX1tNI0pkx6zb4awmsruFHYR_f5kgZXbzEpCGfQCTfIdITeUI6L-2TNYQPeXanGEI4sDyv3AWxKfDNwmyDOYpQSq0ofWdpbXsNokdvkBJzk4vSpDxYstbRjxSAyC-8Lg7MNWXQLH0GjavO4D8xkU76BmF5Aa77O9WxAg1ojX3SJKq0YbqTDGfjWLdIsGNn2NNZ7CxJdVQ46216ypmucL7rsVVbw-QomU98bkVJM5Y8_OA_NddPajDmQasDXN2U77GegINrLbIRbBLYQXmblQavYQJk8uhVE3C-ylcEKSjAniAFufrZedH74YT55oV3xsvJFQ.oBeH9t427nfyi9ZD.HwUUxek29Lm9f0CgGvQThgfzzWEoIv1oAqCBh3SvUoRHT9QoVm2RqI_EtkfJsEM6P528-Jkg5ScN-ku4aofdQc3hJTiJkdH25VdfcM_zkZaA1-Q1ny9q7UakMn98pJ2v0O5xP3VQ5kv5iQXwzVHee11cAauAz_3BuokbNNo_bxV5bfKGcKKFHwLc1sx982Iz9r4zgRWOm-vIDv8rzuACjus8rdXXBVj2HqcQuTQn_ZHIP1cg1hD4qMHywB3SUFU_NJK5xp4LIOV27MVJdz5x4xkNggpkqN-3zBKaJT7KiyUKTQFQ2Pl8R9yREB5jP7QWJ4SBy07oXS52_V8vl6OdOgHkt1Q1hMTcfsKIV2FMuqm0SPg0-hOc2lEorGBzZ275Y9cv_6TgiQI3ng1ZWJGSCaVJNpRtss5szCG5-re3rrPnhRXcGejl1IB-0bBYhTOBoDIwrcsoK-AUq473cI83sbuCf_KUb6tX5DG6ehbW0yyjTRdp1y8BUY4IlgSJJDqrC5SE-B__oktH-TekeQXT96B6o8f_Y6FTMZOvqMgGdoCvx3A7HiADMke-NBFcvSBuE2ifk7s0buzypa997m1UC-qy6kPehTcCIplAqTV1pXbYPMpGQVXpqTXOJmyoAzIO2ghXe0wG3b6NHCmfor38t1tfhRRPNuEkZTazysnaSVeYrxDlxZsXVdwvC0-QnZ2iNQO3pBSqMAshzATKE0V_yCHHty17-xwwDA0UizIz7YJSTB9R0ZiG-5amvoLIMn6IX3DfdTACn_yJ3putfwq3yWn1lTy15vrHvRAbXTABCyWzGMJIW47uPFDhzAOkx-lqlJgOcLlWMgaX9-IvN12ltt4kvbF1eadrUQkBzL9AftWJDa7cdzBfjWt3sbf3sPutjdTKIkX5PcJ4gve_yYqlZpJSzMMgfOSiEcxRf3YAIIW0297bO5KCJqiEsDweJO6oB6JgfVNCcMXCWGD6cAk1WiFBEfuPgpNHboMYjiWUq-erBclyDzKiL0wxttxEgZb-kH4h-oG3HiNkDqNDrZWCFCDbeqfiu2H5fmoz4FxF4uGPlZA3UzxzDTs4x0-IxgDYy8PqwgIp6Hat_gwkVEcBV0CPobO-AeNp2D2e6IgWmkpYu5o3WbrOaOlGPELWPJk_F6LdT7pdpDLx7nhPyKYuMC7eSwrlYddzqjy8WJ82-g8qp3QJv4VEyztHQWegZtiPkzuzgGz3nc3YgwRohK7uBdlVrRF5eCG5wioIDMXyHstzovfpiqLv1FwVY2siapthBvPRu3UbMyqVS8fLNGkMujSky5PYAzY8f7jTj3CIWz4Td_4tzHpiVmIIPkJPWMl6CrjBsHHuQeA07UseWDLlzD68pLdrBhUCFc5Wci2tritsTezLGISPyHEE1OHO1mfiommeak6MhMDPraB6rKIcxXUNxg.FmIBxlnx54zBUUGbjXOSXQ",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:28:45.547Z | [INFO   ]: Connected to database: users
+2022-12-04T04:28:45.550Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:28:45.550Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:28:45.553Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:28:45.553Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:28:45.554Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:28:45.554Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:28:49.457Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:28:50.040Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzg3OTU1ZTRiLWExYzQtNGMwZS05MmZhLTEwYzhmOTNlYmZhZiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjA4NmM4NTQ2LWNmZjctNGI1OC05MTgwLWM1MDdiMGI1NWYwNSIsImV2ZW50X2lkIjoiOTY2ZWU0N2YtMmQxNC00YzFkLTg0MGUtYTM5MTljM2EwNDg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODEzMCwiZXhwIjoxNjcwMTMxNzMwLCJpYXQiOjE2NzAxMjgxMzAsImp0aSI6ImY0YTc3NjQzLTQ0YjUtNDcyYS04M2Q2LWM3YjI5NTY3OTFjZSIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.H9xHJ_5e2L2RUYuHWGIOVvmxsWRUb8HPuxnoga8aem39ScCtVyr7xym8xksMxhhACbITlHi8ePMu8L-dzM51C3DouNdOTx59Q01n_kgdIWFMIuiUimLeBaBpYshTgBTkEQ8NUB8cQN4MJbIDdqnQlAV6vxvbmixLXX6fNuhFlQO0xm340GKmcInQRPgbmgE2VdYZj7NBZNbBqHoZ_uBkMQjWmPQMV0nn4Inv5aHVqqAv14FXCWxdrRPK7PddQWAXf2Lgw7Z403P3kVQzj6_za3Eoy_g7QlTaudxlSL8uoIkk4xayBo1ctNJJJcxt3xDXhDMYdZai4G13Pdm5ljgVfg",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.gt4Tnoj1ch4oSUk4FV-yM0ZzNkaChl-hJ4VqR-tgWJC40U-lgDnRIzA-Da5-t1zkbLvrTnCXz2gJ5NlWT4ICXu9xgX5PMZOOMX9H-blQi0ZObdtJzjnh6tlGJa27NmedbJoAClv8W-a1YfB5zkSOBoan82qWS8a2gtATS56aMgd4kLRJbwMDl4IZLRYL-Xrg4lUoIF_UuUBOlLikDt7hdt1577FaTL9EEfs9-YscHFjdyCjvkKz1au-RtdhMx_8o5zrZsMDQ7cOguVI0cX6VXYZcRMLtg5I95qXb_Rk1ORiHxawLNPK1nq9wxvTmf_77i5H-Uw9eGtvk1_sXpn4LrA.9aXZZMBxui3eEJg_.VW8s4FZHEwAvKssZNimwFJ5f4jD-IdfLujJijM2fmspuTYZ7lOvgDZi8Y5vOoJhT07e3StPiLPsz_NUAEa90k17qDNCesppRZfwAbsZoQQsx-Zsn9cCBHXe5kWoWF3oKAt3pAwGaXWOnrEgmIs5Ka9iHtyHBKzMqjJMdZx2SHywzp6RkfUT8DKjLeO0ZV3XMSMU_daTsYZ4h6-a8CdeMf6u7RRttV5F08xcj2NXYoYvVs7Gu4qCYQhR-65OELIm0-PhDNM4JM9X6XKZl71wcxd3Fi-n4B9W0nU7NW3K4LjtgJ5JuWhI5SgV14_xScLZkv4udC051kFJi-IFVGdT0yn0wU3hrxN0BYkIeGHokzLgb4m9RYnR31rFxF0YxJimYCkRxUCZ7wcgnz9CaAkTINwTKtMaClP5kvh9q2m_UiCHfvFSMZ-r0qQqrsbB3idlGwDqTUHm-3fZ0onZvML73SIDdG_rKUhywJUql8Dbt4FAHeWd6xtXtWFWYFWQGhfxRF6yfM7WXHl-d2-XZQ3JIC1-UiWRbDkAL_aUL-9kCnRgyBhiLN5ddbRaiF7dCk84ART8oRGVRu2okTi07NmCWKTaMvAKxlqd-V9IeruT1P9KGSZT0foQjXSVZNT3EiPsC8s7mCHVNWpZoMdhIWdcFCw-V7NmsU26_0hSDbP_vee1rG4JP8j4qscP06X2ca28bsr-A-sgFI1CAksWnPd3TE6Tm1yRJhVoWDAhuVxcG85xeTcyoM0UfZa9b-s4MBQVT1Lek2nCTtW3-2B7epbbUL7lkZh8Qg2NyvyIeGSpAnCx8s5p_9UItK1IOPQj2MGW8-W0dmVl1ppbg_5jVw5ZS8lQdCwO2bIC3TnWzF0NUyg3X6oPs4FaxU16NfxhTq6l5MgiGqBKfU9ehl84mn6Y6RUF-Peutwjey8l_uvDMtC0zyTHCuqP1ywJ9oEC4dd1ulmk42rJovLTHVM_KfZlUqQmqOOgU910FQ4GjXwBsg9-IjhYtNuxEgHKgLXhhOrWFMvyrlh3GShNEErfwt8oZu0qtHDxkKY2y43-_tr-IpQJ-PQtucN5GxGp6M3UU33UMM6BAPe9LZ6HZeaAxLAgcCw8CfxswoCvntim6ubAzpF1599_MzVwEqplHT6a8PSRUZY3QYYi1vy11mLJDbgGcbrkGTK2t6pjbdMq0syaJQMaxX931XjuaZdYC35GDp7-qnSu1NgZKnavS47qGOJGlbKVu-N4EnT_MvoqeLXZT4XTwsSqgmXt3fYEw0_DyznUxTb4fFFANFDl_H6KN-zMjtlJ_zzCmoRbLGDCUaoyHeqw9Qav3B8FBOqBWXxRqlArx954dM2pZsLLxVe05lEtzSD0Ac_bgOKL_SxcOrHKINHsUTBQulrwVH8TjsGlO8GDlYKBlB5Wfez-FbMqpl-YoiCPEcnw.djIxvVxHdSqxEImXsK_Wsw",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiIwODZjODU0Ni1jZmY3LTRiNTgtOTE4MC1jNTA3YjBiNTVmMDUiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiOTY2ZWU0N2YtMmQxNC00YzFkLTg0MGUtYTM5MTljM2EwNDg0IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjgxMzAsImV4cCI6MTY3MDEzMTczMCwiaWF0IjoxNjcwMTI4MTMwLCJqdGkiOiI1ZDk0MjIzOC00YWFmLTRmZjktYWEyOC03NTQ1N2ZiMWQxNjQiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.Ur_iGVJboNL_Am8QlalKyE9jZsHvULPdHN6mPIDna13nCgPjBixbRZxtQ3RrNQ_hm_wBgn0fRnnHYOdKSfr1dKo38O-f7M-KPLaDo8c7aeKR6CUfFS1inHPG8FSu5LI0KLTNcg9nkXphCFNRyJf9mGQ6_ZUXMSHCCQJo-snj2-gjj4vFZI6gUxK9YpZr5_mzunYv6t6ZA0mRUasL7bVVckq2xzVdNl-GcLYNWxWH2sIfMZrL5IK-NiU_E8pqPGvXkk4M4w0DFx0nifjINzKHNG0yS00nUQ0bR26HGQuNOvoU9ww0ma1JpaWzknYnxv9OPKX1cg_zB45m7ozCFq-nsw",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_87955e4b-a1c4-4c0e-92fa-10c8f93ebfaf",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:28:50.042Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzg3OTU1ZTRiLWExYzQtNGMwZS05MmZhLTEwYzhmOTNlYmZhZiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjA4NmM4NTQ2LWNmZjctNGI1OC05MTgwLWM1MDdiMGI1NWYwNSIsImV2ZW50X2lkIjoiOTY2ZWU0N2YtMmQxNC00YzFkLTg0MGUtYTM5MTljM2EwNDg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODEzMCwiZXhwIjoxNjcwMTMxNzMwLCJpYXQiOjE2NzAxMjgxMzAsImp0aSI6ImY0YTc3NjQzLTQ0YjUtNDcyYS04M2Q2LWM3YjI5NTY3OTFjZSIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.H9xHJ_5e2L2RUYuHWGIOVvmxsWRUb8HPuxnoga8aem39ScCtVyr7xym8xksMxhhACbITlHi8ePMu8L-dzM51C3DouNdOTx59Q01n_kgdIWFMIuiUimLeBaBpYshTgBTkEQ8NUB8cQN4MJbIDdqnQlAV6vxvbmixLXX6fNuhFlQO0xm340GKmcInQRPgbmgE2VdYZj7NBZNbBqHoZ_uBkMQjWmPQMV0nn4Inv5aHVqqAv14FXCWxdrRPK7PddQWAXf2Lgw7Z403P3kVQzj6_za3Eoy_g7QlTaudxlSL8uoIkk4xayBo1ctNJJJcxt3xDXhDMYdZai4G13Pdm5ljgVfg",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.gt4Tnoj1ch4oSUk4FV-yM0ZzNkaChl-hJ4VqR-tgWJC40U-lgDnRIzA-Da5-t1zkbLvrTnCXz2gJ5NlWT4ICXu9xgX5PMZOOMX9H-blQi0ZObdtJzjnh6tlGJa27NmedbJoAClv8W-a1YfB5zkSOBoan82qWS8a2gtATS56aMgd4kLRJbwMDl4IZLRYL-Xrg4lUoIF_UuUBOlLikDt7hdt1577FaTL9EEfs9-YscHFjdyCjvkKz1au-RtdhMx_8o5zrZsMDQ7cOguVI0cX6VXYZcRMLtg5I95qXb_Rk1ORiHxawLNPK1nq9wxvTmf_77i5H-Uw9eGtvk1_sXpn4LrA.9aXZZMBxui3eEJg_.VW8s4FZHEwAvKssZNimwFJ5f4jD-IdfLujJijM2fmspuTYZ7lOvgDZi8Y5vOoJhT07e3StPiLPsz_NUAEa90k17qDNCesppRZfwAbsZoQQsx-Zsn9cCBHXe5kWoWF3oKAt3pAwGaXWOnrEgmIs5Ka9iHtyHBKzMqjJMdZx2SHywzp6RkfUT8DKjLeO0ZV3XMSMU_daTsYZ4h6-a8CdeMf6u7RRttV5F08xcj2NXYoYvVs7Gu4qCYQhR-65OELIm0-PhDNM4JM9X6XKZl71wcxd3Fi-n4B9W0nU7NW3K4LjtgJ5JuWhI5SgV14_xScLZkv4udC051kFJi-IFVGdT0yn0wU3hrxN0BYkIeGHokzLgb4m9RYnR31rFxF0YxJimYCkRxUCZ7wcgnz9CaAkTINwTKtMaClP5kvh9q2m_UiCHfvFSMZ-r0qQqrsbB3idlGwDqTUHm-3fZ0onZvML73SIDdG_rKUhywJUql8Dbt4FAHeWd6xtXtWFWYFWQGhfxRF6yfM7WXHl-d2-XZQ3JIC1-UiWRbDkAL_aUL-9kCnRgyBhiLN5ddbRaiF7dCk84ART8oRGVRu2okTi07NmCWKTaMvAKxlqd-V9IeruT1P9KGSZT0foQjXSVZNT3EiPsC8s7mCHVNWpZoMdhIWdcFCw-V7NmsU26_0hSDbP_vee1rG4JP8j4qscP06X2ca28bsr-A-sgFI1CAksWnPd3TE6Tm1yRJhVoWDAhuVxcG85xeTcyoM0UfZa9b-s4MBQVT1Lek2nCTtW3-2B7epbbUL7lkZh8Qg2NyvyIeGSpAnCx8s5p_9UItK1IOPQj2MGW8-W0dmVl1ppbg_5jVw5ZS8lQdCwO2bIC3TnWzF0NUyg3X6oPs4FaxU16NfxhTq6l5MgiGqBKfU9ehl84mn6Y6RUF-Peutwjey8l_uvDMtC0zyTHCuqP1ywJ9oEC4dd1ulmk42rJovLTHVM_KfZlUqQmqOOgU910FQ4GjXwBsg9-IjhYtNuxEgHKgLXhhOrWFMvyrlh3GShNEErfwt8oZu0qtHDxkKY2y43-_tr-IpQJ-PQtucN5GxGp6M3UU33UMM6BAPe9LZ6HZeaAxLAgcCw8CfxswoCvntim6ubAzpF1599_MzVwEqplHT6a8PSRUZY3QYYi1vy11mLJDbgGcbrkGTK2t6pjbdMq0syaJQMaxX931XjuaZdYC35GDp7-qnSu1NgZKnavS47qGOJGlbKVu-N4EnT_MvoqeLXZT4XTwsSqgmXt3fYEw0_DyznUxTb4fFFANFDl_H6KN-zMjtlJ_zzCmoRbLGDCUaoyHeqw9Qav3B8FBOqBWXxRqlArx954dM2pZsLLxVe05lEtzSD0Ac_bgOKL_SxcOrHKINHsUTBQulrwVH8TjsGlO8GDlYKBlB5Wfez-FbMqpl-YoiCPEcnw.djIxvVxHdSqxEImXsK_Wsw",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:29:58.933Z | [INFO   ]: Connected to database: users
+2022-12-04T04:29:58.939Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:29:58.941Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:29:58.946Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:29:58.947Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:29:58.947Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:29:58.947Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:30:01.062Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "ipAdress": {},
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:30:01.837Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2IwODk1M2FiLTEzZmItNDU5OC1hMDNmLTgzZmE1Mzk2NDZhMiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjNhYzRiZDFjLWRmZDctNDFhNy1iNjRhLTI4NjhjYTA5M2IxNiIsImV2ZW50X2lkIjoiODFhMmMzNjMtNjA5OC00ZmZmLTgyZWQtZjYwMWZiMjQzYjVhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODIwMSwiZXhwIjoxNjcwMTMxODAxLCJpYXQiOjE2NzAxMjgyMDEsImp0aSI6IjFiNjY2N2E0LTc3ZjctNDA0NC04OGUzLWM2ODE3NDNkYWU2ZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.GB5lxTsSGb3JhXT9aTfeJZVZR3pt-Xk11vuDs-03j8w-E11VAkTvZMyQFEwCcdhoA0z3NkSxcLvWGrUQFOfpl-AgIASY8VmmCXf9RKyzD7yskjpikoA_zG12ioHvUMQyJ7nXI8rlmLQie5E46imfhTRo0XXfC12wVmcz_S-tIVJD_aN8JHE0uW6gDM4im5KPfbEEaiUo8cOunt_R9JzCdT4gw-0kdOTc_cyuYpdZptSrVxRaz-e7a4SMVTij6FMdDFFbuN9Oa7DpmyAv49WMwVcLvwq6Yh_kDAQBMwgAHiG809OFLLSlR4l9jVDm_VcsggOiP319tjQ03A9wtKbanA",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.H2Vc2oKRbNp-EoIEXucjOlqz7QIOOwl3nhmmxR-xjQlBxy3iamdVgZeDby3IE1d7G18GFpAsrpXKlcK08fKf7veoCZq-aGpO44tHw9wld5tqWmK5xnmzu3u58hRHu-zCWkuf3lOt_xWLxQSL5xo2WnXhYjNgbBY4XfBm0xJVnWOPZLUtjVMAOMKqS8UJdUl1OPOFdUtnygIpWR3fwLX8PY74Z9iBe4Yi9xxYliVWxc3FW2Z8-8i1FHR8DThND9b_gTjKjQp14Kr9_yXssO9y6fOAbvdzMepxECDFNrNTF1-2_cQK3VegYRjqJP0z2OWFTG1KicZ_aAVfxKklvC9wVQ.JJaHJHHzbiRJosfv.icfYLH73l07Et16BNFjD9KtAqOzARMYBPVL_NbBFNehqGdzzSiW3LnzK73lEea3ts0aN5irmB2XUity-sN0-aIwM0Kflai-eTVm1wXTSPJFCl49pguOAeYsPrHLkwexQqKtnSJ0k9b9-xyQJLh9-tI0OWSKU7ADD-2gJpW0DcyIXNiKKbVYkv9Iko4cyuN52XwnTxsx2Z53kAcv3iT3X8A-eMqosWTbL0d3BIf457s_O6N4WPekztTN9AMFRDXiGte9Jf_BZGjSrC0ubCjWpcCB00urEK8KADYMYGfjiUUyVMdr2c296NK-oO6GtOA-n1n5JlrH0afOFngs8T9WUOU5KK8-En4RYk3X77h77-mAlsDyHUCKGwahnpzxAW12-usgzm_FMZFbuThTKbbNXvOiH-FFPQA2o8ZLXpGRReRTqUysGyKgKd6JTZaQAB2kwmvFccCLfZkg7ByEIJ4XW5cj8hu-nGnvGGTzpNbFly339O750dja5ALhRw_aIoX4h04icS8liTEWS7y431rcqpQwiL5godVbHEH3WBR01eGLMTLbzaEbe0ladcvH621cpmOzYC9QLqcwWhWVY6idFMHH4a14FhnsuMZe6NPbHbmNTV8DDVfN4NLHtNpwmUkmEo7UJU8snxjLmrcslqwqqBvzJkW44pQwAyIDGUPf24Esuebvb_xBPx5IFxx-vfw-KN5B0SXy63FjO50qyNZpCBSsB6n1uC8INkbrw4Eq50DM_C8EaDQDec9V_nbtz1xzRun5ZPGqTnMR_fJkRkGkChqFM-HoSRaPQwyBt7DECnrLI-G_GSchNyl-iypVlMlpJMUOhiP6fHke1pbyz83apHjs8_svIcNF9qwGBObk_BtqVy37G_4qJnON1H0JBm3pyx8SLgNYlPg6jseg3OhCYV2_DlJoGkGQwDG9AaaQebQYJGSbIjbBwPXq5rgOailWSg_3iJk1kVktFG47S7tSMgM3HKmEMRukbgANrpBRINKHA2bR6lXWkAFCkpHZSzeb1yjcNoADwpxoLNKrThrD92DeOFfx2_Vspc_xgbdT15iWmoSnfM5hHwQaGqHhvffA0K2_YXyDWoAxXj1m59uSFlcOKTg73eFb0gwW-jtVBYeQoDpTULIakK-1kHfz-acqfmF5w_RoTLbofPizim6BmTvrKQ8ZBT2Ng4vjSt9CgCzctSwb1l29SwlFjq0UmhUdwIMNRTQtSMKUe_H5g35k5e3h6C7j7hs2nNv1Q7yuLg3sLEjVAjBM9fKTD37lJtVgrVG4DGdviPhtDtomi5eatGkRyE2IlWTYq4dHQaXxmqosX54nC480toT6RukiKbJxnTquweyn2QV8DT2xeN8sEYyu8qwuiZwlwePFWCN10I2jPIh9GoLuiubrQbnyEN0dpx3JYjmpcLgQTtOUFIfoiCxJX5Q.M7hYSijkdvCRmeiEN4sP7A",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiIzYWM0YmQxYy1kZmQ3LTQxYTctYjY0YS0yODY4Y2EwOTNiMTYiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiODFhMmMzNjMtNjA5OC00ZmZmLTgyZWQtZjYwMWZiMjQzYjVhIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjgyMDEsImV4cCI6MTY3MDEzMTgwMSwiaWF0IjoxNjcwMTI4MjAxLCJqdGkiOiJlNzk5ZGQzYy05MTFjLTRlMWYtYTllMC01ZTNhODkzZDE2Y2MiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.YTxPKhIH2qj_Y3wUEe8nltoqCPSJxWd-lNoX4m78Uc7jx_f0bOPTBcFFcmnvYRqhl5K2m6YrnXwDLjP-lEzlYE-nK2asf6w91NnbM7eutjFE75olVY7Md5AQ68mhQwv7I6Y5YtUpY0LT4ZbJje4yq7Ut3uN_wSzmms1uQpmxBXP_hwclHsowprFCUDbVCwcVt9nW2CRrGwPnji7hn7c5aQ6OEpgTvAWNuxuPuntA8mUgZFOY_tmF6RUHJKvNCZkOBn1USzf0NfovXyWGMxtmK5wXPSB9d508Qtwu32IDqN0RfCoi4sVtvVy6reSW100pBzHXrpoNtyaBrLqJn1ZlaQ",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_b08953ab-13fb-4598-a03f-83fa539646a2",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:30:01.843Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "ipAdress": {},
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2IwODk1M2FiLTEzZmItNDU5OC1hMDNmLTgzZmE1Mzk2NDZhMiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjNhYzRiZDFjLWRmZDctNDFhNy1iNjRhLTI4NjhjYTA5M2IxNiIsImV2ZW50X2lkIjoiODFhMmMzNjMtNjA5OC00ZmZmLTgyZWQtZjYwMWZiMjQzYjVhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODIwMSwiZXhwIjoxNjcwMTMxODAxLCJpYXQiOjE2NzAxMjgyMDEsImp0aSI6IjFiNjY2N2E0LTc3ZjctNDA0NC04OGUzLWM2ODE3NDNkYWU2ZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.GB5lxTsSGb3JhXT9aTfeJZVZR3pt-Xk11vuDs-03j8w-E11VAkTvZMyQFEwCcdhoA0z3NkSxcLvWGrUQFOfpl-AgIASY8VmmCXf9RKyzD7yskjpikoA_zG12ioHvUMQyJ7nXI8rlmLQie5E46imfhTRo0XXfC12wVmcz_S-tIVJD_aN8JHE0uW6gDM4im5KPfbEEaiUo8cOunt_R9JzCdT4gw-0kdOTc_cyuYpdZptSrVxRaz-e7a4SMVTij6FMdDFFbuN9Oa7DpmyAv49WMwVcLvwq6Yh_kDAQBMwgAHiG809OFLLSlR4l9jVDm_VcsggOiP319tjQ03A9wtKbanA",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.H2Vc2oKRbNp-EoIEXucjOlqz7QIOOwl3nhmmxR-xjQlBxy3iamdVgZeDby3IE1d7G18GFpAsrpXKlcK08fKf7veoCZq-aGpO44tHw9wld5tqWmK5xnmzu3u58hRHu-zCWkuf3lOt_xWLxQSL5xo2WnXhYjNgbBY4XfBm0xJVnWOPZLUtjVMAOMKqS8UJdUl1OPOFdUtnygIpWR3fwLX8PY74Z9iBe4Yi9xxYliVWxc3FW2Z8-8i1FHR8DThND9b_gTjKjQp14Kr9_yXssO9y6fOAbvdzMepxECDFNrNTF1-2_cQK3VegYRjqJP0z2OWFTG1KicZ_aAVfxKklvC9wVQ.JJaHJHHzbiRJosfv.icfYLH73l07Et16BNFjD9KtAqOzARMYBPVL_NbBFNehqGdzzSiW3LnzK73lEea3ts0aN5irmB2XUity-sN0-aIwM0Kflai-eTVm1wXTSPJFCl49pguOAeYsPrHLkwexQqKtnSJ0k9b9-xyQJLh9-tI0OWSKU7ADD-2gJpW0DcyIXNiKKbVYkv9Iko4cyuN52XwnTxsx2Z53kAcv3iT3X8A-eMqosWTbL0d3BIf457s_O6N4WPekztTN9AMFRDXiGte9Jf_BZGjSrC0ubCjWpcCB00urEK8KADYMYGfjiUUyVMdr2c296NK-oO6GtOA-n1n5JlrH0afOFngs8T9WUOU5KK8-En4RYk3X77h77-mAlsDyHUCKGwahnpzxAW12-usgzm_FMZFbuThTKbbNXvOiH-FFPQA2o8ZLXpGRReRTqUysGyKgKd6JTZaQAB2kwmvFccCLfZkg7ByEIJ4XW5cj8hu-nGnvGGTzpNbFly339O750dja5ALhRw_aIoX4h04icS8liTEWS7y431rcqpQwiL5godVbHEH3WBR01eGLMTLbzaEbe0ladcvH621cpmOzYC9QLqcwWhWVY6idFMHH4a14FhnsuMZe6NPbHbmNTV8DDVfN4NLHtNpwmUkmEo7UJU8snxjLmrcslqwqqBvzJkW44pQwAyIDGUPf24Esuebvb_xBPx5IFxx-vfw-KN5B0SXy63FjO50qyNZpCBSsB6n1uC8INkbrw4Eq50DM_C8EaDQDec9V_nbtz1xzRun5ZPGqTnMR_fJkRkGkChqFM-HoSRaPQwyBt7DECnrLI-G_GSchNyl-iypVlMlpJMUOhiP6fHke1pbyz83apHjs8_svIcNF9qwGBObk_BtqVy37G_4qJnON1H0JBm3pyx8SLgNYlPg6jseg3OhCYV2_DlJoGkGQwDG9AaaQebQYJGSbIjbBwPXq5rgOailWSg_3iJk1kVktFG47S7tSMgM3HKmEMRukbgANrpBRINKHA2bR6lXWkAFCkpHZSzeb1yjcNoADwpxoLNKrThrD92DeOFfx2_Vspc_xgbdT15iWmoSnfM5hHwQaGqHhvffA0K2_YXyDWoAxXj1m59uSFlcOKTg73eFb0gwW-jtVBYeQoDpTULIakK-1kHfz-acqfmF5w_RoTLbofPizim6BmTvrKQ8ZBT2Ng4vjSt9CgCzctSwb1l29SwlFjq0UmhUdwIMNRTQtSMKUe_H5g35k5e3h6C7j7hs2nNv1Q7yuLg3sLEjVAjBM9fKTD37lJtVgrVG4DGdviPhtDtomi5eatGkRyE2IlWTYq4dHQaXxmqosX54nC480toT6RukiKbJxnTquweyn2QV8DT2xeN8sEYyu8qwuiZwlwePFWCN10I2jPIh9GoLuiubrQbnyEN0dpx3JYjmpcLgQTtOUFIfoiCxJX5Q.M7hYSijkdvCRmeiEN4sP7A",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:30:23.678Z | [INFO   ]: Connected to database: users
+2022-12-04T04:30:23.682Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:30:23.684Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:30:23.688Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:30:23.689Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:30:23.690Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:30:23.690Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:30:30.359Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:30:31.001Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2JkZjEyNjQ3LWRjNTktNGZiNi1hOGM2LTQ0MjRiZGFiZDlkMSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImYzZGExOGU4LTNmMDctNDg4Yy04MWU3LWY1ZWNjZTc5YzJhZCIsImV2ZW50X2lkIjoiODZmM2RiZTctMGVhMi00OTY4LWFhNTQtYzQwYWNiMmVjNTg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODIzMSwiZXhwIjoxNjcwMTMxODMwLCJpYXQiOjE2NzAxMjgyMzEsImp0aSI6ImQ3ZjQzYjVjLTY3MTgtNDI5Ni1iZTAyLWUwYTZhMTgwZmE3YyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.lRsL-feM4xaGZANmB9M_d6jWDaw-k9ZBMe0UvD4vORoumrxD2FOY2JN9TfDQZhmh2yzOibUUsFXyc7KkqkumZFLhc-pXM2YjOvQAHYigo65WDeXzmOlWLmfozeSmzpiyWOWZ6kiMdLig9eyza8cjsaic6zlSIFH0xnZiHen93NK1GeLLbDSYl4zL01lBBz3NItAO8r9rA92xB3Xwm41Jg5DFCrZNaiwBn-yhjirXDpCiOKRKgsM-hcs305rFrINZqQObpvpc-3x1aosidl8N_Ya7oJuu5yr_c3eIjczYUQadGJVIVx2W2vrGlXuzkZrwIn7kpjaTkekfsZtdMEmLdg",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Wps72MdZpB0FxoNvBX-YVj1jtodl3vxPWbVFXhF2p5bAi7skRrLpjGgZAivGHc5VsDKTXrrtDHgPyYpQRNHGaqTlRcR829RJu-PsPGoIS3vz2y18_MTZTbSnA-h977BHJ50htfOscmvrZq1o-NzUdqDuompYuMJY7e9a5cSSvh6YNw8uU66B_w4utRViRH9lyRcrLTWf1OFgh3gwxryEZkYQFtzV9TlwaqP9Q6KbzB1VPLVDWsfuLrJMb4b3GCKqHZb4tVqbcIBjRsEwloavqqRdilrDvDFgrSsvd5xi5ne9YM3E8IS-KXjx2rFRVaQqFFSG25FACIUwBqvaOCkCTA.Ke_6UB0K80ochIrK.NI9UMtpYyjjFOOD9nNAtpDiJ4W_6dy2pJN5iLiOU0A3AnSD-Nl6_h4Aj0k4foY5_KYN4-8JsnfpXI0X5i_dmY_XhiWhsx7IuRCJ4CuU5lemghkoZ0GMgb2oYjlkIlFkclOzhZaNSwTq3R63ALIBc01SjWDNn_mwTtOnH9ZcU9kXnTwWDszkhTXSUOQ8B6boa74l30BnVgBjBx2-qDzP3M3SDL9CcYXUZQ3RRmHF1NWPpdoxWsahsnbiZDRdIusBWQYHKNgmlbGtx2QWNU7ZcKCbLqHbwpJNjQ6eYt4Yt3e9C_mw78gBzZaVm385Z_eHLlaN92W3vJLZWgnRhCYfp32tRs6Wn21i_-4x_M0KEqn-cCKXgORLSixIJkCPjLnu1ua61adZpG7zdtCWYvD95yelsO2J29ExljxMVyjNNA_EfRkgwVLS5XUT-rMik-FyqmcCtQinIwWIc1dIXTqpdemCqAuqGoFfdKp23evq1VOwCDa5WXtwfU2_4o4XCtkaNNwDvVRI8b9E_Jf_UdVXIt5k3a7_ybGsaCIo6jOFMZvdsiqw9Yb6d5wxvEjTR5gvg1aSb1V763z30CA3MTPKzmae6wRonX4hslIIPbQFk8OC68XTYLbSc04IEI6Z9-MUNTi29NkypwiAIFJW5p3pgcpQ1tvevt4nCaXwxmvPW0AwzE02JbtZWDWE-bX8rLrSOs-9pbL6n9lln0nD-CJNF7gL_ViUmYV4zexdFWCS6SouGYrR7jPc0MExD8eDuz54NPqMODdHp9IH_zJSyTchA9mESAzk982krFjYC1dzm4xDen2WyjCmce7tQHxEXvE4YobwqI8RMIinnxcLvKmWSPcW9dYWkhRpqeGkgbCwIkmoXSB7ngrJDdr9p71lbCs5eImx0jb5vUP1fkS6nE3XG6iompIIOw-jYKYLLRLQOtfeJGuHAixt8y8-rBc6Gsw3ifWL98tTiU7dU6YK-7TKjMWLLCS9YPsd4Cb_IgqaS5Co2pr3LGoSKJNR9PrU5-FQdXL9VF1I0SbhHIddR3VGQgdcMx6t0rUo_cRPGIH0EfQHEa6NZeX4zT3Df75K3DjVGmih6Kpzrzl8aTGpL9TOS1UQc7X7sG_YLNpZRVVh80UM47L1C2L5IlOpnkspXR_MgQFXGdmSAhOEbR9i6PXmzTgzv3KuKstsLeyMaKmZF54kVxpTgt3cHhSFjgdv-KIBh4C9I4vOHA5iK8JF7FngrL4D5IneO65N-GqQk14KR_ZK3zljmdWRFq3NmirIQhnwUb4rlAtGZfWS8qwsqm4ppIQszridSvA6GEfMDGdpUHrs-Qn3lhqC-NxVqEDkJtUaa3pQ4WYzkkUjXT7sw5C_oD7A8zBDVXyq9RI7B-pBFbL7cnV6DeBtZ8O7iM3EvjrB1K1fPt7bkzWCbNwwMUG_OE_3waw.OdEJmQMFm8cq1UJyb0tbDw",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiJmM2RhMThlOC0zZjA3LTQ4OGMtODFlNy1mNWVjY2U3OWMyYWQiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiODZmM2RiZTctMGVhMi00OTY4LWFhNTQtYzQwYWNiMmVjNTg0IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjgyMzEsImV4cCI6MTY3MDEzMTgzMCwiaWF0IjoxNjcwMTI4MjMxLCJqdGkiOiIyNmU3MDFmZi05YjMwLTQxN2YtYmI5ZC0wMzM2NGZkOWQ2NmQiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.Sa3AzLzOHyO1Q-qwrKOqEFlONUrUhoEkqPM4Xjxb-IK4Pm6rhGk8QgdtBukd9sfQRCdAV3aflrbxxX7UkCeKChHR8xa8gvEUwlr7x-VhCEMt-wQhou5LZkDbLPJQDc7mshRVJjjmWudVQzu9cesKJ7TlGcQ1Q7QGL748-wkoXrsUtiVfDxdwqtKO1iZCS6O1GjlGVOnMcUK01kDwfo4zR0OEIBMux-InuC5b4u8xGUHAS-lc40N56nwB3sSEkewQ_UeVejPbCMtJ20zSEF7z2y6mcxyrKYimyVSk9wccMc_RsrOgBVz2hZZVRrzWc28V6XSf1MRSkqz7XniSP26QOA",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_bdf12647-dc59-4fb6-a8c6-4424bdabd9d1",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:30:31.003Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2JkZjEyNjQ3LWRjNTktNGZiNi1hOGM2LTQ0MjRiZGFiZDlkMSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImYzZGExOGU4LTNmMDctNDg4Yy04MWU3LWY1ZWNjZTc5YzJhZCIsImV2ZW50X2lkIjoiODZmM2RiZTctMGVhMi00OTY4LWFhNTQtYzQwYWNiMmVjNTg0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODIzMSwiZXhwIjoxNjcwMTMxODMwLCJpYXQiOjE2NzAxMjgyMzEsImp0aSI6ImQ3ZjQzYjVjLTY3MTgtNDI5Ni1iZTAyLWUwYTZhMTgwZmE3YyIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.lRsL-feM4xaGZANmB9M_d6jWDaw-k9ZBMe0UvD4vORoumrxD2FOY2JN9TfDQZhmh2yzOibUUsFXyc7KkqkumZFLhc-pXM2YjOvQAHYigo65WDeXzmOlWLmfozeSmzpiyWOWZ6kiMdLig9eyza8cjsaic6zlSIFH0xnZiHen93NK1GeLLbDSYl4zL01lBBz3NItAO8r9rA92xB3Xwm41Jg5DFCrZNaiwBn-yhjirXDpCiOKRKgsM-hcs305rFrINZqQObpvpc-3x1aosidl8N_Ya7oJuu5yr_c3eIjczYUQadGJVIVx2W2vrGlXuzkZrwIn7kpjaTkekfsZtdMEmLdg",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Wps72MdZpB0FxoNvBX-YVj1jtodl3vxPWbVFXhF2p5bAi7skRrLpjGgZAivGHc5VsDKTXrrtDHgPyYpQRNHGaqTlRcR829RJu-PsPGoIS3vz2y18_MTZTbSnA-h977BHJ50htfOscmvrZq1o-NzUdqDuompYuMJY7e9a5cSSvh6YNw8uU66B_w4utRViRH9lyRcrLTWf1OFgh3gwxryEZkYQFtzV9TlwaqP9Q6KbzB1VPLVDWsfuLrJMb4b3GCKqHZb4tVqbcIBjRsEwloavqqRdilrDvDFgrSsvd5xi5ne9YM3E8IS-KXjx2rFRVaQqFFSG25FACIUwBqvaOCkCTA.Ke_6UB0K80ochIrK.NI9UMtpYyjjFOOD9nNAtpDiJ4W_6dy2pJN5iLiOU0A3AnSD-Nl6_h4Aj0k4foY5_KYN4-8JsnfpXI0X5i_dmY_XhiWhsx7IuRCJ4CuU5lemghkoZ0GMgb2oYjlkIlFkclOzhZaNSwTq3R63ALIBc01SjWDNn_mwTtOnH9ZcU9kXnTwWDszkhTXSUOQ8B6boa74l30BnVgBjBx2-qDzP3M3SDL9CcYXUZQ3RRmHF1NWPpdoxWsahsnbiZDRdIusBWQYHKNgmlbGtx2QWNU7ZcKCbLqHbwpJNjQ6eYt4Yt3e9C_mw78gBzZaVm385Z_eHLlaN92W3vJLZWgnRhCYfp32tRs6Wn21i_-4x_M0KEqn-cCKXgORLSixIJkCPjLnu1ua61adZpG7zdtCWYvD95yelsO2J29ExljxMVyjNNA_EfRkgwVLS5XUT-rMik-FyqmcCtQinIwWIc1dIXTqpdemCqAuqGoFfdKp23evq1VOwCDa5WXtwfU2_4o4XCtkaNNwDvVRI8b9E_Jf_UdVXIt5k3a7_ybGsaCIo6jOFMZvdsiqw9Yb6d5wxvEjTR5gvg1aSb1V763z30CA3MTPKzmae6wRonX4hslIIPbQFk8OC68XTYLbSc04IEI6Z9-MUNTi29NkypwiAIFJW5p3pgcpQ1tvevt4nCaXwxmvPW0AwzE02JbtZWDWE-bX8rLrSOs-9pbL6n9lln0nD-CJNF7gL_ViUmYV4zexdFWCS6SouGYrR7jPc0MExD8eDuz54NPqMODdHp9IH_zJSyTchA9mESAzk982krFjYC1dzm4xDen2WyjCmce7tQHxEXvE4YobwqI8RMIinnxcLvKmWSPcW9dYWkhRpqeGkgbCwIkmoXSB7ngrJDdr9p71lbCs5eImx0jb5vUP1fkS6nE3XG6iompIIOw-jYKYLLRLQOtfeJGuHAixt8y8-rBc6Gsw3ifWL98tTiU7dU6YK-7TKjMWLLCS9YPsd4Cb_IgqaS5Co2pr3LGoSKJNR9PrU5-FQdXL9VF1I0SbhHIddR3VGQgdcMx6t0rUo_cRPGIH0EfQHEa6NZeX4zT3Df75K3DjVGmih6Kpzrzl8aTGpL9TOS1UQc7X7sG_YLNpZRVVh80UM47L1C2L5IlOpnkspXR_MgQFXGdmSAhOEbR9i6PXmzTgzv3KuKstsLeyMaKmZF54kVxpTgt3cHhSFjgdv-KIBh4C9I4vOHA5iK8JF7FngrL4D5IneO65N-GqQk14KR_ZK3zljmdWRFq3NmirIQhnwUb4rlAtGZfWS8qwsqm4ppIQszridSvA6GEfMDGdpUHrs-Qn3lhqC-NxVqEDkJtUaa3pQ4WYzkkUjXT7sw5C_oD7A8zBDVXyq9RI7B-pBFbL7cnV6DeBtZ8O7iM3EvjrB1K1fPt7bkzWCbNwwMUG_OE_3waw.OdEJmQMFm8cq1UJyb0tbDw",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:31:37.232Z | [INFO   ]: Connected to database: users
+2022-12-04T04:31:37.235Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:31:37.236Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:31:37.239Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:31:37.239Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:31:37.241Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:31:37.242Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:31:54.660Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "ipAdress": "::ffff:127.0.0.1",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:31:55.481Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzE4OGE5MzQ5LTliNWQtNGM3Mi05YjM0LTNkZmQwZjdhZDA4NyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjA0YmYzNTAyLTdiOTItNGE1ZC05ZWU5LTBlNDliNjQ4ZmNhYSIsImV2ZW50X2lkIjoiNGMzN2I4ZDAtODIwNC00YTZhLWE4NjQtZGZlN2Y4OTk2NzU3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODMxNSwiZXhwIjoxNjcwMTMxOTE1LCJpYXQiOjE2NzAxMjgzMTUsImp0aSI6IjgxNzczZmQ1LWEyMDYtNDQxZS05ZjNhLWE0NTY2ZTI3MTU3NCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.YhBZPuUaA4ugY5OYA4UCqp3Jp4l-6nHHcRvnF_Bij3sMPxF1-i_pG4AWlaPr6UFS_g4f6Ftdgs7a_r8Vo4xi0qjxMUM2YMoXjMDWPg1-A2By6c-kiYTkSLC-fC_jnPme97ECqMlzndYV_gTpFbAmMQeTom7ABwt11iiWELQrjJL2ktFTBXher8xW_nFz3XpxBFfIISOA0X4HQspAMprlQp55-XHBuwrKS7Ls8eZEnP-qiLOFKw5Qd7tAm_rzXIBUrLRqGerm3smm6tzWD4Des0jlYV06SbKKlpZn8g9B8ORhYzzI9fZTZa_8cFFL9qcs_OaFJgiOgH6E2bUyVVy1jQ",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.ijNuJra9d1qAWyxLByaQwiTV9JhmcMYsL1XBEjkqdL1eOsa93z61qG3-PmUXDfcM5iGjSzyZhWCFeXk0X72fiuZTqwfcEaUExx3xqRGwlpTkSEUsdhRKOjUjgO2KpJWE50L-pio-WizocDxbpF1U4etMFSbMMzqOoB_Vo1MZ2avu7N6kG8KPS0mVI5KJniBTKRK8G5M8sYt2QFupy0ZQLkIUXbjygK9ctwAU7zqQLzMytmR5R5b1r9rSKdhTppuI5gfgJQRtLfzJYfqoQiFF5DH4J7BZbKs-IdHdzcI4QEzaFiQSPE9NwKAWyH4tBgDgppJgp6AsXjlcHTn-_TFKKQ.WB3UobNeC0pduFZ2.ZVspoX3AvIzbwDOpr8Rx0Y30Sukl-kxHYdzugV2cWWaCjPGzJH0_vGuOATnQgWNrGpxL0gv4Vf8mZq3WZDdcqx3ozDh9tQHoqh1AyMT-LcVuTz_6XIeJTV3GY9XSc8KJWq5MuhRFY3UhrWfab8sM0-sbPoQUgBDZrGwGQ8A6TLNeuSQ-pZhZ-QyjFSI3lJHBtQmnzh666nhaIKy1hlsyfmixpjayRzxxpr3wsRgPQcAlkHkQ4sWVSxPRlx7VhpoSmBHfEMsM30ddm7fZJyIKDiJZK9VRnWQMK0C4oB4-kTtmWxgCxJ2x0s_ZNgd0iTnZkB3c2kK4yEgX0bmBh_blFWnCX_7XVPTOMJuAdazX5EJGTZkUlbngpqSuiBwMC6K8B15fufpgryjbXH7Je6dmSgw8ScIpfOQfomjkejLHA-9oUAxW-opt1j33rpUN537_W-4j6bUawP364IhgEj2NSRRh3sNlVVE7Kas6eBWhLkjP9ULZbdqSn1lqx780lK8SPKepvB7sd5UjUuq31IfuXz4B42lz38NnsAdrONbsM5uVolfNhd2_mmagUiVa42UYnMnaQEWZ06DY0dn_3eLeUB7Bmv5eHr6kYIvhh41x9AzaeNK3xqt5Zwx9OzJxZXSnFv5SRACMtfSItPRVwCgZ_3OI7tmnYDBbyRVjW7FkIwvKVdJHLBmwRn7sx3-_pz3z37J5wQ3o2WohvylHAjpJcCenKcyk6B_6jlDTyS7RPpLPn1yOQu9k6d0s-B_q8mCCjw8Ms2LpCSOycDSShWvzXsLx0TOk-Q_pbD4H1OC7IYPynYJm27ChH4AbQqkxPAGvEWy2eSHYwFEImShEcbe6pyxHTKUy2UmssJEOJ4H7YHmi0fcKsojSO2nM4Sju3U8xkHvJ0cPDYwDzjQVRKg4rZ4Yd5yS9E4Kmn74nsYW4P8sDU6B7_EBcpErA6SAVCd10mqy5MlK-EbHvusD0RgFxR907fUX6creuSnVgMyQhQDBt2RfqcAli2z7Q5X8f7peepwTFVYdWEk_RV_xedvJvjcdbkXO8lqPStWlWsf8PvJlgmc9mr5DW1E1qIy70eOSjvH_1-zOeimIYavvCKA1lfx86q5YYFVuP_KIfFHYdWytstOcEiijmXs27MWRZ38SmwarD2oL0cl7SoaU_AYdIHPMf5Hhi6QsWhtRMiWOzdZl_aflLrYritlAjIoAZkQrkaITFkt0k9dPTB1sGD4_2Qf1aGxhSzlAyqMDJp0E2Y2XZXmFh1F1NO49RwJ0777oQ7giAf_bWocFukRM2n7GKVM7ScGcgj3Wfm9LNh1AB6MsmkrVUcawApjt_pL41ycPOsPAlnK8mi9ePEu1kIpY2mMM-Z2MtAcIDGu7lI88Q5EoRukZH7EfucwUOWswKma6CiiDePTj1LDGfw6oAhAibI-x_7w.zQ3WJJSznqbidbF7DTZ8NA",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiIwNGJmMzUwMi03YjkyLTRhNWQtOWVlOS0wZTQ5YjY0OGZjYWEiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiNGMzN2I4ZDAtODIwNC00YTZhLWE4NjQtZGZlN2Y4OTk2NzU3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjgzMTUsImV4cCI6MTY3MDEzMTkxNSwiaWF0IjoxNjcwMTI4MzE1LCJqdGkiOiJmZWQ0ZTNkNC1kM2E1LTRiZWMtODljMy1hNjE3MzQ3YzkyNjkiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.Y3tiq-G5naQcUbjp1_imWKjpoVhvPxvfEsZ0uBYBsKifyLdD9srzl-6HEqVI8qPnY_1IrNLMV-NqypX5fuwe0FZIWINaejaWAw-eeQ6eIsV6XZPFVqQ4O6zUSQaXl1ypES7aRYg7qa5imPEf8wxVXu972NEv5nBY-ifxdHRcb2AYk3H7WMBh4HO7gNlZAL6LU5LReHhs8U9B2DI8xz6KBY7Gcn2m78_UGq263ypOq7ORTWYsQxXTpRD9QgQ-QLQK-8dQTDeubhoOKSBOFHJNZLJdxh1Y0UQ9nSLFI0ghkzIFae4tKj_rM3prbkfg9PVtfa43bbOIFVSCDBeEkhZuMw",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_188a9349-9b5d-4c72-9b34-3dfd0f7ad087",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:31:55.483Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "ipAdress": "::ffff:127.0.0.1",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzE4OGE5MzQ5LTliNWQtNGM3Mi05YjM0LTNkZmQwZjdhZDA4NyIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjA0YmYzNTAyLTdiOTItNGE1ZC05ZWU5LTBlNDliNjQ4ZmNhYSIsImV2ZW50X2lkIjoiNGMzN2I4ZDAtODIwNC00YTZhLWE4NjQtZGZlN2Y4OTk2NzU3IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODMxNSwiZXhwIjoxNjcwMTMxOTE1LCJpYXQiOjE2NzAxMjgzMTUsImp0aSI6IjgxNzczZmQ1LWEyMDYtNDQxZS05ZjNhLWE0NTY2ZTI3MTU3NCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.YhBZPuUaA4ugY5OYA4UCqp3Jp4l-6nHHcRvnF_Bij3sMPxF1-i_pG4AWlaPr6UFS_g4f6Ftdgs7a_r8Vo4xi0qjxMUM2YMoXjMDWPg1-A2By6c-kiYTkSLC-fC_jnPme97ECqMlzndYV_gTpFbAmMQeTom7ABwt11iiWELQrjJL2ktFTBXher8xW_nFz3XpxBFfIISOA0X4HQspAMprlQp55-XHBuwrKS7Ls8eZEnP-qiLOFKw5Qd7tAm_rzXIBUrLRqGerm3smm6tzWD4Des0jlYV06SbKKlpZn8g9B8ORhYzzI9fZTZa_8cFFL9qcs_OaFJgiOgH6E2bUyVVy1jQ",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.ijNuJra9d1qAWyxLByaQwiTV9JhmcMYsL1XBEjkqdL1eOsa93z61qG3-PmUXDfcM5iGjSzyZhWCFeXk0X72fiuZTqwfcEaUExx3xqRGwlpTkSEUsdhRKOjUjgO2KpJWE50L-pio-WizocDxbpF1U4etMFSbMMzqOoB_Vo1MZ2avu7N6kG8KPS0mVI5KJniBTKRK8G5M8sYt2QFupy0ZQLkIUXbjygK9ctwAU7zqQLzMytmR5R5b1r9rSKdhTppuI5gfgJQRtLfzJYfqoQiFF5DH4J7BZbKs-IdHdzcI4QEzaFiQSPE9NwKAWyH4tBgDgppJgp6AsXjlcHTn-_TFKKQ.WB3UobNeC0pduFZ2.ZVspoX3AvIzbwDOpr8Rx0Y30Sukl-kxHYdzugV2cWWaCjPGzJH0_vGuOATnQgWNrGpxL0gv4Vf8mZq3WZDdcqx3ozDh9tQHoqh1AyMT-LcVuTz_6XIeJTV3GY9XSc8KJWq5MuhRFY3UhrWfab8sM0-sbPoQUgBDZrGwGQ8A6TLNeuSQ-pZhZ-QyjFSI3lJHBtQmnzh666nhaIKy1hlsyfmixpjayRzxxpr3wsRgPQcAlkHkQ4sWVSxPRlx7VhpoSmBHfEMsM30ddm7fZJyIKDiJZK9VRnWQMK0C4oB4-kTtmWxgCxJ2x0s_ZNgd0iTnZkB3c2kK4yEgX0bmBh_blFWnCX_7XVPTOMJuAdazX5EJGTZkUlbngpqSuiBwMC6K8B15fufpgryjbXH7Je6dmSgw8ScIpfOQfomjkejLHA-9oUAxW-opt1j33rpUN537_W-4j6bUawP364IhgEj2NSRRh3sNlVVE7Kas6eBWhLkjP9ULZbdqSn1lqx780lK8SPKepvB7sd5UjUuq31IfuXz4B42lz38NnsAdrONbsM5uVolfNhd2_mmagUiVa42UYnMnaQEWZ06DY0dn_3eLeUB7Bmv5eHr6kYIvhh41x9AzaeNK3xqt5Zwx9OzJxZXSnFv5SRACMtfSItPRVwCgZ_3OI7tmnYDBbyRVjW7FkIwvKVdJHLBmwRn7sx3-_pz3z37J5wQ3o2WohvylHAjpJcCenKcyk6B_6jlDTyS7RPpLPn1yOQu9k6d0s-B_q8mCCjw8Ms2LpCSOycDSShWvzXsLx0TOk-Q_pbD4H1OC7IYPynYJm27ChH4AbQqkxPAGvEWy2eSHYwFEImShEcbe6pyxHTKUy2UmssJEOJ4H7YHmi0fcKsojSO2nM4Sju3U8xkHvJ0cPDYwDzjQVRKg4rZ4Yd5yS9E4Kmn74nsYW4P8sDU6B7_EBcpErA6SAVCd10mqy5MlK-EbHvusD0RgFxR907fUX6creuSnVgMyQhQDBt2RfqcAli2z7Q5X8f7peepwTFVYdWEk_RV_xedvJvjcdbkXO8lqPStWlWsf8PvJlgmc9mr5DW1E1qIy70eOSjvH_1-zOeimIYavvCKA1lfx86q5YYFVuP_KIfFHYdWytstOcEiijmXs27MWRZ38SmwarD2oL0cl7SoaU_AYdIHPMf5Hhi6QsWhtRMiWOzdZl_aflLrYritlAjIoAZkQrkaITFkt0k9dPTB1sGD4_2Qf1aGxhSzlAyqMDJp0E2Y2XZXmFh1F1NO49RwJ0777oQ7giAf_bWocFukRM2n7GKVM7ScGcgj3Wfm9LNh1AB6MsmkrVUcawApjt_pL41ycPOsPAlnK8mi9ePEu1kIpY2mMM-Z2MtAcIDGu7lI88Q5EoRukZH7EfucwUOWswKma6CiiDePTj1LDGfw6oAhAibI-x_7w.zQ3WJJSznqbidbF7DTZ8NA",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-04T04:33:18.862Z | [INFO   ]: Connected to database: users
+2022-12-04T04:33:18.868Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:33:18.869Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:33:18.874Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:33:18.875Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:33:18.877Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:33:18.878Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:34:15.058Z | [INFO   ]: Connected to database: users
+2022-12-04T04:34:15.062Z | [INFO   ]: Connected to collection: users
+2022-12-04T04:34:15.062Z | [INFO   ]: Connected to collection: companies
+2022-12-04T04:34:15.065Z | [INFO   ]: Server started on port: 8080
+2022-12-04T04:34:15.065Z | [INFO   ]: Server environment mode: development
+2022-12-04T04:34:15.066Z | [INFO   ]: HTTP requests API version: v1
+2022-12-04T04:34:15.066Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-04T04:34:17.186Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "IPv6": "::ffff:127.0.0.1",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-04T04:34:17.943Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2ViZGVhYzA5LWYxZDItNDc5Yy1hMjNjLWRmMTcxYzkzNTJlMSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImFlY2QxNjhhLTRmNzUtNDExZi04ZTg2LWMwODMxYTQ3ODE3NSIsImV2ZW50X2lkIjoiYzE2Y2IyZmYtNjkxMS00OGEzLThlMWMtMzVjMDEzMWYwMTJiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODQ1OCwiZXhwIjoxNjcwMTMyMDU3LCJpYXQiOjE2NzAxMjg0NTgsImp0aSI6IjZhNTJkMzY0LTk0NzQtNDIzNy05ZmRiLTY4NGI5YmE1NjM3OSIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.Dsq4KqCcMt2QR2StaOVcc-vfBxrYkR4J6fC2XQacAFlI5KSGDO3UaWBJDgzSRIrjQbbj7siFdfTu4gcESIkXreB18LBCbgab8tgI1D1ESPE1wP8vu2Z9zMiJX-1fjPDPZ8IGdnhfQjEPzpYTC6q6rv33IAahQUQKQCCk1OIdCDRBG36NpywzCLczpvspLhPbDCINKGacWF2my5zUfVAzgu-h9CMMbiaKU94Ji8vGdzOuzaRvEW6SmrMF9mcJ3iAJ0OqDSsXGDDAyu8RGr9AHlk7s2Vi7gkMIaMx06almJYwzFnB-QyOkeXF8caC1O9zyHe-UaF6xf0S26lN6EnVJAg",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.b5trnOP40WsvoFroBWNbNVTp1ynCNSdJDbkCs60FjHjhXrJDdrrILN9oKeDNiX2QbJGaps99OL9gJHYlMYlrhfLufYMxzd7FQK3ASXjkJmUADdqMn3JtTAZOh4tw5sfcRkTXnmLwF5VLLphE_lbKJX_Q0OmkMh9eQqWHXWD4ExRiQw3RQjn7v2eTGVPmjojImN3FmmQ0q4M_zqRB1Xi_oJk2v2bzMujCK6TfHzFbmPnAgDUZgz-5bx8HxCLwDu48m171lLbwURs_8r7nzoLG0sea_GRtzRZSaX1ytIkaH7kyxTlfuj-uZUL6sjdWTEZ_lcNp2qabJop0lC9FqHwtSA.3tD76yDwcsCw2wFX.71thZcSiDDbVyiE47k5huHu2t-LiPYFYRx7_2rvu-2teqA-bf1tucFQz-i95EgiQ6wCNdldU2YaHpsHaap7ppxg8tWUx4wwsbrfhFUuAgOwUMzF9B-7aA3E-XTzUmJkIz7O3XvezThdIx1l-L11_F_7bo-1lHc9S3IswXHOuJlVLGJWB6xl2jRFqTi8sjNdCj6ExElI-8YKl3kL_2mm1_tbgtQ-aIK_UpHlWkDOqBQPg54rrBERbXz61hi2e97JmmkzULj2xxI4YCRPqtoiQCShlerN03J7qY85I352zDYkRsknC1KUxtAxp-j_mg78MtPwwrjBYGq6KrvCok6lvliGE1hxBE-nUMN12H4Vsw2kqZbzvo_P79gTxNI6ayEc9wV63L0Wb1s01tC3CeTNVgO_2914DgMgrv7qRieKM_K8zgZ6IuE50vmP-sEWbZsDO88v3EEPu1NvYYH1Sww36gydTBy0ixdyL-Olh_RrmfFCygJIoPqHPRepOPv1aca8VJ7dviLciQR_5mdW4ap3_WMTcJw740Elkp91ra3lKYBxwnqOR43MyRWYo5bwdmCM5pzk31UEsDXQRD0GJ_BnZ5FrOls-T6OywaeiqupnTYZY-PQR-sFUR3yHNTMSP1py4XttYEoGsMMk4rnliLOmsEmS0q_cPgOPNMy2SWP9J1CKqvCeW-5grz_E_LTwmaLAM4qhmKxD3hUA5Wpg9Hm1_q7G7JzHz13MFX8qrGdF_S7AEtl1ZjWXTXEeZT0U8W73mPjuSGDwUKpL_kWlkr6f-47EVQlO4LcnZwUlJwPpfefsoUjgF4HxNUF4Qui7jDJuK-PRcCTxCqZ-WDOkBmWy2knRXV4N9IveKYElaXdLNYoW9QLU13TEAC_yrWxUDWJWuvszRgSuwsn1TrywdEOqc9lqQGuhG_ePcXE4ssYQfk1etqtA6xnbWkeyk6ZWXd83y0GFIbUwduZvTy54s2XBujsnu-VnjMG2ydhROGLA9MYVT8N0VIf8gJnfdbhjE4eo3oyPSKieziSC6hxifYdsPZDvPWesuEh_uNPE1-XAJ9kGjsiWxBoIszjmYhYWjYhkpDtGjSWiayjJgwdvzVhD6V8lx05b_Amp4hy6xtuMlazYBJxzGOonFi-V1gCdCrvC1hiSfN9u8N3vKQlYRRD012G53kGcdYi-j4JWd_F-pI777fOqaRDge407z4-LuQ2BB80UHzdlEclMbRBTRwfgh1hx7K0-ENA2DU9GoHS0rnl5chI6UEDzzGsmN7vdQoF9r_vB02NqSneL1LyxUQTIMsrMHKvKtR4N8t8dgjT-_FjB4GAAdbAqVEhuoS1WIvkiZmRpRcHHVusHmny51vCtuwqXUVxC57z__gNmHzcAoyGXG6u4Bv_6MrvKkVP4VfbJp0Baz5OchUrZT9aeVf06MgJIScg.DVCVgs7R5MP6sMSH4NPBlg",
+      "IdToken": "eyJraWQiOiJiQVFJUGUwRXFRdStpQnlXZ3ZLSTdGcEJ5YUpxK0pOa0J0ZG5vb3VsZlNnPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfb001ZXRScWZRIiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiJhZWNkMTY4YS00Zjc1LTQxMWYtOGU4Ni1jMDgzMWE0NzgxNzUiLCJhdWQiOiI1amYxajlqaW9qM2Nmb3YxNGpnaWczcTNhMCIsImV2ZW50X2lkIjoiYzE2Y2IyZmYtNjkxMS00OGEzLThlMWMtMzVjMDEzMWYwMTJiIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzAxMjg0NTgsImV4cCI6MTY3MDEzMjA1NywiaWF0IjoxNjcwMTI4NDU4LCJqdGkiOiJmZjNjZWM0ZC0yYjUzLTQzYTQtYjQ1Zi0wYjUzN2M1MjRjOGQiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.fH8offTxFtTpzxdcvPr8ywqaUUQfp9bRRFYbbygBwNH3R4RfjN6xxIB8AkQxdtthhQCZG3mD4-RjE3NF2JMfj37hgeJkGudP5-KwBDNtQ93DvnFT3ARqxTyE2QAvyeO0sfETtCQeetAqIelsd-Ju_4nbm16O6-gO5cWNx78CQb5HNbHX8gsJxeHcyp-lG0F7CsWbQctl7Eca4TBnSeHTmkpN8PDQUMuJdjqIX3jY6u1aq-KBJ4VZrX5qD3q1s6lI2hQZV4WdWjfxTTZzA62ZUTxP7-h17vm0EaHIN-699s6x0Qgl8ieMGbBesJGKBFQJekzDV1kY701Reypk0SDMaQ",
+      "NewDeviceMetadata": {
+        "DeviceKey": "eu-west-3_ebdeac09-f1d2-479c-a23c-df171c9352e1",
+        "DeviceGroupKey": "-TWjbXfEA"
+      }
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-04T04:34:17.945Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "IPv6": "::ffff:127.0.0.1",
+    "endpoint": "/auth/login",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2ViZGVhYzA5LWYxZDItNDc5Yy1hMjNjLWRmMTcxYzkzNTJlMSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImFlY2QxNjhhLTRmNzUtNDExZi04ZTg2LWMwODMxYTQ3ODE3NSIsImV2ZW50X2lkIjoiYzE2Y2IyZmYtNjkxMS00OGEzLThlMWMtMzVjMDEzMWYwMTJiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyODQ1OCwiZXhwIjoxNjcwMTMyMDU3LCJpYXQiOjE2NzAxMjg0NTgsImp0aSI6IjZhNTJkMzY0LTk0NzQtNDIzNy05ZmRiLTY4NGI5YmE1NjM3OSIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.Dsq4KqCcMt2QR2StaOVcc-vfBxrYkR4J6fC2XQacAFlI5KSGDO3UaWBJDgzSRIrjQbbj7siFdfTu4gcESIkXreB18LBCbgab8tgI1D1ESPE1wP8vu2Z9zMiJX-1fjPDPZ8IGdnhfQjEPzpYTC6q6rv33IAahQUQKQCCk1OIdCDRBG36NpywzCLczpvspLhPbDCINKGacWF2my5zUfVAzgu-h9CMMbiaKU94Ji8vGdzOuzaRvEW6SmrMF9mcJ3iAJ0OqDSsXGDDAyu8RGr9AHlk7s2Vi7gkMIaMx06almJYwzFnB-QyOkeXF8caC1O9zyHe-UaF6xf0S26lN6EnVJAg",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.b5trnOP40WsvoFroBWNbNVTp1ynCNSdJDbkCs60FjHjhXrJDdrrILN9oKeDNiX2QbJGaps99OL9gJHYlMYlrhfLufYMxzd7FQK3ASXjkJmUADdqMn3JtTAZOh4tw5sfcRkTXnmLwF5VLLphE_lbKJX_Q0OmkMh9eQqWHXWD4ExRiQw3RQjn7v2eTGVPmjojImN3FmmQ0q4M_zqRB1Xi_oJk2v2bzMujCK6TfHzFbmPnAgDUZgz-5bx8HxCLwDu48m171lLbwURs_8r7nzoLG0sea_GRtzRZSaX1ytIkaH7kyxTlfuj-uZUL6sjdWTEZ_lcNp2qabJop0lC9FqHwtSA.3tD76yDwcsCw2wFX.71thZcSiDDbVyiE47k5huHu2t-LiPYFYRx7_2rvu-2teqA-bf1tucFQz-i95EgiQ6wCNdldU2YaHpsHaap7ppxg8tWUx4wwsbrfhFUuAgOwUMzF9B-7aA3E-XTzUmJkIz7O3XvezThdIx1l-L11_F_7bo-1lHc9S3IswXHOuJlVLGJWB6xl2jRFqTi8sjNdCj6ExElI-8YKl3kL_2mm1_tbgtQ-aIK_UpHlWkDOqBQPg54rrBERbXz61hi2e97JmmkzULj2xxI4YCRPqtoiQCShlerN03J7qY85I352zDYkRsknC1KUxtAxp-j_mg78MtPwwrjBYGq6KrvCok6lvliGE1hxBE-nUMN12H4Vsw2kqZbzvo_P79gTxNI6ayEc9wV63L0Wb1s01tC3CeTNVgO_2914DgMgrv7qRieKM_K8zgZ6IuE50vmP-sEWbZsDO88v3EEPu1NvYYH1Sww36gydTBy0ixdyL-Olh_RrmfFCygJIoPqHPRepOPv1aca8VJ7dviLciQR_5mdW4ap3_WMTcJw740Elkp91ra3lKYBxwnqOR43MyRWYo5bwdmCM5pzk31UEsDXQRD0GJ_BnZ5FrOls-T6OywaeiqupnTYZY-PQR-sFUR3yHNTMSP1py4XttYEoGsMMk4rnliLOmsEmS0q_cPgOPNMy2SWP9J1CKqvCeW-5grz_E_LTwmaLAM4qhmKxD3hUA5Wpg9Hm1_q7G7JzHz13MFX8qrGdF_S7AEtl1ZjWXTXEeZT0U8W73mPjuSGDwUKpL_kWlkr6f-47EVQlO4LcnZwUlJwPpfefsoUjgF4HxNUF4Qui7jDJuK-PRcCTxCqZ-WDOkBmWy2knRXV4N9IveKYElaXdLNYoW9QLU13TEAC_yrWxUDWJWuvszRgSuwsn1TrywdEOqc9lqQGuhG_ePcXE4ssYQfk1etqtA6xnbWkeyk6ZWXd83y0GFIbUwduZvTy54s2XBujsnu-VnjMG2ydhROGLA9MYVT8N0VIf8gJnfdbhjE4eo3oyPSKieziSC6hxifYdsPZDvPWesuEh_uNPE1-XAJ9kGjsiWxBoIszjmYhYWjYhkpDtGjSWiayjJgwdvzVhD6V8lx05b_Amp4hy6xtuMlazYBJxzGOonFi-V1gCdCrvC1hiSfN9u8N3vKQlYRRD012G53kGcdYi-j4JWd_F-pI777fOqaRDge407z4-LuQ2BB80UHzdlEclMbRBTRwfgh1hx7K0-ENA2DU9GoHS0rnl5chI6UEDzzGsmN7vdQoF9r_vB02NqSneL1LyxUQTIMsrMHKvKtR4N8t8dgjT-_FjB4GAAdbAqVEhuoS1WIvkiZmRpRcHHVusHmny51vCtuwqXUVxC57z__gNmHzcAoyGXG6u4Bv_6MrvKkVP4VfbJp0Baz5OchUrZT9aeVf06MgJIScg.DVCVgs7R5MP6sMSH4NPBlg",
+    "message": "User logged in successfully"
+  }
+}
+
+2022-12-05T16:43:22.063Z | [INFO   ]: Connected to database: users
+2022-12-05T16:43:22.066Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:43:22.067Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:43:22.070Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:43:22.070Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:43:22.070Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:43:22.070Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:47:08.035Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "GET",
+    "ipv6": "::ffff:127.0.0.1",
+    "url": "/api/v1/users",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-05T16:47:08.039Z | [INFO   ]: {
+  "request": {
+    "type": "GET",
+    "ipv6": "::ffff:127.0.0.1",
+    "url": "/api/v1/users",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 401,
+  "response": {
+    "message": "Invalid token"
+  }
+}
+
+2022-12-05T16:48:25.643Z | [INFO   ]: Connected to database: users
+2022-12-05T16:48:25.652Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:48:25.653Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:48:25.656Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:48:25.656Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:48:25.659Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:48:25.659Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:48:37.912Z | [INFO   ]: Connected to database: users
+2022-12-05T16:48:37.917Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:48:37.921Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:48:37.924Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:48:37.924Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:48:37.925Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:48:37.925Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:48:59.338Z | [INFO   ]: Connected to database: users
+2022-12-05T16:48:59.344Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:48:59.345Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:48:59.348Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:48:59.349Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:48:59.349Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:48:59.352Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:49:37.981Z | [INFO   ]: Connected to database: users
+2022-12-05T16:49:37.984Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:49:37.986Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:49:37.988Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:49:37.989Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:49:37.989Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:49:37.990Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:50:34.237Z | [INFO   ]: Connected to database: users
+2022-12-05T16:50:34.246Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:50:34.250Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:50:34.266Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:50:34.266Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:50:34.267Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:50:34.268Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:50:52.683Z | [INFO   ]: Connected to database: users
+2022-12-05T16:50:52.688Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:50:52.688Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:50:52.691Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:50:52.691Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:50:52.691Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:50:52.691Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:51:06.312Z | [INFO   ]: Connected to database: users
+2022-12-05T16:51:06.316Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:51:06.317Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:51:06.321Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:51:06.321Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:51:06.321Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:51:06.322Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:52:56.384Z | [INFO   ]: Connected to database: users
+2022-12-05T16:52:56.387Z | [INFO   ]: Connected to collection: users
+2022-12-05T16:52:56.387Z | [INFO   ]: Connected to collection: companies
+2022-12-05T16:52:56.390Z | [INFO   ]: Server started on port: 8080
+2022-12-05T16:52:56.390Z | [INFO   ]: Server environment mode: development
+2022-12-05T16:52:56.390Z | [INFO   ]: HTTP requests API version: v1
+2022-12-05T16:52:56.391Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-05T16:53:37.944Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "GET",
+    "ipv6": "::ffff:127.0.0.1",
+    "url": "/api/v1/users",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 100
+}
+
+2022-12-05T16:53:37.947Z | [INFO   ]: {
+  "request": {
+    "type": "GET",
+    "ipv6": "::ffff:127.0.0.1",
+    "url": "/api/v1/users",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjZWNmYzI3NC00Mzk4LTQ2ODEtYTJkOC0yNjNlM2VmODBkZTEiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zXzk1MmM3OTdiLTViODgtNGQzMy05NTEwLWQ3ZTAzYmRjZmE1MSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6ImU0MGU3NTM4LTZkM2ItNDU4Ny05Y2RmLTEzZjM5OTI2ZTIzOSIsImV2ZW50X2lkIjoiMzViZGI1YWEtN2JlZS00YmY3LWE3N2QtMGI3ZTk4Y2M3OGU0IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMzgyMCwiZXhwIjoxNjcwMTI3NDIwLCJpYXQiOjE2NzAxMjM4MjAsImp0aSI6ImU4YzVkMzBhLTYyODctNGI0Ni05NzIwLWQ3MWM4NGQyN2NiZCIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.M7x3k3OOgXzsMKv6n37ubE1crYt-IELNeskN8YSR6UE8tR0WKqOn14URU0ib7DcrXNMxXEx3nQBupYpBnEg0co2aViCMjeRythGkr45VU7VHKh41nY_zW847y_t95uWXFMQbrnXj1iTYqk_TtT0cvBNsL9BXF0bhljgJd9Rt4QfX_wlLBl0xbtn69cvTgDrqZQLcnk5bxL-WVj1RvZVB7hxmIelioQD-dMRnsb5-Eh2bq8wFO39O5HHQw0oLl3oIGGWRi9y8-iULtch_7d14SAE5R0qCLZwjRn_7bUbMFg7whVMtN9TeH0w5w_WqnRXE2HMyEgIn1HtBZSGHEaBVVg",
+      "accept": "*/*"
+    },
+    "body": {}
+  },
+  "statusCode": 401,
+  "response": {
+    "message": "Invalid token"
+  }
+}
+
