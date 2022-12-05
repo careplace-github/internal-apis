@@ -6,10 +6,9 @@ import usersDAO from "../db/usersDAO.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
+import requestUtils from "../utils/request.utils.js";
 
-import { api_url } from "../../../config/constants/index.js";
 
-const host = api_url || "http://localhost:3000/api/v1";
 
 export default class AuthenticationController {
   /**
@@ -122,15 +121,9 @@ export default class AuthenticationController {
    */
   static async login(req, res, next) {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req)
+
+      
 
       logger.info(
         "Attempting to login the user: " +
@@ -378,6 +371,7 @@ export default class AuthenticationController {
         },
         statusCode: 100,
       };
+
 
       logger.info(
         "Attempting to reset the user password with the code sent to the user's email: " +

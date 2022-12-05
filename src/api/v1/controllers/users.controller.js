@@ -6,15 +6,17 @@ import companiesDAO from "../db/companiesDAO.js";
 
 import AuthHelper from "../helpers/auth.helper.js";
 
+// Import logger
 import logger from "../../../logs/logger.js";
-
-import { api_url } from "../../../config/constants/index.js";
-
-const host = api_url || "http://localhost:3000/api/v1";
+import requestUtils from "../utils/request.utils.js";
 
 export default class UsersController {
   static async createUser(req, res, next) {
     try {
+
+      var request = requestUtils(req)
+
+
       const user = req.body;
       user.password = password.randomPassword({
         characters: [
@@ -53,7 +55,11 @@ export default class UsersController {
  * @description 
  */
   static async getAccount(req, res, next) {
-    console.log("getAccount");
+
+    var request = requestUtils(req)
+
+
+  
 
     if (
       req.headers.authorization &&
@@ -76,6 +82,18 @@ export default class UsersController {
  */
   static async getUser(req, res, next) {
     try {
+
+      var request = {
+        request: {
+          type: "POST",
+          url: `${host}/auth/signup`,
+          headers: req.headers,
+          body: req.body,
+        },
+        statusCode: 100,
+      };
+
+
       const userId = req.params.id;
 
       const user = await usersDAO.getUserById(userId);
@@ -101,6 +119,10 @@ export default class UsersController {
  */
   static async updateUser(req, res, next) {
     try {
+
+      var request = requestUtils(req)
+
+
       const userId = req.params.id;
       const user = req.body;
 
@@ -124,6 +146,10 @@ export default class UsersController {
  */
   static async deleteUser(req, res, next) {
     try {
+
+      var request = requestUtils(req)
+
+
       const userId = req.params.userId;
 
       // Check if user already exists by verifying the id
@@ -147,6 +173,9 @@ export default class UsersController {
  */
   static async getUsers(req, res, next) {
     try {
+
+      var request = requestUtils(req)
+
 
       var request = {
         request: {
@@ -215,6 +244,18 @@ export default class UsersController {
  * @description 
  */
   static async getUsersByCompanyId(req, res, next) {
+    try {
+
+    var request = requestUtils(req)
+
+
+
   }
+
+  catch (error) {
+    
+  }
+
+}
 
 }
