@@ -2,16 +2,37 @@ import AuthHelper from "../helpers/auth.helper.js";
 import usersDAO from "../db/usersDAO.js";
 import logger from "../../../logs/logger.js";
 
+import requestUtils from "../utils/request.utils.js";
+
 /**
- * @description Role Based Guard Middleware. Verifies if the user that made the request has one of the roles that are passed in the parameters of this function. If the user has one of the roles, then the request is passed to the next middleware. If the user does not have one of the roles, then the request is not passed to the next middleware. 
- * @param {Array<String>} roles - Array of roles that the user must have to pass the guard.
- * @returns Boolean - True if the user has one of the roles, false otherwise.
+ * @description Role Based Guard Middleware. 
+ * Verifies if the user that made the request has one of the roles that are passed in the parameters of this function. If the user has one of the roles, then the request is passed to the next middleware. 
+ * If the user does not have one of the roles, then the request is not passed to the next middleware. 
+ * 
+ * @param {array<String>} roles - The roles that the user must have to be allowed to access the resource.
+ * 
+ * @param {*} req - The request object.
+ * @param {*} res - The response object.
+ * @param {*} next - The next middleware function.
+ * @returns {void} - Returns nothing.
+ * 
+ * @example
+ * // This middleware will only allow a user to access the resource if the user has the role "admin" or "company_owner" or "company_board_member"
+ * router.get("/users/:id", validateAccess(["admin", "company_owner", "company_board_member"]), async (req, res) => {
+ *  [...]
+ * });
  */
 export default function validateRole(roles) {
   return function (req, res, next) {
     async function handleRequest() {
-    logger.info("Role Validation Middleware");
-    // Check that the request contains a token
+
+      var request = requestUtils(req)
+
+      logger.info(
+        "Authentication Validation Middleware: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
     if (
       req.headers.authorization &&
       req.headers.authorization.split(" ")[0] === "Bearer"

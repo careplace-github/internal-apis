@@ -1,30 +1,26 @@
 import logger from "../../../logs/logger.js";
 import AuthHelper from "../helpers/auth.helper.js";
 
-import { api_url } from "../../../config/constants/index.js";
+import requestUtils from "../utils/request.utils.js";
 
-const host = api_url || "http://localhost:3000/api/v1";
 
 /**
- * Middleware to validate if a user is authenticated through the JWT token.
+ * @description Middleware to validate if a user is authenticated through the JWT token.
  * JWT token is passed in the header of the request
  * The token is validated by the expiration date and the signature.
  * If the token is valid, the request is passed to the next middleware.
  * If the token is invalid, a 401 Unauthorized is returned.
  * If the token is not present, a 400 Unauthorized is returned.
+ * 
+ * @param {*} req - The request object.
+ * @param {*} res - The response object.
+ * @param {*} next - The next middleware function.
+ * @returns {void} - Returns nothing.
  */
 export default function validateAuth(req, res, next) {
   async function handleRequest() {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req)
 
       logger.info(
         "Authentication Validation Middleware: " +

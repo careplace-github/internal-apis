@@ -1,10 +1,18 @@
 import BucketService from "../services/bucket.service.js";
 
+// Import logger
+import logger from "../../../logs/logger.js";
+import requestUtils from "../utils/request.utils.js";
+
+
 export default class FilesController {
   static async uploadFile(req, res, next) {
     let response;
 
     try {
+
+      var request = requestUtils(req)
+
       const file = req.file;
 
       console.log("file: ", file);

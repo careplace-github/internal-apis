@@ -1,9 +1,14 @@
 import CognitoService from "../services/cognito.service.js";
 import companiesDAO from "../db/companiesDAO.js";
 
+// Import logger
+import logger from "../../../logs/logger.js";
+import requestUtils from "../utils/request.utils.js";
+
 export default class UsersController {
   static async getCompanies(req, res, next) {
     try {
+      var request = requestUtils(req)
       const companies = await companiesDAO.getCompanies();
       res.status(200).json(companies);
     } catch (error) {
