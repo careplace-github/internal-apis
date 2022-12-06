@@ -15,16 +15,18 @@ const router = express.Router();
 router
   .route("/users")
   .get(validateAuth, validateRole(["admin"]), UsersController.getUsers);
-//.post(validateAuth, validateRole(["admin","companyOwner","companyBoard"]), UsersController.createUser);
 
-router.route("/users/account").get(validateAuth, UsersController.getAccount);
+
+router.route("/users/account")
+  .get(validateAuth, UsersController.getAccount);
 
 router
   .route("/users/:id")
   .get(
     validateAuth,
-    validateAccess,
     validateRole(["admin", "companyOwner", "comoanyBoard"]),
+    validateAccess,
+    
     UsersController.getUser
   )
   .put(

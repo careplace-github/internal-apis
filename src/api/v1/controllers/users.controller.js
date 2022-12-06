@@ -11,11 +11,13 @@ import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
 
 export default class UsersController {
+  /**
+   * @debug
+   * @description
+   */
   static async createUser(req, res, next) {
     try {
-
-      var request = requestUtils(req)
-
+      var request = requestUtils(req);
 
       const user = req.body;
       user.password = password.randomPassword({
@@ -49,79 +51,161 @@ export default class UsersController {
     }
   }
 
-  
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async getAccount(req, res, next) {
+    try {
+      var request = requestUtils(req);
 
-    var request = requestUtils(req)
+      logger.info(
+        "Users Controller getAccount: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
 
-
-  
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.split(" ")[0] === "Bearer"
-    ) {
       const token = req.headers.authorization.split(" ")[1];
 
       const user = await AuthHelper.getUser(token, "cognito");
 
-      console.log(user);
+      // User found
+      if (user) {
+        // The role user is the only role that does not have a company
+        if (user.role != "user") {
+          // Find the company associated with the user
+          const company = await companiesDAO.getCompanyByUserId(user._id);
+          // User populated with company information
+          user.company = company;
 
-      res.status(200).json(user);
+          request.statusCode = 200;
+          request.response = user;
+
+          logger.info(
+            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+              JSON.stringify(user, null, 2) +
+              "\n"
+          );
+
+          res.status(200).json(user);
+          // User not associated with a company
+        }
+        // User is not associated with a company
+        else {
+          request.statusCode = 200;
+          request.response = user;
+          logger.info(
+            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+              JSON.stringify(user, null, 2) +
+              "\n"
+          );
+          // Return the user without company information
+          res.status(200).json(user);
+        }
+      }
+      // User not found
+      else {
+        request.statusCode = 404;
+        request.response = { message: "Couldn't fetch user account." };
+
+        logger.warn(
+          "Users Controller getAccount error: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        res.status(404).json({ message: "Couldn't fetch user account." });
+      }
+    } catch (error) {
+      request.statusCode = 500;
+      request.response = { error: error };
+
+      logger.error(
+        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
+      return res.status(500).json(error);
     }
   }
 
-
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async getUser(req, res, next) {
     try {
-
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
-
+      var request = requestUtils(req);
 
       const userId = req.params.id;
 
+      // Get user by id
       const user = await usersDAO.getUserById(userId);
 
+      // User found
       if (user) {
+        // The role user is the only role that does not have a company
         if (user.role != "user") {
-          const company = await companiesDAO.getCompanyByUserId(userId);
+          // Find the company associated with the user
+          const company = await companiesDAO.getCompanyByUserId(user._id);
+          // User populated with company information
           user.company = company;
+
+          request.statusCode = 200;
+          request.response = user;
+          logger.info(
+            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+              JSON.stringify(user, null, 2) +
+              "\n"
+          );
+
+          res.status(200).json(user);
         }
-        res.status(200).json(user);
-      } else {
-        res.status(404).send("User not found");
+
+        // User not associated with a company
+        else {
+          request.statusCode = 200;
+          request.response = user;
+          logger.info(
+            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+              JSON.stringify(user, null, 2) +
+              "\n"
+          );
+          // Return the user without company information
+          res.status(200).json(user);
+        }
+      }
+      // User does not exist
+      else {
+        request.statusCode = 404;
+        request.response = { message: "User does not exist." };
+
+        logger.warn(
+          "Users Controller getUser error: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        res.status(404).json({ message: "User does not exist." });
       }
     } catch (error) {
-      next(error);
+      request.statusCode = 500;
+      request.response = { error: error };
+
+      logger.error(
+        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
+      return res.status(500).json(error);
     }
   }
 
-
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async updateUser(req, res, next) {
     try {
-
-      var request = requestUtils(req)
-
+      var request = requestUtils(req);
 
       const userId = req.params.id;
       const user = req.body;
@@ -140,15 +224,13 @@ export default class UsersController {
     }
   }
 
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async deleteUser(req, res, next) {
     try {
-
-      var request = requestUtils(req)
-
+      var request = requestUtils(req);
 
       const userId = req.params.userId;
 
@@ -166,27 +248,15 @@ export default class UsersController {
     }
   }
 
-
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async getUsers(req, res, next) {
     try {
+      var request = requestUtils(req);
 
-      var request = requestUtils(req)
-
-
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-          
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req);
 
       let mongodbResponse;
 
@@ -196,11 +266,10 @@ export default class UsersController {
           "\n"
       );
 
-    
-     mongodbResponse = await usersDAO.getUsers();
+      mongodbResponse = await usersDAO.getUsers();
 
-     if(mongodbResponse.error != null){
-      request.statusCode = 400;
+      if (mongodbResponse.error != null) {
+        request.statusCode = 400;
         request.response = { error: mongodbResponse.error.message };
 
         logger.error(
@@ -210,8 +279,7 @@ export default class UsersController {
         );
 
         return res.status(400).json({ error: mongodbResponse.error.message });
-      }
-      else {
+      } else {
         request.statusCode = 200;
         request.response = mongodbResponse;
 
@@ -222,40 +290,24 @@ export default class UsersController {
         );
 
         return res.status(200).json(mongodbResponse);
-
       }
-     }
-
-   
-     catch (error) {
+    } catch (error) {
       request.statusCode = 500;
       request.response = { error: error };
 
       logger.error(
         "Internal error: " + JSON.stringify(request, null, 2) + "\n"
       );
-
+    }
   }
-}
 
-
-/**
- * @debug
- * @description 
- */
+  /**
+   * @debug
+   * @description
+   */
   static async getUsersByCompanyId(req, res, next) {
     try {
-
-    var request = requestUtils(req)
-
-
-
+      var request = requestUtils(req);
+    } catch (error) {}
   }
-
-  catch (error) {
-    
-  }
-
-}
-
 }
