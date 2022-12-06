@@ -11,8 +11,6 @@ let companies;
 const ObjectId = mongodb.ObjectId;
 
 export default class companiesDAO {
-
-
   static async injectDB(conn) {
     if (companies) {
       return;
@@ -72,19 +70,37 @@ export default class companiesDAO {
   }
 
   // Function to return a company by the user id
-  static async getCompanyByUserId(id) {
+  static async getCompanyByUserId(userId) {
     try {
+      logger.info("Attempting to find company by userId: " + userId + "\n");
 
-   
+      const companies = await this.getCompanies();
 
-      logger.info("Attempting to find company by userId: " + id + "\n");
+      console.log("COMPANIES: " + JSON.stringify(companies[0].team, null, 2));
 
-      const company = await companies.findOne({ userId: `${id}` });
+      for (let i = 0; i < companies.length; i++) {
+        var team = companies[i].team;
 
-      return company;
-    } catch (e) {
-      logger.error(`Unable to find company by user id, ${e}`);
-      return { error: e };
+        for (let j = 0; j < team.length; j++) {
+          var user = team[j];
+
+          if (user.equals(ObjectId(userId))) {
+            
+            logger.info("Found company by userId: " + companies[i] + "\n");
+
+            return companies[i];
+          }
+        }
+      }
+
+      // Unable to find company by userId
+      return { error: "User is not associated with a company" };
+
+    } catch (error) {
+      logger.error(
+        "COMPANIES-DAO GET_COMPANY-BY-USERID ERROR: " + error + "\n"
+      );
+      return { error: error };
     }
   }
 
