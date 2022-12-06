@@ -4,6 +4,10 @@ import CognitoService from "../services/cognito.service.js";
 import usersDAO from "../db/usersDAO.js";
 import companiesDAO from "../db/companiesDAO.js";
 
+// Import logger
+import logger from "../../../logs/logger.js";
+import requestUtils from "../utils/request.utils.js";
+
 /**
  * Class to manage the authentication process from all the Auth Providers.
  * @class AuthHelper
@@ -21,7 +25,23 @@ export default class AuthHelper {
    * @returns {Promise<JSON>} A JSON object containing the decoded token.
    * */
   static async decodeToken(token) {
-    return jwt_decode(token);
+    try {
+      logger.info("AUTHENTICATION HELPER DECODE_TOKEN STARTED: ");
+
+      logger.info("AUTHENTICATION HELPER DECODE_TOKEN TOKEN: " + token);
+
+      const decodedToken = await jwt_decode(token);
+
+      return decodedToken;
+    } catch (error) {
+      logger.error(
+        "AUTHENTICATION HELPER DECODE_TOKEN ERROR: " +
+          JSON.stringify(error.message, null, 2) +
+          "\n"
+      );
+
+      return { error: error.message };
+    }
   }
 
   /**
@@ -30,15 +50,35 @@ export default class AuthHelper {
    * @returns {Boolean} True if the user is logged in, false otherwise.
    */
   static async isLoggedIn(token) {
-    
     try {
+      logger.info("AUTHENTICATION HELPER IS_LOGGED_IN STARTED: ");
+
       const decodedToken = await this.decodeToken(token);
 
-      const currentTime = new Date().getTime() / 1000;
+      if (decodedToken.error) {
+        logger.error(
+          "AUTHENTICATION HELPER IS_LOGGED_IN ERROR: " +
+            JSON.stringify(decodedToken.error, null, 2) +
+            "\n"
+        );
+        return { error: decodedToken.error };
+      } else {
+        const currentTime = new Date().getTime() / 1000;
 
-      return decodedToken.exp > currentTime;
-    } catch (e) {
-      return false;
+        const isLoggedIn = decodedToken.exp > currentTime;
+
+        logger.info("AUTHENTICATION HELPER IS_LOGGED_IN RESULT: " + isLoggedIn);
+
+        return isLoggedIn;
+      }
+    } catch (error) {
+      logger.error(
+        "AUTHENTICATION HELPER IS_LOGGED_IN ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
     }
   }
 
@@ -50,33 +90,62 @@ export default class AuthHelper {
    */
   static async getAuthId(token, authProvider) {
     try {
+      logger.info("AUTHENTICATION HELPER GET_AUTH_ID STARTED: ");
+
+      logger.info(
+        "AUTHENTICATION HELPER GET_AUTH_ID AUTH PROVIDER: " + authProvider
+      );
+      logger.info("AUTHENTICATION HELPER GET_AUTH_ID TOKEN: " + token + "\n");
+
       switch (authProvider) {
         case "cognito":
-          return this.decodeToken(token).sub;
+          const authId = await this.decodeToken(token).sub;
+          logger.info("AUTHENTICATION HELPER GET_AUTH_ID RESULT: " + authId);
+          return authId;
       }
-    } catch (err) {
-      return err;
+    } catch (error) {
+      logger.error(
+        "AUTHENTICATION HELPER GET_AUTH_ID ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+      return { error: error };
     }
   }
 
-/**
- * @description Fetches the user details from the authentication provider.
- * @param {String} token - JWT token.
- * @param {String} authProvider - Authentication provider.
- * @returns {Promise<JSON>} A JSON object containing the user details from the authentication provider.
- */
+  /**
+   * @description Fetches the user details from the authentication provider.
+   * @param {String} token - JWT token.
+   * @param {String} authProvider - Authentication provider.
+   * @returns {Promise<JSON>} A JSON object containing the user details from the authentication provider.
+   */
   static async getAuthUser(token, authProvider) {
     try {
+      logger.info("AUTHENTICATION HELPER GET_AUTH_USER START: ");
+
+      logger.info(
+        "AUTHENTICATION HELPER GET_AUTH_USER AUTH PROVIDER: " + authProvider
+      );
+      logger.info("AUTHENTICATION HELPER GET_AUTH_USER TOKEN: " + token + "\n");
+
       const decodedToken = await this.decodeToken(token);
 
       switch (authProvider) {
         case "cognito":
           const user = await CognitoService.getUserDetails(token);
+          logger.info(
+            "AUTHENTICATION HELPER GET_AUTH_USER RESULT: " +
+              JSON.stringify(user, null, 2)
+          );
           return user;
-
       }
-    } catch (e) {
-      return e;
+    } catch (error) {
+      logger.error(
+        "AUTHENTICATION HELPER GET_AUTH_ID ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+      return { error: error };
     }
   }
 
@@ -88,6 +157,13 @@ export default class AuthHelper {
    * */
   static async getUser(token, authProvider) {
     try {
+      logger.info("AUTHENTICATION HELPER GET_USER STARTED ");
+
+      logger.info(
+        "AUTHENTICATION HELPER GET_USER AUTH PROVIDER: " + authProvider
+      );
+      logger.info("AUTHENTICATION HELPER GET_USER TOKEN: " + token + "\n");
+
       let user;
 
       const decodedToken = await this.decodeToken(token);
@@ -102,6 +178,11 @@ export default class AuthHelper {
             user.company = company;
           }
 
+          logger.info(
+            "AUTHENTICATION HELPER GET_USER RESULT: " +
+              JSON.stringify(user, null, 2)
+          );
+
           return user;
 
         default:
@@ -112,13 +193,18 @@ export default class AuthHelper {
             user.company = company;
           }
 
+          logger.info("AUTHENTICATION HELPER GET_USER SUCCESS: ", user);
+
           return user;
       }
-    } catch (e) {
-      return null;
+    } catch (error) {
+      logger.error(
+        "AUTHENTICATION HELPER GET_USER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
     }
   }
-
 }
-
-  
