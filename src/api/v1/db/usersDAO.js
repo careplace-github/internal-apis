@@ -132,6 +132,7 @@ export default class usersDAO {
         "USERS-DAO ADD_USER user: " + JSON.stringify(user, null, 2) + "\n"
       );
 
+      // User schema 
       const newUser = new User({
         cognitoId: user.cognitoId,
         email: user.email,
@@ -146,42 +147,63 @@ export default class usersDAO {
         companyId: user.companyId,
       });
 
-      const mongodbResponse = await users.insertOne(newUser);
+      const userExists = await this.get_one_by_email(user.email);
 
-      logger.info(
-        "USERS-DAO ADD_USER MONGODB RESPONSE: " +
-          JSON.stringify(mongodbResponse, null, 2) +
-          "\n"
-      );
-
-      // User inserted
-      if (mongodbResponse.acknowledged === true) {
+      // Check if user already exists in the database with the same email. If so, return an error.
+      if (userExists) {
         logger.info(
-          "USERS-DAO ADD_USER RESPONSE: " +
+          "USERS-DAO ADD_USER ERROR: " +
             JSON.stringify(
-              {
-                response: mongodbResponse,
-                userCreated: newUser,
-              },
+              { error: `User already exists with emaiL: \n` },
               null,
               2
             ) +
             "\n"
         );
         return {
-          response: mongodbResponse,
-          userCreated: newUser,
+          error: "User already exists with email: " + user.email + "\n",
         };
-      }
-      // User not inserted
+      } 
+      // If user does not exist, insert it in the database.
       else {
+        const mongodbResponse = await users.insertOne(newUser);
+
         logger.info(
-          "USERS-DAO ADD_USER ERROR: " +
+          "USERS-DAO ADD_USER MONGODB RESPONSE: " +
             JSON.stringify(mongodbResponse, null, 2) +
             "\n"
         );
-        return { error: mongodbResponse };
+
+        // User inserted
+        if (mongodbResponse.acknowledged === true) {
+          logger.info(
+            "USERS-DAO ADD_USER RESPONSE: " +
+              JSON.stringify(
+                {
+                  response: mongodbResponse,
+                  userCreated: newUser,
+                },
+                null,
+                2
+              ) +
+              "\n"
+          );
+          return {
+            response: mongodbResponse,
+            userCreated: newUser,
+          };
+        }
+        // User not inserted
+        else {
+          logger.info(
+            "USERS-DAO ADD_USER ERROR: " +
+              JSON.stringify(mongodbResponse, null, 2) +
+              "\n"
+          );
+          return { error: mongodbResponse };
+        }
       }
+      // Internal error
     } catch (error) {
       logger.error(
         "USERS-DAO ADD_USER ERROR: " + JSON.stringify(error, null, 2) + "\n"

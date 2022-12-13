@@ -70718,3 +70718,875 @@
   }
 }
 
+2022-12-13T17:28:41.377Z | [INFO   ]: Connected to database: users
+2022-12-13T17:28:41.417Z | [INFO   ]: Connected to collection: users
+2022-12-13T17:28:41.418Z | [INFO   ]: Connected to collection: companies
+2022-12-13T17:28:41.435Z | [INFO   ]: Server started on port: 8080
+2022-12-13T17:28:41.437Z | [INFO   ]: Server environment mode: development
+2022-12-13T17:28:41.441Z | [INFO   ]: HTTP requests API version: v1
+2022-12-13T17:28:41.443Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-13T17:28:45.601Z | [INFO   ]: COGNITO SERVICE SIGN_UP SUCESS:{
+  "cognitoResponse": {
+    "UserConfirmed": false,
+    "CodeDeliveryDetails": {
+      "Destination": "c***@c***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    },
+    "UserSub": "b99dd579-008d-40fa-adb7-75923249ccef"
+  },
+  "message": "Cognito user created successfully"
+}
+
+2022-12-13T17:28:45.602Z | [INFO   ]: USERS-DAO ADD_USER STARTED: 
+2022-12-13T17:28:45.602Z | [INFO   ]: USERS-DAO ADD_USER user: {
+  "name": "Henrique Fonseca",
+  "email": "crm@carely.pt",
+  "role": "caregiver",
+  "companyId": "636c3e997a9b3b62ef0f99e2"
+}
+
+2022-12-13T17:28:45.611Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:28:45.612Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: crm@carely.pt
+
+2022-12-13T17:28:45.668Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67"
+}
+
+2022-12-13T17:28:45.671Z | [ERROR  ]: USERS-DAO ADD_USER ERROR: {}
+
+2022-12-13T17:29:21.075Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:29:21.076Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:29:21.076Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:29:21.129Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL USER NOT FOUND
+
+2022-12-13T17:29:21.129Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "error": "User not found"
+}
+2022-12-13T17:29:21.491Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:29:21.490Z","requestId":"7c131433-edd4-4d4e-9929-7633ee057bf8","statusCode":400,"retryable":false,"retryDelay":43.7151239165044}
+
+2022-12-13T17:29:21.491Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:29:51.834Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:29:51.834Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:29:51.834Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: crm@carely.pt
+
+2022-12-13T17:29:51.890Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:29:51.892Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+2022-12-13T17:29:52.335Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:29:52.335Z","requestId":"62c28005-8782-4872-875b-a1c65031fad2","statusCode":400,"retryable":false,"retryDelay":61.32831441983211}
+
+2022-12-13T17:29:52.345Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:30:20.456Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:30:20.456Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:30:20.456Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: crm@carely.pt
+
+2022-12-13T17:30:20.494Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:30:20.494Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+2022-12-13T17:30:20.904Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:30:20.903Z","requestId":"6f507f97-07d6-445c-90bf-c5d9f3a5451a","statusCode":400,"retryable":false,"retryDelay":1.031195385905681}
+
+2022-12-13T17:30:20.904Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:30:35.534Z | [INFO   ]: Attempting to signup the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "121"
+    },
+    "query": {},
+    "body": {
+      "name": "Henrique Fonseca",
+      "email": "crm@carely.pt",
+      "password": "Password123",
+      "confirmPassword": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:30:35.534Z | [INFO   ]: Attempting to create new user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/signup",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "121"
+    },
+    "query": {},
+    "body": {
+      "name": "Henrique Fonseca",
+      "email": "crm@carely.pt",
+      "password": "Password123",
+      "confirmPassword": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:30:35.936Z | [INFO   ]: COGNITO SERVICE SIGN_UP SUCESS:{
+  "cognitoResponse": {
+    "UserConfirmed": false,
+    "CodeDeliveryDetails": {
+      "Destination": "c***@c***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    },
+    "UserSub": "bf5ae884-5d99-45ae-ae4a-e26b685ba6fb"
+  },
+  "message": "Cognito user created successfully"
+}
+
+2022-12-13T17:30:35.936Z | [INFO   ]: Successfully created a new Cognito user: {
+  "cognitoResponse": {
+    "UserConfirmed": false,
+    "CodeDeliveryDetails": {
+      "Destination": "c***@c***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    },
+    "UserSub": "bf5ae884-5d99-45ae-ae4a-e26b685ba6fb"
+  },
+  "message": "Cognito user created successfully"
+}
+
+2022-12-13T17:30:35.936Z | [INFO   ]: USERS-DAO ADD_USER STARTED: 
+2022-12-13T17:30:35.936Z | [INFO   ]: USERS-DAO ADD_USER user: {
+  "name": "Henrique Fonseca",
+  "email": "crm@carely.pt",
+  "password": "Password123",
+  "cognitoId": "bf5ae884-5d99-45ae-ae4a-e26b685ba6fb"
+}
+
+2022-12-13T17:30:35.937Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:30:35.937Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: crm@carely.pt
+
+2022-12-13T17:30:35.975Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:30:35.976Z | [ERROR  ]: USERS-DAO ADD_USER ERROR: {}
+
+2022-12-13T17:30:35.976Z | [ERROR  ]: Error adding a new user to MongoDB: ReferenceError: userExists is not defined
+
+2022-12-13T17:31:04.819Z | [INFO   ]: Connected to database: users
+2022-12-13T17:31:04.826Z | [INFO   ]: Connected to collection: users
+2022-12-13T17:31:04.827Z | [INFO   ]: Connected to collection: companies
+2022-12-13T17:31:04.830Z | [INFO   ]: Server started on port: 8080
+2022-12-13T17:31:04.830Z | [INFO   ]: Server environment mode: development
+2022-12-13T17:31:04.831Z | [INFO   ]: HTTP requests API version: v1
+2022-12-13T17:31:04.832Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-13T17:31:17.971Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:31:17.973Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:31:17.973Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: crm@carely.pt
+
+2022-12-13T17:31:18.018Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:31:18.019Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "crm@carely.pt",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+2022-12-13T17:31:18.420Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:31:18.418Z","requestId":"d9fffa9d-59cc-4459-b4e1-79ccadcc5b47","statusCode":400,"retryable":false,"retryDelay":6.310919063121334}
+
+2022-12-13T17:31:18.421Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "57"
+    },
+    "query": {},
+    "body": {
+      "email": "crm@carely.pt",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:32:31.237Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:32:31.237Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:32:31.237Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:32:31.277Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL USER NOT FOUND
+
+2022-12-13T17:32:31.278Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "error": "User not found"
+}
+2022-12-13T17:32:31.673Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:32:31.672Z","requestId":"98c35c21-aaa5-4489-938e-9fc99ae716c6","statusCode":400,"retryable":false,"retryDelay":91.77956516204888}
+
+2022-12-13T17:32:31.673Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:33:10.266Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:33:10.267Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:33:10.267Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:33:10.315Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL USER NOT FOUND
+
+2022-12-13T17:33:10.316Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "error": "User not found"
+}
+2022-12-13T17:33:10.699Z | [ERROR  ]: COGNITO SERVICE AUTHENTICATE_USER ERROR: {"message":"Incorrect username or password.","code":"NotAuthorizedException","time":"2022-12-13T17:33:10.699Z","requestId":"371075eb-b9c8-46fa-b54f-442afc088d07","statusCode":400,"retryable":false,"retryDelay":8.81131796006962}
+
+2022-12-13T17:33:10.699Z | [ERROR  ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 400,
+  "response": {
+    "error": "Incorrect username or password."
+  }
+}
+
+2022-12-13T17:35:01.663Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:35:01.664Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:35:01.664Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:35:01.701Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "henrique.efonseca@gmail.com",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:35:01.702Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "henrique.efonseca@gmail.com",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+2022-12-13T17:35:02.391Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeName": "NEW_PASSWORD_REQUIRED",
+    "Session": "AYABeBUTiVAJ-O86idlL9SRrrTwAHQABAAdTZXJ2aWNlABBDb2duaXRvVXNlclBvb2xzAAEAB2F3cy1rbXMAS2Fybjphd3M6a21zOmV1LXdlc3QtMzozMzU4NzkyNzQwMjY6a2V5LzczYzdjZmIzLTE3NDctNGFhNS05YmVlLTc2MTA1NGZkNGI2ZAC4AQIBAHiKDLjqAKVaCfSyvvrrldWbVxRap_QvGkKyhLQ_QiK1zQGY-cpRlKDDZXYpynWJyDCOAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM9N-ZnMw3zrZYV0FDAgEQgDuZAh_S7G4UAwVeCqK-u-xrviRN9gjGMxbut8j52w6lG0OWo-Nx-kCzVWBuzAXGGeV09-VFqfCmhaTMGAIAAAAADAAAEAAAAAAAAAAAAAAAAADlQBAYnBh2m7vl2ue_iU1O_____wAAAAEAAAAAAAAAAAAAAAEAAADMe3dZKRzSOcVOvKB243datd70yFR63J2Cz_3cT5masZebJKkE6j8-xCrVFjVRr9mHjWA02hzBNo1bdhQvJ4cLbesRVlsRFG1lWhalmXrUU_ylJimFRArs9-254miesLgHfsZhVIAFDQIY4gyjvn-S1CGE3U9Jr8rTtdwwqV7DIIs-oASJU_r0CXdAHOxejJeu0D7fIJiFQUwDFbSqWlAiCIYMQqGM6PqYEkk19TxBXafqgkDhEgzDPNCh1CMUjpdfZh2HeaIS8c3M8oHg_SU6wkN9xkBIZAHZNxaR_A",
+    "ChallengeParameters": {
+      "USER_ID_FOR_SRP": "henrique.efonseca@gmail.com",
+      "requiredAttributes": "[]",
+      "userAttributes": "{\"email\":\"henrique.efonseca@gmail.com\"}"
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-13T17:35:02.392Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "challenge": "NEW_PASSWORD_REQUIRED",
+    "session": "AYABeBUTiVAJ-O86idlL9SRrrTwAHQABAAdTZXJ2aWNlABBDb2duaXRvVXNlclBvb2xzAAEAB2F3cy1rbXMAS2Fybjphd3M6a21zOmV1LXdlc3QtMzozMzU4NzkyNzQwMjY6a2V5LzczYzdjZmIzLTE3NDctNGFhNS05YmVlLTc2MTA1NGZkNGI2ZAC4AQIBAHiKDLjqAKVaCfSyvvrrldWbVxRap_QvGkKyhLQ_QiK1zQGY-cpRlKDDZXYpynWJyDCOAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM9N-ZnMw3zrZYV0FDAgEQgDuZAh_S7G4UAwVeCqK-u-xrviRN9gjGMxbut8j52w6lG0OWo-Nx-kCzVWBuzAXGGeV09-VFqfCmhaTMGAIAAAAADAAAEAAAAAAAAAAAAAAAAADlQBAYnBh2m7vl2ue_iU1O_____wAAAAEAAAAAAAAAAAAAAAEAAADMe3dZKRzSOcVOvKB243datd70yFR63J2Cz_3cT5masZebJKkE6j8-xCrVFjVRr9mHjWA02hzBNo1bdhQvJ4cLbesRVlsRFG1lWhalmXrUU_ylJimFRArs9-254miesLgHfsZhVIAFDQIY4gyjvn-S1CGE3U9Jr8rTtdwwqV7DIIs-oASJU_r0CXdAHOxejJeu0D7fIJiFQUwDFbSqWlAiCIYMQqGM6PqYEkk19TxBXafqgkDhEgzDPNCh1CMUjpdfZh2HeaIS8c3M8oHg_SU6wkN9xkBIZAHZNxaR_A"
+  }
+}
+
+2022-12-13T17:35:25.177Z | [INFO   ]: Authentication Validation Middleware: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/change-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2Y4NTJjMGVkLTczMTctNDM2ZS05YzE4LWI5NjZlNjJhYTI2ZCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjdjN2E1OWQ4LWY1YjctNDJjNS1hMjM4LTk5YmY1NzdlNGVjOSIsImV2ZW50X2lkIjoiMDZkZGQ5NmUtZDcwZS00ZjNkLTk3YmEtMDE2NjM1YWRkZTA2IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMDAzNiwiZXhwIjoxNjcwMTIzNjM2LCJpYXQiOjE2NzAxMjAwMzYsImp0aSI6IjZmOWJkNGRlLTk4NDMtNDAzNC1iZjdjLWNmMmJjYWEyM2ExYiIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.Zrb0rRvgo84rAC2HO3z6glm5eywig5jLR2jeEsFPZgiYgRAn9-KH0lgDzPlkPpKgeSES1JXAADHm5JR0fLsGBvllXFY11XU5WkEi_ChCS3DsiDQpqm7OiyFVOO4esdBCQEqzM8XCYnJhpyIT8GTio-lcvidMHS6BIYprfDKHjYh-jndmUoxqfXUCYs2EsrgjDZGLUBTGZmjc90oCIZZxe3gJsMzmqElI5d0zpkjpMn9XtYH0c6i8TBo8-KS1B7kLmnjyP0BJLAKoPZaYGTi3zU0KwNlNaEebQHaAq1-a2aUL-0zkdb6OuDgsudv-bCrJEZIt4LUOs9CaMRqxbxRxNQ",
+      "accept": "*/*",
+      "content-length": "107"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "oldPassword": "Password12",
+      "newPassword": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:35:25.179Z | [INFO   ]: AUTHENTICATION HELPER IS_LOGGED_IN STARTED: 
+2022-12-13T17:35:25.179Z | [INFO   ]: AUTHENTICATION HELPER DECODE_TOKEN STARTED: 
+2022-12-13T17:35:25.179Z | [INFO   ]: AUTHENTICATION HELPER DECODE_TOKEN TOKEN: eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2Y4NTJjMGVkLTczMTctNDM2ZS05YzE4LWI5NjZlNjJhYTI2ZCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjdjN2E1OWQ4LWY1YjctNDJjNS1hMjM4LTk5YmY1NzdlNGVjOSIsImV2ZW50X2lkIjoiMDZkZGQ5NmUtZDcwZS00ZjNkLTk3YmEtMDE2NjM1YWRkZTA2IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMDAzNiwiZXhwIjoxNjcwMTIzNjM2LCJpYXQiOjE2NzAxMjAwMzYsImp0aSI6IjZmOWJkNGRlLTk4NDMtNDAzNC1iZjdjLWNmMmJjYWEyM2ExYiIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.Zrb0rRvgo84rAC2HO3z6glm5eywig5jLR2jeEsFPZgiYgRAn9-KH0lgDzPlkPpKgeSES1JXAADHm5JR0fLsGBvllXFY11XU5WkEi_ChCS3DsiDQpqm7OiyFVOO4esdBCQEqzM8XCYnJhpyIT8GTio-lcvidMHS6BIYprfDKHjYh-jndmUoxqfXUCYs2EsrgjDZGLUBTGZmjc90oCIZZxe3gJsMzmqElI5d0zpkjpMn9XtYH0c6i8TBo8-KS1B7kLmnjyP0BJLAKoPZaYGTi3zU0KwNlNaEebQHaAq1-a2aUL-0zkdb6OuDgsudv-bCrJEZIt4LUOs9CaMRqxbxRxNQ
+2022-12-13T17:35:25.181Z | [INFO   ]: AUTHENTICATION HELPER IS_LOGGED_IN RESULT: false
+2022-12-13T17:35:25.182Z | [WARN   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/change-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "authorization": "Bearer eyJraWQiOiIwenNmQzh6QWZhSWZNbU41Tzdlb2ZUUXhyMkJpOGtwVjZTdGpUdjhwSUdRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIwZTRlMGUzOC0wZDk3LTQ3OTUtYjRiYi1hNjJlMjczYjcyNWUiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2Y4NTJjMGVkLTczMTctNDM2ZS05YzE4LWI5NjZlNjJhYTI2ZCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX29NNWV0UnFmUSIsImNsaWVudF9pZCI6IjVqZjFqOWppb2ozY2ZvdjE0amdpZzNxM2EwIiwib3JpZ2luX2p0aSI6IjdjN2E1OWQ4LWY1YjctNDJjNS1hMjM4LTk5YmY1NzdlNGVjOSIsImV2ZW50X2lkIjoiMDZkZGQ5NmUtZDcwZS00ZjNkLTk3YmEtMDE2NjM1YWRkZTA2IiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3MDEyMDAzNiwiZXhwIjoxNjcwMTIzNjM2LCJpYXQiOjE2NzAxMjAwMzYsImp0aSI6IjZmOWJkNGRlLTk4NDMtNDAzNC1iZjdjLWNmMmJjYWEyM2ExYiIsInVzZXJuYW1lIjoiaGVucmlxdWUuZWZvbnNlY2FAZ21haWwuY29tIn0.Zrb0rRvgo84rAC2HO3z6glm5eywig5jLR2jeEsFPZgiYgRAn9-KH0lgDzPlkPpKgeSES1JXAADHm5JR0fLsGBvllXFY11XU5WkEi_ChCS3DsiDQpqm7OiyFVOO4esdBCQEqzM8XCYnJhpyIT8GTio-lcvidMHS6BIYprfDKHjYh-jndmUoxqfXUCYs2EsrgjDZGLUBTGZmjc90oCIZZxe3gJsMzmqElI5d0zpkjpMn9XtYH0c6i8TBo8-KS1B7kLmnjyP0BJLAKoPZaYGTi3zU0KwNlNaEebQHaAq1-a2aUL-0zkdb6OuDgsudv-bCrJEZIt4LUOs9CaMRqxbxRxNQ",
+      "accept": "*/*",
+      "content-length": "107"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "oldPassword": "Password12",
+      "newPassword": "Password123"
+    }
+  },
+  "statusCode": 401,
+  "response": {
+    "message": "Token expired"
+  }
+}
+
+2022-12-13T17:36:59.075Z | [INFO   ]: COGNITO SERVICE SIGN_UP SUCESS:{
+  "cognitoResponse": {
+    "UserConfirmed": false,
+    "CodeDeliveryDetails": {
+      "Destination": "h***@g***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    },
+    "UserSub": "b9fd665c-6637-4545-8e98-7c1663e51ad2"
+  },
+  "message": "Cognito user created successfully"
+}
+
+2022-12-13T17:36:59.075Z | [INFO   ]: USERS-DAO ADD_USER STARTED: 
+2022-12-13T17:36:59.075Z | [INFO   ]: USERS-DAO ADD_USER user: {
+  "name": "Henrique Fonseca",
+  "email": "henrique.efonseca@gmail.com",
+  "role": "caregiver",
+  "companyId": "636c3e997a9b3b62ef0f99e2"
+}
+
+2022-12-13T17:36:59.086Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:36:59.087Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:36:59.149Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "henrique.efonseca@gmail.com",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:36:59.149Z | [INFO   ]: USERS-DAO ADD_USER ERROR: {
+  "error": "User already exists with emaiL: \n"
+}
+
+2022-12-13T17:39:04.025Z | [INFO   ]: Connected to database: users
+2022-12-13T17:39:04.029Z | [INFO   ]: Connected to collection: users
+2022-12-13T17:39:04.029Z | [INFO   ]: Connected to collection: companies
+2022-12-13T17:39:04.032Z | [INFO   ]: Server started on port: 8080
+2022-12-13T17:39:04.032Z | [INFO   ]: Server environment mode: development
+2022-12-13T17:39:04.033Z | [INFO   ]: HTTP requests API version: v1
+2022-12-13T17:39:04.033Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-13T17:39:50.454Z | [INFO   ]: Connected to database: users
+2022-12-13T17:39:50.457Z | [INFO   ]: Connected to collection: users
+2022-12-13T17:39:50.458Z | [INFO   ]: Connected to collection: companies
+2022-12-13T17:39:50.460Z | [INFO   ]: Server started on port: 8080
+2022-12-13T17:39:50.460Z | [INFO   ]: Server environment mode: development
+2022-12-13T17:39:50.461Z | [INFO   ]: HTTP requests API version: v1
+2022-12-13T17:39:50.461Z | [INFO   ]: API route: http://localhost:8080/api/v1
+
+2022-12-13T17:39:53.470Z | [INFO   ]: Attempting to send the forgot password code to the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/forgot-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "43"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:39:54.121Z | [INFO   ]: COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE SUCESS: {
+  "cognitoResponse": {
+    "CodeDeliveryDetails": {
+      "Destination": "h***@g***",
+      "DeliveryMedium": "EMAIL",
+      "AttributeName": "email"
+    }
+  },
+  "message": "Cognito forgot password code sent successfully"
+}
+
+2022-12-13T17:39:54.122Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/forgot-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "43"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "Password reset email sent successfully."
+  }
+}
+
+2022-12-13T17:40:13.199Z | [INFO   ]: Attempting to reset the user password with the code sent to the user's email: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "324284",
+      "newPassword": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:40:13.514Z | [INFO   ]: COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE SUCESS: {
+  "cognitoResponse": {},
+  "message": "Cognito user password changed successfully"
+}
+
+2022-12-13T17:40:13.514Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/verify/forgot-password",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "93"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "code": "324284",
+      "newPassword": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "message": "Password reset successfully."
+  }
+}
+
+2022-12-13T17:40:18.614Z | [INFO   ]: Attempting to login the user: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 100
+}
+
+2022-12-13T17:40:18.614Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL STARTED: 
+2022-12-13T17:40:18.614Z | [INFO   ]: USERS-DAO GET_USER_BY_EMAIL email: henrique.efonseca@gmail.com
+
+2022-12-13T17:40:18.656Z | [INFO   ]: USERS-DAO GET_USER_BY_AUTH_ID RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "henrique.efonseca@gmail.com",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+
+2022-12-13T17:40:18.656Z | [INFO   ]: AUTHENTICATION HELPER GET_USER_APP RESULT: {
+  "_id": "6398b55cabc89718a57c96f5",
+  "email": "henrique.efonseca@gmail.com",
+  "company": "638e7be34c35525928353d67",
+  "companyId": "638e7be34c35525928353d67",
+  "role": "companyOwner"
+}
+2022-12-13T17:40:19.074Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "cognitoResponse": {
+    "ChallengeParameters": {},
+    "AuthenticationResult": {
+      "AccessToken": "eyJraWQiOiIrNGlSdGtVa3VEbEo0RzNNZk9nZWtyYkxcL05KQXJOU1BSanZ3Y1QzRnhuMD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiOWZkNjY1Yy02NjM3LTQ1NDUtOGU5OC03YzE2NjNlNTFhZDIiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0zLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtM19DTzZwY2dvYjQiLCJjbGllbnRfaWQiOiIyMzVwOHFvZmE5ZmtkdDRyZW9jZjVmcDFmbiIsIm9yaWdpbl9qdGkiOiIxZmE5OGM5OC02MTE5LTQxNGMtOWVkMS1iZjViYjViNWQ0ZWYiLCJldmVudF9pZCI6IjY5ZjUxZGVjLTBlNzMtNDRlYy04MjMyLTA1NWJkNWNhY2Y2YyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2NzA5NTMyMTksImV4cCI6MTY3MDk1NjgxOSwiaWF0IjoxNjcwOTUzMjE5LCJqdGkiOiIzNjVkOWNjNC1lMTM0LTQ0YzgtODJiZC0wOWI3MGI5YjI3YzkiLCJ1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.tggIaMBF3gWRno1eVt9cmQ_pnoxiD4-iQ6FD8AmXgUV5iVYlZ_hmsCo7pFbcRwksXXW3jouB0KAEOz1g5rrKNIQByi9Hg5B4snL2nv-gUABMas1l8pYaJroaUxeoWFmqcINe4CCD25CvFGGMi4pntOL5rTtM4jBMdnPtiD3evlnEMbZQAgYQNatxT1E8UFL2cskVpUHIhKWH_tRhvJUyqHcyf_lLda5Zcv0V67Uwv2UbXwx1p4IUnbO-1QmzhSjVbhCTOHtqTXwbS_LwAohFw8dMfdEBqKMC6ugGeqefL3w99PhWOLLaiGdINBLqcKoJ5kDkYB2gZtz4Tj1lg_bgsA",
+      "ExpiresIn": 3600,
+      "TokenType": "Bearer",
+      "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Q-lHu9pQ4H8vMBJXBIkfrDCpLPodwkzOh-ahnuXAxreq38JUG8X4W6-el6JMQo_C1nR_6l12UJWuFd6u-6VoWiNOVn1eQABB5-V18EoHnyWCxxsf5Jdfb8B2VD_aDqjKEcBNBvFmRQAJvXKtM2uXZx7aU-DtTFXnnyES_YgXP-d9nswwEIpc8pAPXvesdiFfV8SfUoEyIzkNwQ00TnSGwh1PKYyjqmFAIlM9e30xEM_fG6tTDQ9Fgria35TSBIywBrA5kX7JRB6gYBcADTXk06HnKcrDc-QvVIWq0yJ-y7C8riy-PLgxUnvsnbTouHCbMj4uFqEZ4DiWXsUNqbwpKg.6UshV1Q29bBzQLCy.z6lJUZw8GA_JrENVe4DvP9PL_ofGa2XugfXGeJ4ArzSKIxH3RMLguNayQDUnMuq3yffGXpWsOlE55N8STg4gM0Z_CPHkkEht2SdUYkzBSUD4XbCvj0mgLwchGU3ymRdIFnwgZvoBdQumvdtma1uM16iye7UCaQsN0Xzs4YuEoJCgXW9Od0cNAu2Azu2kLA32IlB-9lgNixk9DikLpxPsJ3KKpfTJmPTCWj1T8vri1vlf4w01Twp4YW0PK1MddoGU5Ta-FemkNMDe1So0zP7CC8gHFS7gkzUcb6PQRAUAMXtgOkmSQ3MNVbyWswwNqDZ80LOHS6CA8xb2hW7VvceqMmwE-Vdq4fwguiX4KwP87C74uE0oW5eOp7i0xhxQazCFNKdUM2qM_ndzJfpHewVmuyXHGNeRpTFC3AnFtFsflNdGGfgklsOvLOy0e-ZvEnVj4mRMIU-a4AnXFLddWsCrDSLCS23Qkouqf4SmSRdOlkt3bkR63udrg1jHH6fgFAnMVHSrPz6Dd2obNYGW9aUqHYFGABnUq6e-uT3tpBk7JoUBXh9-B5wL0izA72IZDxrO90KP-E_c6zbXxqh1Tk_acp0VaYT-EXTICn51kmJ1hkUUmK9kxEx76y0ayMgVLpQ0ZIfY3JAwIv42glezhIL6nwUnpa4HFrHJrWi9RmZE383yH4-u_j8jMNt5QORWzmhd45rIFrxVyDqAe7jfNJaUpmcGri3ANwuVaKe_xubmajC1yHmAYM4oqViYJbdp9t-wW3bapkQUr3n-DhOrmbPKuAKVjzbk1EPm9X_C-alV75vKG-yvj5XBk5kL0eJK-swuvVHoXKBUHwXR240SThGKBkzLq-yQjzHAaD0AzdmQEOrNClrtcISFuvxvmgWiP_jMguaRYTRnWe-ql7FODgZlnQrEpXPAs7A2Z06mTxo09XHgDhAgEiXKqROjePrPKcKSmMf4CYnsYHqqNcbtdoxE6JUvRXkLIpRtS4BAroUNpNzIJQJz4YNRgKpvsYlOZ7qY-GCReWC3VpgU6p5DwatRK-M629P6-Swyoc3sYaCqAT9f6dCHlf3cDEul6ebsSaCfNnLrAV6P2tXdPYRg5Mv3aKt7TUYih9gGy5DLf-0WcAZV7jl47wTceTIs8dOH2mkbH0SIZv8rDEvn_6WfwqUxI1bghNGh6NbWIEggnZ0B-nW5ja2FbNG-_eH4Io0g1cz8Jka7Ty_uozOgRMxDmS4CPHiSAtw_Di6QptcEpVoLQcKEF8GZGdz7Ehd03UHcVV3VirAqdEgQvUn47CvGbyRnJ0sPQg23vJ3j5AUOyJcotQ.znrAARIZWesWVSMae-nQMg",
+      "IdToken": "eyJraWQiOiJpUGJpNWJJNGFXQVwvXC9Xc01KaHRlR2sxaWFieVwvNWdVYmdyUlJzcG5VaDF3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJiOWZkNjY1Yy02NjM3LTQ1NDUtOGU5OC03YzE2NjNlNTFhZDIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfQ082cGNnb2I0IiwiY29nbml0bzp1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSIsIm9yaWdpbl9qdGkiOiIxZmE5OGM5OC02MTE5LTQxNGMtOWVkMS1iZjViYjViNWQ0ZWYiLCJhdWQiOiIyMzVwOHFvZmE5ZmtkdDRyZW9jZjVmcDFmbiIsImV2ZW50X2lkIjoiNjlmNTFkZWMtMGU3My00NGVjLTgyMzItMDU1YmQ1Y2FjZjZjIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NzA5NTMyMTksImV4cCI6MTY3MDk1NjgxOSwiaWF0IjoxNjcwOTUzMjE5LCJqdGkiOiJhYWIzNDRjNS1iNjAyLTRiNjUtOGY4ZC0yNTc4NGI3YmUyNGIiLCJlbWFpbCI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.CjK8yJy-AakLUmKoApHg7g7pcZuFlX0ARvF931zRYvi_uXsjWsWdEqsupaCX7UlCegAPeWkymaqpYH73erBK5nZOYpFZ7utdbd7xrMRLN7BztTXDmg3yRFtbdFdyr0H6qNghPao45S1Ebs3DEiMc0imFNC4ttmGirFoDiVhJXPHaTtMy82dqD7cnPcwqRWZ9PmZAlAN5JOR9RQLaMLl7HF8b1nunsGeEboIC7QnCMKi3xS_gVg0cgqtOVMI_ZiX7-bQsHaYpz4xxE4y3mdiD-qTvIWtonlCF37kFY47bsxvwewz-vZnvQQPNCHiCMlVZ_iVKGKDrAPh8_MWzSvOVxA"
+    }
+  },
+  "message": "Cognito user authenticated successfully"
+}
+
+2022-12-13T17:40:19.079Z | [INFO   ]: {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/login",
+    "ipv6": "::ffff:127.0.0.1",
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.6.0",
+      "content-type": "application/json",
+      "accept": "*/*",
+      "content-length": "71"
+    },
+    "query": {},
+    "body": {
+      "email": "henrique.efonseca@gmail.com",
+      "password": "Password123"
+    }
+  },
+  "statusCode": 200,
+  "response": {
+    "accessToken": "eyJraWQiOiIrNGlSdGtVa3VEbEo0RzNNZk9nZWtyYkxcL05KQXJOU1BSanZ3Y1QzRnhuMD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiOWZkNjY1Yy02NjM3LTQ1NDUtOGU5OC03YzE2NjNlNTFhZDIiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0zLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtM19DTzZwY2dvYjQiLCJjbGllbnRfaWQiOiIyMzVwOHFvZmE5ZmtkdDRyZW9jZjVmcDFmbiIsIm9yaWdpbl9qdGkiOiIxZmE5OGM5OC02MTE5LTQxNGMtOWVkMS1iZjViYjViNWQ0ZWYiLCJldmVudF9pZCI6IjY5ZjUxZGVjLTBlNzMtNDRlYy04MjMyLTA1NWJkNWNhY2Y2YyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2NzA5NTMyMTksImV4cCI6MTY3MDk1NjgxOSwiaWF0IjoxNjcwOTUzMjE5LCJqdGkiOiIzNjVkOWNjNC1lMTM0LTQ0YzgtODJiZC0wOWI3MGI5YjI3YzkiLCJ1c2VybmFtZSI6ImhlbnJpcXVlLmVmb25zZWNhQGdtYWlsLmNvbSJ9.tggIaMBF3gWRno1eVt9cmQ_pnoxiD4-iQ6FD8AmXgUV5iVYlZ_hmsCo7pFbcRwksXXW3jouB0KAEOz1g5rrKNIQByi9Hg5B4snL2nv-gUABMas1l8pYaJroaUxeoWFmqcINe4CCD25CvFGGMi4pntOL5rTtM4jBMdnPtiD3evlnEMbZQAgYQNatxT1E8UFL2cskVpUHIhKWH_tRhvJUyqHcyf_lLda5Zcv0V67Uwv2UbXwx1p4IUnbO-1QmzhSjVbhCTOHtqTXwbS_LwAohFw8dMfdEBqKMC6ugGeqefL3w99PhWOLLaiGdINBLqcKoJ5kDkYB2gZtz4Tj1lg_bgsA",
+    "accessTokenExpiration": 3600,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Q-lHu9pQ4H8vMBJXBIkfrDCpLPodwkzOh-ahnuXAxreq38JUG8X4W6-el6JMQo_C1nR_6l12UJWuFd6u-6VoWiNOVn1eQABB5-V18EoHnyWCxxsf5Jdfb8B2VD_aDqjKEcBNBvFmRQAJvXKtM2uXZx7aU-DtTFXnnyES_YgXP-d9nswwEIpc8pAPXvesdiFfV8SfUoEyIzkNwQ00TnSGwh1PKYyjqmFAIlM9e30xEM_fG6tTDQ9Fgria35TSBIywBrA5kX7JRB6gYBcADTXk06HnKcrDc-QvVIWq0yJ-y7C8riy-PLgxUnvsnbTouHCbMj4uFqEZ4DiWXsUNqbwpKg.6UshV1Q29bBzQLCy.z6lJUZw8GA_JrENVe4DvP9PL_ofGa2XugfXGeJ4ArzSKIxH3RMLguNayQDUnMuq3yffGXpWsOlE55N8STg4gM0Z_CPHkkEht2SdUYkzBSUD4XbCvj0mgLwchGU3ymRdIFnwgZvoBdQumvdtma1uM16iye7UCaQsN0Xzs4YuEoJCgXW9Od0cNAu2Azu2kLA32IlB-9lgNixk9DikLpxPsJ3KKpfTJmPTCWj1T8vri1vlf4w01Twp4YW0PK1MddoGU5Ta-FemkNMDe1So0zP7CC8gHFS7gkzUcb6PQRAUAMXtgOkmSQ3MNVbyWswwNqDZ80LOHS6CA8xb2hW7VvceqMmwE-Vdq4fwguiX4KwP87C74uE0oW5eOp7i0xhxQazCFNKdUM2qM_ndzJfpHewVmuyXHGNeRpTFC3AnFtFsflNdGGfgklsOvLOy0e-ZvEnVj4mRMIU-a4AnXFLddWsCrDSLCS23Qkouqf4SmSRdOlkt3bkR63udrg1jHH6fgFAnMVHSrPz6Dd2obNYGW9aUqHYFGABnUq6e-uT3tpBk7JoUBXh9-B5wL0izA72IZDxrO90KP-E_c6zbXxqh1Tk_acp0VaYT-EXTICn51kmJ1hkUUmK9kxEx76y0ayMgVLpQ0ZIfY3JAwIv42glezhIL6nwUnpa4HFrHJrWi9RmZE383yH4-u_j8jMNt5QORWzmhd45rIFrxVyDqAe7jfNJaUpmcGri3ANwuVaKe_xubmajC1yHmAYM4oqViYJbdp9t-wW3bapkQUr3n-DhOrmbPKuAKVjzbk1EPm9X_C-alV75vKG-yvj5XBk5kL0eJK-swuvVHoXKBUHwXR240SThGKBkzLq-yQjzHAaD0AzdmQEOrNClrtcISFuvxvmgWiP_jMguaRYTRnWe-ql7FODgZlnQrEpXPAs7A2Z06mTxo09XHgDhAgEiXKqROjePrPKcKSmMf4CYnsYHqqNcbtdoxE6JUvRXkLIpRtS4BAroUNpNzIJQJz4YNRgKpvsYlOZ7qY-GCReWC3VpgU6p5DwatRK-M629P6-Swyoc3sYaCqAT9f6dCHlf3cDEul6ebsSaCfNnLrAV6P2tXdPYRg5Mv3aKt7TUYih9gGy5DLf-0WcAZV7jl47wTceTIs8dOH2mkbH0SIZv8rDEvn_6WfwqUxI1bghNGh6NbWIEggnZ0B-nW5ja2FbNG-_eH4Io0g1cz8Jka7Ty_uozOgRMxDmS4CPHiSAtw_Di6QptcEpVoLQcKEF8GZGdz7Ehd03UHcVV3VirAqdEgQvUn47CvGbyRnJ0sPQg23vJ3j5AUOyJcotQ.znrAARIZWesWVSMae-nQMg"
+  }
+}
+
