@@ -3,14 +3,14 @@
 import AWS from "aws-sdk";
 import {
     AWS_ses_region,
-    AWS_ses_access_key_id,
-    AWS_ses_secret_access_key,
+    AWS_access_key_id,
+    AWS_secret_access_key,
 } from "../../../config/constants/index.js";
 
 const ses = new AWS.SES({
     region: AWS_ses_region,
-    accessKeyId: AWS_ses_access_key_id,
-    secretAccessKey: AWS_ses_secret_access_key,
+    accessKeyId: AWS_access_key_id,
+    secretAccessKey: AWS_secret_access_key,
 });
 
 export default class SES {
@@ -41,7 +41,7 @@ export default class SES {
 
 
     // Function to send an email with a template
-    static async sendEmailWithTemplate(email, subject, template, templateData) {
+    static async sendEmailWithTemplate(email, template, templateData) {
         const params = {
             Destination: {
                 ToAddresses: [email],
@@ -55,7 +55,7 @@ export default class SES {
                 },
                 Subject: {
                     Charset: "UTF-8",
-                    Data: subject,
+                    Data: "Subject",
                 },
             },
             Source: "",
@@ -66,13 +66,15 @@ export default class SES {
     }
 
     // Function to create a new email template
-    static async createTemplate(templateName, subject, body) {
+    static async createEmailTemplate(templateName, subject, html_body, text_body) {
         const params = {
-            Template: {
-                TemplateName: templateName,
-                SubjectPart: subject,
-                HtmlPart: body,
+            TemplateContent: {
+                Subject: subject,
+                Html: html_body,
+                Text: text_body,
             },
+            TemplateName: templateName,
+
         };
 
         return ses.createTemplate(params).promise();
