@@ -4,154 +4,204 @@ import Cognito from "../services/cognito.service.js";
 // Import database access objects
 import usersDAO from "../db/usersDAO.js";
 
+import authHelper from "../helpers/auth.helper.js";
+
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
-
-
+//import { CognitoIdentityServiceProvider } from "aws-sdk";
 
 export default class AuthenticationController {
-  /**
+ 
+
+
+ /**
    * @description Creates a new user in Cognito and MongoDB
    */
 
   static async signup(req, res, next) {
-    try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+   
 
-      const newUser = {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        cognitoId: "",
-      };
+    // try {
 
-      let cognitoResponse;
-      let mongodbResponse;
+      var request = requestUtils(req);
 
-      logger.info(
-        "Attempting to create new user: " +
+      const app = "marketplace"
+
+    logger.info(
+      "Attempting to signup the user: " +
+        JSON.stringify(request, null, 2) +
+        "\n"
+    );
+
+    const newUser = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      cognitoId: "",
+    };
+
+    let cognitoResponse;
+    let mongodbResponse;
+
+    logger.info(
+      "Attempting to create new user: " +
+        JSON.stringify(request, null, 2) +
+        "\n"
+    );
+
+    cognitoResponse = await Cognito.addUser(app, newUser.email, newUser.password);
+
+    // If there is an error, return the error to the client
+    if (cognitoResponse.error != null) {
+      request.statusCode = 400;
+      request.response = { error: cognitoResponse.error.message };
+
+      logger.error(
+        "Error adding a new Cognito user: " +
           JSON.stringify(request, null, 2) +
           "\n"
       );
 
-      cognitoResponse = await Cognito.addUser(newUser.email, newUser.password);
+      return res.status(400).json({ error: cognitoResponse.error.message });
+    }
+
+    // A new user has been created in Cognito
+    else {
+      logger.info(
+        "Successfully created a new Cognito user: " +
+          JSON.stringify(cognitoResponse, null, 2) +
+          "\n"
+      );
+
+     
+
+
+
+      newUser.cognitoId = cognitoResponse.cognitoResponse.UserSub;
+
+      // Attempting to add a new user to the database
+      mongodbResponse = await usersDAO.add(newUser);
 
       // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error.message };
-
+      if (mongodbResponse.error != null) {
         logger.error(
-          "Error adding a new Cognito user: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
+          "Error adding a new user to MongoDB: " + mongodbResponse.error + "\n"
         );
 
-        return res.status(400).json({ error: cognitoResponse.error.message });
-      }
+        request.statusCode = 400;
+        request.response = { error: mongodbResponse.error };
 
-      // A new user has been created in Cognito
-      else {
+        return res.status(400).json({ error: mongodbResponse.error });
+      } else {
+        // User has been added to MongoDB successfully
         logger.info(
-          "Successfully created a new Cognito user: " +
-            JSON.stringify(cognitoResponse, null, 2) +
+          "Successfully created a new user in MongoDB: " +
+            JSON.stringify(mongodbResponse, null, 2) +
             "\n"
         );
 
-        newUser.cognitoId = cognitoResponse.UserSub;
+       // Cognito.resendVerificationCode(newUser.email);
 
-        // Attempting to add a new user to the database
-        mongodbResponse = await usersDAO.addUser(newUser);
+        request.statusCode = 200;
+        request.response = {
+          message: "User created successfully",
+          user: mongodbResponse.userCreated,
+        };
 
-        // If there is an error, return the error to the client
-        if (mongodbResponse.error != null) {
-          logger.error(
-            "Error adding a new user to MongoDB: " +
-              mongodbResponse.error +
-              "\n"
-          );
+        logger.info(JSON.stringify(request, null, 2) + "\n");
 
-          request.statusCode = 400;
-          request.response = { error: mongodbResponse.error };
-
-          return res.status(400).json({ error: mongodbResponse.error });
-        } else {
-          // User has been added to MongoDB successfully
-          logger.info(
-            "Successfully created a new user in MongoDB: " +
-              JSON.stringify(mongodbResponse, null, 2) +
-              "\n"
-          );
-
-          request.statusCode = 200;
-          request.response = {
-            message: "User created successfully",
-            user: mongodbResponse.userCreated,
-          };
-
-          logger.info(JSON.stringify(request, null, 2) + "\n");
-
-          return res.status(200).json({
-            message: "User created successfully",
-            user: mongodbResponse.userCreated,
-          });
-        }
+        return res.status(200).json({
+          message: "User created successfully",
+          user: mongodbResponse.userCreated,
+        });
       }
-    } catch (error) {
+    }
+
+    /**
+       *  } catch (error) {
       request.statusCode = 500;
       request.response = { error: error };
 
       logger.error(
         "Internal error: " + JSON.stringify(request, null, 2) + "\n"
       );
-    }
+
+      return res.status(500).json(error);
+      }
+
+       */
   }
+
 
   /**
    * @description Signs in a user
    */
   static async login(req, res, next) {
-    try {
-      var request = requestUtils(req)
+    // try {
+    var request = requestUtils(req);
 
-      
+    logger.info(
+      "Attempting to login the user: " + JSON.stringify(request, null, 2) + "\n"
+    );
 
-      logger.info(
-        "Attempting to login the user: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+    let cognitoResponse;
 
-      let cognitoResponse;
+   
+    const app = await authHelper.getUserApp(req.body.email)
 
-      cognitoResponse = await Cognito.authenticateUser(
-        req.body.email,
-        req.body.password
-      );
+    console.log("app: ", app)
 
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error.message };
+    cognitoResponse = await Cognito.authenticateUser(
+      app,
+      req.body.email,
+      req.body.password
+    );
 
-        logger.error(JSON.stringify(request, null, 2) + "\n");
+    // If there is an error, return the error to the client
+    if (cognitoResponse.error != null) {
+      request.statusCode = 400;
+      request.response = { error: cognitoResponse.error.message };
 
-        return res.status(400).json({ error: cognitoResponse.error.message });
+      logger.error(JSON.stringify(request, null, 2) + "\n");
+
+      return res.status(400).json({ error: cognitoResponse.error.message });
+    }
+
+    // If the user is authenticated, return the user's information
+    else {
+      logger.debug(JSON.stringify(cognitoResponse, null, 2) + "\n");
+
+      // Check for challenges
+      if (cognitoResponse.cognitoResponse.ChallengeName != null) {
+        let response;
+        switch (cognitoResponse.cognitoResponse.ChallengeName) {
+          case "NEW_PASSWORD_REQUIRED":
+            response = {
+              challenge: cognitoResponse.cognitoResponse.ChallengeName,
+              session: cognitoResponse.cognitoResponse.Session,
+            };
+
+            break;
+
+          default:
+            response = {
+              challenge: cognitoResponse.cognitoResponse.ChallengeName,
+              challengeParameters:
+                cognitoResponse.cognitoResponse.ChallengeParameters,
+            };
+            break;
+        }
+
+        request.statusCode = 200;
+        request.response = response;
+
+        logger.info(JSON.stringify(request, null, 2) + "\n");
+
+        return res.status(200).json(response);
       }
-
-      // If the user is authenticated, return the user's information
+      // Normal authentication
       else {
-        logger.debug(JSON.stringify(cognitoResponse, null, 2) + "\n");
-
         const response = {
           accessToken:
             cognitoResponse.cognitoResponse.AuthenticationResult.AccessToken,
@@ -161,7 +211,6 @@ export default class AuthenticationController {
             cognitoResponse.cognitoResponse.AuthenticationResult.TokenType,
           refreshToken:
             cognitoResponse.cognitoResponse.AuthenticationResult.RefreshToken,
-          message: "User logged in successfully",
         };
 
         request.statusCode = 200;
@@ -171,7 +220,11 @@ export default class AuthenticationController {
 
         return res.status(200).json(response);
       }
-    } catch (error) {
+    }
+  
+
+  /**
+       *   } catch (error) {
       request.statusCode = 500;
       request.response = { error: error };
 
@@ -181,6 +234,8 @@ export default class AuthenticationController {
 
       return res.status(500).json(error);
     }
+       */
+
   }
 
   /**
@@ -372,7 +427,6 @@ export default class AuthenticationController {
         statusCode: 100,
       };
 
-
       logger.info(
         "Attempting to reset the user password with the code sent to the user's email: " +
           JSON.stringify(request, null, 2) +
@@ -501,7 +555,7 @@ export default class AuthenticationController {
           "\n"
       );
 
-      const cognitoResponse = await Cognito.confirmUser(
+      const cognitoResponse = await Cognito.verifyAttribute(
         req.body.email,
         req.body.code
       );

@@ -86,7 +86,7 @@ export default class companiesDAO {
 
           if (user.equals(ObjectId(userId))) {
             
-            logger.info("Found company by userId: " + companies[i] + "\n");
+            logger.info("Found company by userId: " +  JSON.stringify(companies[i].team, null, 2) + "\n");
 
             return companies[i];
           }

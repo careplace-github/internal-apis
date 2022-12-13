@@ -6,12 +6,9 @@ import validateAuth from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-/**
- * @swagge
- */
-
 
 router.route("/auth/signup").post(AuthenticationController.signup);
+
 
 router.route("/auth/login").post(AuthenticationController.login);
 

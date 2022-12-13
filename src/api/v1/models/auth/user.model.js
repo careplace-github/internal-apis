@@ -1,9 +1,4 @@
 import mongoose from "mongoose"
-import hash from "bcryptjs"
-import sign from "jsonwebtoken"
-import randomBytes from "crypto"
-import pick from "lodash"
-import { JWT_secret } from "../../../../config/constants/index.js"
 
 
 const Schema = mongoose.Schema

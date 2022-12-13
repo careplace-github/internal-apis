@@ -5,13 +5,13 @@ import fs from "fs";
 import {
   AWS_s3_bucket_name,
   AWS_s3_region,
-  AWS_s3_access_key_id,
-  AWS_s3_secret_access_key,
+  AWS_access_key_id,
+  AWS_secret_access_key,
 } from "../../../config/constants/index.js";
 
 const s3 = new AWS.S3({
-  accessKeyId: AWS_s3_access_key_id,
-  secretAccessKey: AWS_s3_secret_access_key,
+  accessKeyId: AWS_access_key_id,
+  secretAccessKey: AWS_secret_access_key,
   region: AWS_s3_region,
 });
 export default class S3 {
