@@ -99,7 +99,8 @@ export default class AuthHelper {
 
       switch (authProvider) {
         case "cognito":
-          const authId = await this.decodeToken(token).sub;
+          const decodedToken = await this.decodeToken(token);
+          const authId = decodedToken.sub;
           logger.info("AUTHENTICATION HELPER GET_AUTH_ID RESULT: " + authId);
           return authId;
       }
@@ -170,32 +171,18 @@ export default class AuthHelper {
 
       switch (authProvider) {
         case "cognito":
-          user = await usersDAO.getUserByAuthId(decodedToken.sub, "cognito");
-
-          if (user.role != "user") {
-            const company = await companiesDAO.getCompanyByUserId(user._id);
-
-            user.company = company;
-          }
+          user = await usersDAO.get_one_by_auth_id(decodedToken.sub, "cognito");
 
           logger.info(
             "AUTHENTICATION HELPER GET_USER RESULT: " +
               JSON.stringify(user, null, 2)
           );
+      }
 
-          return user;
+      if (user.role != "user") {
+        const company = await companiesDAO.getCompanyByUserId(user._id);
 
-        default:
-          user = await usersDAO.getUserByAuthId(decodedToken.sub, "cognito");
-
-          if (user.role != "user") {
-            const company = await companiesDAO.getCompanyByUserId(user._id);
-            user.company = company;
-          }
-
-          logger.info("AUTHENTICATION HELPER GET_USER SUCCESS: ", user);
-
-          return user;
+        user.company = company;
       }
     } catch (error) {
       logger.error(
@@ -207,4 +194,25 @@ export default class AuthHelper {
       return { error: error };
     }
   }
-}
+
+
+  static async getUserApp(email) {
+    let user;
+
+  
+
+   
+        user = await usersDAO.get_one_by_email(email);
+
+        logger.info(
+          "AUTHENTICATION HELPER GET_USER_APP RESULT: " +
+            JSON.stringify(user, null, 2)
+        );
+
+        return user.role == "user" ? "marketplace" : "crm";
+
+        
+    }
+  }
+
+

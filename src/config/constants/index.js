@@ -30,28 +30,40 @@ export const COLLECTION_users_ns = process.env.COLLECTION_USERS_NS
 export const COLLECTION_companies_ns = process.env.COLLECTION_COMPANIES_NS
 
 
-export const JWT_secret = process.env.JWT_SECRET
+// AWS Credentials
+export const AWS_access_key_id = process.env.AWS_ACCESS_KEY_ID
+export const AWS_secret_access_key = process.env.AWS_SECRET_ACCESS_KEY
+export const AWS_region = process.env.AWS_REGION
+export const AWS_user = process.env.AWS_USER
+export const AWS_ARN = process.env.AWS_ARN
+
 
 
 // AWS Cognito Credentials
-export const AWS_cognito_user_pool_id = process.env.AWS_COGNITO_USER_POOL_ID
-export const AWS_cognito_client_id = process.env.AWS_COGNITO_CLIENT_ID
-export const AWS_cognito_region = process.env.AWS_COGNITO_REGION
+export const AWS_cognito_crm_user_pool_id = process.env.AWS_COGNITO_CRM_USER_POOL_ID
+export const AWS_cognito_crm_client_id = process.env.AWS_COGNITO_CRM_CLIENT_ID
+export const AWS_cognito_marketplace_user_pool_id = process.env.AWS_COGNITO_MARKETPLACE_USER_POOL_ID
+export const AWS_cognito_marketplace_client_id = process.env.AWS_COGNITO_MARKETPLACE_CLIENT_ID
+export const AWS_cognito_region = process.env.AWS_COGNITO_REGION || process.env.AWS_REGION
 export const AWS_cognito_identity_pool_id = process.env.AWS_COGNITO_IDENTITY_POOL_ID
-export const AWS_cognito_access_key_id = process.env.AWS_ACCESS_KEY_ID
-export const AWS_cognito_secret_access_key = process.env.AWS_SECRET_ACCESS_KEY
+
 
 // AWS S3 Credentials
 export const AWS_s3_bucket_name = process.env.AWS_S3_BUCKET_NAME
-export const AWS_s3_region = process.env.AWS_S3_REGION
-export const AWS_s3_access_key_id = process.env.AWS_S3_ACCESS_KEY_ID
-export const AWS_s3_secret_access_key = process.env.AWS_S3_SECRET_ACCESS_KEY
+export const AWS_s3_region = process.env.AWS_S3_REGION || process.env.AWS_REGION
+
 
 
 // AWS SES Credentials
-export const AWS_ses_region = process.env.AWS_SES_REGION
-export const AWS_ses_access_key_id = process.env.AWS_SES_ACCESS_KEY_ID
-export const AWS_ses_secret_access_key = process.env.AWS_SES_SECRET_ACCESS_KEY
+export const AWS_ses_region = process.env.AWS_SES_REGION || process.env.AWS_REGION
+export const AWS_ses_sender_email = process.env.AWS_SES_SENDER_EMAIL
+export const AWS_ses_sender_name = process.env.AWS_SES_SENDER_NAME
+export const AWS_ses_reply_to_email = process.env.AWS_SES_REPLY_TO_EMAIL
+export const AWS_ses_reply_to_name = process.env.AWS_SES_REPLY_TO_NAME
+export const AWS_ses_starttls_port = process.env.AWS_SES_STARTTLS_PORT || AWS_SES_STARTTLS_PORT_BACKUP
+export const AWS_ses_tls_wrapper_port = process.env.AWS_SES_TLS_WRAPPER_PORT || AWS_SES_TLS_WRAPPER_PORT_BACKUP
+
+
 
 
 

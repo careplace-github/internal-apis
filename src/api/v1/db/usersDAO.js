@@ -35,55 +35,158 @@ export default class usersDAO {
       return { error: error };
     }
   }
-
   /**
-   * @description Fetches the user information by the authentication provider id. If the user is associated with a company, the company information is also included.
-   * @param {String} authId - Authentication provider id.
-   * @param {String} authProvider - Authentication provider name.
-   * @returns {Promise<JSON>} - User information.
+   * @description Fetches a user/s by the query.
+   * @param {JSON} filters - Query to search for the user/s.
+   * @param {JSON} options - Options to search for the user/s.
+   * @param {Integer} page - Page to search for the user/s.
+   * @param {Integer} documentsPerPage - Documents per page to search for the user/s.
+   * @returns {Promise<JSON>} - User/s information.
    */
-  static async getUserByAuthId(authId, authProvider) {
-    let mongodbResponse;
+  static async get_list(filters, options, page, documentsPerPage) {
     try {
-      logger.info("USERS-DAO GET_USER_BY_AUTH_ID STARTED: ");
+      logger.info("USERS-DAO GET_USERS_BY_QUERY STARTED: ");
 
-      logger.info("USERS-DAO GET_USER_BY_AUTH_ID authId: " + authId);
       logger.info(
-        "USERS-DAO GET_USER_BY_AUTH_ID authProvider: " + authProvider + "\n"
+        "USERS-DAO GET_USERS_BY_QUERY SEARCH: " +
+          JSON.stringify(
+            {
+              filters: filters,
+              options: options,
+              page: page,
+              documentsPerPage: documentsPerPage,
+            },
+            null,
+            2
+          ) +
+          "\n"
       );
 
-      // Verifies if it was provided the authId and authProvider
-      if (authProvider && authId) {
-        switch (authProvider) {
-          case "cognito":
-            mongodbResponse = await users.findOne({ cognitoId: authId });
+      let query = {};
 
-            // User found
-            if (mongodbResponse) {
-              logger.info(
-                "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
-                  JSON.stringify(mongodbResponse, null, 2) +
-                  "\n"
-              );
-
-              return mongodbResponse;
-              // User not found
-            } else {
-              logger.info(
-                "USERS-DAO GET_USER_BY_AUTH_ID USER NOT FOUND" + "\n"
-              );
-              return { error: "User not found" };
-            }
+      if (filters) {
+        if (filters.companyId) {
+          query = { companyId: ObjectId(filters.companyId) };
         }
-      } else {
-        logger.info(
-          "USERS-DAO GET_USER_BY_AUTH_ID ERROR: Missing authProvider and/or authId." +
-            "\n"
-        );
-        return { error: "Missing authProvider and/or authId." };
+      }
+
+      const option = {
+        // sort returned documents in ascending order by title (A->Z)
+        sort: { name: 1 },
+      };
+
+      const mongodbResponse = await users.find(query, options);
+
+      // User/s found
+      if (mongodbResponse) {
+        // console.log("PAGE:"+ page != null)
+
+        if (page != null) {
+          let cursor = await mongodbResponse;
+
+          const totalDocuments = await cursor.count();
+
+          const documentsPerPage = this.documentsPerPage || 10;
+
+          const totalPages = Math.ceil(totalDocuments / documentsPerPage) - 1;
+
+          const displayCursor = cursor
+            .limit(documentsPerPage)
+            .skip(documentsPerPage * page);
+          const documents = await displayCursor.toArray();
+
+          logger.info(
+            "USERS-DAO GET_USERS_BY_QUERY RESULT: " +
+              JSON.stringify({ documents, totalPages }, null, 2) +
+              "\n"
+          );
+
+          return { documents, totalPages };
+        } else {
+          let documents = await mongodbResponse.toArray();
+
+          return documents;
+        }
+      }
+      // User/s not found
+      else {
+        logger.info("USERS-DAO GET_USERS_BY_QUERY USER NOT FOUND" + "\n");
+        return { error: "User not found" };
       }
     } catch (error) {
-      logger.error("USERS-DAO GET_USER_BY_AUTH_ID ERROR: " + error + "\n");
+      logger.error("USERS-DAO GET_USERS_BY_QUERY ERROR: " + error + "\n");
+      return { error: error };
+    }
+  }
+
+  /**
+   * @description Inserts a new user in the database.
+   * @param {User} user - User object.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
+  static async add(user) {
+    try {
+      logger.info("USERS-DAO ADD_USER STARTED: ");
+
+      logger.info(
+        "USERS-DAO ADD_USER user: " + JSON.stringify(user, null, 2) + "\n"
+      );
+
+      const newUser = new User({
+        cognitoId: user.cognitoId,
+        email: user.email,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        country: user.country,
+        city: user.city,
+        address: user.address,
+        zipCode: user.zipCode,
+        companyId: user.companyId,
+        role: user.role || "user", // Default role is user
+        companyId: user.companyId,
+      });
+
+      const mongodbResponse = await users.insertOne(newUser);
+
+      logger.info(
+        "USERS-DAO ADD_USER MONGODB RESPONSE: " +
+          JSON.stringify(mongodbResponse, null, 2) +
+          "\n"
+      );
+
+      // User inserted
+      if (mongodbResponse.acknowledged === true) {
+        logger.info(
+          "USERS-DAO ADD_USER RESPONSE: " +
+            JSON.stringify(
+              {
+                response: mongodbResponse,
+                userCreated: newUser,
+              },
+              null,
+              2
+            ) +
+            "\n"
+        );
+        return {
+          response: mongodbResponse,
+          userCreated: newUser,
+        };
+      }
+      // User not inserted
+      else {
+        logger.info(
+          "USERS-DAO ADD_USER ERROR: " +
+            JSON.stringify(mongodbResponse, null, 2) +
+            "\n"
+        );
+        return { error: mongodbResponse };
+      }
+    } catch (error) {
+      logger.error(
+        "USERS-DAO ADD_USER ERROR: " + JSON.stringify(error, null, 2) + "\n"
+      );
+
       return { error: error };
     }
   }
@@ -93,7 +196,7 @@ export default class usersDAO {
    * @param {String} userId - User id from the database.
    * @returns {Promise<JSON>} - User information.
    */
-  static async getUserById(userId) {
+  static async get_one(userId) {
     try {
       logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
 
@@ -125,67 +228,12 @@ export default class usersDAO {
   }
 
   /**
-   * @description Inserts a new user in the database.
-   * @param {User} user - User object.
-   * @returns {Promise<JSON>} - MongoDB response.
-   */
-  static async addUser(user) {
-    try {
-      logger.info("USERS-DAO ADD_USER STARTED: ");
-
-      logger.info(
-        "USERS-DAO ADD_USER user: " + JSON.stringify(user, null, 2) + "\n"
-      );
-
-      const newUser = new User({
-        cognitoId: user.cognitoId,
-        email: user.email,
-        name: user.name,
-        phoneNumber: user.phoneNumber,
-        country: user.country,
-        city: user.city,
-        address: user.address,
-        zipCode: user.zipCode,
-        companyId: user.companyId,
-        role: user.role || "user", // Default role is user
-        companyId: user.companyId,
-      });
-
-      const mongodbResponse = await users.insertOne(newUser);
-
-      // User inserted
-      if (mongodbResponse.insertedCount === 1) {
-        logger.info(
-          "USERS-DAO ADD_USER RESULT: " +
-            JSON.stringify(mongodbResponse.ops[0], null, 2) +
-            "\n"
-        );
-        return {
-          response: mongodbResponse,
-          userCreated: newUser,
-        };
-      }
-      // User not inserted
-      else {
-        logger.info("USERS-DAO ADD_USER ERROR: " + mongodbResponse + "\n");
-        return { error: mongodbResponse };
-      }
-    } catch (error) {
-      logger.error(
-        "USERS-DAO ADD_USER ERROR: " + JSON.stringify(error, null, 2) + "\n"
-      );
-
-      return { error: error };
-    }
-  }
-
-  /**
    * @description Updates the user information in the database.
    * @param {*} userId - User id from the database.
    * @param {*} user - User object.
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async updateUser(userId, user) {
+  static async set(userId, user) {
     try {
       logger.info("USERS-DAO UPDATE_USER STARTED: ");
 
@@ -230,7 +278,7 @@ export default class usersDAO {
    * @param {*} userId - User id from the database.
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async deleteUser(userId) {
+  static async delete(userId) {
     try {
       logger.info("USERS-DAO DELETE_USER STARTED: ");
 
@@ -264,40 +312,75 @@ export default class usersDAO {
     }
   }
 
-  /**
-   * @description Fetches all the users from the database.
-   * @returns {Promise<JSON>} - MongoDB response.
-   */
-  static async getUsers() {
+  static async get_one_by_auth_id(authId, authProvider) {
     try {
-      logger.info("USERS-DAO GET_USERS STARTED: ");
+      logger.info("USERS-DAO GET_USER_BY_AUTH_ID STARTED: ");
 
-      let mongodbResponse = {};
-      mongodbResponse = await users.find().toArray();
+      logger.info("USERS-DAO GET_USER_BY_AUTH_ID authId: " + authId + "\n");
 
-      // Users found
-      if (mongodbResponse.length > 0) {
+      let mongodbResponse;
+
+      switch (authProvider) {
+        case "cognito":
+          mongodbResponse = await users.findOne({ cognitoId: authId });
+      }
+
+      // User found
+      if (mongodbResponse) {
         logger.info(
-          "USERS-DAO GET_USERS RESULT: " +
+          "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
             JSON.stringify(mongodbResponse, null, 2) +
             "\n"
         );
+
         return mongodbResponse;
       }
-      // Users not found
+      // User not found
       else {
+        logger.info("USERS-DAO GET_USER_BY_AUTH_ID USER NOT FOUND" + "\n");
+        return { error: "User not found" };
+      }
+    } catch (error) {
+      logger.error(
+        "USERS-DAO GET_USER_BY_AUTH_ID ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+      return { error: error };
+    }
+  }
+
+  static async get_one_by_email(email) {
+    try {
+      logger.info("USERS-DAO GET_USER_BY_EMAIL STARTED: ");
+
+      logger.info("USERS-DAO GET_USER_BY_EMAIL email: " + email + "\n");
+
+      let mongodbResponse;
+
+      mongodbResponse = await users.findOne({ email: email });
+
+      // User found
+      if (mongodbResponse) {
         logger.info(
-          "USERS-DAO GET_USERS ERROR: " +
+          "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
             JSON.stringify(mongodbResponse, null, 2) +
             "\n"
         );
-        return { error: mongodbResponse };
-      }
-    } catch (e) {
-      logger.error(
-        "MONGODB GET_USERS ERROR:" + JSON.stringify(error, null, 2) + "\n"
-      );
 
+        return mongodbResponse;
+      }
+      // User not found
+      else {
+        logger.info("USERS-DAO GET_USER_BY_EMAIL USER NOT FOUND" + "\n");
+        return { error: "User not found" };
+      }
+    } catch (error) {
+      logger.error(
+        "USERS-DAO GET_USER_BY_EMAIL ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
       return { error: error };
     }
   }

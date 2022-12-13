@@ -8,10 +8,11 @@
     const request = {
         request: {
             type: req.method,
+            url: req.originalUrl,
             ipv6: req.ip,
             proxy: req.headers['x-forwarded-for'],
-            url: req.originalUrl,
             headers: req.headers,
+            query: req.query,
             body: req.body,
         },
         statusCode: 100,

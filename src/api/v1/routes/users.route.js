@@ -12,39 +12,17 @@ import UsersController from "../controllers/users.controller.js";
 
 const router = express.Router();
 
-router
-  .route("/users")
-  .get(validateAuth, validateRole(["admin"]), UsersController.getUsers);
-
+router.route("/users")
+  .get(UsersController.index)
+  .post(UsersController.create);
 
 router.route("/users/account")
-  .get(validateAuth, UsersController.getAccount);
+  .get( UsersController.account);
 
-router
-  .route("/users/:id")
-  .get(
-    validateAuth,
-    validateRole(["admin", "companyOwner", "comoanyBoard"]),
-    validateAccess,
-    
-    UsersController.getUser
-  )
-  .put(
-    validateAuth,
-    validateAccess,
-    validateRole(["admin", "companyOwner", "comoanyBoard"]),
-    UsersController.updateUser
-  )
-  .delete(
-    validateAuth,
-    validateAccess,
-    validateRole(["admin", "companyOwner", "comoanyBoard"]),
-    UsersController.deleteUser
-  )
-
-router
-  .route("/users/:companyId")
-  .get(validateAuth, UsersController.getUsersByCompanyId)
-  .post(validateAuth, UsersController.createUser);
+router.route("/users/:id")
+  .get(UsersController.show)
+  .patch(UsersController.update)
+  .put(UsersController.update)
+  .delete(UsersController.destroy);
 
 export default router;
