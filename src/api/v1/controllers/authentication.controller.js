@@ -243,15 +243,7 @@ export default class AuthenticationController {
    */
   static async changePassword(req, res, next) {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req);
 
       logger.info(
         "Attempting to change the user password: " +
@@ -307,15 +299,7 @@ export default class AuthenticationController {
   static async logout(req, res, next) {
     const token = req.headers.authorization.split(" ")[1];
 
-    var request = {
-      request: {
-        type: "POST",
-        url: `${host}/auth/signup`,
-        headers: req.headers,
-        body: req.body,
-      },
-      statusCode: 100,
-    };
+    var request = requestUtils(req);
 
     logger.info(
       "Attempting to logout the user: " +
@@ -359,15 +343,7 @@ export default class AuthenticationController {
    * @description Sends a password reset code email to the user
    */
   static async sendForgotPasswordCode(req, res, next) {
-    var request = {
-      request: {
-        type: "POST",
-        url: `${host}/auth/signup`,
-        headers: req.headers,
-        body: req.body,
-      },
-      statusCode: 100,
-    };
+    var request = requestUtils(req);
 
     logger.info(
       "Attempting to send the forgot password code to the user: " +
@@ -376,7 +352,7 @@ export default class AuthenticationController {
     );
 
     try {
-      const cognitoResponse = await Cognito.sendForgotPasswordCode(
+      const cognitoResponse = await Cognito.sendForgotPasswordCode("crm",
         req.body.email
       );
 
@@ -417,15 +393,7 @@ export default class AuthenticationController {
    */
   static async verifyForgotPasswordCode(req, res, next) {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req);
 
       logger.info(
         "Attempting to reset the user password with the code sent to the user's email: " +
@@ -433,7 +401,7 @@ export default class AuthenticationController {
           "\n"
       );
 
-      const cognitoResponse = await Cognito.changeUserPasswordWithCode(
+      const cognitoResponse = await Cognito.changeUserPasswordWithCode("crm",
         req.body.email,
         req.body.code,
         req.body.newPassword
@@ -479,15 +447,7 @@ export default class AuthenticationController {
    */
   static async resendVerificationCode(req, res, next) {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req);
 
       logger.info(
         "Attempting to resend the verification code to the user's email: " +
@@ -539,15 +499,7 @@ export default class AuthenticationController {
   // Function to confirm the user's email address after registration using the confirmation code sent to the user's email address
   static async verifyUser(req, res, next) {
     try {
-      var request = {
-        request: {
-          type: "POST",
-          url: `${host}/auth/signup`,
-          headers: req.headers,
-          body: req.body,
-        },
-        statusCode: 100,
-      };
+      var request = requestUtils(req);
 
       logger.info(
         "Attempting to confirm a Cognito user through the verification code sent to the user email: " +
