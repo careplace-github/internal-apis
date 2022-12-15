@@ -3,6 +3,7 @@ import Cognito from "../services/cognito.service.js";
 
 // Import database access objects
 import usersDAO from "../db/usersDAO.js";
+import companiesDAO from "../db/companiesDAO.js";
 
 import authHelper from "../helpers/auth.helper.js";
 
@@ -12,21 +13,16 @@ import requestUtils from "../utils/request.utils.js";
 //import { CognitoIdentityServiceProvider } from "aws-sdk";
 
 export default class AuthenticationController {
- 
-
-
- /**
+  /**
    * @description Creates a new user in Cognito and MongoDB
    */
 
   static async signup(req, res, next) {
-   
-
     // try {
 
-      var request = requestUtils(req);
+    var request = requestUtils(req);
 
-      const app = "marketplace"
+    const app = "marketplace";
 
     logger.info(
       "Attempting to signup the user: " +
@@ -50,7 +46,11 @@ export default class AuthenticationController {
         "\n"
     );
 
-    cognitoResponse = await Cognito.addUser(app, newUser.email, newUser.password);
+    cognitoResponse = await Cognito.addUser(
+      app,
+      newUser.email,
+      newUser.password
+    );
 
     // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {
@@ -73,10 +73,6 @@ export default class AuthenticationController {
           JSON.stringify(cognitoResponse, null, 2) +
           "\n"
       );
-
-     
-
-
 
       newUser.cognitoId = cognitoResponse.cognitoResponse.UserSub;
 
@@ -101,7 +97,7 @@ export default class AuthenticationController {
             "\n"
         );
 
-       // Cognito.resendVerificationCode(newUser.email);
+        // Cognito.resendVerificationCode(newUser.email);
 
         request.statusCode = 200;
         request.response = {
@@ -133,7 +129,6 @@ export default class AuthenticationController {
        */
   }
 
-
   /**
    * @description Signs in a user
    */
@@ -145,17 +140,19 @@ export default class AuthenticationController {
       "Attempting to login the user: " + JSON.stringify(request, null, 2) + "\n"
     );
 
-    let cognitoResponse;
+    let cognitoResponse = {};
+    let response = {};
 
-   
-    const app = await authHelper.getUserApp(req.body.email)
+    const app = await authHelper.getUserApp(req.body.email);
 
-    console.log("app: ", app)
+    //console.log("app: ", app);
+
+    var payload = { email: req.body.email, password: req.body.password };
 
     cognitoResponse = await Cognito.authenticateUser(
       app,
-      req.body.email,
-      req.body.password
+      "USER_PASSWORD_AUTH",
+      payload
     );
 
     // If there is an error, return the error to the client
@@ -168,60 +165,66 @@ export default class AuthenticationController {
       return res.status(400).json({ error: cognitoResponse.error.message });
     }
 
-    // If the user is authenticated, return the user's information
+    // User authenticated successfully
     else {
-      logger.debug(JSON.stringify(cognitoResponse, null, 2) + "\n");
+      logger.warn(JSON.stringify(cognitoResponse, null, 2) + "\n");
 
       // Check for challenges
-      if (cognitoResponse.cognitoResponse.ChallengeName != null) {
-        let response;
-        switch (cognitoResponse.cognitoResponse.ChallengeName) {
+      if (cognitoResponse.ChallengeName != null) {
+        switch (cognitoResponse.ChallengeName) {
           case "NEW_PASSWORD_REQUIRED":
-            response = {
-              challenge: cognitoResponse.cognitoResponse.ChallengeName,
-              session: cognitoResponse.cognitoResponse.Session,
-            };
+            response.challenge = cognitoResponse.ChallengeName;
+            response.session = cognitoResponse.Session;
+
+            const test = Cognito.getSession(app, req.body.email);
 
             break;
 
           default:
-            response = {
-              challenge: cognitoResponse.cognitoResponse.ChallengeName,
-              challengeParameters:
-                cognitoResponse.cognitoResponse.ChallengeParameters,
-            };
+            response.hallenge = cognitoResponse.ChallengeName;
+            response.challengeParameters = cognitoResponse.ChallengeParameters;
+
             break;
         }
-
-        request.statusCode = 200;
-        request.response = response;
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(200).json(response);
       }
-      // Normal authentication
+
+      // No challenges
       else {
-        const response = {
-          accessToken:
-            cognitoResponse.cognitoResponse.AuthenticationResult.AccessToken,
-          accessTokenExpiration:
-            cognitoResponse.cognitoResponse.AuthenticationResult.ExpiresIn,
-          accessTokenType:
-            cognitoResponse.cognitoResponse.AuthenticationResult.TokenType,
-          refreshToken:
-            cognitoResponse.cognitoResponse.AuthenticationResult.RefreshToken,
-        };
-
-        request.statusCode = 200;
-        request.response = response;
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(200).json(response);
+       
+          response.accessToken = cognitoResponse.AuthenticationResult.AccessToken;
+          response.accessTokenExpiration = cognitoResponse.AuthenticationResult.ExpiresIn;
+          response.accessTokenType = cognitoResponse.AuthenticationResult.TokenType;
+          response.refreshToken = cognitoResponse.AuthenticationResult.RefreshToken;
+      
       }
+
+      // Fetch user information from the database
+      const user = await usersDAO.get_one_by_email(req.body.email);
+
+      // User information fetched successfully
+      if (user) {
+        // The role user is the only role not associated with a company
+        if (user.role != "user") {
+          // Fetch company information from the database
+          const company = await companiesDAO.get_one(user.companyId);
+
+          // Company information fetched successfully
+          if (company) {
+            user.company = company;
+          }
+        }
+        // Populate the response with the user information
+        response.user = user;
+      }
+
+      request.statusCode = 200;
+      request.response = response;
+
+      logger.info(JSON.stringify(request, null, 2) + "\n");
+
+      return res.status(200).json(response);
     }
-  
+  }
 
   /**
        *   } catch (error) {
@@ -235,8 +238,6 @@ export default class AuthenticationController {
       return res.status(500).json(error);
     }
        */
-
-  }
 
   /**
    * @description Changes a user's password
@@ -352,7 +353,8 @@ export default class AuthenticationController {
     );
 
     try {
-      const cognitoResponse = await Cognito.sendForgotPasswordCode("crm",
+      const cognitoResponse = await Cognito.sendForgotPasswordCode(
+        "crm",
         req.body.email
       );
 
@@ -401,7 +403,8 @@ export default class AuthenticationController {
           "\n"
       );
 
-      const cognitoResponse = await Cognito.changeUserPasswordWithCode("crm",
+      const cognitoResponse = await Cognito.changeUserPasswordWithCode(
+        "crm",
         req.body.email,
         req.body.code,
         req.body.newPassword

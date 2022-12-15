@@ -116,7 +116,7 @@ export default class companiesDAO {
   }
 
   // Function to return a company by the company id
-  static async getCompanyById(companyId) {
+  static async get_one(companyId) {
     try {
       const company = await companies.findOne({ _id: ObjectId(companyId) });
       return company;

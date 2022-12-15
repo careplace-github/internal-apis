@@ -16,10 +16,10 @@ const ses = new AWS.SES({
 export default class SES {
 
     // Function to send an email
-    static async sendEmail(email, subject, body) {
+    static async sendEmail(receiverEmail, subject, body) {
         const params = {
             Destination: {
-                ToAddresses: [email],
+                ToAddresses: [receiverEmail],
             },
             Message: {
                 Body: {
@@ -33,7 +33,8 @@ export default class SES {
                     Data: subject,
                 },
             },
-            Source: "",
+            // suporte@careplace.pt
+            Source: "henrique.efonseca@gmail.com",
         };
 
         return ses.sendEmail(params).promise();
