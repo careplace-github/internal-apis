@@ -11,10 +11,12 @@ import AuthHelper from "../helpers/auth.helper.js";
 
 // Import Utils
 import password from "secure-random-password";
+import EmailUtils from "../utils/email.utils.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
+import { APP_url } from "../../../config/constants/index.js";
 import { stringify } from "querystring";
 
 const app = "crm";
@@ -50,7 +52,6 @@ export default class UsersController {
           [req.query.sortBy]: req.query.sortOrder == "desc" ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
-
 
       logger.info(
         "Attempting to get users from MongoDB: " +
@@ -115,56 +116,102 @@ export default class UsersController {
    * @description
    */
   static async create(req, res, next) {
-    try {
-      var request = requestUtils(req);
+    // try {
+    var request = requestUtils(req);
 
-      const user = req.body;
-     const userPassword = String(password.randomPassword({
+    const user = req.body;
+
+    logger.info(
+      "Users Controller CREATE: " + JSON.stringify(request, null, 2) + "\n"
+    );
+
+    // Generate a random password of 8 characters.
+    const temporaryPassword = String(
+      password.randomPassword({
         characters: [
           password.lower,
           password.upper,
           password.digits,
-          password.symbols,
         ],
-      }))
+        length: 8,
+      })
+    );
 
-      const cognitoUser = await CognitoService.addUser(
-        app,      
-        user.email,
-        userPassword
+    const company = await companiesDAO.get_one(user.companyId);
+
+    // Tried to add a user to a company that doesn't exist.
+    if (company == null) {
+      request.statusCode = 400;
+      request.response = {
+        error:
+          "Company not found. User must be associated with an existing company.",
+      };
+
+      logger.error(
+        "Company not found. User must be associated with an existing company." +
+          JSON.stringify(request, null, 2) +
+          "\n"
       );
 
-      // Confirm the user in Cognito
-    // const test = await CognitoService.adminConfirmUser(app, user.email);
-
-
-
-      if (cognitoUser.error) {
-        console.log("ERROR", cognitoUser.error);
-        return res.status(500).send(cognitoUser.error);
-      }
-      else{
-        user.cognitoId = cognitoUser.cognitoResponse.userSub;
-
-       
-  
-        const newUser = await usersDAO.add(user);
-
-        // Populate the user object with the password so that it can be sent to the user via email.
-        user.password = password;
-  
-        
-
-        // Send email to user
-        // SES.sendEmailWithTemplate(newUser.email, "crm-new-user", user);
-
-        res.status(201).json(newUser);
-      }
-
-     
-    } catch (error) {
-      next(error);
+      return res.status(400).json({
+        error:
+          "Company not found. User must be associated with an existing company.",
+      });
     }
+
+    // Create a new user in Cognito.
+    const cognitoUser = await CognitoService.addUser(
+      app,
+      user.email,
+      temporaryPassword
+    );
+
+    logger.info("COGNITO USER: " + JSON.stringify(cognitoUser, null, 2) + "\n");
+
+    user.cognitoId = cognitoUser.UserSub;
+
+    // Confirm the user in Cognito.
+   const confirmUser = CognitoService.adminConfirmUser(app, user.email);
+
+    if(confirmUser.error == null){
+      user.verified = true;
+    }
+
+    // Add the user to the database.
+    const newUser = await usersDAO.add(user);
+
+    // Variables to be inserted into email template
+    const emailData = {
+      name: user.name,
+      email: user.email,
+      password: temporaryPassword,
+      company: company.name,
+      gender: user.gender,
+    };
+
+    // Insert variables into email template
+    let email = await EmailUtils.getEmailWithData("crm_new_user", emailData);
+
+   // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
+
+   
+    // Send email to user
+     SES.sendEmail(user.email, email.subject, email.body);
+
+    res.status(201).json(newUser);
+
+    /**
+       *   } catch (error) {
+      request.statusCode = 500;
+      request.response = { error: error };
+
+      logger.error(
+        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
+      return res.status(500).json(error);
+    }
+       */
   }
 
   /**
@@ -179,7 +226,6 @@ export default class UsersController {
 
       // Get user by id
       const user = await usersDAO.get_one(userId);
-
 
       // User found
       if (user) {
@@ -312,69 +358,67 @@ export default class UsersController {
    * @description Returns the user information based on the token
    */
   static async account(req, res, next) {
-    try {
-      var request = requestUtils(req);
+    //  try {
+    var request = requestUtils(req);
+
+    logger.info(
+      "Users Controller getAccount: " + JSON.stringify(request, null, 2) + "\n"
+    );
+
+    const token = req.headers.authorization.split(" ")[1];
+
+    const authId = await AuthHelper.getAuthId(token, "cognito");
+
+    const user = await usersDAO.get_one_by_auth_id(authId, "cognito");
+
+    // User found
+    if (user) {
+      console.log("1");
+      // The role user is the only role that does not have a company
+      if (user.role != "user") {
+        // Find the company associated with the user
+        const company = await companiesDAO.get_one(user.companyId);
+
+        console.log("COMPANY: " + company + "\n");
+
+        console.log("2");
+
+        // Comapny fetched successfully
+        if (company) {
+          console.log("3");
+          // User populated with company information
+          user.company = company;
+        }
+      }
+
+      request.statusCode = 200;
+      request.response = user;
 
       logger.info(
-        "Users Controller getAccount: " +
+        "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+          JSON.stringify(user, null, 2) +
+          "\n"
+      );
+
+      // Return the user with company information
+      res.status(200).json(user);
+    }
+    // User not found
+    else {
+      request.statusCode = 404;
+      request.response = { message: "Couldn't fetch user account." };
+
+      logger.warn(
+        "Users Controller getAccount error: " +
           JSON.stringify(request, null, 2) +
           "\n"
       );
 
-      const token = req.headers.authorization.split(" ")[1];
+      res.status(404).json({ message: "Couldn't fetch user account." });
+    }
 
-      const authId = await AuthHelper.getAuthId(token, "cognito");
-
-      const user = await usersDAO.get_one_by_auth_id(authId, "cognito");
-
-      // User found
-      if (user) {
-        // The role user is the only role that does not have a company
-        if (user.role != "user") {
-          // Find the company associated with the user
-          const company = await companiesDAO.getCompanyByUserId(user._id);
-          // User populated with company information
-          user.company = company;
-
-          request.statusCode = 200;
-          request.response = user;
-
-          logger.info(
-            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
-              JSON.stringify(user, null, 2) +
-              "\n"
-          );
-
-          // Return the user with company information
-          res.status(200).json(user);
-        }
-        // User is not associated with a company
-        else {
-          request.statusCode = 200;
-          request.response = user;
-          logger.info(
-            "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
-              JSON.stringify(user, null, 2) +
-              "\n"
-          );
-          // Return the user without company information
-          res.status(200).json(user);
-        }
-      }
-      // User not found
-      else {
-        request.statusCode = 404;
-        request.response = { message: "Couldn't fetch user account." };
-
-        logger.warn(
-          "Users Controller getAccount error: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
-
-        res.status(404).json({ message: "Couldn't fetch user account." });
-      }
-    } catch (error) {
+    /**
+       *  } catch (error) {
       request.statusCode = 500;
       request.response = { error: error };
 
@@ -384,5 +428,6 @@ export default class UsersController {
 
       return res.status(500).json(error);
     }
+       */
   }
 }

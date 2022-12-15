@@ -31,11 +31,14 @@ export default class Cognito {
    * @param {Object} user - User object.
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async addUser(app,email, password) {
+  static async addUser(app, email, password) {
     // Catch the error if the user already exists
     try {
       const params = {
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
         Password: password,
         Username: email,
 
@@ -49,9 +52,8 @@ export default class Cognito {
 
       let response = {};
 
-      response.cognitoResponse = await cognito.signUp(params).promise();
-      response.message = "Cognito user created successfully";
-
+      response = await cognito.signUp(params).promise();
+     
       logger.info(
         "COGNITO SERVICE SIGN_UP SUCESS:" +
           JSON.stringify(response, null, 2) +
@@ -70,28 +72,28 @@ export default class Cognito {
     }
   }
 
- /**
+  /**
    * @description Send a confirmation code to the user email.
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   static async resendVerificationCode(app, email) {
-
-
     try {
       const params = {
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
         Username: email,
       };
 
-
       let response = {};
 
-      response.cognitoResponse = await cognito
+      
+
+      response = await cognito
         .resendConfirmationCode(params)
         .promise();
-      response.message = "Cognito confirmation code sent successfully";
-
      
 
       logger.info(
@@ -110,11 +112,7 @@ export default class Cognito {
 
       return { error: error };
     }
-
-
   }
-
-
 
   /**
    * @description Confirms the user email in the Cognito service by confirming the confirmation code that was sent to the user email.
@@ -125,7 +123,10 @@ export default class Cognito {
   static async confirmUser(app, email, code) {
     try {
       const params = {
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
 
         ConfirmationCode: code,
         Username: email,
@@ -162,7 +163,10 @@ export default class Cognito {
   static async adminConfirmUser(app, email) {
     try {
       const params = {
-        UserPoolId: app === "crm" ? AWS_cognito_crm_user_pool_id : AWS_cognito_marketplace_user_pool_id,
+        UserPoolId:
+          app === "crm"
+            ? AWS_cognito_crm_user_pool_id
+            : AWS_cognito_marketplace_user_pool_id,
         Username: email,
       };
 
@@ -188,7 +192,6 @@ export default class Cognito {
     }
   }
 
-
   /**
    * @description Sends a "forgot password" code to the user email.
    * @param {String} email - User email.
@@ -197,7 +200,10 @@ export default class Cognito {
   static async sendForgotPasswordCode(app, email) {
     try {
       const params = {
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
         Username: email,
       };
 
@@ -263,7 +269,10 @@ export default class Cognito {
   static async changeUserPasswordWithCode(app, email, code, password) {
     try {
       const params = {
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
         ConfirmationCode: code,
         Password: password,
         Username: email,
@@ -300,23 +309,30 @@ export default class Cognito {
    * @param {String} password - New password.
    * @returns {Promise<JSON>} - JWT token.
    */
-  static async authenticateUser(app, email, password) {
+  static async authenticateUser(app,authflow, payload) {
     try {
       const params = {
-        AuthFlow: "USER_PASSWORD_AUTH",
+        AuthFlow: authflow != null ? authflow : "USER_PASSWORD_AUTH",
 
         AuthParameters: {
-          USERNAME: email,
-          PASSWORD: password,
+          USERNAME: payload.email,
+          PASSWORD: payload.password,
+          REFRESH_TOKEN: payload.refreshToken,
         },
 
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
       };
 
-      let response = {};
+      logger.info("payload ", JSON.stringify(payload,null,2));
+      logger.info("params ", JSON.stringify(params,null,2));
 
-      response.cognitoResponse = await cognito.initiateAuth(params).promise();
-      response.message = "Cognito user authenticated successfully";
+   
+
+      const response  = await cognito.initiateAuth(params).promise();
+    
 
       logger.info(
         "COGNITO SERVICE AUTHENTICATE_USER SUCESS: " +
@@ -328,7 +344,7 @@ export default class Cognito {
     } catch (error) {
       logger.error(
         "COGNITO SERVICE AUTHENTICATE_USER ERROR: " +
-          JSON.stringify(error) +
+          JSON.stringify(error, null, 2) +
           "\n"
       );
 
@@ -386,12 +402,18 @@ export default class Cognito {
    * @param {String} refreshToken - User refresh token.
    * @returns {Promise<JSON>} - JWT token.
    */
-  static async refreshUserToken(app , refreshToken) {
+  static async refreshUserToken(app, refreshToken) {
     try {
       const params = {
         AuthFlow: "REFRESH_TOKEN_AUTH",
-        ClientId: app === "crm" ? AWS_cognito_crm_client_id : AWS_cognito_marketplace_client_id,
-        UserPoolId: app === "crm" ? AWS_cognito_crm_user_pool_id : AWS_cognito_marketplace_user_pool_id,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
+        UserPoolId:
+          app === "crm"
+            ? AWS_cognito_crm_user_pool_id
+            : AWS_cognito_marketplace_user_pool_id,
         AuthParameters: {
           REFRESH_TOKEN: refreshToken,
         },
@@ -554,6 +576,74 @@ export default class Cognito {
     }
   }
 
+  static async respondToAuthChallenge(app, challengeName, session, challengePayload) {
+    try {
+      const params = {
+        ChallengeName: challengeName,
+        ClientId:
+          app === "crm"
+            ? AWS_cognito_crm_client_id
+            : AWS_cognito_marketplace_client_id,
+        Session: session,
+        ChallengeResponses: challengePayload,
+      };
+
+      let response = {};
+
+      response.cognitoResponse = cognito
+        .respondToAuthChallenge(params)
+        .promise();
+
+      logger.info(
+        "COGNITO SERVICE RESPOND_TO_AUTH_CHALLENGE RESULT: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE RESPOND_TO_AUTH_CHALLENGE ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
+  }
+
+  static async getSession(app, token) {
+    
+      
+      try {
+        const params = {
+          AccessToken: accessToken,
+         
+        };
+  
+        
+  
+        const cognitoResponse = await cognito.getUser(params).promise();
+       
+        logger.info(
+          "COGNITO SERVICE GET_SESSION SUCESS: " +
+            JSON.stringify(cognitoResponse, null, 2) +
+            "\n"
+        );
+  
+        return cognitoResponse;
+
+      } catch (error) {
+        logger.error(
+          "COGNITO SERVICE GET_SESSION ERROR: " +
+            JSON.stringify(error, null, 2) +
+            "\n"
+        );
+  
+        return { error: error };
+      }
+
+  }
 
   
 
