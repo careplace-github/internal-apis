@@ -9,6 +9,9 @@ export const api_version = process.env.API_VERSION
 export const api = process.env.API_URL
 export const api_url = api.concat(process.env.API_VERSION)
 
+// Application
+export const APP_url = process.env.APP_URL
+
 
 // Loads environment variables
 dotenv.config({path: `./src/config/.env/.env.${env}`}) 

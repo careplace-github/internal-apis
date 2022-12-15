@@ -125,7 +125,7 @@ export default class usersDAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   static async add(user) {
-    try {
+   // try {
       logger.info("USERS-DAO ADD_USER STARTED: ");
 
       logger.info(
@@ -145,12 +145,14 @@ export default class usersDAO {
         companyId: user.companyId,
         role: user.role || "user", // Default role is user
         companyId: user.companyId,
+        gender: user.gender,
+        verified: user.verified ,
       });
 
       const userExists = await this.get_one_by_email(user.email);
 
       // Check if user already exists in the database with the same email. If so, return an error.
-      if (userExists) {
+      if (userExists.error == null) {
         logger.info(
           "USERS-DAO ADD_USER ERROR: " +
             JSON.stringify(
@@ -203,14 +205,18 @@ export default class usersDAO {
           return { error: mongodbResponse };
         }
       }
-      // Internal error
-    } catch (error) {
+
+      /**
+       *  } catch (error) {
       logger.error(
         "USERS-DAO ADD_USER ERROR: " + JSON.stringify(error, null, 2) + "\n"
       );
 
       return { error: error };
     }
+       */
+      // Internal error
+   
   }
 
   /**
@@ -385,7 +391,7 @@ export default class usersDAO {
       // User found
       if (mongodbResponse) {
         logger.info(
-          "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
+          "USERS-DAO GET_USER_BY_EMAIL RESULT: " +
             JSON.stringify(mongodbResponse, null, 2) +
             "\n"
         );

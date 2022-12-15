@@ -45,9 +45,10 @@ import {
 } from "./config/constants/index.js";
 // Router exports
 import configAPI from "./api/v1/routes/config.route.js";
-import authAPI from "./api/v1/routes/authentication.route.js";
+import emailsAPI from "./api/v1/routes/emails.route.js";
 import filesAPI from "./api/v1/routes/files.route.js";
 
+import authAPI from "./api/v1/routes/authentication.route.js";
 import usersAPI from "./api/v1/routes/users.route.js";
 import companiesAPI from "./api/v1/routes/companies.route.js";
 
@@ -62,16 +63,13 @@ app.use(cors());
 app.use(express.json());
 
 // Inject sub router and APIs
-app.use(api_url, usersAPI);
-app.use(api_url, authAPI);
+app.use(api_url, configAPI);
+app.use(api_url, emailsAPI);
 app.use(api_url, filesAPI);
 
-app.use(api_url, configAPI);
+app.use(api_url, authAPI);
+app.use(api_url, usersAPI);
 app.use(api_url, companiesAPI);
-
-//app.use("*", (req, res) => res.status(404).json({ error: "not found"}))
-//app.use('/users', userAPIs)
-//app.use(process.env.API_URL, caregivers)
 
 const main = async () => {
   try {
