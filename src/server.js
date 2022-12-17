@@ -37,10 +37,12 @@ import {
   env,
   api_version,
   api_url,
-  DB_uri,
-  DB_name,
-  COLLECTION_users_ns,
-  COLLECTION_companies_ns,
+  MONGODB_db_active_uri,
+  MONGODB_db_deletes_uri,
+  MONGODB_db_active,
+  MONGODB_db_deletes,
+  MONGODB_collection_users,
+  MONGODB_collection_companies,
   SERVER_Port,
 } from "./config/constants/index.js";
 // Router exports
@@ -52,8 +54,12 @@ import authAPI from "./api/v1/routes/authentication.route.js";
 import usersAPI from "./api/v1/routes/users.route.js";
 import companiesAPI from "./api/v1/routes/companies.route.js";
 
-// Initialize MongoDB client
-const MongoClient = mongodb.MongoClient;
+// Import mongoose
+import mongoose from "mongoose";
+
+import userSchema from "./api/v1/models/auth/user.model.js";
+import companySchema from "./api/v1/models/auth/company.model.js";
+//import userSchema from  "./api/v1/models/auth/user.model.js";
 
 // Initialize express application
 const app = express();
@@ -73,30 +79,30 @@ app.use(api_url, companiesAPI);
 
 const main = async () => {
   try {
-    // Connects to MongoDB Cluster
-    await MongoClient.connect(DB_uri)
-      .catch((err) => {
-        // console.log(DB_users_uri)
-        logger.error(`Unable to connect to MongoDB Cluster: ${err}`);
-        console.error(err.stack);
-        process.exit(1);
-      })
+    // Connects to MongoDB Database
+   let client = mongoose.createConnection(MONGODB_db_active_uri);
 
-      .then(async (client) => {
-        logger.info(`Connected to database: ${DB_name}`);
+   usersDAO.injectCollection(client);
+   companiesDAO.injectCollection(client);
 
-        // Connects to MongoDB Collections
-        await usersDAO.injectDB(client);
-        logger.info(`Connected to collection: ${COLLECTION_users_ns}`);
-        await companiesDAO.injectDB(client);
-        logger.info(`Connected to collection: ${COLLECTION_companies_ns}`);
-      });
+   // await mongoose.Collection(MONGODB_collection_users);
+    //await mongoose.Collection(MONGODB_collection_companies);
+    //mongoose.model("users", userSchema);
+    //mongoose.model("companies", companySchema);
+
+    // MONGO_db_active_client.model("users", userSchema);
+
+    // Injects database connections to MongoDB Collections
+    //await usersDAO.injectCollection(MONGO_db_active_client);
+    logger.info(`Connected to collection: ${MONGODB_collection_users}`);
+    // await companiesDAO.injectCollection(MONGO_db_active_client);
+    logger.info(`Connected to collection: ${MONGODB_collection_companies}`);
 
     // Starts server
     app.listen(SERVER_Port, () => {
       logger.info(`Server started on port: ${SERVER_Port}`);
       logger.info(`Server environment mode: ${env}`);
-      logger.info(`HTTP requests API version: ${api_version}`);
+      logger.info(`API version: ${api_version}`);
       logger.info(
         `API route: http://localhost:${SERVER_Port}${api_url}` + "\n"
       );

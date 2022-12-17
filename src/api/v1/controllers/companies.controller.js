@@ -21,19 +21,15 @@ export default class UsersController {
       const company = req.body;
 
       // Check if company already exists by verifying the email
-      const companyExists = await companiesDAO.getCompanyByEmail(company.email);
+      
+      /**
+       * const companyExists = await companiesDAO.getCompanyByEmail(company.email);
       if (companyExists) {
         return res.status(400).send("Company already exists");
       }
+       */
+      
 
-      // The field userId is the id of the Company Owner
-      // Verify if the userId is already associated with a company
-      const userHasCompany = await companiesDAO.getCompanyByUserId(
-        company.userId
-      );
-      if (userHasCompany) {
-        return res.status(400).send("Company owner already has a company");
-      }
 
       const newCompany = await companiesDAO.createCompany(company);
       res.status(201).json(newCompany);
