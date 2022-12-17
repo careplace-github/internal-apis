@@ -19,18 +19,23 @@ dotenv.config({path: `./src/config/.env/.env.${env}`})
 export const SERVER_Port = process.env.PORT || process.env.PORT_BACKUP
 
 // MongoDB credentials
-export const DB_user = process.env.DB_USER
-export const DB_password = process.env.DB_PASSWORD
+export const MONGODB_user = process.env.MONGODB_USER
+export const MONGODB_password = process.env.MONGODB_PASSWORD
+
+//MongoDB databases
+export const MONGODB_db_active = process.env.MONGODB_DB_ACTIVE
+export const MONGODB_db_deletes = process.env.MONGODB_DB_DELETES
 
 // MongoDB connection 
-export const DB_uri = `mongodb+srv://${DB_user}:${DB_password}@development-node.0f8rxwj.mongodb.net/?retryWrites=true&w=majority`
+//export const MONGODB_cluster_uri = `mongodb://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.`
+export const MONGODB_db_active_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.mongodb.net/${MONGODB_db_active}?retryWrites=true&w=majority`
+export const MONGODB_db_deletes_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.mongodb.net/${MONGODB_db_deletes}?retryWrites=true&w=majority`
 
-//MongoDB database name
-export const DB_name = process.env.DB_NAME
 
-// MongoDB collections name
-export const COLLECTION_users_ns = process.env.COLLECTION_USERS_NS
-export const COLLECTION_companies_ns = process.env.COLLECTION_COMPANIES_NS
+
+// MongoDB collections 
+export const MONGODB_collection_users = process.env.MONGODB_COLLECTION_USERS_NS
+export const MONGODB_collection_companies = process.env.MONGODB_COLLECTION_COMPANIES_NS
 
 
 // AWS Credentials
@@ -60,11 +65,14 @@ export const AWS_s3_region = process.env.AWS_S3_REGION || process.env.AWS_REGION
 // AWS SES Credentials
 export const AWS_ses_region = process.env.AWS_SES_REGION || process.env.AWS_REGION
 export const AWS_ses_sender_email = process.env.AWS_SES_SENDER_EMAIL
-export const AWS_ses_sender_name = process.env.AWS_SES_SENDER_NAME
 export const AWS_ses_reply_to_email = process.env.AWS_SES_REPLY_TO_EMAIL
-export const AWS_ses_reply_to_name = process.env.AWS_SES_REPLY_TO_NAME
 export const AWS_ses_starttls_port = process.env.AWS_SES_STARTTLS_PORT || AWS_SES_STARTTLS_PORT_BACKUP
 export const AWS_ses_tls_wrapper_port = process.env.AWS_SES_TLS_WRAPPER_PORT || AWS_SES_TLS_WRAPPER_PORT_BACKUP
+
+
+// Stripe Credentials
+export const STRIPE_secret_key = process.env.STRIPE_SECRET_KEY
+export const STRIPE_publishable_key = process.env.STRIPE_PUBLISHABLE_KEY
 
 
 

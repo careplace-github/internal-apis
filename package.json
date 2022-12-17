@@ -40,7 +40,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "mongodb": "^4.7.0",
-    "mongoose": "^6.4.4",
+    "mongoose": "^6.8.0",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.2.8",
     "oas3-tools": "^2.2.3",
@@ -48,6 +48,7 @@
     "passport-jwt": "^4.0.0",
     "request": "^2.88.2",
     "secure-random-password": "^0.2.3",
+    "stripe": "^11.4.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0",
     "winston": "^3.8.2"

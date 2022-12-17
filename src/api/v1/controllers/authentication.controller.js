@@ -34,6 +34,8 @@ export default class AuthenticationController {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
+      phoneNumber: req.body.phoneNumber,
+      gender : req.body.gender,
       cognitoId: "",
     };
 
@@ -74,7 +76,7 @@ export default class AuthenticationController {
           "\n"
       );
 
-      newUser.cognitoId = cognitoResponse.cognitoResponse.UserSub;
+      newUser.cognitoId = cognitoResponse.UserSub;
 
       // Attempting to add a new user to the database
       mongodbResponse = await usersDAO.add(newUser);
