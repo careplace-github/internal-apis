@@ -202,8 +202,10 @@ export default class AuthenticationController {
 
       // Fetch user information from the database
       const user = await usersDAO.get_one_by_email(req.body.email);
+      response.user = user;
 
-      // User information fetched successfully
+      /**
+       *  // User information fetched successfully
       if (user) {
         // The role user is the only role not associated with a company
         if (user.role != "user") {
@@ -218,6 +220,9 @@ export default class AuthenticationController {
         // Populate the response with the user information
         response.user = user;
       }
+       */
+
+     
 
       request.statusCode = 200;
       request.response = response;
