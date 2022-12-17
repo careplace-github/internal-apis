@@ -6,7 +6,7 @@ import {
 } from "../../../config/constants/index.js";
 import mongodb from "mongodb";
 //import User from "../models/auth/user.model.js";
-import companySchema from "../models/auth/company.model.js";
+import companySchema from "../models/userLogic/company.model.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 

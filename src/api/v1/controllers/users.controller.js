@@ -40,12 +40,12 @@ export default class UsersController {
       );
 
       // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
-      if (req.query.companyId != null) {
+      if (req.query.companyId) {
         filters.companyId = req.query.companyId;
       }
 
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
-      if (req.query.sortBy != null) {
+      if (req.query.sortBy) {
         // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
         // Otherwise, we will by default sort the results by ascending order.
         options.sort = {
