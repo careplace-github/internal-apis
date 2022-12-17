@@ -5,6 +5,8 @@ import {
     AWS_ses_region,
     AWS_access_key_id,
     AWS_secret_access_key,
+    AWS_ses_sender_email,
+    AWS_ses_reply_to_email
 } from "../../../config/constants/index.js";
 
 const ses = new AWS.SES({
@@ -17,6 +19,8 @@ export default class SES {
 
     // Function to send an email
     static async sendEmail(receiverEmail, subject, body) {
+
+        // https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html
         const params = {
             Destination: {
                 ToAddresses: [receiverEmail],
@@ -34,7 +38,10 @@ export default class SES {
                 },
             },
             // suporte@careplace.pt
-            Source: "henrique.efonseca@gmail.com",
+            Source: AWS_ses_sender_email,
+
+            ReplyToAddresses: [AWS_ses_reply_to_email],
+            
         };
 
         return ses.sendEmail(params).promise();

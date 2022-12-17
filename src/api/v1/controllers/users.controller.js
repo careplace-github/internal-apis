@@ -128,16 +128,17 @@ export default class UsersController {
     // Generate a random password of 8 characters.
     const temporaryPassword = String(
       password.randomPassword({
-        characters: [
-          password.lower,
-          password.upper,
-          password.digits,
-        ],
+        characters: [password.lower, password.upper, password.digits],
         length: 8,
       })
     );
 
-    const company = await companiesDAO.get_one(user.companyId);
+    if (user.role == "admin") {
+      return res.status(400).json({ error: "Cannot create admin user." });
+    }
+
+    // Get the company from MongoDB.
+    const company = await companiesDAO.get_one(user.company);
 
     // Tried to add a user to a company that doesn't exist.
     if (company == null) {
@@ -166,19 +167,78 @@ export default class UsersController {
       temporaryPassword
     );
 
+    // Error creating user in Cognito.
+    if (cognitoUser.error != null) {
+      request.statusCode = 400;
+      request.response = { error: cognitoUser.error.message };
+
+      logger.error(
+        "Error creating user in Cognito: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
+
+      return res.status(400).json({ error: cognitoUser.error.message });
+    }
+
     logger.info("COGNITO USER: " + JSON.stringify(cognitoUser, null, 2) + "\n");
 
     user.cognitoId = cognitoUser.UserSub;
 
     // Confirm the user in Cognito.
-   const confirmUser = CognitoService.adminConfirmUser(app, user.email);
+    const confirmUser = CognitoService.adminConfirmUser(app, user.email);
 
-    if(confirmUser.error == null){
+    // Error confirming user in Cognito.
+    if (confirmUser.error != null) {
+      request.statusCode = 400;
+      request.response = { error: confirmUser.error.message };
+
+      logger.error(
+        "Error confirming user in Cognito: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
+
+      return res.status(400).json({ error: confirmUser.error.message });
+    }
+
+    // If there is no error, then the user has been confirmed.
+    if (confirmUser.error == null) {
       user.verified = true;
     }
 
     // Add the user to the database.
     const newUser = await usersDAO.add(user);
+
+    // Error adding user to database.
+    if (newUser.error != null) {
+      // Delete the user from Cognito.
+      const deleteUser = await CognitoService.adminDeleteUser(app, user.email);
+
+      // Delete the user from the database.
+      const deleteMongoUser = await usersDAO.delete(user.email);
+
+      request.statusCode = 400;
+      request.response = { error: newUser.error };
+
+      logger.error(
+        "Error adding user to database: " +
+          JSON.stringify(request, null, 2) +
+          "\n"
+      );
+
+      return res.status(400).json({ error: newUser.error });
+    }
+
+    // Add the new user to the company.
+    const addCompanyUser = await companiesDAO.add_user(
+      user.company,
+      newUser._id
+    );
+
+    
+
+
 
     // Variables to be inserted into email template
     const emailData = {
@@ -192,11 +252,10 @@ export default class UsersController {
     // Insert variables into email template
     let email = await EmailUtils.getEmailWithData("crm_new_user", emailData);
 
-   // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
+    // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
 
-   
     // Send email to user
-     SES.sendEmail(user.email, email.subject, email.body);
+    SES.sendEmail(user.email, email.subject, email.body);
 
     res.status(201).json(newUser);
 

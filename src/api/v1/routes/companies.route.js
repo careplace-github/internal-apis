@@ -14,7 +14,7 @@ const router = express.Router();
 router
   .route("/companies")
   .get(validateAuth, validateRole(["admin"]), companiesController.getCompanies)
-  .post(validateAuth, validateRole(["admin"]), companiesController.createCompany);
+  .post(companiesController.createCompany);
 
 router
   .route("/companies/:id")
