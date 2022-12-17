@@ -57,8 +57,8 @@ import companiesAPI from "./api/v1/routes/companies.route.js";
 // Import mongoose
 import mongoose from "mongoose";
 
-import userSchema from "./api/v1/models/auth/user.model.js";
-import companySchema from "./api/v1/models/auth/company.model.js";
+import userSchema from "./api/v1/models/userLogic/user.model.js";
+import companySchema from "./api/v1/models/userLogic/company.model.js";
 //import userSchema from  "./api/v1/models/auth/user.model.js";
 
 // Initialize express application

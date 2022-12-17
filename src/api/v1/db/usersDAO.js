@@ -9,9 +9,9 @@ import mongoose from "mongoose";
 
 // Import the user schema
 //import User from "../models/auth/user.model.js";
-import userSchema from "../models/auth/user.model.js";
+import userSchema from "../models/userLogic/user.model.js";
 
-import companiesDAO from "./companiesDAO.js";
+
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -65,7 +65,7 @@ export default class usersDAO {
           JSON.stringify(
             {
               filters: filters,
-              options: options,
+              options: this.options,
               page: page,
               documentsPerPage: documentsPerPage,
             },
@@ -77,27 +77,23 @@ export default class usersDAO {
 
       let query = {};
 
+      
       if (filters) {
         if (filters.companyId) {
           query = { companyId: ObjectId(filters.companyId) };
         }
       }
 
-      const option = {
-        // sort returned documents in ascending order by title (A->Z)
-        sort: { name: 1 },
-      };
+     // return User.find();
 
-      return User.find();
-
-      const mongodbResponse = await users.find(query, options);
+      let users = await User.find(query, options);
 
       // User/s found
-      if (mongodbResponse) {
+      if (users) {
         // console.log("PAGE:"+ page != null)
 
         if (page != null) {
-          let cursor = await mongodbResponse;
+          let cursor = await users;
 
           const totalDocuments = await cursor.count();
 
@@ -252,8 +248,17 @@ export default class usersDAO {
 
       logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
       
+      //let users = await User.find(query, options);
 
-      const user = await User.find({ _id: ObjectId(userId) }).populate('company').exec();
+      // const user = await User.find({ _id: ObjectId(userId) }).populate('company').exec();
+
+
+      const user = await User.findById("639cbcae42162add49bee22c").populate("company");
+
+
+      // Return user without it being wrapped in an array
+
+      
 
       // Return user without it being wrapped in an array
 
@@ -417,10 +422,16 @@ export default class usersDAO {
 
     let mongodbResponse;
 
-    let newUser = new User();
+  
 
     // Find user by email
-    mongodbResponse = await users.findOne({ email: email });
+    mongodbResponse = await User.find({ email: email }).populate("company").exec();
+
+    // Return user without it being an array
+
+    let newUser = mongodbResponse[0];
+
+    return newUser;
 
     //mongodbResponse = await users.findOne({ email: email }).populate({ path: 'company', _id: ObjectId  }).exec();
 
