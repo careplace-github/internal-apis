@@ -6,7 +6,7 @@ import requestUtils from "../utils/request.utils.js";
 
 
 export default class FilesController {
-  static async uploadFile(req, res, next) {
+  static async create(req, res, next) {
     let response;
 
     try {
@@ -39,7 +39,7 @@ export default class FilesController {
     }
   }
 
-  static async getFile(req, res, next) {
+  static async show(req, res, next) {
     try {
       const key = req.params.key;
       
@@ -50,7 +50,7 @@ export default class FilesController {
     }
   }
 
-  static async deleteFile(req, res, next) {
+  static async destroy(req, res, next) {
     try {
       const key = req.params.key;
       const bucketName = BUCKET_NAME;
@@ -61,7 +61,7 @@ export default class FilesController {
     }
   }
 
-  static async getFiles(req, res, next) {
+  static async index(req, res, next) {
     try {
       const bucketName = BUCKET_NAME;
       const getResponse = await BucketService.getFiles(bucketName);

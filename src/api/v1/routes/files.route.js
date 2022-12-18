@@ -18,14 +18,14 @@ const router = express.Router()
 
 
 router.route("/files")
-    .get(validateAuth, validateRole(["admin"]), FilesController.getFiles)
-    .post(validateAuth,  upload.single('file'), FilesController.uploadFile )
+    .get(validateAuth, validateRole(["admin"]), FilesController.index)
+    .post(validateAuth,  upload.single('file'), FilesController.create )
 
 
 // router to get user information by id
 router.route("/files/:id")
-    .get(validateAuth, validateAccess, FilesController.getFile)
-    .delete(validateAuth, validateAccess, FilesController.deleteFile)
+    .get(validateAuth, validateAccess, FilesController.show)
+    .delete(validateAuth, validateAccess, FilesController.destroy)
    
 
 
