@@ -32,6 +32,8 @@ import mongodb from "mongodb";
 import dotenv from "dotenv";
 import usersDAO from "./api/v1/db/usersDAO.js";
 import companiesDAO from "./api/v1/db/companiesDAO.js";
+import ordersDAO from "./api/v1/db/ordersDAO.js";
+
 // Loads environment constants"
 import {
   env,
@@ -53,6 +55,7 @@ import filesAPI from "./api/v1/routes/files.route.js";
 import authAPI from "./api/v1/routes/authentication.route.js";
 import usersAPI from "./api/v1/routes/users.route.js";
 import companiesAPI from "./api/v1/routes/companies.route.js";
+import ordersAPI from "./api/v1/routes/orders.route.js";
 
 // Import mongoose
 import mongoose from "mongoose";
@@ -76,6 +79,7 @@ app.use(api_url, filesAPI);
 app.use(api_url, authAPI);
 app.use(api_url, usersAPI);
 app.use(api_url, companiesAPI);
+app.use(api_url, ordersAPI);
 
 const main = async () => {
   try {
@@ -84,6 +88,7 @@ const main = async () => {
 
    usersDAO.injectCollection(client);
    companiesDAO.injectCollection(client);
+   ordersDAO.injectCollection(client);
 
    // await mongoose.Collection(MONGODB_collection_users);
     //await mongoose.Collection(MONGODB_collection_companies);

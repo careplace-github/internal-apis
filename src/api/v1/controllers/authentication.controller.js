@@ -104,14 +104,14 @@ export default class AuthenticationController {
         request.statusCode = 200;
         request.response = {
           message: "User created successfully",
-          user: mongodbResponse.userCreated,
+          user: mongodbResponse,
         };
 
         logger.info(JSON.stringify(request, null, 2) + "\n");
 
         return res.status(200).json({
           message: "User created successfully",
-          user: mongodbResponse.userCreated,
+          user: mongodbResponse,
         });
       }
     }

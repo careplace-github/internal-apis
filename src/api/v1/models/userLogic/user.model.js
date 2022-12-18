@@ -8,6 +8,9 @@ const userSchema = new Schema(
 
     cognitoId: { type: String, required: true, unique: true },
 
+     // Role: user, caregiver, companyBoard, companyOwner, admin
+     role: { type: String, required: true, default: "user" },
+
     avatar: { type: Schema.ObjectId, ref: "file", required: false },
 
     company: { type: Schema.ObjectId, ref: "company", required: false },
@@ -27,6 +30,8 @@ const userSchema = new Schema(
     age: { type: Number, required: false },
 
     gender: { type: String, required: true },
+
+    
 
     // Make this has not required
     address: {
@@ -50,8 +55,7 @@ const userSchema = new Schema(
         { longitude: { type: String, required: false } },
       ],
 
-      // Role: user, caregiver, companyBoard, companyOwner, admin
-      role: { type: String, required: true, default: "user" },
+     
   
      
 
