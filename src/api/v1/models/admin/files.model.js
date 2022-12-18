@@ -17,7 +17,7 @@ const fileSchema = new Schema(
     // URL of file (AWS S3 URL). This is the URL that will be used to access the file. 
     url: { type: String, required: true, unique: true },
 
-    // Enumerate type of file: avatar, banner, etc. 
+    // Enumerate type of file: avatar, banner, logo, icon, etc. 
     type: { type: String, required: true },
 
     // Extension of file: jpg, png, mp4, pdf, etc.

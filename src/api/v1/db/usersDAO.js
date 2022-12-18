@@ -11,8 +11,6 @@ import mongoose from "mongoose";
 //import User from "../models/auth/user.model.js";
 import userSchema from "../models/userLogic/user.model.js";
 
-
-
 // Import logger
 import logger from "../../../logs/logger.js";
 
@@ -34,13 +32,11 @@ export default class usersDAO {
       return;
     }
     try {
-       User = await conn.model("user", userSchema);
-  
+      User = await conn.model("user", userSchema);
 
-     // users = await conn.collection(MONGODB_collection_users);
-     // User = mongoose.model("User", userSchema);
-    // await connection.model("users", User);
-      
+      // users = await conn.collection(MONGODB_collection_users);
+      // User = mongoose.model("User", userSchema);
+      // await connection.model("users", User);
     } catch (error) {
       logger.error(
         `Unable to establish a collection handle in usersDAO: ${error}`
@@ -77,14 +73,13 @@ export default class usersDAO {
 
       let query = {};
 
-      
       if (filters) {
         if (filters.companyId) {
           query = { companyId: ObjectId(filters.companyId) };
         }
       }
 
-     // return User.find();
+      // return User.find();
 
       let users = await User.find(query, options);
 
@@ -114,9 +109,13 @@ export default class usersDAO {
 
           return { documents, totalPages };
         } else {
-          let documents = await mongodbResponse.toArray();
+          logger.info(
+            "USERS-DAO GET_USERS_BY_QUERY RESULT: " +
+              JSON.stringify(users, null, 2) +
+              "\n"
+          );
 
-          return documents;
+          return users;
         }
       }
       // User/s not found
@@ -139,34 +138,11 @@ export default class usersDAO {
     // try {
     logger.info("USERS-DAO ADD_USER STARTED: ");
 
-    logger.info(
-      "USERS-DAO ADD_USER user: " + JSON.stringify(user, null, 2) + "\n"
-    );
-
-    // User schema
-    const newUser = await User.create({
-      _id: new ObjectId(),
-      cognitoId: user.cognitoId,
-      email: user.email,
-      name: user.name,
-      phoneNumber: user.phoneNumber,
-      address: user.address   ,
-      companyId: user.companyId,
-      role: user.role || "user", // Default role is user
-      company: user.company,
-      gender: user.gender,
-      verified: user.verified,
-    });
-
+    logger.info(JSON.stringify(user, null, 2) + "\n");
 
     // Save the user in the database
 
-
-    await newUser.save();
-
-
-
-   const userExists = await this.get_one_by_email(user.email);
+    const userExists = await this.get_one_by_email(user.email);
 
     // Check if user already exists in the database with the same email. If so, return an error.
     if (userExists.error == null) {
@@ -185,44 +161,38 @@ export default class usersDAO {
     }
     // If user does not exist, insert it in the database.
     else {
+      // User schema
+      const newUser = await User.create({
+        _id: new ObjectId(),
+        cognitoId: user.cognitoId,
+        email: user.email,
+        name: user.name,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        companyId: user.companyId,
+        role: user.role || "user", // Default role is user
+        company: user.company,
+        gender: user.gender,
+        phoneVerified: user.phoneVerified,
+        emailVerified: user.emailVerified,
+      });
 
-    // const mongodbResponse = await newUser.save();
-   //   const mongodbResponse = await users.insertOne(newUser);
+     const mongodbResponse = await newUser.save();
+
+    
+     
 
       logger.info(
-        "USERS-DAO ADD_USER MONGODB RESPONSE: " +
+        "USERS-DAO ADD_USER RESULT:: " +
           JSON.stringify(mongodbResponse, null, 2) +
           "\n"
       );
 
       // User inserted
-      if (mongodbResponse.acknowledged === true) {
-        logger.info(
-          "USERS-DAO ADD_USER RESPONSE: " +
-            JSON.stringify(
-              {
-                response: mongodbResponse,
-                userCreated: newUser,
-              },
-              null,
-              2
-            ) +
-            "\n"
-        );
-        return {
-          response: mongodbResponse,
-          userCreated: newUser,
-        };
-      }
-      // User not inserted
-      else {
-        logger.info(
-          "USERS-DAO ADD_USER ERROR: " +
-            JSON.stringify(mongodbResponse, null, 2) +
-            "\n"
-        );
-        return { error: mongodbResponse };
-      }
+      return mongodbResponse;
+
+      
+    
     }
 
     /**
@@ -247,26 +217,24 @@ export default class usersDAO {
       logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
 
       logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
-      
+
       //let users = await User.find(query, options);
 
       // const user = await User.find({ _id: ObjectId(userId) }).populate('company').exec();
 
-
-      const user = await User.findById("639cbcae42162add49bee22c").populate("company");
-
+      const user = await User.findById("639cbcae42162add49bee22c").populate(
+        "company"
+      );
 
       // Return user without it being wrapped in an array
-
-      
 
       // Return user without it being wrapped in an array
 
       return user;
 
-    //  let user = new User(mongodbResponse)
+      //  let user = new User(mongodbResponse)
 
-     // user.populate('company')
+      // user.populate('company')
 
       // User found
       if (mongodbResponse) {
@@ -418,25 +386,22 @@ export default class usersDAO {
     //try {
     logger.info("USERS-DAO GET_USER_BY_EMAIL STARTED: ");
 
-    logger.info("USERS-DAO GET_USER_BY_EMAIL email: " + email + "\n");
+    logger.info("Email: " + email + "\n");
 
     let mongodbResponse;
 
-  
-
     // Find user by email
-    mongodbResponse = await User.find({ email: email }).populate("company").exec();
+    mongodbResponse = await User.find({ email: email })
+      .populate("company")
+      .exec();
 
     // Return user without it being an array
-
     let newUser = mongodbResponse[0];
-
-    return newUser;
 
     //mongodbResponse = await users.findOne({ email: email }).populate({ path: 'company', _id: ObjectId  }).exec();
 
     // User found
-    if (mongodbResponse) {
+    if (newUser) {
       logger.info(
         "USERS-DAO GET_USER_BY_EMAIL RESULT: " +
           JSON.stringify(mongodbResponse, null, 2) +
