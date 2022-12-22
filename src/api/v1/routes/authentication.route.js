@@ -14,7 +14,7 @@ router.route("/auth/login").post(AuthenticationController.login);
 
 router
   .route("/auth/change-password")
-  .post(validateAuth, AuthenticationController.changePassword);
+  .post( AuthenticationController.changePassword);
 
 router
   .route("/auth/logout")

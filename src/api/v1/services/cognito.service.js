@@ -31,7 +31,7 @@ export default class Cognito {
    * @param {Object} user - User object.
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async addUser(app, email, password) {
+  static async addUser(app, email, password, phoneNumber) {
     // Catch the error if the user already exists
     try {
       const params = {
@@ -42,13 +42,21 @@ export default class Cognito {
         Password: password,
         Username: email,
 
+
         UserAttributes: [
           {
             Name: "email",
             Value: email,
           },
+
+          {
+            Name: "phone_number",
+            Value: phoneNumber,
+          }
         ],
       };
+
+      logger.info("APP NAME: " + app + "\n");
 
       let response = {};
 
@@ -108,6 +116,8 @@ export default class Cognito {
       return { error: error };
     }
   }
+
+  
 
   /**
    * @description Confirms the user email in the Cognito service by confirming the confirmation code that was sent to the user email.

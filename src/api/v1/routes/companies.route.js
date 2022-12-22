@@ -13,14 +13,14 @@ const router = express.Router();
 
 router
   .route("/companies")
-  .get(validateAuth, validateRole(["admin"]), companiesController.getCompanies)
-  .post(companiesController.createCompany);
+ // .get(validateAuth, validateRole(["admin"]), companiesController.getCompanies)
+  .post(companiesController.create);
 
 router
   .route("/companies/:id")
-  .get(validateAuth, validateRole(["admin"]), companiesController.getCompany)
-  .put(validateAuth, validateRole(["admin"]), companiesController.updateCompany)
-  .delete(validateAuth, validateRole(["admin"]), companiesController.deleteCompany
+  .get(companiesController.show)
+  .put(validateAuth, validateRole(["admin"]), companiesController.update)
+  .delete(validateAuth, validateRole(["admin"]), companiesController.destroy
   );
 
 export default router;

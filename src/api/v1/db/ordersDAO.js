@@ -3,7 +3,7 @@ import mongodb from "mongodb";
 
 // Import the user schema
 //import User from "../models/auth/user.model.js";
-import orderSchema from "../models/app/orders/order.model.js";
+import orderSchema from "../models/app/orders/orders.model.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
