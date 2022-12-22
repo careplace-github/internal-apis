@@ -1,13 +1,13 @@
 /*
  * [EN]
  *
- * Copyright (C) Carely, LDA - All Rights Reserved
+ * Copyright (C) CARELY, LDA - All Rights Reserved
  *
  * Unauthorized copying or distributing of this file via any medium is strictly prohibited.
  * This file is confidential and intellectual property of Carely, Lda.
  * Contact: contact@carely.pt
  *
- * © 2022 Carely. All Rights Reserved.
+ * © 2022 Careplace. All Rights Reserved.
  *
  *
  * [PT]
@@ -33,6 +33,8 @@ import dotenv from "dotenv";
 import usersDAO from "./api/v1/db/usersDAO.js";
 import companiesDAO from "./api/v1/db/companiesDAO.js";
 import ordersDAO from "./api/v1/db/ordersDAO.js";
+import servicesDAO from "./api/v1/db/servicesDAO.js";
+import filesDAO from "./api/v1/db/filesDAO.js";
 
 // Loads environment constants"
 import {
@@ -45,6 +47,9 @@ import {
   MONGODB_db_deletes,
   MONGODB_collection_users,
   MONGODB_collection_companies,
+  MONGODB_collection_orders,
+  MONGODB_collection_services,
+  MONGODB_collection_files,
   SERVER_Port,
 } from "./config/constants/index.js";
 // Router exports
@@ -53,15 +58,17 @@ import emailsAPI from "./api/v1/routes/emails.route.js";
 import filesAPI from "./api/v1/routes/files.route.js";
 
 import authAPI from "./api/v1/routes/authentication.route.js";
+
 import usersAPI from "./api/v1/routes/users.route.js";
 import companiesAPI from "./api/v1/routes/companies.route.js";
+import servicesAPI from "./api/v1/routes/services.route.js";
 import ordersAPI from "./api/v1/routes/orders.route.js";
 
 // Import mongoose
 import mongoose from "mongoose";
 
-import userSchema from "./api/v1/models/userLogic/user.model.js";
-import companySchema from "./api/v1/models/userLogic/company.model.js";
+import userSchema from "./api/v1/models/userLogic/users.model.js";
+import companySchema from "./api/v1/models/userLogic/companies.model.js";
 //import userSchema from  "./api/v1/models/auth/user.model.js";
 
 // Initialize express application
@@ -80,17 +87,26 @@ app.use(api_url, authAPI);
 app.use(api_url, usersAPI);
 app.use(api_url, companiesAPI);
 app.use(api_url, ordersAPI);
+app.use(api_url, servicesAPI);
 
 const main = async () => {
   try {
+    
     // Connects to MongoDB Database
-   let client = mongoose.createConnection(MONGODB_db_active_uri);
+    let client = mongoose.createConnection(MONGODB_db_active_uri);
 
-   usersDAO.injectCollection(client);
-   companiesDAO.injectCollection(client);
-   ordersDAO.injectCollection(client);
+    usersDAO.injectCollection(client);
+    logger.info(`Connected to collection: ${MONGODB_collection_users}`);
+    companiesDAO.injectCollection(client);
+    logger.info(`Connected to collection: ${MONGODB_collection_companies}`);
+    ordersDAO.injectCollection(client);
+    logger.info(`Connected to collection: ${MONGODB_collection_orders}`);
+    servicesDAO.injectCollection(client);
+    logger.info(`Connected to collection: ${MONGODB_collection_services}`);
+    filesDAO.injectCollection(client);
+    logger.info(`Connected to collection: ${MONGODB_collection_files}`);
 
-   // await mongoose.Collection(MONGODB_collection_users);
+    // await mongoose.Collection(MONGODB_collection_users);
     //await mongoose.Collection(MONGODB_collection_companies);
     //mongoose.model("users", userSchema);
     //mongoose.model("companies", companySchema);
@@ -99,9 +115,9 @@ const main = async () => {
 
     // Injects database connections to MongoDB Collections
     //await usersDAO.injectCollection(MONGO_db_active_client);
-    logger.info(`Connected to collection: ${MONGODB_collection_users}`);
+   
     // await companiesDAO.injectCollection(MONGO_db_active_client);
-    logger.info(`Connected to collection: ${MONGODB_collection_companies}`);
+   
 
     // Starts server
     app.listen(SERVER_Port, () => {

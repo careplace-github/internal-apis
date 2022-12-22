@@ -133,6 +133,9 @@ export default class UsersController {
       })
     );
 
+    logger.info( 
+      "Temporary password: " + temporaryPassword + "\n");
+
     if (user.role == "admin") {
       return res.status(400).json({ error: "Cannot create admin user." });
     }
@@ -164,7 +167,8 @@ export default class UsersController {
     const cognitoUser = await CognitoService.addUser(
       app,
       user.email,
-      temporaryPassword
+      temporaryPassword,
+      user.phoneNumber,
     );
 
     // Error creating user in Cognito.
@@ -204,7 +208,7 @@ export default class UsersController {
 
     // If there is no error, then the user has been confirmed.
     if (confirmUser.error == null) {
-      user.verified = true;
+      user.emailVerified = true;
     }
 
     // Add the user to the database.
@@ -231,8 +235,10 @@ export default class UsersController {
     }
 
     // Add the new user to the company.
+    
+
     const addCompanyUser = await companiesDAO.add_user(
-      user.company,
+      user.company._id,
       newUser._id
     );
 
@@ -432,23 +438,8 @@ export default class UsersController {
 
     // User found
     if (user) {
-      console.log("1");
-      // The role user is the only role that does not have a company
-      if (user.role != "user") {
-        // Find the company associated with the user
-        const company = await companiesDAO.get_one(user.companyId);
-
-        console.log("COMPANY: " + company + "\n");
-
-        console.log("2");
-
-        // Comapny fetched successfully
-        if (company) {
-          console.log("3");
-          // User populated with company information
-          user.company = company;
-        }
-      }
+    
+     
 
       request.statusCode = 200;
       request.response = user;
@@ -489,4 +480,115 @@ export default class UsersController {
     }
        */
   }
+
+  /**
+   * @description Returns an array of Caregivers of a Company that are available for the given order. In the request params the order id is passed. The order id is used to get the order information. The order information is used to get the company id. The company id is used to get the caregivers of the company. The id of the caregivers are used to get the caregiver information and their events. The events are used to check if the caregiver is available for the given order. The caregivers that are available are returned. 
+   */
+  static async availableCaregivers(req, res, next) {
+
+    var request = requestUtils(req);
+
+    logger.info(
+      "Users Controller availableCaregivers: " +
+        JSON.stringify(request, null, 2) +
+        "\n"
+    );
+
+    try {
+      const orderId = req.params.orderId;
+
+      // Get order information
+      const order = await ordersDAO.get_one(orderId);
+
+      // Order found
+      if (order) {
+        // Get company id
+        const companyId = order.companyId;
+
+        // Get caregivers of the company
+        const caregivers = await usersDAO.get_caregivers(companyId);
+
+        // Caregivers found
+        if (caregivers) {
+          // Array of available caregivers
+          const availableCaregivers = [];
+
+          // Iterate through the caregivers
+          for (let i = 0; i < caregivers.length; i++) {
+            // Get caregiver information
+            const caregiver = await usersDAO.get_one(caregivers[i]._id);
+
+            // Get caregiver events
+            const events = await eventsDAO.get_events_by_user_id(
+              caregivers[i]._id
+            );
+
+            // Check if the caregiver is available for the given order
+            const available = await this.isAvailable(
+              caregiver,
+              events,
+              order.start,
+              order.end
+            );
+
+            // Caregiver is available
+            if (available) {
+              // Add caregiver to the array of available caregivers
+              availableCaregivers.push(caregiver);
+            }
+          }
+
+          request.statusCode = 200;
+          request.response = availableCaregivers;
+
+          logger.info(
+            "USERS-DAO AVAILABLE_CAREGIVERS RESULT: " +
+              JSON.stringify(availableCaregivers, null, 2) +
+              "\n"
+          );
+
+          // Return the array of available caregivers
+          res.status(200).json(availableCaregivers);
+        }
+        // No caregivers found
+        else {
+          request.statusCode = 404;
+          request.response = { message: "No caregivers found." };
+
+          logger.warn(
+            "Users Controller availableCaregivers error: " +
+              JSON.stringify(request, null, 2) +
+              "\n"
+          );
+
+          res.status(404).json({ message: "No caregivers found." });
+        }
+      }
+      // Order not found
+      else {
+        request.statusCode = 404;
+        request.response = { message: "Order not found." };
+
+        logger.warn(
+          "Users Controller availableCaregivers error: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        res.status(404).json({ message: "Order not found." });
+
+      }
+
+    } catch (error) {
+      request.statusCode = 500;
+      request.response = { error: error };
+
+      logger.error(
+        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
+      return res.status(500).json(error);
+    }
+  }
+
 }
