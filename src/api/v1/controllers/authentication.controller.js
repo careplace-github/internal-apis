@@ -10,7 +10,6 @@ import authHelper from "../helpers/auth.helper.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
-//import { CognitoIdentityServiceProvider } from "aws-sdk";
 
 export default class AuthenticationController {
   /**
@@ -51,8 +50,12 @@ export default class AuthenticationController {
     cognitoResponse = await Cognito.addUser(
       app,
       newUser.email,
-      newUser.password
+      newUser.password,
+      newUser.phoneNumber,
     );
+
+
+    
 
     // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {

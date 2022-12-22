@@ -22,20 +22,26 @@ export const SERVER_Port = process.env.PORT || process.env.PORT_BACKUP
 export const MONGODB_user = process.env.MONGODB_USER
 export const MONGODB_password = process.env.MONGODB_PASSWORD
 
+// MongoDB Cluster
+export const MONGODB_cluster_uri = process.env.MONGODB_CLUSTER_URI
+
 //MongoDB databases
 export const MONGODB_db_active = process.env.MONGODB_DB_ACTIVE
 export const MONGODB_db_deletes = process.env.MONGODB_DB_DELETES
 
 // MongoDB connection 
-//export const MONGODB_cluster_uri = `mongodb://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.`
-export const MONGODB_db_active_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.mongodb.net/${MONGODB_db_active}?retryWrites=true&w=majority`
-export const MONGODB_db_deletes_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@development-node.0f8rxwj.mongodb.net/${MONGODB_db_deletes}?retryWrites=true&w=majority`
+export const MONGODB_db_active_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@${MONGODB_cluster_uri}/${MONGODB_db_active}?retryWrites=true&w=majority`
+export const MONGODB_db_deletes_uri = `mongodb+srv://${MONGODB_user}:${MONGODB_password}@${MONGODB_cluster_uri}/${MONGODB_db_deletes}?retryWrites=true&w=majority`
 
 
 
 // MongoDB collections 
 export const MONGODB_collection_users = process.env.MONGODB_COLLECTION_USERS_NS
 export const MONGODB_collection_companies = process.env.MONGODB_COLLECTION_COMPANIES_NS
+export const MONGODB_collection_services = process.env.MONGODB_COLLECTION_SERVICES_NS
+export const MONGODB_collection_orders = process.env.MONGODB_COLLECTION_ORDERS_NS
+export const MONGODB_collection_files = process.env.MONGODB_COLLECTION_FILES_NS
+
 
 
 // AWS Credentials

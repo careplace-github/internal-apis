@@ -3,6 +3,7 @@ import BucketService from "../services/bucket.service.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
+import filesDAO from "../db/filesDAO.js";
 
 
 export default class FilesController {
@@ -63,8 +64,9 @@ export default class FilesController {
 
   static async index(req, res, next) {
     try {
-      const bucketName = BUCKET_NAME;
-      const getResponse = await BucketService.getFiles(bucketName);
+      
+      let files = filesDAO.get_list();
+      const getResponse = await BucketService.getFiles();
       res.status(200).json(getResponse);
     } catch (error) {
       next(error);

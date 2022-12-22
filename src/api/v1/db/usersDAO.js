@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 
 // Import the user schema
 //import User from "../models/auth/user.model.js";
-import userSchema from "../models/userLogic/user.model.js";
+import userSchema from "../models/userLogic/users.model.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -213,28 +213,22 @@ export default class usersDAO {
    * @returns {Promise<JSON>} - User information.
    */
   static async get_one(userId) {
-    try {
+   // try {
       logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
 
       logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
 
-      //let users = await User.find(query, options);
-
-      // const user = await User.find({ _id: ObjectId(userId) }).populate('company').exec();
-
-      const user = await User.findById("639cbcae42162add49bee22c").populate(
+     
+      const user = await User.findById(userId).populate(
         "company"
-      );
+      )
 
-      // Return user without it being wrapped in an array
+    //  user.populate("file")
 
-      // Return user without it being wrapped in an array
-
+    
       return user;
 
-      //  let user = new User(mongodbResponse)
-
-      // user.populate('company')
+   
 
       // User found
       if (mongodbResponse) {
@@ -253,10 +247,14 @@ export default class usersDAO {
         logger.info("USERS-DAO GET_USER_BY_ID USER NOT FOUND" + "\n");
         return { error: "User not found" };
       }
-    } catch (error) {
+
+      /**
+       *  } catch (error) {
       logger.error("USERS-DAO GET_USER_BY_ID ERROR: " + error + "\n");
       return { error: error };
     }
+       */
+   
   }
 
   /**
@@ -354,7 +352,7 @@ export default class usersDAO {
 
       switch (authProvider) {
         case "cognito":
-          mongodbResponse = await users.findOne({ cognitoId: authId });
+          mongodbResponse = await User.findOne({ cognitoId: authId }).populate("company");
       }
 
       // User found
@@ -372,6 +370,8 @@ export default class usersDAO {
         logger.info("USERS-DAO GET_USER_BY_AUTH_ID USER NOT FOUND" + "\n");
         return { error: "User not found" };
       }
+
+
     } catch (error) {
       logger.error(
         "USERS-DAO GET_USER_BY_AUTH_ID ERROR: " +

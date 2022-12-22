@@ -6,9 +6,9 @@ import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
 
 export default class UsersController {
-  static async getCompanies(req, res, next) {
+  static async index(req, res, next) {
     try {
-      var request = requestUtils(req)
+      var request = requestUtils(req);
       const companies = await companiesDAO.getCompanies();
       res.status(200).json(companies);
     } catch (error) {
@@ -16,46 +16,73 @@ export default class UsersController {
     }
   }
 
-  static async createCompany(req, res, next) {
+  static async create(req, res, next) {
     try {
+      let request = requestUtils(req);
       const company = req.body;
 
+      logger.info(
+        "Company Controller CREATE: " + JSON.stringify(request, null, 2) + "\n"
+      );
+
       // Check if company already exists by verifying the email
-      
-      /**
-       * const companyExists = await companiesDAO.getCompanyByEmail(company.email);
+      const companyExists = await companiesDAO.get_one_by_email(
+        company.contactInformation.email
+      );
       if (companyExists) {
-        return res.status(400).send("Company already exists");
+        request.statusCode = 400;
+        request.response =
+          "Company already exists with the email: " +
+          company.contactInformation.email;
+
+        logger.error(
+          "Company Controller CREATE error: " +
+            JSON.stringify(request, null, 2) +
+            "\n"
+        );
+
+        return res.status(400).json({ error: "Company already exists" });
       }
-       */
-      
 
+      if (company.address) {
+        let coordinates = [];
+        let latitude;
+        let longitude;
 
-      const newCompany = await companiesDAO.createCompany(company);
+        // Get the latitude and longitude from the address
+        // Use Google Maps API
+
+        coordinates.push(latitude);
+        coordinates.push(longitude);
+
+        company.address.coordinates = coordinates;
+      }
+
+      const newCompany = await companiesDAO.add(company);
       res.status(201).json(newCompany);
     } catch (error) {
       next(error);
     }
   }
 
-  static async getCompany(req, res, next) {
+  static async show(req, res, next) {
     try {
       const companyId = req.params.id;
 
       // Check if company already exists by verifying the company id
-      const companyExists = await companiesDAO.getCompanyById(companyId);
-      if (!companyExists) {
+      const company = await companiesDAO.get_one(companyId);
+      if (!company) {
         return res.status(400).send("Company does not exist");
       }
 
-      const company = await companiesDAO.getCompanyById(companyId);
+      
       res.status(200).json(company);
     } catch (error) {
       next(error);
     }
   }
 
-  static async updateCompany(req, res, next) {
+  static async update(req, res, next) {
     try {
       const company = req.body;
       const companyId = req.params.id;
@@ -75,7 +102,7 @@ export default class UsersController {
     }
   }
 
-  static async deleteCompany(req, res, next) {
+  static async destroy(req, res, next) {
     try {
       const companyId = req.params.id;
       // Check if company already exists by verifying the company id
