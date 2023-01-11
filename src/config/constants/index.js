@@ -40,7 +40,12 @@ export const MONGODB_collection_users = process.env.MONGODB_COLLECTION_USERS_NS
 export const MONGODB_collection_companies = process.env.MONGODB_COLLECTION_COMPANIES_NS
 export const MONGODB_collection_services = process.env.MONGODB_COLLECTION_SERVICES_NS
 export const MONGODB_collection_orders = process.env.MONGODB_COLLECTION_ORDERS_NS
+
 export const MONGODB_collection_files = process.env.MONGODB_COLLECTION_FILES_NS
+export const MONGODB_collection_caregivers = process.env.MONGODB_COLLECTION_CAREGIVERS_NS
+export const MONGODB_collection_events = process.env.MONGODB_COLLECTION_EVENTS_NS
+export const MONGODB_collection_eventsSeries = process.env.MONGODB_COLLECTION_EVENTS_SERIES_NS
+
 
 
 

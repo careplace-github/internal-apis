@@ -5,16 +5,19 @@ const Schema = mongoose.Schema;
 const eventSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
-    user: { type: Schema.ObjectId, ref: "user", required: true },
-    order: { type: Schema.ObjectId, ref: "order", required: false },
+    userId: { type: Schema.ObjectId, ref: "user", required: true },
+
     series: { type: Schema.ObjectId, ref: "eventSeries", required: false },
+
     title: { type: String, required: true },
     description: { type: String, required: false },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
+
     allDay: { type: Boolean, required: true, default: false },
+
     location: { type: String, required: false },
     color: { type: String, required: true, default: "#000000" },
 
@@ -26,4 +29,4 @@ const eventSchema = new Schema(
   }
 );
 
-export default mongoose.model("event", eventSchema);
+export default eventSchema;

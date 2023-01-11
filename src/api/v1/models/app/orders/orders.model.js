@@ -19,15 +19,15 @@ const orderSchema = new Schema(
     // The client is the user that is receiving the service (home care support).
     client: { type: Schema.ObjectId, ref: "relative", required: true },
 
+    // New -> Customer Created Order && Pending Company Acceptance
     // Pending -> Company Accepted && Schedule Visit Process
     // Canceled -> Company Canceled || Customer Canceled
     // Active -> Visit Done && Customer Paid
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
-    orderStatus: { type: String, required: true, default: "pending" },
+    orderStatus: { type: String, required: true, default: "new" },
 
     services: [{ type: Schema.ObjectId, ref: "service", required: true }],
 
-    companyAccepted: { type: Boolean, required: true, default: false },
 
     screeningVisit: {
       date: { type: Date, required: false },
@@ -38,7 +38,8 @@ const orderSchema = new Schema(
 
     observations: { type: String, required: false },
 
-    files: [{ type: Schema.ObjectId, ref: "file", required: false }],
+
+    //files: [{ type: Schema.ObjectId, ref: "file", required: false }],
 
     // Json with all the information about the order schedule
     scheduleInformation: {
@@ -54,8 +55,10 @@ const orderSchema = new Schema(
 
       isRecurrent: { type: Boolean, required: true, default: false },
 
-      // Weekly or Biweekly
-      recurrencyType: { type: String, required: false },
+      // Weekly  -> Every week
+      // Biweekly -> Every 2 weeks
+      // Monthly  -> Every month (every 4 weeks)
+      recurrencyType: { type: String,required: false, enum: ["weekly,", "biweekly", "monthly"],},
 
       // If isRecurrent is true, this is the frequency of the order
       // If isRecurrent is false, this is the date of the order
@@ -67,11 +70,7 @@ const orderSchema = new Schema(
         },
       ],
 
-      // Only applies if isRecurrent is true
-      hoursPerWeek: { type: Number, required: false },
-      hoursPerMonth: { type: Number, required: false },
-      visitsPerWeek: { type: Number, required: false },
-      visitsPerMonth: { type: Number, required: false },
+      
     },
 
     // Json with all the information about the payment
@@ -81,6 +80,7 @@ const orderSchema = new Schema(
       orderCurrency: { type: String, required: true, default: "EUR" },
 
       stripeInformation: {
+        stripe_payment_intent_id: { type: String, required: false },
         stripe_company_id: { type: String, required: false },
         stripe_customer_id: { type: String, required: false },
         stripe_subscription_id: { type: String, required: false },
@@ -102,7 +102,7 @@ const orderSchema = new Schema(
 
       postalCode: { type: String, required: true },
 
-      state: { type: String, required: true },
+      state: { type: String, required: false },
 
       city: { type: String, required: true },
 
@@ -139,5 +139,11 @@ orderSchema.methods.createEventSeries = async function () {
   });
   return eventSeries;
 };
+
+
+orderSchema.methods.updateStripePaymentIntent = async function (paymentIntentId) {
+  this.paymentInformation.stripeInformation.stripe_payment_intent_id = paymentIntentId;
+  return this.save();
+}
 
 export default orderSchema;

@@ -45,9 +45,9 @@ const companySchema = new Schema(
       website: { type: String, required: false, unique: true },
     },
 
-    team: [{ type: Schema.ObjectId, ref: "user", required: false }],
+    team: [{ type: Schema.ObjectId, ref: "User", required: false }],
 
-    services: [{ type: Schema.ObjectId, ref: "service", required: false }],
+    services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
     serviceArea: { type: Array, required: false },
 

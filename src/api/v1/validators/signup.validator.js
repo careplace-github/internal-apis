@@ -1,7 +1,4 @@
 import {check} from "express-validator"
-import usersDAO from "../db/usersDAO.js"
-
-
 
 const name = check("name").not().isEmpty().withMessage("Name is required")
 const email = check("email").isEmail().withMessage("Email must be a valid email")

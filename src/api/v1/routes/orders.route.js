@@ -2,10 +2,12 @@
 import Router from "express"
 import express from "express"
 
+
 // Import middlewares
-import validateAuth from "../middlewares/auth.middleware.js"
-import validateRole from "../middlewares/role.middleware.js"
-import validateAccess from "../middlewares/access.middleware.js"
+import authenticationGuard from "../middlewares/authenticationGuard.middleware.js"
+import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
+import accessGuard from "../middlewares/accessGuard.middleware.js"
+import inputValidation from "../middlewares/inputValidation.middleware.js"
 
 
 

@@ -32,7 +32,7 @@ export default class usersDAO {
       return;
     }
     try {
-      User = await conn.model("user", userSchema);
+      User = await conn.model("User", userSchema);
 
       // users = await conn.collection(MONGODB_collection_users);
       // User = mongoose.model("User", userSchema);
@@ -168,6 +168,7 @@ export default class usersDAO {
         email: user.email,
         name: user.name,
         phoneNumber: user.phoneNumber,
+        phoneNumberCountryCode: user.phoneNumberCountryCode,
         address: user.address,
         companyId: user.companyId,
         role: user.role || "user", // Default role is user
@@ -177,10 +178,7 @@ export default class usersDAO {
         emailVerified: user.emailVerified,
       });
 
-     const mongodbResponse = await newUser.save();
-
-    
-     
+      const mongodbResponse = await newUser.save();
 
       logger.info(
         "USERS-DAO ADD_USER RESULT:: " +
@@ -190,9 +188,6 @@ export default class usersDAO {
 
       // User inserted
       return mongodbResponse;
-
-      
-    
     }
 
     /**
@@ -213,48 +208,41 @@ export default class usersDAO {
    * @returns {Promise<JSON>} - User information.
    */
   static async get_one(userId) {
-   // try {
-      logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
+    // try {
+    logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
 
-      logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
+    logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
 
-     
-      const user = await User.findById(userId).populate(
-        "company"
-      )
+    const user = await User.findById(userId).populate("company");
 
     //  user.populate("file")
 
-    
+    return user;
+
+    // User found
+    if (mongodbResponse) {
+      // The role "user" is the only role that is not associated with a company
+
+      logger.info(
+        "USERS-DAO GET_USER_BY_ID RESULT: " +
+          JSON.stringify(mongodbResponse, null, 2) +
+          "\n"
+      );
+
       return user;
 
-   
+      // User not found
+    } else {
+      logger.info("USERS-DAO GET_USER_BY_ID USER NOT FOUND" + "\n");
+      return { error: "User not found" };
+    }
 
-      // User found
-      if (mongodbResponse) {
-        // The role "user" is the only role that is not associated with a company
-
-        logger.info(
-          "USERS-DAO GET_USER_BY_ID RESULT: " +
-            JSON.stringify(mongodbResponse, null, 2) +
-            "\n"
-        );
-
-        return user;
-
-        // User not found
-      } else {
-        logger.info("USERS-DAO GET_USER_BY_ID USER NOT FOUND" + "\n");
-        return { error: "User not found" };
-      }
-
-      /**
+    /**
        *  } catch (error) {
       logger.error("USERS-DAO GET_USER_BY_ID ERROR: " + error + "\n");
       return { error: error };
     }
        */
-   
   }
 
   /**
@@ -352,7 +340,42 @@ export default class usersDAO {
 
       switch (authProvider) {
         case "cognito":
-          mongodbResponse = await User.findOne({ cognitoId: authId }).populate("company");
+          mongodbResponse = await User.findOne({ cognitoId: authId })
+            .populate({
+              path: "company",
+              populate: [
+                {
+                  path: "team",
+                  model: "User",
+                  select:
+                    "-__v -cognitoId -company -createdAt -updatedAt -services -relatives -settings",
+                  populate: {
+                    path: "caregiverInformation",
+                    model: "Caregiver",
+                    select: "-user, -__v -createdAt -updatedAt",
+                    populate: {
+                      path: "services",
+                      model: "Service",
+                      select: "-__v -createdAt -updatedAt -translations",
+                    },
+                  },
+                },
+
+                {
+                  path: "services",
+                  model: "Service",
+                  select: "-__v -createdAt -updatedAt",
+                },
+                {
+                  path: "contactInformation.owner",
+                  model: "User",
+                  select:
+                    "-__v -cognitoId -company -createdAt -updatedAt -services -relatives -settings",
+                },
+              ],
+              select: "-__v -createdAt -updatedAt",
+            })
+            .select("-__v -cognitoId -createdAt -updatedAt -relatives");
       }
 
       // User found
@@ -370,8 +393,6 @@ export default class usersDAO {
         logger.info("USERS-DAO GET_USER_BY_AUTH_ID USER NOT FOUND" + "\n");
         return { error: "User not found" };
       }
-
-
     } catch (error) {
       logger.error(
         "USERS-DAO GET_USER_BY_AUTH_ID ERROR: " +

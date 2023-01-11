@@ -60,4 +60,45 @@ export default class ordersDAO {
       return { error: error };
     }
   }
+
+
+ /**
+   * @description Updates the order information in the database.
+   * @param {*} order - Order object.
+   * @returns {Promise<JSON>} - MongoDB response.
+   */
+  static async set(order) {
+    
+    try {
+      logger.info("ORDERS-DAO SET STARTED: ");
+
+      logger.info(JSON.stringify(order, null, 2) + "\n");
+
+      const updatedOrder = await Order.findOneAndUpdate(
+        { _id: order._id },
+        {
+          $set: {
+            company: order.company,
+            caregiver: order.caregiver,
+            client: order.client,
+            companyAccepted: order.companyAccepted,
+            clientAccepted: order.clientAccepted,
+            services: order.services,
+            scheduleInformation: order.scheduleInformation,
+            paymentInformation: order.paymentInformation,
+            orderStatus: order.orderStatus,
+            billingAddress: order.billingAddress,
+          },
+        },
+        { new: true }
+      );
+
+      return updatedOrder;
+    } catch (error) {
+      logger.error(`Unable to update order: ${error}`);
+      return { error: error };
+    }
+
+  }
+
 }

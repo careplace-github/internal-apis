@@ -9,7 +9,7 @@ const router = express.Router()
 
 router.route("/")
     .get(function(req,res) {
-        res.send("<html><h1> [DEVELOPMENT ENVIRONMENT] API V0.1.2 </h1></html>");})
+        res.send("<html><h1> [DEVELOPMENT ENVIRONMENT] API V1.0.0 </h1></html>");})
         
 
   
