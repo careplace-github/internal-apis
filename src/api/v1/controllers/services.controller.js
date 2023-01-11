@@ -6,7 +6,7 @@ import servicesDAO from "../db/servicesDAO.js";
 
 export default class ServicesController {
   static async index(req, res, next) {
-    try {
+    //try {
       var request = requestUtils(req);
       let response;
 
@@ -18,9 +18,14 @@ export default class ServicesController {
         "Services Controller INDEX: " + JSON.stringify(request, null, 2) + "\n"
       );
 
-      // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
-      if (req.query.companyId) {
-        filters.companyId = req.query.companyId;
+      // Check which language the user wants to use.
+      if (req.query.language) {
+        let language = req.query.language;
+        filters.language = language
+      } 
+      else {
+         // If the language query is null or empty, then we will use the default language.
+        //filters.language = "pt";
       }
 
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
@@ -46,7 +51,7 @@ export default class ServicesController {
           "\n"
       );
 
-      const services = await servicesDAO.get_list(request);
+      const services = await servicesDAO.get_list(filters, options, page);
 
       // If there is an error, then we will return the error.
       if (services.error != null) {
@@ -66,7 +71,11 @@ export default class ServicesController {
       request.response = services;
 
       return res.status(200).json(services);
-    } catch (error) {
+
+
+
+      /**
+       *  } catch (error) {
       // If there is an internal error, then we will return the error.
       request.statusCode = 500;
       request.response = { error: error };
@@ -77,5 +86,8 @@ export default class ServicesController {
 
       return res.status(500).json({ error: error });
     }
+       */
+
+   
   }
 }

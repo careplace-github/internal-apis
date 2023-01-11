@@ -19,7 +19,7 @@ export default class ordersDAO {
    */
   static async injectCollection(conn) {
     try {
-      Service = await conn.model("service", serviceSchema);
+      Service = await conn.model("Service", serviceSchema);
     } catch (error) {
       logger.error(
         `Unable to establish a collection handle in servicesDAO: ${error}`
@@ -28,8 +28,7 @@ export default class ordersDAO {
     }
   }
 
-
- /**
+  /**
    * @description Fetches services by query.
    * @param {JSON} filters - Query to search for the services.
    * @param {JSON} options - Options to search for the services.
@@ -37,7 +36,7 @@ export default class ordersDAO {
    * @param {Integer} documentsPerPage - Documents per page to search for the services.
    * @returns {Promise<JSON>} - Services information.
    */
- static async get_list(filters, options, page, documentsPerPage) {
+  static async get_list(filters, options, page, documentsPerPage) {
     try {
       logger.info("SERVICES-DAO GET_SERVICES_BY_QUERY STARTED: ");
 
@@ -60,13 +59,21 @@ export default class ordersDAO {
 
       if (filters) {
         if (filters.language) {
-          query = { language: ObjectId(filters.language) };
+          query = { 
+           // [filters.language]: {$in: "languages"}
+          };
+          logger.info(
+            "SERVICES-DAO GET_SERVICES_BY_QUERY QUERY: " +
+              JSON.stringify(query, null, 2) +
+              "\n"
+          );
         }
       }
 
-    
-
-      let services = await Service.find(query, options);
+      let services = await Service.find(
+        query,
+        options
+      );
 
       // Services found
       if (services) {
@@ -114,6 +121,5 @@ export default class ordersDAO {
     }
   }
 
-
-
+  
 }

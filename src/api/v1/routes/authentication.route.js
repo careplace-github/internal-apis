@@ -1,7 +1,12 @@
 import express from "express";
 import AuthenticationController from "../controllers/authentication.controller.js";
 
-import validateAuth from "../middlewares/auth.middleware.js";
+
+// Import middlewares
+import authenticationGuard from "../middlewares/authenticationGuard.middleware.js"
+import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
+import accessGuard from "../middlewares/accessGuard.middleware.js"
+import inputValidation from "../middlewares/inputValidation.middleware.js"
 
 
 const router = express.Router();
@@ -18,7 +23,7 @@ router
 
 router
   .route("/auth/logout")
-  .post(validateAuth, AuthenticationController.logout);
+  .post( AuthenticationController.logout);
 
 router
   .route("/auth/forgot-password")

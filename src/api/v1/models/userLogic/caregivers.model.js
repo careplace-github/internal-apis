@@ -5,16 +5,29 @@ const Schema = mongoose.Schema;
 const caregiverSchema = new Schema({
   _id: Schema.Types.ObjectId,
 
-  user: { type: Schema.ObjectId, ref: "user", required: true },
+  user: { type: Schema.ObjectId, ref: "User", required: true },
 
-  services: [{ type: Schema.ObjectId, ref: "service", required: false }],
+  services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
-  schedule: [{ type: Schema.ObjectId, ref: "events", required: false }],
+  schedule: [{ type: Schema.ObjectId, ref: "Event", required: false }],
 
   rating: { type: Number, required: false },
 
-  reviews: [{ type: Schema.ObjectId, ref: "review", required: false }],
-});
+  reviews: [{ type: Schema.ObjectId, ref: "Review", required: false }],
+
+
+  createdAt: { type: Date, required: true, default: Date.now },
+  updatedAt: { type: Date, required: true, default: Date.now },
+
+}
+,
+{
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+}
+
+);
 
 // methods
 
@@ -45,4 +58,4 @@ caregiverSchema.methods.isAvailable = function (events) {
   return available;
 };
 
-export default mongoose.model("caregiver", caregiverSchema);
+export default caregiverSchema;

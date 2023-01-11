@@ -21,11 +21,7 @@ const userSchema = new Schema(
 
     emailVerified: { type: Boolean, required: false, default: false },
 
-    phoneNumberCountryCode: {
-      type: String,
-      required: true,
-      enum: ["+351", "+34", "+1", "+44"],
-    },
+    
 
     // Verify if the phone number doesn't have any spaces and if doesn't have any special characters. If it does, remove them.
     phoneNumber: {
@@ -36,11 +32,14 @@ const userSchema = new Schema(
         if (value.includes(" ")) {
           // Remove all spaces from the phone number
           value = value.replace(/\s/g, "");
-        } else if (value.startsWith(this.phoneNumberCountryCode)) {
-          // Remove all the special characters from the phone number
-          value = value.replace(/[^0-9]/g, "");
-        }
+        } 
       },
+    },
+
+    phoneNumberCountryCode: {
+      type: String,
+      required: true,
+      enum: ["+351", "+34", "+1", "+44"],
     },
 
     phoneNumberVerified: { type: Boolean, required: false, default: false },
@@ -55,7 +54,7 @@ const userSchema = new Schema(
 
     caregiverInformation: {
       type: Schema.ObjectId,
-      ref: "caregiver",
+      ref: "Caregiver",
       required: false,
     },
 
@@ -72,14 +71,14 @@ const userSchema = new Schema(
 
       countryId: {
         type: String,
-        required: true,
+        required: false,
         enum: ["PT", "ES", "US", "UK"],
       },
       // Check if full address is equal to street + postalCode + city + state + country
       // If it's not equal, add the missing information to the full address
       fullAddress: {
         type: String,
-        required: true,
+        required: false,
         validate(value) {
           if (
             value !==

@@ -5,7 +5,7 @@ import companiesDAO from "../db/companiesDAO.js";
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
 
-export default class UsersController {
+export default class CompaniesController {
   static async index(req, res, next) {
     try {
       var request = requestUtils(req);
