@@ -120,7 +120,7 @@ export default class Cognito {
   
 
   /**
-   * @description Confirms the user email in the Cognito service by confirming the confirmation code that was sent to the user email.
+   * @description Confirms the user  in the Cognito service by confirming the confirmation code that was sent either to the user email or phone number. Even if the code is sent to the user's phone number this function always takes the email as a parameter and the code to verify the user because the username in the Cognito is the email.
    * @param {String} email - User email.
    * @param {String} code - Confirmation code.
    * @returns {Promise<JSON>} - AWS Cognito response.
@@ -156,6 +156,44 @@ export default class Cognito {
 
       return { error: error };
     }
+  }
+
+
+  /**
+   * @description Confirms the user phone number in the Cognito service by confirming the confirmation code that was sent to the user phone number.
+   * @param {String} app - Application name (crm or marketplace).
+   * @param {String} phoneNumber - User phone number.
+   * @param {String} code - Confirmation code.
+   * @returns {Promise<JSON>} - AWS Cognito response.
+   */
+  static async confirmUserPhoneNumber(app, phoneNumber, code) {
+
+    try {
+      const params = {
+        AccessToken: code,
+        AttributeName: "phone_number",
+        AttributeValue: phoneNumber,
+      };
+
+      const response = await cognito.updateUserAttributes(params).promise();
+
+      logger.info(
+        "COGNITO SERVICE CONFIRM_USER_PHONE_NUMBER SUCESS: " +
+          JSON.stringify(response, null, 2) +
+          "\n"
+      );
+
+      return response;
+    } catch (error) {
+      logger.error(
+        "COGNITO SERVICE CONFIRM_USER_PHONE_NUMBER ERROR: " +
+          JSON.stringify(error, null, 2) +
+          "\n"
+      );
+
+      return { error: error };
+    }
+
   }
 
   /**

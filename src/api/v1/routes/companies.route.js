@@ -2,10 +2,12 @@
 import Router from "express";
 import express from "express";
 
-// Import middlewares
-import validateAuth from "../middlewares/auth.middleware.js";
-import validateRole from "../middlewares/role.middleware.js";
 
+// Import middlewares
+import authenticationGuard from "../middlewares/authenticationGuard.middleware.js"
+import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
+import accessGuard from "../middlewares/accessGuard.middleware.js"
+import inputValidation from "../middlewares/inputValidation.middleware.js"
 // Import controllers
 import companiesController from "../controllers/companies.controller.js";
 
@@ -19,8 +21,8 @@ router
 router
   .route("/companies/:id")
   .get(companiesController.show)
-  .put(validateAuth, validateRole(["admin"]), companiesController.update)
-  .delete(validateAuth, validateRole(["admin"]), companiesController.destroy
+  .put( companiesController.update)
+  .delete(companiesController.destroy
   );
 
 export default router;

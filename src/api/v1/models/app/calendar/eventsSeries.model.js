@@ -206,4 +206,4 @@ const getWeekDayNumber = (weekDay) => {
     // Helper function to get the number for a week day (e.g. Monday = 1, Tuesday = 2, etc.)
   };
 
-export default mongoose.model("eventsSeries", eventsSeriesSchema);
+export default eventsSeriesSchema;

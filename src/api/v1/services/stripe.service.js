@@ -11,7 +11,45 @@ const stripeClient = stripe(STRIPE_secret_key);
  export default class Stripe {
 
 
-/**
+    /**
+ * @method createPaymentIntent 
+ * @description Create a Stripe payment intent. The payment intent is used to confirm the payment. 
+ * @param {Object} data - The data to create the payment intent
+ * @param {String} data.amount - The amount of the payment intent
+ * @param {String} data.currency - The currency of the payment intent
+ * @param {String} data.description - The description of the payment intent
+ * @param {String} data.payment_method_types - The payment method types of the payment intent
+ * @param {String} data.receipt_email - The receipt email of the payment intent
+ * @param {String} data.statement_descriptor - The statement descriptor of the payment intent
+ * @param {String} data.statement_descriptor_suffix - The statement descriptor suffix of the payment intent
+ * @param {String} data.transfer_data - The transfer data of the payment intent
+ * @returns {Promise} - The promise of the Stripe API
+ * @see https://stripe.com/docs/api/payment_intents/create
+ */
+static async createPaymentIntent(data) {
+
+    const amountToCharge = parseInt(data.amount * 100);
+
+    
+
+     await stripeClient.paymentIntents.create({
+        amount: data.amount,
+        currency: data.currency,
+        description: data.description,
+        payment_method_types: data.payment_method_types,
+        receipt_email: data.receipt_email,
+        statement_descriptor: data.statement_descriptor,
+        statement_descriptor_suffix: data.statement_descriptor_suffix,
+        transfer_data: data.transfer_data
+    });
+
+    
+
+    }
+
+    
+
+     /**
  * @method createIndividualAccount
  * @description Create a Stripe account for an individual
  * @param {Object} data - The data to create the account
@@ -496,6 +534,11 @@ return stripeClient.discounts.create({
     start: data.start
 });
 }
+     */
+
+
+
+
 
 
  

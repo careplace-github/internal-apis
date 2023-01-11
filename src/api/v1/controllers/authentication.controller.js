@@ -10,6 +10,7 @@ import authHelper from "../helpers/auth.helper.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
+let app;
 
 export default class AuthenticationController {
   /**
@@ -29,11 +30,12 @@ export default class AuthenticationController {
         "\n"
     );
 
-    const newUser = {
+    let newUser = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       phoneNumber: req.body.phoneNumber,
+      phoneNumberCountryCode: req.body.phoneNumberCountryCode,
       gender : req.body.gender,
       cognitoId: "",
     };
@@ -148,7 +150,7 @@ export default class AuthenticationController {
     let cognitoResponse = {};
     let response = {};
 
-    const app = await authHelper.getUserApp(req.body.email);
+     app = await authHelper.getUserApp(req.body.email);
 
     //console.log("app: ", app);
 
@@ -511,7 +513,7 @@ export default class AuthenticationController {
    */
   // Function to confirm the user's email address after registration using the confirmation code sent to the user's email address
   static async verifyUser(req, res, next) {
-    try {
+    
       var request = requestUtils(req);
 
       logger.info(
@@ -519,8 +521,10 @@ export default class AuthenticationController {
           JSON.stringify(request, null, 2) +
           "\n"
       );
+      app = await authHelper.getUserApp(req.body.email);
 
-      const cognitoResponse = await Cognito.verifyAttribute(
+      const cognitoResponse = await Cognito.confirmUser(
+        app, 
         req.body.email,
         req.body.code
       );
@@ -547,15 +551,6 @@ export default class AuthenticationController {
           message: "User confirmed successfully.",
         });
       }
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      return res.status(500).json({
-        error: error,
-      });
-    }
+    
   }
 }

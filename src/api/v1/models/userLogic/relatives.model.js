@@ -8,13 +8,13 @@ const relativeSchema = new Schema(
 
     owner: { type: Schema.ObjectId, ref: "user", required: true },
 
-    avatar: { type: Schema.ObjectId, ref: "file", required: false },
+    avatar: { type: String, required: false },
 
     name: { type: String, required: true },
 
-    birthDate: { type: Date, required: false },
+    birthDate: { type: Date, required: true },
 
-    age: { type: Number, required: false },
+    age: { type: Number, required: true },
 
     medicalConditions: {
       bloodType: { type: String, required: false },
@@ -26,19 +26,19 @@ const relativeSchema = new Schema(
     },
 
     address: {
-      street: { type: String, required: false },
+      street: { type: String, required: true },
 
-      postalCode: { type: String, required: false },
+      postalCode: { type: String, required: true },
 
-      state: { type: String, required: false },
+      state: { type: String, required: true },
 
-      city: { type: String, required: false },
+      city: { type: String, required: true },
 
-      country: { type: String, required: false },
+      country: { type: String, required: true },
 
-      countryId: { type: String, required: false },
+      countryId: { type: String, required: true },
 
-      fullAddress: { type: String, required: false },
+      fullAddress: { type: String, required: true },
 
       // Array of coordinates [longitude, latitude] String
       coordinates: [
