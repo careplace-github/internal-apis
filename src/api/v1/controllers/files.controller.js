@@ -3,7 +3,7 @@ import BucketService from "../services/bucket.service.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
-import filesDAO from "../db/filesDAO.js";
+import filesDAO from "../db/files.dao.js";
 
 
 export default class FilesController {

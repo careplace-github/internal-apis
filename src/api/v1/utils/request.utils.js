@@ -4,7 +4,7 @@
  */
 
  
- export default function requestUtils(req, res, next) {
+ export default function RequestUtils(req, res, next) {
     const request = {
         request: {
             type: req.method,
@@ -12,6 +12,7 @@
             ipv6: req.ip,
             proxy: req.headers['x-forwarded-for'],
             headers: req.headers,
+            params: req.params,
             query: req.query,
             body: req.body,
         },

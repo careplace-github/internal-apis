@@ -30,7 +30,6 @@ import cors from "cors";
 import hpp from "hpp";
 import xss from "xss-clean";
 
-
 import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 
@@ -42,7 +41,6 @@ import {
   env,
   api_version,
   api_url,
-  
   SERVER_Port,
   MONGODB_db_active_uri,
   MONGODB_db_deletes_uri,
@@ -61,119 +59,57 @@ import servicesAPI from "./api/v1/routes/services.route.js";
 import ordersAPI from "./api/v1/routes/orders.route.js";
 import calendarAPI from "./api/v1/routes/calendar.route.js";
 
-// Import Data Access Objects
-import usersDAO from "./api/v1/db/usersDAO.js";
-import companiesDAO from "./api/v1/db/companiesDAO.js";
-import ordersDAO from "./api/v1/db/ordersDAO.js";
-import servicesDAO from "./api/v1/db/servicesDAO.js";
-import servicesTranslationsDAO from "./api/v1/db/servicesTranslationsDAO.js";
-import filesDAO from "./api/v1/db/filesDAO.js";
-import caregiversDAO from "./api/v1/db/caregiversDAO.js";
-import eventsDAO from "./api/v1/db/eventsDAO.js";
-import eventsSeriesDAO from "./api/v1/db/eventsSeriesDAO.js";
+
+
+
 
 // Import logger
 import logger from "./logs/logger.js";
+import requestLogger from "./api/v1/middlewares/server/requestHandler.middleware.js";
+import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js";
+import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
+
+
+
+
 
 const main = async () => {
+
+   // MongoDB connection options
+   let options = {
+    //useCreateIndex: true, //
+    autoIndex: false, // Don't build indexes
+    useNewUrlParser: true, // Use the new Server Discover and Monitoring engine
+    useUnifiedTopology: true, // Use the new Server Discover and Monitoring engine
+    //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
+
+    maxPoolSize: 100, // Maintain up to 100 socket connections
+    serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
+    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    family: 4, // Use IPv4, skip trying IPv6
+  };
+
+
+
+    // Connects to MongoDB Database
+    let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
+   
   try {
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
-    try {
-      // Connects to MongoDB Database
-      logger.info(
-        `Attempting to connect to MongoDB Database: ${MONGODB_db_active}`
-      );
 
-      // MongoDB connection options
-      let options = {
-        //useCreateIndex: true, //
-        autoIndex: false, // Don't build indexes
-        useNewUrlParser: true, // Use the new Server Discover and Monitoring engine
-        useUnifiedTopology: true, // Use the new Server Discover and Monitoring engine
-        //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
+    // Connects to MongoDB Database
+    logger.info(
+      `Attempting to connect to MongoDB Database: ${MONGODB_db_active}`
+    );
+    logger.info(
+      `Attempting to connect to MongoDB Database: ${MONGODB_db_deletes}`
+    );
 
-        maxPoolSize: 100, // Maintain up to 100 socket connections
-        serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-        socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-        family: 4, // Use IPv4, skip trying IPv6
-      };
+     
+  
 
-      let client = mongoose.createConnection(MONGODB_db_active_uri, options);
-
-      logger.info(`Connected to MongoDB Database: ${MONGODB_db_active}`);
-
-      /**
-       * Handles errors after connection is established
-       */
-
-      // Connection error
-      client.on("error", (error) => {
-        logger.error(
-          `Unable to connect to MongoDB Database: ${MONGODB_db_active} | Error: ${error}`
-        );
-
-        // If the connection to the MongoDB database has an error the server will restart after 5 seconds
-        setTimeout(
-          () => {
-            logger.error(`Server will restart in 5 seconds...`);
-            main();
-          },
-
-          5000
-        );
-      });
-
-      // Connection closed
-      client.on("disconnected", (error) => {
-        logger.error(
-          `Lost connection to MongoDB Database: ${MONGODB_db_active} | Error: ${error}`
-        );
-
-        // If the connection to the MongoDB database closes the server will restart after 5 seconds
-        setTimeout(
-          () => {
-            logger.error(`Server will restart in 5 seconds...`);
-            main();
-          },
-
-          5000
-        );
-      });
-
-      // Connection closed but reconnected
-      client.on("reconnected", (event) => {
-        logger.info(
-          `Reconnected to MongoDB Database: ${MONGODB_db_active} | Event: ${event}`
-        );
-      });
-
-
-
-      // Injects the MongoDB Database connection to the Data Access Objects
-      usersDAO.injectCollection(client);
-      companiesDAO.injectCollection(client);
-      ordersDAO.injectCollection(client);
-      servicesDAO.injectCollection(client);
-      filesDAO.injectCollection(client);
-      caregiversDAO.injectCollection(client);
-      eventsDAO.injectCollection(client);
-      eventsSeriesDAO.injectCollection(client);
-    } catch (error) {
-      // Handles connection error
-      logger.error(
-        `Unable to connect to MongoDB Database: ${MONGODB_db_active} | Error: ${error}`
-      );
-
-      // If the connection to the MongoDB database fails the server will restart after 5 seconds
-      setTimeout(
-        () => {
-          logger.error(`Server will restart in 5 seconds...`);
-          main();
-        },
-
-        5000
-      );
-    }
+ 
+ 
 
     // Initialise HTTP Server
     try {
@@ -183,7 +119,6 @@ const main = async () => {
       // Apply application middlewares
       app.use(express.json());
 
-
       // -------------------------------------------------------------------------------------------- //
       //         Apply Application Security Middlewares and Attacks Protection & Handling             //
       // -------------------------------------------------------------------------------------------- //
@@ -192,7 +127,6 @@ const main = async () => {
        * @see https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html
        * @see https://nodejs.org/en/docs/guides/security
        */
-
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -212,8 +146,6 @@ const main = async () => {
        * Prevents MIME Type Sniffing
        */
       app.use(helmet.noSniff());
-
-     
 
       /**
        * Prevents Cross-Origin Resource Sharing (CORS) attacks
@@ -261,7 +193,7 @@ const main = async () => {
        * @see https://nodejs.org/en/docs/guides/security/#memory-access-violation-cwe-284
        * @NotWorking
        */
-     /**
+      /**
       * app.use(helmet.noCache());
       * /
 
@@ -353,7 +285,6 @@ const main = async () => {
         })
       );
        */
-      
 
       /**
        * Prevents External Control of System or Configuration Setting Attacks
@@ -383,24 +314,21 @@ const main = async () => {
       // -------------------------------------------------------------------------------------------- //
 
       /**
-       * 
+       *
        */
 
       app.on("error", (error) => {
         logger.error(`HTTP Server error: ${error}`);
-
-        // If there is an error with the HTTP Server it will try to start again after 5 seconds
-        setTimeout(
-          () => {
-            logger.error(
-              `Àttempting to start the server again in 5 seconds...`
-            );
-            main();
-          },
-
-          5000
-        );
       });
+
+
+      app.use(requestLogger);
+    
+
+     
+  
+
+        
 
       app.on("SIGUSR1", () => {
         // Handle SIGUSR1 signal
@@ -417,6 +345,12 @@ const main = async () => {
       app.use(api_url, servicesAPI);
       app.use(api_url, calendarAPI);
 
+      app.use(errorLogger);
+      app.use(responseLogger);
+     
+
+      
+
       // Starts listening for HTTP requests
       app.listen(SERVER_Port, () => {
         logger.info(`HTTP Server started on port: ${SERVER_Port}`);
@@ -428,31 +362,15 @@ const main = async () => {
       });
     } catch (error) {
       logger.error(`Unable to start the HTTP Server: ${error}`);
-
-      // If the HTTP Server fails to start it will try to start again after 5 seconds
-      setTimeout(
-        () => {
-          logger.error(`Àttempting to start the server again in 5 seconds...`);
-          main();
-        },
-
-        5000
-      );
     }
+
+     
   } catch (error) {
     // Internal Error
 
     logger.error(`Internal Error: ${error}`);
 
-    // If there is an internal error the server it will try to start again after 5 seconds
-    setTimeout(
-      () => {
-        logger.error(`Server will restart in 5 seconds...`);
-        main();
-      },
 
-      5000
-    );
   }
 };
 

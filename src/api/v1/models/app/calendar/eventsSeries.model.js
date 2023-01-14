@@ -3,34 +3,35 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const eventsSeriesSchema = new Schema(
+  
   {
     _id: Schema.Types.ObjectId,
 
     user: { type: Schema.ObjectId, ref: "user", required: true },
 
-    startDate: { type: Date, required: true },
+    start_date: { type: Date, required: true },
 
-    endDate: {
+    end_date: {
       type: Date,
       required: true,
       default: Date.now() + 31536000000,
     },
 
     // Weekly or Biweekly
-    recurrencyType: { type: String, required: false },
+    recurrency_type: { type: String, required: false, enum: ["weekly", "biweekly","monthly"] },
 
     // If isRecurrent is true, this is the frequency of the order
     // If isRecurrent is false, this is the date of the order
     schedule: [
       {
-        weekDay: { type: String, required: true },
-        startTime: { type: String, required: true },
-        endTime: { type: String, required: true },
+        week_day: { type: String, required: true, enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
+        start_time: { type: String, required: true },
+        end_time: { type: String, required: true },
       },
     ],
 
-    createdAt: { type: Date, required: true, default: Date.now() },
-    updatedAt: { type: Date, required: true, default: Date.now() },
+    created_at: { type: Date, required: true, default: Date.now() },
+    updated_at: { type: Date, required: true, default: Date.now() },
   },
   {
     timestamps: true,

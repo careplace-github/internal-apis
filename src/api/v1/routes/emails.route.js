@@ -1,15 +1,5 @@
-// Import the express module
-import Router from "express"
+
 import express from "express"
-
-// Import middlewares
-
-// Import middlewares
-import authenticationGuard from "../middlewares/authenticationGuard.middleware.js"
-import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
-import accessGuard from "../middlewares/accessGuard.middleware.js"
-import inputValidation from "../middlewares/inputValidation.middleware.js"
-
 
 
 

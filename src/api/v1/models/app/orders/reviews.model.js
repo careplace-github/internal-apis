@@ -15,7 +15,7 @@ const reviewSchema = new Schema({
   order: { type: Schema.ObjectId, ref: "order", required: true },
 
   // Rating for the whole order
-  generalRating: {
+  general_rating: {
     type: Number,
     required: true,
     validate(value) {
@@ -31,7 +31,7 @@ const reviewSchema = new Schema({
   },
 
   // Rating for each service in the order
-  servicesRating: [
+  services_rating: [
     {
       service: { type: Schema.ObjectId, ref: "service", required: true },
       rating: {
@@ -51,9 +51,9 @@ const reviewSchema = new Schema({
 
   comment: { type: String, required: false },
 
-  createdAt: { type: Date, required: true, default: Date.now() },
+  created_at: { type: Date, required: true, default: Date.now() },
 
-  updatedAt: { type: Date, required: true, default: Date.now() },
+  updated_at: { type: Date, required: true, default: Date.now() },
 });
 
 // Methods
@@ -62,11 +62,11 @@ reviewSchema.methods.getServices = function () {
 };
 
 reviewsSchema.methods.getGeneralRating = function () {
-    let rating = 0;
-    this.servicesRating.forEach(service => {
-        rating += service.rating;
-    });
-    return rating / this.servicesRating.length;
+  let rating = 0;
+  this.servicesRating.forEach((service) => {
+    rating += service.rating;
+  });
+  return rating / this.servicesRating.length;
 };
 
 export default mongoose.model("review", reviewSchema);

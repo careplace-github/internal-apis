@@ -1,13 +1,7 @@
 // Import the express module
-import Router from "express";
 import express from "express";
 
 
-// Import middlewares
-import authenticationGuard from "../middlewares/authenticationGuard.middleware.js"
-import roleBasedGuard from "../middlewares/roleBasedGuard.middleware.js"
-import accessGuard from "../middlewares/accessGuard.middleware.js"
-import inputValidation from "../middlewares/inputValidation.middleware.js"
 
 // Import controllers
 import CalendarController from "../controllers/calendar.controller.js";
@@ -23,15 +17,15 @@ router
   .route("/calendar/events/:id")
   .get(CalendarController.show_event)
   .put(CalendarController.update_event)
-  .delete(CalendarController.destroy_event);
+  .delete(CalendarController.destroy_event );
 
 router
-  .route("/calendar/eventsSeries")
+  .route("/calendar/events_series")
   .get(CalendarController.index_eventsSeries)
   .post(CalendarController.create_eventsSeries);
 
 router
-  .route("/calendar/eventsSeries/:id")
+  .route("/calendar/events_series/:id")
   .get(CalendarController.show_eventsSeries)
   .put(CalendarController.update_eventsSeries)
   .delete(CalendarController.destroy_eventsSeries);
