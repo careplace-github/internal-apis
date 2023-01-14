@@ -1,26 +1,27 @@
 import mongoose from "mongoose";
 
-import caregiverSchema from "../models/userLogic/caregivers.model.js";
+import fileSchema from "../models/utils/files.model.js";
 
 import logger from "../../../logs/logger.js";
 
-let Caregiver;
+let File;
 
 /**
- * @class Class to manage the Ccregivers collection.
+ * @class Class to manage the files collection.
  */
 export default class usersDAO {
   /**
-   * @description Creates the connection to the MongoDB database.
-   * @param {mongoose} connection
+   * @description Creates the db_connectionection to the MongoDB database.
+   * @param {mongoose} db_connectionection
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async injectCollection(conn) {
+  static async injectCollection(db_connection, deletes_db_connection) {
     try {
-      Caregiver = await conn.model("Caregiver", caregiverSchema);
+      File = await db_connection.model("file", fileSchema);
+      File.injectCollection(deletes_db_connection);
     } catch (error) {
       logger.error(
-        `Unable to establish a collection handle in CaregiversDAO: ${error}`
+        `Unable to establish a collection handle in filesDAO: ${error}`
       );
       return { error: error };
     }
@@ -28,10 +29,10 @@ export default class usersDAO {
 
   static async get_list(filters, options, page, documentsPerPage) {
     try {
-      logger.info("CaregiverS-DAO GET_CaregiverS_BY_QUERY STARTED: ");
+      logger.info("FILES-DAO GET_FILES_BY_QUERY STARTED: ");
 
       logger.info(
-        "CaregiverS-DAO GET_CaregiverS_BY_QUERY SEARCH: " +
+        "FILES-DAO GET_FILES_BY_QUERY SEARCH: " +
           JSON.stringify(
             {
               filters: filters,
@@ -53,18 +54,18 @@ export default class usersDAO {
         }
       }
 
-      let caregivers = await Caregiver.find(query, options);
+      let files = await File.find(query, options);
 
       logger.info(
-        "CaregiverS-DAO GET_CaregiverS_BY_QUERY RESULT: " +
-          JSON.stringify(caregivers, null, 2) +
+        "FILES-DAO GET_FILES_BY_QUERY RESULT: " +
+          JSON.stringify(files, null, 2) +
           "\n"
       );
 
-      return caregivers;
+      return files;
     } catch (error) {
       logger.error(
-        `Unable to establish a collection handle in caregiversDAO: ${error}`
+        `Unable to establish a collection handle in filesDAO: ${error}`
       );
       return { error: error };
     }

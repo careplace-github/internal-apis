@@ -7,207 +7,98 @@ const companySchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    name: { type: String, required: true, unique: true },
-
-    logo: { type: String, required: false },
-
-    banner: { type: String, required: false },
-
-    isActive: { type: Boolean, required: true, default: true },
-
-    contactInformation: {
-      owner: { type: Schema.ObjectId, ref: "user", required: false },
+    business_profile: {
+      name: { type: String, required: true, unique: true },
 
       email: { type: String, required: true, unique: true },
 
-      phoneNumberCountryCode: {
-        type: String,
-        required: true,
-        enum: ["+351", "+34", "+1", "+44"],
-      },
-
-      // Verify if the phone number doesn't have any spaces and if doesn't have any special characters. If it does, remove them.
-      phoneNumber: {
-        type: String,
-        required: true,
-        unique: true,
-        validate(value) {
-          if (value.includes(" ")) {
-            // Remove all spaces from the phone number
-            value = value.replace(/\s/g, "");
-          } else if (value.startsWith(this.phoneNumberCountryCode)) {
-            // Remove all the special characters from the phone number
-            value = value.replace(/[^0-9]/g, "");
-          }
-        },
-      },
+      phone: { type: String, required: true, unique: true },
 
       website: { type: String, required: false, unique: true },
-    },
 
-    team: [{ type: Schema.ObjectId, ref: "User", required: false }],
+      logo: { type: String, required: false },
+
+      banner: { type: String, required: false },
+    },
 
     services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
-    serviceArea: { type: Array, required: false },
+    service_area: { type: Array, required: false },
+
+    team: [{ type: Schema.ObjectId, ref: "User", required: false }],
 
     address: {
       street: { type: String, required: true },
 
-      postalCode: { type: String, required: true },
+      postal_code: { type: String, required: true },
 
       state: { type: String, required: false },
 
       city: { type: String, required: true },
 
-      country: { type: String, required: true },
-
-      countryId: {
+      country: {
         type: String,
         required: true,
         enum: ["PT", "ES", "US", "UK"],
       },
 
-       // Check if full address is equal to street + postalCode + city + state + country
-        // If it's not equal, add the missing information to the full address
-        fullAddress: {
-          type: String,
-          required: true,
-          validate(value) {
-            if (
-              value !==
-              this.street +
-                ", " +
-                this.postalCode +
-                ", " +
-                this.city +
-                ", " +
-                this.state +
-                ", " +
-                this.country
-            ) {
-              value =
-                this.street +
-                ", " +
-                this.postalCode +
-                ", " +
-                this.city +
-                ", " +
-                this.state +
-                ", " +
-                this.country;
-            }
-          },
-        },
+      coordinates: { type: Array, required: true },
+    },
+
+    billing_address: {
+      street: { type: String, required: true },
+
+      postal_code: { type: String, required: true },
+
+      state: { type: String, required: false },
+
+      city: { type: String, required: true },
+
+      country: {
+        type: String,
+        required: true,
+        enum: ["PT", "ES", "US", "UK"],
+      },
 
       coordinates: { type: Array, required: true },
     },
 
-    legalInformation: {
+    /**
+     *   contactInformation: {
+      owner: { type: Schema.ObjectId, ref: "user", required: false },
+    },
+     */
+
+    legal_information: {
       // The legal name of the company
-      businessName: { type: String, required: true },
+      business_name: { type: String, required: true },
 
       // NIPC in Portugal, NIF in Spain, in USA it's the SSN, IN UK it's the VAT number, etc
-      taxId: { type: String, required: true },
+      tax_number: { type: String, required: true },
 
       // Business legal structure should be written on the company's country language
-      businessStructure: { type: String, required: true },
+      business_structure: { type: String, required: true },
     },
 
-    paymentInformation: {
+    stripe_information: {
+      /**
+       *  The stripe connected account id
+       * This is the id of the connected account that will be used for transfers to the company.
+       */
+      account_id: { type: String, required: true, unique: true },
 
-      // Name of the billing company  
-      billingName: { type: String, required: true },
-
-      // The bank account number
-      bankAccountNumber: { type: String, required: true },
-
-      // The bank account holder name
-      bankAccountHolderName: { type: String, required: true },
-
-      billingAddress: {
-        street: { type: String, required: true },
-
-        postalCode: { type: String, required: true },
-
-        state: { type: String, required: false },
-
-        city: { type: String, required: true },
-
-        country: { type: String, required: true },
-
-        countryId: {
-          type: String,
-          required: true,
-          enum: ["PT", "ES", "US", "UK"],
-        },
-
-        // Check if full address is equal to street + postalCode + city + state + country
-        // If it's not equal, add the missing information to the full address
-        fullAddress: {
-          type: String,
-          required: true,
-          validate(value) {
-            if (
-              value !==
-              this.street +
-                ", " +
-                this.postalCode +
-                ", " +
-                this.city +
-                ", " +
-                this.state +
-                ", " +
-                this.country
-            ) {
-              value =
-                this.street +
-                ", " +
-                this.postalCode +
-                ", " +
-                this.city +
-                ", " +
-                this.state +
-                ", " +
-                this.country;
-            }
-          },
-        },
-
-        coordinates: { type: Array, required: true },
-      },
-
-      cards: [
-        {
-          // Last 4 digits of the bank account number
-          // Verify if is equal to 4
-          cardLastDigits: {
-            type: Number,
-            required: true,
-            validate(value) {
-              if (value.toString().length !== 4) {
-                throw new Error(
-                  "Last 4 digits of the bank account number must be 4 digits"
-                );
-              }
-            },
-          },
-
-          cardType: {
-            type: String,
-            required: true,
-            enum: ["Visa", "Mastercard", "American Express", "Discover"],
-          },
-        },
-      ],
+      /**
+       * The stripe customer id
+       * This is the id of the customer that will be used for payments to the company (eg. Plan Payment).
+       */
+      customer_id: { type: String, required: true, unique: true },
     },
 
-    // Membership plan
-    plan: { type: String, required: true, enum: ["Free", "Premium"] },
+    is_active: { type: Boolean, required: true, default: true },
 
-    createdAt: { type: Date, required: true, default: Date.now() },
+    created_at: { type: Date, required: true, default: Date.now() },
 
-    updatedAt: { type: Date, required: true, default: Date.now() },
+    updated_at: { type: Date, required: true, default: Date.now() },
   },
 
   {

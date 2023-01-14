@@ -2,7 +2,7 @@
 import logger from "../../../logs/logger.js";
 
 // Import utils
-import EmailUtils from "../utils/email.utils.js";
+import EmailHelper from "../helpers/email.helper.js";
 import requestUtils from "../utils/request.utils.js";
 
 // Import  SES Service
@@ -18,7 +18,7 @@ export default class EmailsController {
       "Emails Controller INDEX: " + JSON.stringify(request, null, 2) + "\n"
     );
 
-    var response = await EmailUtils.getEmailTemplates();
+    var response = await EmailHelper.getEmailTemplates();
 
     logger.info(
       "Emails Controller INDEX Response: " +
@@ -36,9 +36,9 @@ export default class EmailsController {
       "Emails Controller SHOW: " + JSON.stringify(request, null, 2) + "\n"
     );
 
-    var body = await EmailUtils.getEmailTemplate(req.params.name);
-    var subject = await EmailUtils.getEmailSubject(req.params.name);
-    var variables = await EmailUtils.getEmailVariables(req.params.name);
+    var body = await EmailHelper.getEmailTemplate(req.params.name);
+    var subject = await EmailHelper.getEmailSubject(req.params.name);
+    var variables = await EmailHelper.getEmailVariables(req.params.name);
 
     var response = {
         name: req.params.name,
@@ -65,7 +65,7 @@ export default class EmailsController {
         "\n"
     );
 
-    const email = await EmailUtils.getEmailWithData(req.params.name, req.body);
+    const email = await EmailHelper.getEmailWithData(req.params.name, req.body);
 
    
    
@@ -92,7 +92,7 @@ export default class EmailsController {
         "\n"
     );
 
-    const email = await EmailUtils.getEmailWithData(req.params.name, req.body);
+    const email = await EmailHelper.getEmailWithData(req.params.name, req.body);
     
 
     const response = await SES.sendEmail(

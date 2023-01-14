@@ -1,5 +1,4 @@
 import dotenv from "dotenv"
-import CognitoUserPool from "amazon-cognito-identity-js"
 
 // Loads environment settings
 dotenv.config({path: './src/config/.env/.env'}) 

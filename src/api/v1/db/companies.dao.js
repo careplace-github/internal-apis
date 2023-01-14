@@ -14,14 +14,15 @@ let Company;
 const ObjectId = mongodb.ObjectId;
 
 export default class companiesDAO {
-  static async injectCollection(conn) {
+  static async injectCollection(db_connection , deletes_db_connection) {
     if (companies) {
       return;
     }
     try {
-      Company = await conn.model("company", companySchema);
+      Company = await db_connection .model("company", companySchema);
+      Company.injectCollection(deletes_db_connection);
 
-      //  companies = await conn.collection(MONGODB_collection_companies);
+      //  companies = await db_connection .collection(MONGODB_collection_companies);
     } catch (e) {
       logger.error(
         `Unable to establish a collection handle in companiesDAO: ${e}`

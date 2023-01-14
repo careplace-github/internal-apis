@@ -13,13 +13,14 @@ const ObjectId = mongodb.ObjectId;
 
 export default class ordersDAO {
   /**
-   * @description Creates the connection to the MongoDB database.
-   * @param {mongoose} connection
+   * @description Creates the db_connectionection to the MongoDB database.
+   * @param {mongoose} db_connectionection
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async injectCollection(conn) {
+  static async injectCollection(db_connection, deletes_db_connection) {
     try {
-      Service = await conn.model("Service", serviceSchema);
+      Service = await db_connection.model("Service", serviceSchema);
+      await Service.injectCollection(deletes_db_connection);
     } catch (error) {
       logger.error(
         `Unable to establish a collection handle in servicesDAO: ${error}`

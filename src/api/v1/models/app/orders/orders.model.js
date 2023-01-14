@@ -24,98 +24,78 @@ const orderSchema = new Schema(
     // Canceled -> Company Canceled || Customer Canceled
     // Active -> Visit Done && Customer Paid
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
-    orderStatus: { type: String, required: true, default: "new" },
+    order_status: { type: String, required: true, default: "new" },
 
     services: [{ type: Schema.ObjectId, ref: "service", required: true }],
 
+    // Json with all the information about the order schedule
+    schedule_information: {
+      start_date: { type: Date, required: true },
 
-    screeningVisit: {
+      // If isRecurrent is true, this is the end date of the order
+      // The default value is 1 year after the start date
+      end_date: {
+        type: Date,
+        required: true,
+        default: Date.now() + 31536000000,
+      },
+
+      is_recurrent: { type: Boolean, required: true, default: false },
+
+      // Weekly  -> Every week
+      // Biweekly -> Every 2 weeks
+      // Monthly  -> Every month (every 4 weeks)
+      recurrency_type: {
+        type: String,
+        required: false,
+        enum: ["weekly,", "biweekly", "monthly"],
+      },
+
+      // If isRecurrent is true, this is the frequency of the order
+      // If isRecurrent is false, this is the date of the order
+      schedule: [
+        {
+          week_day: { type: String, required: true },
+          start_time: { type: String, required: true },
+          end_time: { type: String, required: true },
+        },
+      ],
+    },
+
+    screening_visit: {
       date: { type: Date, required: false },
       event: { type: Schema.ObjectId, ref: "event", required: false },
       // Pending; Scheduled; Done
       status: { type: String, required: true, default: "pending" },
     },
 
+    actual_start_date: { type: Date, required: true },
+
     observations: { type: String, required: false },
 
+    stripe_subscription_id: { type: String, required: false },
 
-    //files: [{ type: Schema.ObjectId, ref: "file", required: false }],
-
-    // Json with all the information about the order schedule
-    scheduleInformation: {
-      startDate: { type: Date, required: true },
-
-      // If isRecurrent is true, this is the end date of the order
-      // The default value is 1 year after the start date
-      endDate: {
-        type: Date,
-        required: true,
-        default: Date.now() + 31536000000,
-      },
-
-      isRecurrent: { type: Boolean, required: true, default: false },
-
-      // Weekly  -> Every week
-      // Biweekly -> Every 2 weeks
-      // Monthly  -> Every month (every 4 weeks)
-      recurrencyType: { type: String,required: false, enum: ["weekly,", "biweekly", "monthly"],},
-
-      // If isRecurrent is true, this is the frequency of the order
-      // If isRecurrent is false, this is the date of the order
-      schedule: [
-        {
-          weekDay: { type: String, required: true },
-          startTime: { type: String, required: true },
-          endTime: { type: String, required: true },
-        },
-      ],
-
-      
-    },
-
-    // Json with all the information about the payment
-    // TODO: Add payment information
-    paymentInformation: {
-      orderTotal: { type: Number, required: true, default: 0 },
-      orderCurrency: { type: String, required: true, default: "EUR" },
-
-      stripeInformation: {
-        stripe_payment_intent_id: { type: String, required: false },
-        stripe_company_id: { type: String, required: false },
-        stripe_customer_id: { type: String, required: false },
-        stripe_subscription_id: { type: String, required: false },
-        stripe_payment_link: { type: String, required: false },
-      },
-
-      invoices: [
-        {
-          invoiceId: { type: String, required: false },
-          invoiceDate: { type: Date, required: false },
-          invoiceAmount: { type: Number, required: false },
-          invoiceStatus: { type: String, required: false },
-        },
-      ],
-    },
-
-    billingAddress: {
+    billing_address: {
       street: { type: String, required: true },
 
-      postalCode: { type: String, required: true },
+      postal_code: { type: String, required: true },
 
       state: { type: String, required: false },
 
       city: { type: String, required: true },
 
-      country: { type: String, required: true },
+      country: {
+        type: String,
+        required: true,
+        enum: ["PT", "ES", "US", "UK"],
+      },
 
-      countryId: { type: String, required: true },
-
-      fullAddress: { type: String, required: true },
+      coordinates: { type: Array, required: true },
     },
 
-    createdAt: { type: Date, required: true, default: Date.now() },
+    created_at: { type: Date, required: true, default: Date.now() },
 
-    updatedAt: { type: Date, required: true, default: Date.now() },
+    updated_at: { type: Date, required: true, default: Date.now() },
   },
   {
     timestamps: true,
@@ -140,10 +120,12 @@ orderSchema.methods.createEventSeries = async function () {
   return eventSeries;
 };
 
-
-orderSchema.methods.updateStripePaymentIntent = async function (paymentIntentId) {
-  this.paymentInformation.stripeInformation.stripe_payment_intent_id = paymentIntentId;
+orderSchema.methods.updateStripePaymentIntent = async function (
+  paymentIntentId
+) {
+  this.paymentInformation.stripeInformation.stripe_payment_intent_id =
+    paymentIntentId;
   return this.save();
-}
+};
 
 export default orderSchema;

@@ -2,16 +2,18 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+
+
+const user_schema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    cognitoId: { type: String, required: true, unique: true },
+    cognito_id: { type: String, required: true, unique: true },
 
     // Role: user, caregiver, companyBoard, companyOwner, admin
     role: { type: String, required: true, default: "user" },
 
-    profilePicture: { type: String, required: false },
+    profile_picture: { type: String, required: false },
 
     company: { type: Schema.ObjectId, ref: "company", required: false },
 
@@ -19,98 +21,46 @@ const userSchema = new Schema(
 
     email: { type: String, required: true, unique: true },
 
-    emailVerified: { type: Boolean, required: false, default: false },
+    email_verified: { type: Boolean, required: false, default: false },
 
     
+    phone: { type: String, required: true, unique: true },
 
-    // Verify if the phone number doesn't have any spaces and if doesn't have any special characters. If it does, remove them.
-    phoneNumber: {
-      type: String,
-      required: true,
-      unique: true,
-      validate(value) {
-        if (value.includes(" ")) {
-          // Remove all spaces from the phone number
-          value = value.replace(/\s/g, "");
-        } 
-      },
-    },
+    phone_verified: { type: Boolean, required: false, default: false },
 
-    phoneNumberCountryCode: {
-      type: String,
-      required: true,
-      enum: ["+351", "+34", "+1", "+44"],
-    },
 
-    phoneNumberVerified: { type: Boolean, required: false, default: false },
 
-    birthDate: { type: Date, required: false },
+
+    birth_date: { type: Date, required: false },
 
     age: { type: Number, required: false },
 
-    gender: { type: String, required: true },
+    gender: { type: String, required: true, enum: ["male","female","other"] },
 
     relatives: [{ type: Schema.ObjectId, ref: "relative", required: true }],
 
-    caregiverInformation: {
+    caregiver_information: {
       type: Schema.ObjectId,
       ref: "Caregiver",
       required: false,
     },
 
     address: {
-      street: { type: String, required: false },
+      street: { type: String, required: true },
 
-      postalCode: { type: String, required: false },
+      postal_code: { type: String, required: true },
 
       state: { type: String, required: false },
 
-      city: { type: String, required: false },
+      city: { type: String, required: true },
 
-      country: { type: String, required: false },
-
-      countryId: {
+      country: {
         type: String,
-        required: false,
+        required: true,
         enum: ["PT", "ES", "US", "UK"],
       },
-      // Check if full address is equal to street + postalCode + city + state + country
-      // If it's not equal, add the missing information to the full address
-      fullAddress: {
-        type: String,
-        required: false,
-        validate(value) {
-          if (
-            value !==
-            this.street +
-              ", " +
-              this.postalCode +
-              ", " +
-              this.city +
-              ", " +
-              this.state +
-              ", " +
-              this.country
-          ) {
-            value =
-              this.street +
-              ", " +
-              this.postalCode +
-              ", " +
-              this.city +
-              ", " +
-              this.state +
-              ", " +
-              this.country;
-          }
-        },
-      },
 
-      // Array of coordinates [longitude, latitude] String
-      coordinates: [
-        { latitude: { type: String, required: false } },
-        { longitude: { type: String, required: false } },
-      ],
+      coordinates: { type: Array, required: true },
     },
 
     settings: {
@@ -149,6 +99,7 @@ const userSchema = new Schema(
 
   {
     timestamps: true,
+    virtuals: true,
   }
 );
 
@@ -157,17 +108,30 @@ const userSchema = new Schema(
  */
 
 // Function to check if user is an admin
-userSchema.methods.isAdmin = function () {
+user_schema.methods.isAdmin = function () {
   return this.role === "admin";
 };
 
-userSchema.methods.isCompanyOwner = function () {
+user_schema.methods.isCompanyOwner = function () {
   return this.role === "companyOwner";
 };
 
 // Function to return the user role
-userSchema.methods.getRole = function () {
+user_schema.methods.getRole = function () {
   return this.role;
 };
 
-export default userSchema;
+user_schema.static ("injectCollection", async function (
+  deletes_db_connection
+) {
+  if (deleted_users) {
+    return;
+  }
+
+  deleted_users = await deletes_db_connection.model(
+    "Service",
+    user_schema
+  );
+});
+
+export default user_schema;

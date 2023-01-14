@@ -7,9 +7,12 @@ import {
 import mongodb from "mongodb";
 import mongoose from "mongoose";
 
+// Import the DAO class
+import DAO from "./DAO.js";
+
 // Import the user schema
 //import User from "../models/auth/user.model.js";
-import userSchema from "../models/userLogic/users.model.js";
+import user_schema from "../models/userLogic/users.model.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -21,22 +24,23 @@ const ObjectId = mongodb.ObjectId;
 /**
  * @class Class to manage the users collection.
  */
-export default class usersDAO {
+export default class usersDAO extends DAO {
   /**
-   * @description Creates the connection to the MongoDB database.
-   * @param {mongoose} connection
+   * @description Creates the db_connectionection to the MongoDB database.
+   * @param {mongoose} db_connectionection
    * @returns {Promise<JSON>} - MongoDB response.
    */
-  static async injectCollection(conn) {
+  static async injectCollection(db_connection, deletes_db_connection) {
     if (users) {
       return;
     }
     try {
-      User = await conn.model("User", userSchema);
+      User = await db_connection.model("User", user_schema);
+      User.injectCollection(deletes_db_connection);
 
-      // users = await conn.collection(MONGODB_collection_users);
+      // users = await db_connection.collection(MONGODB_collection_users);
       // User = mongoose.model("User", userSchema);
-      // await connection.model("users", User);
+      // await db_connectionection.model("users", User);
     } catch (error) {
       logger.error(
         `Unable to establish a collection handle in usersDAO: ${error}`
@@ -202,48 +206,7 @@ export default class usersDAO {
     // Internal error
   }
 
-  /**
-   * @description Fetches the user information by the user id. If the user is associated with a company, the company information is also included.
-   * @param {String} userId - User id from the database.
-   * @returns {Promise<JSON>} - User information.
-   */
-  static async get_one(userId) {
-    // try {
-    logger.info("USERS-DAO GET_USER_BY_ID STARTED: ");
 
-    logger.info("USERS-DAO GET_USER_BY_ID userId: " + userId + "\n");
-
-    const user = await User.findById(userId).populate("company");
-
-    //  user.populate("file")
-
-    return user;
-
-    // User found
-    if (mongodbResponse) {
-      // The role "user" is the only role that is not associated with a company
-
-      logger.info(
-        "USERS-DAO GET_USER_BY_ID RESULT: " +
-          JSON.stringify(mongodbResponse, null, 2) +
-          "\n"
-      );
-
-      return user;
-
-      // User not found
-    } else {
-      logger.info("USERS-DAO GET_USER_BY_ID USER NOT FOUND" + "\n");
-      return { error: "User not found" };
-    }
-
-    /**
-       *  } catch (error) {
-      logger.error("USERS-DAO GET_USER_BY_ID ERROR: " + error + "\n");
-      return { error: error };
-    }
-       */
-  }
 
   /**
    * @description Updates the user information in the database.
@@ -340,6 +303,11 @@ export default class usersDAO {
 
       switch (authProvider) {
         case "cognito":
+          mongodbResponse = await User.findOne({ cognitoId: authId })
+          .select("-__v -cognitoId -createdAt -updatedAt -relatives");
+          break;
+
+        default:
           mongodbResponse = await User.findOne({ cognitoId: authId })
             .populate({
               path: "company",

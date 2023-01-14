@@ -11,11 +11,11 @@ const serviceTranslationSchema = new Schema(
     language: { type: String, required: true, enum: ["pt", "en"] },
     name: { type: String, required: true },
     description: { type: String, required: true },
-    shortDescription: { type: String, required: true },
+    short_description: { type: String, required: true },
     image: { type: String, required: true },
 
-    createdAt: { type: Date, required: true, default: Date.now },
-    updatedAt: { type: Date, required: true, default: Date.now },
+    created_at: { type: Date, required: true, default: Date.now },
+    updated_at: { type: Date, required: true, default: Date.now },
   },
   {
     timestamps: true,
