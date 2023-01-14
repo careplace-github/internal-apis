@@ -16,14 +16,16 @@ const caregiverSchema = new Schema({
   reviews: [{ type: Schema.ObjectId, ref: "Review", required: false }],
 
 
-  createdAt: { type: Date, required: true, default: Date.now },
-  updatedAt: { type: Date, required: true, default: Date.now },
+  created_at: { type: Date, required: true, default: Date.now() },
+
+    updated_at: { type: Date, required: true, default: Date.now() },
 
 }
 ,
 {
-  timestamps: true,
-  toJSON: { virtuals: true },
+
+  timestamps: true, 
+  toJSON: { virtuals: true }, 
   toObject: { virtuals: true },
 }
 

@@ -2,8 +2,8 @@
 import Cognito from "../services/cognito.service.js";
 
 // Import database access objects
-import usersDAO from "../db/usersDAO.js";
-import companiesDAO from "../db/companiesDAO.js";
+import usersDAO from "../db/users.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 
 import authHelper from "../helpers/auth.helper.js";
 

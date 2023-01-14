@@ -9,7 +9,7 @@ import {
   
   // Import the user schema
   //import User from "../models/auth/user.model.js";
-  import eventsSeriesSchema from "../../../api/v1/models/app/calendar/eventsSeries.model.js";
+  import eventsSeriesSchema from "../models/app/calendar/eventsSeries.model.js";
 
 
   // Import logger
@@ -25,20 +25,21 @@ import {
    */
   export default class eventsSeriesDAO {
     /**
-     * @description Creates the connection to the MongoDB database.
-     * @param {mongoose} connection
+     * @description Creates the db_connectionection to the MongoDB database.
+     * @param {mongoose} db_connectionection
      * @returns {Promise<JSON>} - MongoDB response.
      */
-    static async injectCollection(conn) {
+    static async injectCollection(db_connection, deletes_db_connection) {
       if (eventsSeries) {
         return;
       }
       try {
-        EventSeries = await conn.model("EventSeries", eventsSeriesSchema);
+        EventSeries = await db_connection.model("EventSeries", eventsSeriesSchema);
+        EventSeries.injectCollection(deletes_db_connection);
   
-        // users = await conn.collection(MONGODB_collection_users);
+        // users = await db_connection.collection(MONGODB_collection_users);
         // User = mongoose.model("User", userSchema);
-        // await connection.model("users", User);
+        // await db_connectionection.model("users", User);
       } catch (error) {
         logger.error(
           `Unable to establish a collection handle in eventsSeriesDAO: ${error}`

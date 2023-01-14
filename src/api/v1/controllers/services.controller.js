@@ -2,7 +2,7 @@
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
 
-import servicesDAO from "../db/servicesDAO.js";
+import servicesDAO from "../db/services.dao.js";
 
 export default class ServicesController {
   static async index(req, res, next) {

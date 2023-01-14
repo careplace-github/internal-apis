@@ -2,8 +2,8 @@
 import Cognito from "../services/cognito.service.js";
 
 // Import database access objects
-import ordersDAO from "../db/ordersDAO.js";
-import companiesDAO from "../db/companiesDAO.js";
+import ordersDAO from "../db/orders.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 
 
 

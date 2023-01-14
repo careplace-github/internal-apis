@@ -1,5 +1,5 @@
 import CognitoService from "../services/cognito.service.js";
-import companiesDAO from "../db/companiesDAO.js";
+import companiesDAO from "../db/companies.dao.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";

@@ -1,8 +1,8 @@
-import AuthHelper from "../helpers/auth.helper.js";
-import usersDAO from "../db/usersDAO.js";
-import logger from "../../../logs/logger.js";
+import AuthHelper from "../../helpers/auth.helper.js";
+import usersDAO from "../../db/users.dao.js";
+import logger from "../../../../logs/logger.js";
 
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../../utils/request.utils.js";
 
 /**
  * @description Role Based Guard Middleware.

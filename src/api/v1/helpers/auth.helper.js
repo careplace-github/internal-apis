@@ -1,8 +1,8 @@
 import jwt_decode from "jwt-decode";
 import CognitoService from "../services/cognito.service.js";
 
-import usersDAO from "../db/usersDAO.js";
-import companiesDAO from "../db/companiesDAO.js";
+import usersDAO from "../db/users.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";

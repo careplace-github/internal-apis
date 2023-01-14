@@ -1,6 +1,6 @@
 import AuthHelper from "../helpers/auth.helper.js";
-import usersDAO from "../db/usersDAO.js";
-import companiesDAO from "../db/companiesDAO.js";
+import usersDAO from "../db/users.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 import mongodb from "mongodb";
 
 import logger from "../../../logs/logger.js";

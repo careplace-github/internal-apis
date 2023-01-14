@@ -3,15 +3,17 @@ import CognitoService from "../services/cognito.service.js";
 import SES from "../services/ses.service.js";
 
 // Import DAOs
-import usersDAO from "../db/usersDAO.js";
-import companiesDAO from "../db/companiesDAO.js";
+import usersDAO from "../db/users.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 
 // Import Helpers
 import AuthHelper from "../helpers/auth.helper.js";
 
 // Import Utils
 import password from "secure-random-password";
-import EmailUtils from "../utils/email.utils.js";
+import EmailHelper from "../helpers/email.helper.js";
+
+
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -256,7 +258,7 @@ export default class UsersController {
     };
 
     // Insert variables into email template
-    let email = await EmailUtils.getEmailWithData("crm_new_user", emailData);
+    let email = await EmailHelper.getEmailWithData("crm_new_user", emailData);
 
     // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
 
