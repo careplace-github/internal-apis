@@ -36,6 +36,8 @@ import rateLimit from "express-rate-limit";
 // Import mongoose
 import mongoose from "mongoose";
 
+import userSchema from "./api/v1/models/userLogic/users.model.js";
+
 // Loads environment constants"
 import {
   env,
@@ -59,24 +61,16 @@ import servicesAPI from "./api/v1/routes/services.route.js";
 import ordersAPI from "./api/v1/routes/orders.route.js";
 import calendarAPI from "./api/v1/routes/calendar.route.js";
 
-
-
-
-
 // Import logger
+import inputValidation from "./api/v1/middlewares/validators/inputValidation.middleware.js";
 import logger from "./logs/logger.js";
 import requestLogger from "./api/v1/middlewares/server/requestHandler.middleware.js";
 import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js";
 import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
 
-
-
-
-
 const main = async () => {
-
-   // MongoDB connection options
-   let options = {
+  // MongoDB connection options
+  let options = {
     //useCreateIndex: true, //
     autoIndex: false, // Don't build indexes
     useNewUrlParser: true, // Use the new Server Discover and Monitoring engine
@@ -89,11 +83,9 @@ const main = async () => {
     family: 4, // Use IPv4, skip trying IPv6
   };
 
+  // Connects to MongoDB Database
+  let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
 
-
-    // Connects to MongoDB Database
-    let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
-   
   try {
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
 
@@ -104,12 +96,6 @@ const main = async () => {
     logger.info(
       `Attempting to connect to MongoDB Database: ${MONGODB_db_deletes}`
     );
-
-     
-  
-
- 
- 
 
     // Initialise HTTP Server
     try {
@@ -321,18 +307,13 @@ const main = async () => {
         logger.error(`HTTP Server error: ${error}`);
       });
 
-
       app.use(requestLogger);
-    
-
-     
-  
-
-        
 
       app.on("SIGUSR1", () => {
         // Handle SIGUSR1 signal
       });
+
+      
 
       // Apply application routes
       app.use(api_url, configAPI);
@@ -345,11 +326,8 @@ const main = async () => {
       app.use(api_url, servicesAPI);
       app.use(api_url, calendarAPI);
 
-      app.use(errorLogger);
+     app.use(errorLogger);
       app.use(responseLogger);
-     
-
-      
 
       // Starts listening for HTTP requests
       app.listen(SERVER_Port, () => {
@@ -363,14 +341,10 @@ const main = async () => {
     } catch (error) {
       logger.error(`Unable to start the HTTP Server: ${error}`);
     }
-
-     
   } catch (error) {
     // Internal Error
 
     logger.error(`Internal Error: ${error}`);
-
-
   }
 };
 

@@ -1,5 +1,5 @@
 import logger from "../../../../logs/logger.js";
-import BaseError from "./utils/baseError.js";
+import BaseError from "../../utils/baseError.utils.js";
 
 export default function errorHandler(err, req, res, next) {
   function handleRequest() {
@@ -22,7 +22,23 @@ export default function errorHandler(err, req, res, next) {
      * }
      */
 
-    //console.log("ERROR: " + err);
+    
+
+    /**
+     * The `ErrorHandler` middleware comes first that the `ResponseHandler` middleware in the middleware stack.
+     * So we need to check if the parameter `err` is an error and handle accordingly.
+     */
+    if (err instanceof BaseError) {
+      logger.warn(`${err.stack} \n`);
+    } else if (err instanceof Error) {
+      logger.error(`${err.stack} \n`);
+    } else {
+      /**
+       * In this case this is not an error.
+       * So we need to pass the response (in this case called the parameter `err`) to the `ResponseHandler` middleware.
+       */
+      next(err);
+    }
 
     let response = {
       data: {
@@ -33,12 +49,6 @@ export default function errorHandler(err, req, res, next) {
       },
       statusCode: err.statusCode,
     };
-
-    if (err instanceof BaseError) {
-      logger.warn(`${err.stack} \n`);
-    } else {
-      logger.error(`${err.stack} \n`);
-    }
 
     next(response);
   }

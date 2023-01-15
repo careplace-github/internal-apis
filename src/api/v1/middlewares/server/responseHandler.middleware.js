@@ -46,16 +46,16 @@ export default function responseHandler(response, req, res, next) {
         },
       });
 
-      logger.info(`HTTP Response: ${JSON.stringify(response_, null, 2)}\n`);
+      logger.error(`HTTP Response: ${JSON.stringify(response_, null, 2)}\n`);
 
       return;
     }
 
     res.status(response.statusCode).json(response.data);
 
-    logger.info(`HTTP Response: ${JSON.stringify(response_, null, 2)}\n`);
+    logger.info(`HTTP Response: \n ${JSON.stringify(response_, null, 2)}\n`);
 
-    next();
+    return;
   }
 
   handleRequest();
