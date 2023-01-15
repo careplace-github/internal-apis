@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-let deleted_services;
+let Service;
 
 const Schema = mongoose.Schema;
 
-const service_schema = new Schema(
+const serviceSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
@@ -23,32 +23,12 @@ const service_schema = new Schema(
         required: false,
       },
     ],
-
-    created_at: { type: Date, required: true, default: Date.now },
-    updated_at: { type: Date, required: true, default: Date.now },
   },
   {
     timestamps: true,
   }
 );
 
-service_schema.static ("injectCollection", async function (
-  deletes_db_connection
-) {
-  if (deleted_services) {
-    return;
-  }
+export default Service = mongoose.model("Service", serviceSchema);
 
-  deleted_services = deletes_db_connection.model(
-    "Service",
-    service_schema
-  );
-});
-
-
-
-
-
-
-
-export default service_schema;
+export { serviceSchema };

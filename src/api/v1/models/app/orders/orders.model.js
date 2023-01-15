@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import eventSeriesSchema from "../calendar/eventsSeries.model.js";
 
-import ObjectId from "mongodb";
+let Order;
 
 const Schema = mongoose.Schema;
 
@@ -9,15 +9,15 @@ const orderSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    company: { type: Schema.ObjectId, ref: "company", required: false },
+    company: { type: Schema.ObjectId, ref: "Company", required: true },
 
-    caregiver: { type: Schema.ObjectId, ref: "user", required: false },
+    caregiver: { type: Schema.ObjectId, ref: "User", required: false },
 
     // The customer is the user that is paying for the order
-    customer: { type: Schema.ObjectId, ref: "user", required: true },
+    customer: { type: Schema.ObjectId, ref: "User", required: true },
 
     // The client is the user that is receiving the service (home care support).
-    client: { type: Schema.ObjectId, ref: "relative", required: true },
+    client: { type: Schema.ObjectId, ref: "Relative", required: true },
 
     // New -> Customer Created Order && Pending Company Acceptance
     // Pending -> Company Accepted && Schedule Visit Process
@@ -26,7 +26,7 @@ const orderSchema = new Schema(
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
     order_status: { type: String, required: true, default: "new" },
 
-    services: [{ type: Schema.ObjectId, ref: "service", required: true }],
+    services: [{ type: Schema.ObjectId, ref: "Service", required: true }],
 
     // Json with all the information about the order schedule
     schedule_information: {
@@ -40,22 +40,24 @@ const orderSchema = new Schema(
         default: Date.now() + 31536000000,
       },
 
-      is_recurrent: { type: Boolean, required: true, default: false },
+      
 
-      // Weekly  -> Every week
-      // Biweekly -> Every 2 weeks
-      // Monthly  -> Every month (every 4 weeks)
+      // 0 -> Every 0 weeks -> Not recurrent, one time only order.
+      // 1 -> Every 1 week -> Weekly
+      // 2 -> Every 2 weeks -> Biweekly
+      // 4 -> Every 4 weeks -> Monthly
       recurrency_type: {
-        type: String,
-        required: false,
-        enum: ["weekly,", "biweekly", "monthly"],
+        type: Number,
+        required: true,
+        enum: [0, 1, 2, 4],
       },
 
       // If isRecurrent is true, this is the frequency of the order
       // If isRecurrent is false, this is the date of the order
+      // week_day must be a number betwen 1 and 7
       schedule: [
         {
-          week_day: { type: String, required: true },
+          week_day: { type: Number, required: true, enum: [1, 2, 3, 4, 5, 6, 7]},
           start_time: { type: String, required: true },
           end_time: { type: String, required: true },
         },
@@ -64,16 +66,18 @@ const orderSchema = new Schema(
 
     screening_visit: {
       date: { type: Date, required: false },
-      event: { type: Schema.ObjectId, ref: "event", required: false },
-      // Pending; Scheduled; Done
+       // Pending; Scheduled; completed; Canceled
       status: { type: String, required: true, default: "pending" },
+      event: { type: Schema.ObjectId, ref: "Event", required: false },
+     
+      
     },
 
-    actual_start_date: { type: Date, required: true },
+    actual_start_date: { type: Date, required: false },
 
     observations: { type: String, required: false },
 
-    stripe_subscription_id: { type: String, required: false },
+    stripe_subscription_id: { type: String, required: true },
 
     billing_address: {
       street: { type: String, required: true },
@@ -93,12 +97,11 @@ const orderSchema = new Schema(
       coordinates: { type: Array, required: true },
     },
 
-    created_at: { type: Date, required: true, default: Date.now() },
-
-    updated_at: { type: Date, required: true, default: Date.now() },
+   
   },
   {
     timestamps: true,
+    virtuals: true,
   }
 );
 
@@ -128,4 +131,9 @@ orderSchema.methods.updateStripePaymentIntent = async function (
   return this.save();
 };
 
-export default orderSchema;
+/**
+ * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
+ * @see https://mongoosejs.com/docs/models.html#compiling
+ */
+export default Order = mongoose.model("Order", orderSchema);
+

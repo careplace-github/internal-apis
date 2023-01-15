@@ -36,11 +36,12 @@ import rateLimit from "express-rate-limit";
 // Import mongoose
 import mongoose from "mongoose";
 
-import userSchema from "./api/v1/models/userLogic/users.model.js";
+import * as Error from "./api/v1/middlewares/errors/index.js";
 
 // Loads environment constants"
 import {
   env,
+  host,
   api_version,
   api_url,
   SERVER_Port,
@@ -61,6 +62,8 @@ import servicesAPI from "./api/v1/routes/services.route.js";
 import ordersAPI from "./api/v1/routes/orders.route.js";
 import calendarAPI from "./api/v1/routes/calendar.route.js";
 
+import getServices from "./api/v1/helpers/services.helper.js";
+
 // Import logger
 import inputValidation from "./api/v1/middlewares/validators/inputValidation.middleware.js";
 import logger from "./logs/logger.js";
@@ -69,50 +72,104 @@ import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js"
 import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
 
 const main = async () => {
-  // MongoDB connection options
-  let options = {
-    //useCreateIndex: true, //
-    autoIndex: false, // Don't build indexes
-    useNewUrlParser: true, // Use the new Server Discover and Monitoring engine
-    useUnifiedTopology: true, // Use the new Server Discover and Monitoring engine
-    //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
-
-    maxPoolSize: 100, // Maintain up to 100 socket connections
-    serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
-    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-    family: 4, // Use IPv4, skip trying IPv6
-  };
-
-  // Connects to MongoDB Database
-  let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
-
   try {
-    // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
+    logger.info(`
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     \n`);
 
-    // Connects to MongoDB Database
+    logger.info(`Server settings: `);
+    logger.info(`Running in '${env}' environment`);
+    logger.info(`Host: ${host} `);
+    logger.info(`API Version: ${api_version} `);
+    logger.info(`API URL: ${api_url} `);
+    logger.info(`Server Port: ${SERVER_Port} \n \n`);
+
+    logger.info(`Initializing the server... \n \n`);
+
+    // -------------------------------------------------------------------------------------------- //
+    //                        APPLY DATABASE CONNECTION AND ERROR HANDLING                          //
+    //                                                                                              //
+    //                                                                                              //
+    //  @see                                                                                        //
+    // -------------------------------------------------------------------------------------------- //
+
+    // MongoDB connection options
+    let options = {
+      //useCreateIndex: true, //
+      autoIndex: false, // Don't build indexes
+      useNewUrlParser: true, // Use the new Server Discover and Monitoring engine
+      useUnifiedTopology: true, // Use the new Server Discover and Monitoring engine
+      //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
+
+      maxPoolSize: 100, // Maintain up to 100 socket connections
+      serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      family: 4, // Use IPv4, skip trying IPv6
+    };
+
     logger.info(
       `Attempting to connect to MongoDB Database: ${MONGODB_db_active}`
     );
-    logger.info(
-      `Attempting to connect to MongoDB Database: ${MONGODB_db_deletes}`
-    );
 
-    // Initialise HTTP Server
+    
+
+    // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
+    let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
+
+    /**
+     *  Handle connection errors
+     */
+    db_connection.connection.on("error", (err) => {
+      throw new Error._503(`MongoDB Connection Error: ${err}`);
+    });
+
+
+    db_connection.connection.on("reconnected", (err) => {
+      logger.info(`MongoDB Connection Reconnected: ${err}`);
+    });
+
+    db_connection.connection.on("disconnected", (err) => {
+      throw new Error._503(`MongoDB Connection Error: ${err}`);
+    });
+
+    db_connection.connection.on("timeout", (err) => {
+      throw new Error._503(`MongoDB Connection Error: ${err}`);
+    });
+
+    db_connection.connection.on("close", (err) => {
+      throw new Error._503(`MongoDB Connection Error: ${err}`);
+    });
+
+    
+
+    // Successfuly connected to MongoDB
+    logger.info(`Successfuly connected to MongoDB databse: '${MONGODB_db_active}'`);
+    //Store the connection in a global variable
+    global.db = db_connection.connection;
+
     try {
-      // Initialize express application
-      let app = express();
+      // -------------------------------------------------------------------------------------------- //
+      //                                INITIALIZE EXPRESS APPLICATION                                //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see                                                                                        //
+      // -------------------------------------------------------------------------------------------- //
+      var app = express();
 
       // Apply application middlewares
       app.use(express.json());
 
       // -------------------------------------------------------------------------------------------- //
-      //         Apply Application Security Middlewares and Attacks Protection & Handling             //
+      //         APPLY APPLICATION SECURITY MIDDLEWARES AND ATTACKS PROTECTION & HANDLING             //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html        //
+      //  @see https://nodejs.org/en/docs/guides/security                                             //
       // -------------------------------------------------------------------------------------------- //
-
-      /**
-       * @see https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html
-       * @see https://nodejs.org/en/docs/guides/security
-       */
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -296,26 +353,16 @@ const main = async () => {
       );
 
       // -------------------------------------------------------------------------------------------- //
-      //                                    Application Error Handling                                //
+      //                                 APPLY APPLICATION MIDDLEWARES                                //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see                                                                                         //
       // -------------------------------------------------------------------------------------------- //
 
-      /**
-       *
-       */
-
-      app.on("error", (error) => {
-        logger.error(`HTTP Server error: ${error}`);
-      });
-
+      // Middleware to log all the HTTP requests
       app.use(requestLogger);
 
-      app.on("SIGUSR1", () => {
-        // Handle SIGUSR1 signal
-      });
-
-      
-
-      // Apply application routes
+      // Routes middlewares
       app.use(api_url, configAPI);
       app.use(api_url, emailsAPI);
       app.use(api_url, filesAPI);
@@ -326,25 +373,71 @@ const main = async () => {
       app.use(api_url, servicesAPI);
       app.use(api_url, calendarAPI);
 
-     app.use(errorLogger);
+      // Middleware to handle and log all the errors
+      app.use(errorLogger);
+      // Middleware to log all the HTTP responses
       app.use(responseLogger);
+
+      // Middleware to throw internal server errors
+      app.on("error", (error) => {
+        throw new Error._500(`Internal Server Error: ${error.message}`);
+      });
+
+      // -------------------------------------------------------------------------------------------- //
+      //                                 APPLY APPLICATION SIGNALS                                    //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see                                                                                         //
+      // -------------------------------------------------------------------------------------------- //
+
+      // Handle SIGINT signal
+      app.on("SIGINT", () => {
+        // Handle SIGINT signal
+      });
+
+      app.on("SIGUSR1", () => {
+        // Handle SIGUSR1 signal
+      });
+    } catch (error) {
+      throw new Error._500(`Unable to start Express Application: ${error}`);
+    }
+
+    try {
+      // -------------------------------------------------------------------------------------------- //
+      //                                       ASSETS PREPARATION                                     //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see                                                                                        //
+      // -------------------------------------------------------------------------------------------- //
+
+      /**
+       * Gets all the services from the database and stores them in the cache
+       */
+      logger.info("Getting all the necessary assets...");
+      await getServices();
+    } catch (error) {
+      throw new Error._503(`Service Unavailable: ${error}`);
+    }
+
+    try {
+      // -------------------------------------------------------------------------------------------- //
+      //                              STARTS LISTENING FOR HTTP REQUESTS                              //
+      //                                                                                              //
+      //                                                                                              //
+      //  @see                                                                                        //
+      // -------------------------------------------------------------------------------------------- //
 
       // Starts listening for HTTP requests
       app.listen(SERVER_Port, () => {
-        logger.info(`HTTP Server started on port: ${SERVER_Port}`);
-        logger.info(`Server environment mode: ${env}`);
-        logger.info(`API version: ${api_version}`);
-        logger.info(
-          `API route: http://localhost:${SERVER_Port}${api_url}` + "\n"
-        );
+        logger.info(`Listening for HTTP requests on port: ${SERVER_Port}\n`);
+
+        logger.info(`Server started successfully! 🚀`);
       });
     } catch (error) {
-      logger.error(`Unable to start the HTTP Server: ${error}`);
+      throw new Error._500(`Unable to start the HTTP Server: ${error}`);
     }
   } catch (error) {
-    // Internal Error
-
-    logger.error(`Internal Error: ${error}`);
+    throw new Error._500(`Internal Error: ${error}`);
   }
 };
 
