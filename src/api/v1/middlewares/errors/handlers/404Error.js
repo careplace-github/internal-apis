@@ -1,5 +1,5 @@
 import httpStatusCodes from "../assets/httpStatusCodes.js";
-import BaseError from "../utils/baseError.js";
+import BaseError from "../../../utils/baseError.utils.js";
 
 export default class API404Error extends BaseError {
   constructor(

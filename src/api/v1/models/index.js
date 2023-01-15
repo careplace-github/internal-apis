@@ -1,8 +1,3 @@
-//export { default as user } from "./user.model.js"
-
-
-// Export schemas
-export { default as userSchema } from "./userLogic/users.model.js";
-
-export {default as eventSchema} from "./app/calendar/events.model.js";
-
+export {default as userSchema} from "./userLogic/users.model.js";
+export {default as caregiverSchema} from "./userLogic/caregivers.model.js";
+export {default as companySchema} from "./userLogic/companies.model.js";

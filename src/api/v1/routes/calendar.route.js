@@ -1,9 +1,14 @@
 // Import the express module
 import express from "express";
 
+// Import Middlewares
+import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import {
+  AddEventValidator,
+  UpdateEventValidator,
+} from "../validators/event.validator.js";
 
-
-// Import controllers
+// Import Controller
 import CalendarController from "../controllers/calendar.controller.js";
 
 const router = express.Router();
@@ -11,13 +16,13 @@ const router = express.Router();
 router
   .route("/calendar/events")
   .get(CalendarController.index_events)
-  .post(CalendarController.create_event);
+  .post(AddEventValidator, InputValidation, CalendarController.create_event);
 
 router
   .route("/calendar/events/:id")
   .get(CalendarController.show_event)
-  .put(CalendarController.update_event)
-  .delete(CalendarController.destroy_event );
+  .put(UpdateEventValidator, InputValidation, CalendarController.update_event)
+  .delete(CalendarController.destroy_event);
 
 router
   .route("/calendar/events_series")

@@ -7,24 +7,42 @@ import requestUtils from "../utils/request.utils.js";
 import errorUtils from "../utils/error.utils.js";
 // Import logger
 import logger from "../../../logs/logger.js";
+import * as Error from "../middlewares/errors/index.js";
+import AuthHelper from "../helpers/auth.helper.js";
 
 export default class CalendarController {
   static async index_events(req, res, next) {
     try {
-      var request = requestUtils(req);
+      let response = {};
 
-      let filters = {};
+      if (req.headers.authorization) {
+        // Extract the token from the request header
+        let token = req.headers.authorization.split(" ")[1];
+
+        let authId = await AuthHelper.getAuthId(token, "cognito");
+
+        let usersDAO = new UsersDAO();
+
+        // Get user that cognitoId matches the authId
+        var user = await usersDAO.get_list({ cognito_id: { $eq: authId } });
+      } else {
+        throw new Error._401("No token provided.");
+      }
+
+      let filters = {
+        user: { $eq: user._id },
+      };
       let options = {};
       let page = req.query.page != null ? req.query.page : null;
-      let mongodbResponse;
+      let documentsPerPage =
+        req.query.documentsPerPage != null ? req.query.documentsPerPage : null;
+      let populate = req.query.populate != null ? req.query.populate : null;
 
-      logger.info(
-        "Events Controller INDEX: " + JSON.stringify(request, null, 2) + "\n"
-      );
+      let eventsDAO = new EventsDAO();
 
       // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
       if (req.query.userId) {
-        filters.userId = req.query.userId;
+        //filters.userId = req.query.userId;
       }
 
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
@@ -36,23 +54,18 @@ export default class CalendarController {
         };
       }
 
-      logger.info(
-        "Attempting to get Events from MongoDB: " +
-          JSON.stringify(
-            {
-              filters: filters,
-              options: options,
-              page: page,
-            },
-            null,
-            2
-          ) +
-          "\n"
+      const events = await eventsDAO.get_list(
+        filters,
+        options,
+        page,
+        documentsPerPage,
+        populate
       );
 
-      const events = await eventsDAO.get_list(filters, options, page);
+      response.statusCode = 200;
+      response.data = events;
 
-      res.status(200).json(events);
+      next(response);
     } catch (error) {
       next(error);
     }
@@ -60,96 +73,111 @@ export default class CalendarController {
 
   static async create_event(req, res, next) {
     try {
-      let request = requestUtils(req);
+      let response = {};
 
-      logger.info(
-        `Calendar Controller CREATE Request: ${JSON.stringify(
-          request,
-          null,
-          2
-        )}\n`
-      );
-
-      let response;
       let event = req.body;
       let eventsDAO = new EventsDAO();
       let usersDAO = new UsersDAO();
 
-      /**
-       *   try {
-        let userExists = usersDAO.get_one(event.userId);
-      } catch (err) {
-        response.statusCode = 404;
-        response.message =
-          "User not found. Unable to create event without a user.";
-
-        let error = {
-          code: err.code,
-          message: err.message,
-        };
-
-        logger.error(
-          `Calendar Controller CREATE Response: ${JSON.stringify(
-            error,
-            null,
-            2
-          )}\n`
-        );
-
-        res.status(404).json(error);
-      }
-       */
-
       try {
-        let eventAdded = await eventsDAO.add(event);
-        res.status(201).json(eventAdded);
+        let userExists = await usersDAO.get_one(event.user);
       } catch (err) {
-        let error = {
-          code: err.code,
-          message: err.message,
-        };
-
-        switch (err.code) {
-          case invalid_request:
-            response.statusCode = 400;
-
-            response.message = "Invalid request.";
-            break;
+        if (err.type === "NOT_FOUND" || err.name === "CastError") {
+          throw new Error._400(
+            "User does not exist. Need a valid User to create an event."
+          );
         }
-
-        logger.error(
-          `Calendar Controller CREATE Response: ${JSON.stringify(
-            error,
-            null,
-            2
-          )}\n`
-        );
-
-        res.status(error.code).json(error);
       }
-    } catch (error) {}
+
+      let eventAdded = await eventsDAO.add(event);
+
+      response.statusCode = 201;
+      response.data = eventAdded;
+
+      next(response);
+    } catch (err) {
+      next(err);
+    }
   }
 
-  static async show_event(req, res, next) {}
+  static async show_event(req, res, next) {
+    let response = {};
 
-  static async update_event(req, res, next) {}
+    let event_id = req.params.id;
+    let eventsDAO = new EventsDAO();
+
+    try {
+      let event = await eventsDAO.get_one(event_id);
+
+      response.statusCode = 200;
+      response.data = event;
+
+      next(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async update_event(req, res, next) {
+    let response = {};
+
+    let event_id = req.params.id;
+    let event = req.body;
+    let eventsDAO = new EventsDAO();
+    let usersDAO = new UsersDAO();
+
+    try {
+      var eventExists = await eventsDAO.get_one(event_id);
+    } catch (err) {
+      if (err.type === "NOT_FOUND" || err.name === "CastError") {
+        throw new Error._400("Event does not exist.");
+      }
+    }
+
+    try {
+      let userExists = await usersDAO.get_one(eventExists.user);
+    } catch (err) {
+      if (err.type === "NOT_FOUND" || err.name === "CastError") {
+        throw new Error._400(
+          "User does not exist. Need a valid User to create an event."
+        );
+      }
+    }
+
+    try {
+      // Get the Event from the database and substitute the values that are in the request body.
+
+      let updatedEvent = {
+        ...eventExists,
+        ...event,
+      };
+
+      logger.info(
+        "Attempting to update Event in MongoDB: " +
+          JSON.stringify(updatedEvent, null, 2) +
+          "\n"
+      );
+
+      let updatedDocument = await eventsDAO.set(updatedEvent);
+
+      response.statusCode = 200;
+      response.data = updatedDocument;
+
+      next(response);
+    } catch (err) {
+      logger.error("Error updating Event in MongoDB: " + err + "\n");
+      next(err);
+    }
+  }
 
   static async destroy_event(req, res, next) {
-    let response;
+    let response = {};
 
     let event_id = req.params.id;
     let eventsDAO = new EventsDAO();
 
     try {
       let deletedDocument = await eventsDAO.delete(event_id);
-
-      logger.info(
-        `Calendar Controller DESTROY Response: \n ${JSON.stringify(
-          deletedDocument,
-          null,
-          2
-        )}\n`
-      );
 
       response.statusCode = 200;
       response.data = deletedDocument;
