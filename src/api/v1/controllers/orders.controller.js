@@ -16,6 +16,8 @@ import requestUtils from "../utils/request.utils.js";
 export default class OrdersController {
 
 
+    static async index(req, res, next) {}
+
     static async create(req, res, next) {
 
 
@@ -32,5 +34,13 @@ export default class OrdersController {
     
 
     }
+
+
+    static async show(req, res, next) {}
+
+    static async update(req, res, next) {}
+
+    static async destroy(req, res, next) {}
+
 
 }

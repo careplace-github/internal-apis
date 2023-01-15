@@ -6,7 +6,7 @@ import InputValidation from "../middlewares/validators/inputValidation.middlewar
 import {
   AddEventValidator,
   UpdateEventValidator,
-} from "../validators/event.validator.js";
+} from "../validators/events.validator.js";
 
 // Import Controller
 import CalendarController from "../controllers/calendar.controller.js";

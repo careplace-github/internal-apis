@@ -1,10 +1,13 @@
 {
-  "name": "crm-backend",
+  "name": "careplace-backend",
   "version": "1.0.0",
-  "description": "CRM Backend",
+  "description": "Careplace REST API Backend for Web and Mobile Applications.",
   "main": "./src/server.js",
   "type": "module",
   "private": true,
+  "nodemonConfig": {
+    "ignore": ["./src/assets/data/*.json"]
+  },
   "scripts": {
     "prod": "node ./src/server.js",
     "start": "nodemon ./src/server.js",
@@ -16,8 +19,10 @@
     "type": "git",
     "url": "git+https://github.com/CarelyPT/crm-backend.git"
   },
-  "keywords": [],
-  "author": "Carely, Lda",
+
+
+  "keywords": ["Careplace"],
+  "author": "CARELY, LDA.",
   "bugs": {
     "url": "https://github.com/CarelyPT/crm-backend/issues"
   },

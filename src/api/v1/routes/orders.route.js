@@ -1,12 +1,18 @@
 // Import the express module
-import Router from "express"
 import express from "express"
 
 
 
+// Import Middlewares
+import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import {
+  AddOrderValidator,
+  UpdateOrderValidator,
+} from "../validators/orders.validator.js";
 
 
-// Import controllers
+
+// Import Controller
 import OrdersController from "../controllers/orders.controller.js"
 
 
@@ -14,7 +20,16 @@ const router = express.Router()
 
 
 router.route("/orders")
-    .post( OrdersController.create )
+    .get( OrdersController.index )
+    .post( AddOrderValidator,InputValidation, OrdersController.create )
+
+
+ router.route("/orders/:id")
+    .get( OrdersController.show )   
+    .put(UpdateOrderValidator, InputValidation, OrdersController.update )
+    .delete( OrdersController.destroy )
+
+
 
 
 

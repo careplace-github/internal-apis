@@ -18,8 +18,6 @@ import EmailHelper from "../helpers/email.helper.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
-import { APP_url } from "../../../config/constants/index.js";
-import { stringify } from "querystring";
 
 const app = "crm";
 
