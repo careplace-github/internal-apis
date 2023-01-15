@@ -3,9 +3,6 @@ import logger from "../../../../logs/logger.js";
 export default function RequestUtils(req, res, next) {
   function handleRequest() {
     const request = {
-
-      request_id: req.headers["x-request-id"],
-
       type: req.method,
       url: req.originalUrl,
       ipv6: req.ip,
@@ -25,9 +22,7 @@ export default function RequestUtils(req, res, next) {
 
     req.request_id = req.ip;
 
-
-
-    logger.info("HTTP Request: " + JSON.stringify(request, null, 2) + "\n");
+    logger.info(`HTTP Request: \n ${JSON.stringify(request, null, 2)} \n`);
 
     next();
   }

@@ -2,9 +2,11 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+let User;
 
 
-const user_schema = new Schema(
+
+const userSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
@@ -98,7 +100,7 @@ const user_schema = new Schema(
   },
 
   {
-    timestamps: true,
+    timestamps: false,
     virtuals: true,
   }
 );
@@ -108,30 +110,26 @@ const user_schema = new Schema(
  */
 
 // Function to check if user is an admin
-user_schema.methods.isAdmin = function () {
+userSchema.methods.isAdmin = function () {
   return this.role === "admin";
 };
 
-user_schema.methods.isCompanyOwner = function () {
+userSchema.methods.isCompanyOwner = function () {
   return this.role === "companyOwner";
 };
 
 // Function to return the user role
-user_schema.methods.getRole = function () {
+userSchema.methods.getRole = function () {
   return this.role;
 };
 
-user_schema.static ("injectCollection", async function (
-  deletes_db_connection
-) {
-  if (deleted_users) {
-    return;
-  }
 
-  deleted_users = await deletes_db_connection.model(
-    "Service",
-    user_schema
-  );
-});
+/**
+ * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
+ * @see https://mongoosejs.com/docs/models.html#compiling
+ */
 
-export default user_schema;
+export default User = mongoose.model("user", userSchema);
+
+
+
