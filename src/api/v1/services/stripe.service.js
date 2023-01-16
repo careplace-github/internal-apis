@@ -1,545 +1,676 @@
-import stripe from 'stripe';
+import { Timestamp } from "bson";
+import stripe from "stripe";
 
-import { STRIPE_secret_key, STRIPE_publishable_key } from '../config/constants';
+import { STRIPE_secret_key, STRIPE_publishable_key } from "../../../config/constants/index.js";
+
 
 const stripeClient = stripe(STRIPE_secret_key);
 
 /**
- * @class Class to manage the Stripe API
+ * Class to manage the Stripe API
+ *
  * @documentation https://stripe.com/docs/api
  */
- export default class Stripe {
+export default class Stripe {
+  constructor() {
+    this.stripeClient = stripeClient;
+  }
 
+  // -------------------------------------------------------------------------------------------- //
+  //                                      PAYMENT METHODS                                         //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/payment_methods?lang=node                                   //
+  // -------------------------------------------------------------------------------------------- //
 
-    /**
- * @method createPaymentIntent 
- * @description Create a Stripe payment intent. The payment intent is used to confirm the payment. 
- * @param {Object} data - The data to create the payment intent
- * @param {String} data.amount - The amount of the payment intent
- * @param {String} data.currency - The currency of the payment intent
- * @param {String} data.description - The description of the payment intent
- * @param {String} data.payment_method_types - The payment method types of the payment intent
- * @param {String} data.receipt_email - The receipt email of the payment intent
- * @param {String} data.statement_descriptor - The statement descriptor of the payment intent
- * @param {String} data.statement_descriptor_suffix - The statement descriptor suffix of the payment intent
- * @param {String} data.transfer_data - The transfer data of the payment intent
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/payment_intents/create
- */
-static async createPaymentIntent(data) {
+  /**
+   * Returns a list of PaymentMethods for a given Customer
+   *
+   * @param {String} customerId - The ID of the customer to retrieve the payment methods for.
+   * @param {String} type - The type of payment method. An optional filter on the list, based on the object type field. Without the filter, the list includes all current and future payment method types. If your integration expects only one type of payment method in the response, make sure to provide a type value in the request.
+   * @returns {Promise<JSON>} - A object with a data property that contains an array of up to limit PaymentMethods of type type, starting after PaymentMethods starting_after. Each entry in the array is a separate PaymentMethod object. If no more PaymentMethods are available, the resulting array will be empty. This request should never throw an error.
+   *
+   * @see https://stripe.com/docs/api/payment_methods/customer_list?lang=node
+   */
+  async getCustomerPaymentMethods(customerId, type) {
+    let paymentMethods = await this.stripeClient.customer.listPaymentMethods(
+      customerId,
 
-    const amountToCharge = parseInt(data.amount * 100);
+      { type: type }
+    );
 
-    
+    return paymentMethods;
+  }
 
-     await stripeClient.paymentIntents.create({
-        amount: data.amount,
-        currency: data.currency,
-        description: data.description,
-        payment_method_types: data.payment_method_types,
-        receipt_email: data.receipt_email,
-        statement_descriptor: data.statement_descriptor,
-        statement_descriptor_suffix: data.statement_descriptor_suffix,
-        transfer_data: data.transfer_data
+  /**
+   * Creates a PaymentMethod object.
+   *
+   * @param {StripeElements.PaymentMethod} type - The type of the PaymentMethod. An additional hash is included on the PaymentMethod with a name matching this value. It contains additional information specific to the PaymentMethod type. Required unless payment_method is specified (see the Cloning PaymentMethods guide).
+   * @param {PaymentMethod} paymentMethod - The PaymentMethod to create
+   * @returns {Promise<JSON>} - Returns a PaymentMethod object.
+   *
+   * @see https://stripe.com/docs/api/payment_methods/create?lang=node
+   */
+  async createPaymentMethod(type, paymentMethod) {
+    let payload = {};
+
+    payload.type = type;
+    payload[paymentMethod] = paymentMethod;
+
+    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(
+      payload
+    );
+
+    return createdPaymentMethod;
+  }
+
+  /**
+   * Attaches a PaymentMethod object to a Customer.
+   *
+   * @param {String} paymentMethodId - The ID of the PaymentMethod to attach to the Customer.
+   * @param {String} customerId - The ID of the Customer to attach the PaymentMethod to.
+   * @returns {Promise<JSON>} - Returns a PaymentMethod object.
+   *
+   * @see https://stripe.com/docs/api/payment_methods/attach?lang=node
+   */
+  async attachPaymentMethodToCustomer(paymentMethodId, customerId) {
+    let attachedPaymentMethod = await this.stripeClient.paymentMethods.attach(
+      paymentMethodId,
+      { customer: customerId }
+    );
+
+    return attachedPaymentMethod;
+  }
+
+  // -------------------------------------------------------------------------------------------- //
+  //                                          PRODUCTS                                            //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/products?lang=node                                          //
+  // -------------------------------------------------------------------------------------------- //
+
+  /**
+   * Creates a new price for an existing product. The price can be recurring or one-time.
+   *
+   * @param {String} productId - The ID of the product that this price will belong to.
+   * @param {Number} price - The unit amount in cents to be charged, represented as a whole integer if possible. If you want to charge $10.50, pass 1050. This will be represented as $10.50 when on the API and the Stripe Dashboard. This field is required.
+   * @param {String} currency - Three-letter ISO currency code, in lowercase. Must be a supported currency. Required.
+   * @param {String} recurrency - Specifies billing frequency. Either day, week, month or year. Required.
+   * @returns {Promise<JSON>} - Returns a Price object if the call succeeded. Throws an error if a problem occurs.
+   *
+   * @see https://stripe.com/docs/api/prices/create?lang=node
+   */
+  async createPrice(productId, price, currency, recurrency) {
+    let createdPrice = await this.stripeClient.prices.create({
+      product: productId,
+      unit_amount: price,
+      currency: currency,
+      recurring: {
+        interval: recurrency,
+      },
     });
 
-    
+    return createdPrice;
+  }
 
-    }
+  // -------------------------------------------------------------------------------------------- //
+  //                                           CONNECT                                            //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/accounts?lang=node                                          //
+  // -------------------------------------------------------------------------------------------- //
 
-    
+  /**
+   * Creates a Stripe account.
+   *
+   * @param {String} type - The type of account to create. Can be "standard", "express", or "custom".
+   * @returns {Promise<JSON>} - Returns an Account object if the call succeeds.
+   *
+   * @see https://stripe.com/docs/api/accounts/create?lang=node
+   */
+  async createAccount(type) {
+    const account = await this.stripeClient.accounts.create({
+      type: type,
+    });
 
-     /**
- * @method createIndividualAccount
- * @description Create a Stripe account for an individual
- * @param {Object} data - The data to create the account
- * @param {String} data.email - The email of the account
- * @param {String} data.first_name - The first name of the account
- * @param {String} data.last_name - The last name of the account
- * @param {String} data.phone - The phone number of the account
- * @param {String} data.address - The address of the account
- * @param {String} data.city - The city of the account
- * @param {String} data.zip - The zip code of the account
- * @param {String} data.country - The country of the account
- * @param {String} data.dob - The date of birth of the account
- * @param {String} data.ssn_last_4 - The last 4 digits of the SSN of the account
- * @param {String} data.tos_acceptance_ip - The IP address of the account
- * @param {String} data.tos_acceptance_date - The date of acceptance of the TOS of the account
- * @returns {Promise} - The promise of the Stripe API
- */
-static async createIndividualAccount(data) {
-return stripeClient.accounts.create({
-    type: 'individual',
-    country: data.country,
-    email: data.email,
-    business_type: 'individual',
-    individual: {
-        first_name: data.first_name,
-        last_name: data.last_name,
-        phone: data.phone,
-        address: {
-            line1: data.address,
-            city: data.city,
-            postal_code: data.zip,
-            country: data.country
-        },
-        dob: {
-            day: data.dob.day,
-            month: data.dob.month,
-            year: data.dob.year
-        },
-        ssn_last_4: data.ssn_last_4
-    },
-    tos_acceptance: {
-        ip: data.tos_acceptance_ip,
-        date: data.tos_acceptance_date
-    }
-});
-}
+    return account;
+  }
 
-/**
- * @method createCompanyAccount
- * @description Create a Stripe account for a company
- * @param {Object} data - The data to create the account
- * @param {String} data.email - The email of the account
- * @param {String} data.business_name - The business name of the account
- * @param {String} data.phone - The phone number of the account
- * @param {String} data.address - The address of the account
- * @param {String} data.city - The city of the account
- * @param {String} data.zip - The zip code of the account
- * @param {String} data.country - The country of the account
- * @param {String} data.dob - The date of birth of the account
- * @param {String} data.ssn_last_4 - The last 4 digits of the SSN of the account
- * @param {String} data.tos_acceptance_ip - The IP address of the account
- * @param {String} data.tos_acceptance_date - The date of acceptance of the TOS of the account
- * @returns {Promise} - The promise of the Stripe API
- * @todo Add the business tax ID
- * @todo Add the business VAT ID
- * @todo Add the business registration number
- * @todo Add the business registration URL
- * @todo Add the business registration address
- * @todo Add the business registration city
- * @todo Add the business registration zip
- * @todo Add the business registration country
- * @todo Add the business registration state
- * @todo Add the business registration date
- */
-static async createCompanyAccount(data) {
-return stripeClient.accounts.create({
-    type: 'custom',
-    country: data.country,
-    email: data.email,
-    business_type: 'company',
-    company: {
-        name: data.business_name,
-        phone: data.phone,
-        address: {
-            line1: data.address,
-            city: data.city,
-            postal_code: data.zip,
-            country: data.country
-        },
-        // tax_id: data.business_tax_id,
-        // vat_id: data.business_vat_id,
-        // registration_number: data.business_registration_number,
-        // registration_url: data.business_registration_url,
-        // registration_address: data.business_registration_address,
-        // registration_city: data.business_registration_city,
-        // registration_zip: data.business_registration_zip,
-        // registration_country: data.business_registration_country,
-        // registration_state: data.business_registration_state,
-        // registration_date: data.business_registration_date
-    },
-    tos_acceptance: {
-        ip: data.tos_acceptance_ip,
-        date: data.tos_acceptance_date
-    }
-});
-}
+  /**
+   * Creates a Stripe account link.
+   *
+   * @param {String} accountId - The ID of the account to create the link for.
+   * @param {String} type - The type of account link to create. Can be "account_onboarding" or "account_update".
+   * @param {String} refresh_url - The URL you provide to redirect a user to if their session expires while on the Stripe site.
+   * @param {String} return_url - The URL you provide to redirect a user back to your website after they have successfully completed the link flow on the Stripe site.
+   * @returns {Promise<JSON>} - Returns an account link object if the call succeeded.
+   *
+   * @see https://stripe.com/docs/api/account_links/create?lang=node
+   */
+  async createAccountLink(accountId, type, refresh_url, return_url) {
+    const accountLink = await this.stripeClient.accountLinks.create({
+      account: accountId,
+      refresh_url: refresh_url,
+      return_url: return_url,
+      type: type,
+    });
 
+    return accountLink;
+  }
 
+  /**
+   * Retrieves the details of an account.
+   *
+   * @param {String} accountId
+   * @returns {Promise<JSON>} - Returns an Account object if the call succeeds. If the account ID does not exist, this call throws an error.
+   *
+   * @see https://stripe.com/docs/api/accounts/retrieve?lang=node
+   */
+  async getAccount(accountId) {
+    const account = await this.stripeClient.accounts.retrieve(accountId);
 
+    return account;
+  }
 
+  /**
+   * You can see a list of the bank accounts that belong to a connected account. Note that the 10 most recent external accounts are always available by default on the corresponding Stripe object. If you need more than those 10, you can use this API method and the limit and starting_after parameters to page through additional bank accounts.
+   *
+   * @param {String} accountId - The ID of the account to list the bank accounts for.
+   * @returns {Promise<JSON>} - Returns a list of the bank accounts stored on the account.
+   *
+   * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
+   */
+  async listConnectedAccountExternalAccountsOfBankAccounts(
+    accountId,
+    bankAccountId
+  ) {
+    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
+      accountId,
+      {
+        object: "bank_account",
+      }
+    );
 
-/**
- * @method getAccount
- * @description Get a Stripe account
- * @param {String} id - The ID of the account
- * @returns {Promise} - The promise of the Stripe API
- */
-static async getAccount(id) {
-return stripeClient.accounts.retrieve(id);
-}
+    return bankAccounts;
+  }
 
-/**
- * @method updateAccount
- * @description Update a Stripe account
- * @param {String} id - The ID of the account
- * @param {Object} data - The data to update the account
- * @returns {Promise} - The promise of the Stripe API
- */
-static async updateAccount(id, data) {
-return stripeClient.accounts.update(id, data);
-}
+  /**
+   * You can see a list of the cards that belong to a connected account. The 10 most recent external accounts are available on the account object. If you need more than 10, you can use this API method and the limit and starting_after parameters to page through additional cards.
+   *
+   * @param {String} accountId - The ID of the account to list the bank accounts for.
+   * @returns {Promise<JSON>} - Returns a list of the cards stored on the account.
+   *
+   * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
+   */
+  async listConnectedAccountExternalAccountsOfCards(accountId, bankAccountId) {
+    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
+      accountId,
+      {
+        object: "card",
+      }
+    );
 
-/**
- * @method flagAccount
- * @description Flag a Stripe account for suspicious activity or fraud. This will suspend the account and prevent it from accepting new transactions. The account will be closed if the account is not updated within 30 days. 
- * @param {String} id - The ID of the account
- * @param {Object} data - The data to flag the account
- * @param {String} data.reason - The reason for the flag
- * @param {String} data.message - The message for the flag
- * @returns {Promise} - The promise of the Stripe API
- */
-static async flagAccount(id, data) {
-return stripeClient.accounts.reject(id, {
-    reason: data.reason,
-    message: data.message
-});
-}
+    return bankAccounts;
+  }
 
+  /**
+   * Retrieves the details of an external account that is attached to a Stripe account.
+   *
+   * @param {String} accountId - The ID of the account to retrieve the external account for.
+   * @param {String} externalAccountId - The ID of the external account to retrieve.
+   * @returns Returns the external account object.
+   *
+   * @see https://stripe.com/docs/api/external_account_cards/retrieve?lang=node
+   * @see https://stripe.com/docs/api/external_account_bank_accounts/retrieve?lang=node
+   */
+  getConnectedAccountExternalAccountDetails(accountId, externalAccountId) {
+    return this.stripeClient.accounts.retrieveExternalAccount(
+      accountId,
+      externalAccountId
+    );
+  }
 
-/**
- * @method deleteAccount
- * @description Delete a Stripe account
- * @param {String} id - The ID of the account
- * @returns {Promise} - The promise of the Stripe API
- */
-static async deleteAccount(id) {
-return stripeClient.accounts.del(id);
-}
+  // -------------------------------------------------------------------------------------------- //
+  //                                        CORE RESOURCES                                        //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/balance?lang=node                                           //
+  // -------------------------------------------------------------------------------------------- //
 
-/**
- *  @method createAccountLink
- * @description Create a Stripe account link
- * @param {String} id - The ID of the account
- * @param {Object} data - The data to create the account link
- * @param {String} data.refresh_url - The URL to redirect to after the account link is used
- * @param {String} data.return_url - The URL to redirect to after the account link is used
- * @param {String} data.type - The type of the account link
- * @returns {Promise} - The promise of the Stripe API
- */
-static async createAccountLink(id, data) {
-return stripeClient.accountLinks.create({
-    account: id,
-    refresh_url: data.refresh_url,
-    return_url: data.return_url,
-    type: data.type,
-   collect: data.collect,
-     default_for_currency: data.default_for_currency,
-     failure_url: data.failure_url,
-    success_url: data.success_url
-});
-}
+  /**
+   * Creates a customer object.
+   *
+   * @param {JSON} customer - The customer object to create.
+   * @returns Returns the customer object if the update succeeded. Throws an error if create parameters are invalid (e.g. specifying an invalid coupon or an invalid source).
+   *
+   * @see https://stripe.com/docs/api/customers/create?lang=node
+   */
+  async createCustomer(customer) {
+    let createdCustomer = await this.stripeClient.customers.create(customer);
 
-/**
- * @method createAccountToken
- * @description Create a Stripe account token
- * @param {Object} data - The data to create the account token. The token is used to securely provide details to the account. 
- * @param {String} data.account_id - The ID of the account
- * @param {String} data.client_ip - The IP address of the client
- * @param {String} data.created - The date of creation of the token
- * @param {String} data.email - The email of the token
- * @param {String} data.livemode - The livemode of the token
- * @param {String} data.type - The type of the token
- * @param {String} data.used - The used status of the token
- * @returns {Promise} - The promise of the Stripe API
- */
-static async createAccountToken(data) {
-return stripeClient.tokens.create({
-    account: {
-        id: data.account_id,
-        client_ip: data.client_ip,
-        created: data.created,
-        email: data.email,
-        livemode: data.livemode,
-        type: data.type,
-        used: data.used
-    }
-});
-}
+    return createdCustomer;
+  }
+
+  /**
+   * Returns a list of your customers. The customers are returned sorted by creation date, with the most recent customers appearing first.
+   *
+   * @returns {Promise<JSON>} - A object with a data property that contains an array of up to limit customers, starting after customer starting_after. Passing an optional email will result in filtering to customers with only that exact email address. Each entry in the array is a separate customer object. If no more customers are available, the resulting array will be empty. This request should never throw an error.
+   *
+   * @see https://stripe.com/docs/api/customers/list?lang=node
+   */
+  async listCustomers() {
+    let customers = await this.stripeClient.customers.list();
+
+    return customers;
+  }
+
+  /**
+   * Retrieves a Customer object.
+   *
+   * @param {String} customerId - The ID of the customer to retrieve.
+   * @returns {Promise<JSON>} - Returns the Customer object for a valid identifier. If it’s for a deleted Customer, a subset of the customer’s information is returned, including a deleted property that’s set to true.
+   *
+   * @see https://stripe.com/docs/api/customers/retrieve?lang=node
+   */
+  async getCustomer(customerId) {
+    let customer = await this.stripeClient.customers.retrieve(customerId);
+
+    return customer;
+  }
+
+  /**
+   * Creates a single-use token that represents a bank account’s details. This token can be used with any API method in place of a bank account object. This token can be used only once, by attaching it to a Custom account.
+   *
+   * @param {JSON} bankAccount - The bank account this token will represent.
+   * @returns {Promise<JSON>} - Returns the created bank account token if successful. Otherwise, this call throws an error.
+   *
+   * @see https://stripe.com/docs/api/tokens/create_bank_account?lang=node
+   */
+  async createBankAccountToken(bankAccount) {
+    let bankAccountToken = await this.stripeClient.tokens.create({
+      bank_account: bankAccount,
+    });
+
+    return bankAccountToken;
+  }
 
 
-/**
- * @method createBankAccountToken
- * @description Create a Stripe bank account token. The token is used to securely provide details to the bank account. 
- * @param {Object} data - The data to create the bank account token
- * @param {String} data.account_number - The account number of the bank account
- * @param {String} data.account_holder_name - The account holder name of the bank account
- * @param {String} data.account_holder_type - The account holder type of the bank account
- * @param {String} data.bank_name - The bank name of the bank account
- * @param {String} data.country - The country of the bank account
- * @param {String} data.currency - The currency of the bank account
- * @param {String} data.fingerprint - The fingerprint of the bank account
- * @param {String} data.last4 - The last 4 digits of the bank account
- * @param {String} data.routing_number - The routing number of the bank account
- * @param {String} data.status - The status of the bank account
- * @returns {Promise} - The promise of the Stripe API
- */
-static async createBankAccountToken(data) {
-return stripeClient.tokens.create({
-    bank_account: {
-        account_number: data.account_number,
-        account_holder_name: data.account_holder_name,
-        account_holder_type: data.account_holder_type,
-        bank_name: data.bank_name,
-        country: data.country,
-        currency: data.currency,
-        fingerprint: data.fingerprint,
-        last4: data.last4,
-        routing_number: data.routing_number,
-        status: data.status
-    }
-});
-}
+  /**
+   * Creates a single-use token that represents a credit card’s details. This token can be used in place of a credit card object with any API method. These tokens can be used only once: by creating a new Charge object, or by attaching them to a Customer object.
+   *
+   * @param {Card} card - The card this token will represent. If you also pass in a customer, the card must be the ID of a card belonging to the customer. Otherwise, if you do not pass in a customer, this is an object containing a user's credit card details, with the options described below.
+   * @returns {Promise<JSON>} - Returns the created card token if successful. Otherwise, this call throws an error.
+   */
+  async createCardToken(card) {
+    let cardToken = await this.stripeClient.tokens.create({
+      card: card,
+    });
 
+    return cardToken;
+  }
 
-/**
- * @method createCardToken
- * @description Create a Stripe card token. The token is used to securely provide details to the card. 
- * @param {Object} data - The data to create the card token
- * @param {String} data.address_city - The city of the card
- * @param {String} data.address_country - The country of the card
- * @param {String} data.address_line1 - The address line 1 of the card
- * @param {String} data.address_line2 - The address line 2 of the card
- * @param {String} data.address_state - The state of the card
- * @param {String} data.address_zip - The zip code of the card
- * @param {String} data.brand - The brand of the card
- * @param {String} data.country - The country of the card
- * @param {String} data.currency - The currency of the card
- * @param {String} data.cvc_check - The CVC check of the card
- * @param {String} data.exp_month - The expiration month of the card
- * @param {String} data.exp_year - The expiration year of the card
- * @param {String} data.fingerprint - The fingerprint of the card
- * @param {String} data.funding - The funding of the card
- * @param {String} data.last4 - The last 4 digits of the card
- * @param {String} data.name - The name of the card
- * @param {String} data.tokenization_method - The tokenization method of the card
- * @returns {Promise} - The promise of the Stripe API
-*/
-static async createCardToken(data) {
+  /**
+   * Retrieves the token with the given ID.
+   *
+   * @param {String} tokenId
+   * @returns Returns a token if a valid ID was provided. Throws an error otherwise.
+   *
+   * @see https://stripe.com/docs/api/tokens/retrieve?lang=node
+   */
+  async retrieveToken(tokenId) {
+    let token = await this.stripeClient.tokens.retrieve(tokenId);
 
-return stripeClient.tokens.create({
-    card: {
-        address_city: data.address_city,
-        address_country: data.address_country,
-        address_line1: data.address_line1,
-        address_line2: data.address_line2,
-        address_state: data.address_state,
-        address_zip: data.address_zip,
-        brand: data.brand,
-        country: data.country,
-        currency: data.currency,
-        cvc_check: data.cvc_check,
-        exp_month: data.exp_month,
-        exp_year: data.exp_year,
-        fingerprint: data.fingerprint,
-        funding: data.funding,
-        last4: data.last4,
-        name: data.name,
-        tokenization_method: data.tokenization_method
-    }
-})
-}
+    return token;
+  }
 
+  /**
+   * Retrieves the details of a charge that has previously been created. Supply the unique charge ID that was returned from your previous request, and Stripe will return the corresponding charge information. The same information is returned when creating or refunding the charge.
+   *
+   * @param {String} chargeId - The ID of the charge to retrieve.
+   * @returns {Promise<JSON>} - Returns a charge if a valid identifier was provided, and throws an error otherwise.
+   *
+   * @see https://stripe.com/docs/api/charges/retrieve?lang=node
+   */
+  async getCharge(chargeId) {
+    let charge = await this.stripeClient.charges.retrieve(chargeId);
 
-/**
- * @method createPaymentIntent 
- * @description Create a Stripe payment intent. The payment intent is used to confirm the payment. 
- * @param {Object} data - The data to create the payment intent
- * @param {String} data.amount - The amount of the payment intent
- * @param {String} data.currency - The currency of the payment intent
- * @param {String} data.description - The description of the payment intent
- * @param {String} data.payment_method_types - The payment method types of the payment intent
- * @param {String} data.receipt_email - The receipt email of the payment intent
- * @param {String} data.statement_descriptor - The statement descriptor of the payment intent
- * @param {String} data.statement_descriptor_suffix - The statement descriptor suffix of the payment intent
- * @param {String} data.transfer_data - The transfer data of the payment intent
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/payment_intents/create
- */
-static async createPaymentIntent(data) {
-return stripeClient.paymentIntents.create({
-    amount: data.amount,
-    currency: data.currency,
-    description: data.description,
-    payment_method_types: data.payment_method_types,
-    receipt_email: data.receipt_email,
-    statement_descriptor: data.statement_descriptor,
-    statement_descriptor_suffix: data.statement_descriptor_suffix,
-    transfer_data: data.transfer_data
-});
-}
+    return charge;
+  }
 
-/**
- * @method confirmPaymentIntent
- * @description Confirm a Stripe payment intent. The payment intent is used to confirm the payment.
- * @param {Object} data - The data to confirm the payment intent
- * @param {String} data.payment_intent_id - The payment intent id of the payment intent
- * @param {String} data.payment_method_id - The payment method id of the payment intent
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/payment_intents/confirm
-*/
-static async confirmPaymentIntent(data) {
-return stripeClient.paymentIntents.confirm(data.payment_intent_id, {
-    payment_method: data.payment_method_id
-});
+  /**
+   * Search for charges you’ve previously created using Stripe’s Search Query Language. Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up to an hour behind during outages. Search functionality is not available to merchants in India.
+   *
+   * @param {JSON} query - The search query string. See search query language and the list of supported query fields for charges.
+   * @param {String} limit - A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+   * @param {String} page - A cursor for pagination across multiple pages of results. Don’t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+   * @returns - A dictionary with a data property that contains an array of up to limit charges. If no objects match the query, the resulting array will be empty. See the related guide on expanding properties in lists.
+   *
+   * @see https://stripe.com/docs/api/charges/search?lang=node
+   */
+  async getChargesByQuery(query, limit, page) {
+    let charges = await this.stripeClient.charges.list({
+      query: query,
+      limit: limit,
+      starting_after: page,
+    });
 
-}
+    return charges;
+  }
 
+  /**
+   * Retrieves the details of an event. Supply the unique identifier of the event, which you might have received in a webhook.
+   *
+   * @param {*} eventId - The identifier of the event to be retrieved.
+   * @returns {Promise<JSON>} - Returns an event object if a valid identifier was provided. All events share a common structure, detailed to the right. The only property that will differ is the data property.
+   * In each case, the data object will have an attribute called object and its value will be the same as retrieving the same object directly from the API. For example, a customer.created event will have the same information as retrieving the relevant customer would.
+   * In cases where the attributes of an object have changed, data will also contain a object containing the changes.
+   *
+   * @see https://stripe.com/docs/api/events/retrieve?lang=node
+   */
+  async getEvent(eventId) {
+    let event = await this.stripeClient.events.retrieve(eventId);
 
-/**
- * @description Create subscription for a customer on Stripe.
- * @param {Object} data - The data to create the subscription
- * @param {String} data.customer_id - The customer id of the subscription
- * @param {String} data.plan_id - The plan id of the subscription
- * @param {String} data.quantity - The quantity of the subscription
- * @param {String} data.tax_percent - The tax percent of the subscription
- * @param {String} data.trial_end - The trial end of the subscription
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/subscriptions/create
- */
-static async createSubscription(data) {
+    return event;
+  }
 
-return stripeClient.subscriptions.create({
-    customer: data.customer_id,
-    items: [
-        {
-            plan: data.plan_id,
-            quantity: data.quantity
-        }
-    ],
-    tax_percent: data.tax_percent,
-    trial_end: data.trial_end
-});
+  /**
+   * List events, going back up to 30 days. Each event data is rendered according to Stripe API version at its creation time, specified in event object api_version attribute (not according to your current Stripe API version or Stripe-Version header).
+   *
+   * @param {Timestamp} created - A filter on the list based on the object created field. The value can be a string with an integer Unix timestamp, or it can be a dictionary with the following options:
+   * @param {String} deliverySuccess - Filter events by whether all webhooks were successfully delivered. If false, events which are still pending or have failed all delivery attempts to a webhook endpoint will be returned.
+   * @param {Number} endingBefore - A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+   * @param {Number} limit - A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+   * @param {Number} startingAfter - A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+   * @param {String} type - A string containing a specific event name, or group of events using * as a wildcard. The list will be filtered to include only events with a matching event property.
+   * @returns {Promise<JSON>} -A object with a data property that contains an array of up to limit events, starting after event starting_after. Each entry in the array is a separate event object. If no more events are available, the resulting array will be empty. This request should never throw an error.
+   *
+   * @see https://stripe.com/docs/api/events/list?lang=node
+   */
+  async listEvents(
+    created,
+    deliverySuccess,
+    endingBefore,
+    limit,
+    startingAfter,
+    type
+  ) {
+    let events = await this.stripeClient.events.list({
+      created: created,
+      delivery_success: deliverySuccess,
+      ending_before: endingBefore,
+      limit: limit,
+      starting_after: startingAfter,
+      type: type,
+    });
 
-}
+    return events;
+  }
 
-/**
- * @description Create a Stripe customer. The customer is used to create a subscription.
- * @param {Object} data - The data to create the customer
- * @param {String} data.email - The email of the customer
- * @param {String} data.name - The name of the customer
- * @param {String} data.phone - The phone of the customer
- * @param {String} data.source - The source of the customer
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/customers/create
- */
-static async createCustomer(data) {
+  /**
+   *  Constructs an event object from a request body and signature.
+   *
+   * @param {Object} event - The event object
+   * @param {String} signature - The signature of the event
+   * @param {String} endpointSecret - The endpoint secret of the webhook
+   * @returns {Promise<JSON>} - Returns an event object if a valid identifier was provided. All events share a common structure, detailed to the right. The only property that will differ is the data property.
+   *
+   * @see https://stripe.com/docs/webhooks/signatures?lang=node
+   */
+  async constructEvent(event, signature, endpointSecret) {
 
-return stripeClient.customers.create({
+  
 
-    email: data.email,
-    name: data.name,
-    phone: data.phone,
-    source: data.source
-});
-}
+    let stripeEvent = await this.stripeClient.webhooks.constructEvent(
+      event,
+      signature,
+      endpointSecret
+    );
 
-/**
- * @description Create a Stripe plan. The plan is used to create a subscription.
- * @param {Object} data - The data to create the plan
- * @param {String} data.amount - The amount of the plan
- * @param {String} data.currency - The currency of the plan
- * @param {String} data.interval - The interval of the plan
- * @param {String} data.interval_count - The interval count of the plan
- * @param {String} data.nickname - The nickname of the plan
- * @param {String} data.product - The product of the plan
- * @param {String} data.trial_period_days - The trial period days of the plan
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/plans/create
- */
-static async createPlan(data) {
+    return stripeEvent;
+  }
 
-return stripeClient.plans.create({
-    amount: data.amount,
-    currency: data.currency,
-    interval: data.interval,
-    interval_count: data.interval_count,
-    nickname: data.nickname,
-    product: data.product,
-    trial_period_days: data.trial_period_days
-});
-}
+  // -------------------------------------------------------------------------------------------- //
+  //                                          BIILING                                             //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/subscriptions?lang=node                                     //
+  // -------------------------------------------------------------------------------------------- //
 
-/**
- * @description Create a Stripe coupon.
- * @param {Object} data - The data to create the coupon
- * @param {String} data.amount_off - The amount off of the coupon
- * @param {String} data.currency - The currency of the coupon
- * @param {String} data.duration - The duration of the coupon
- * @param {String} data.duration_in_months - The duration in months of the coupon
- * @param {String} data.max_redemptions - The max redemptions of the coupon
- * @param {String} data.percent_off - The percent off of the coupon
- * @param {String} data.redeem_by - The redeem by of the coupon
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/coupons/create
- * @see https://stripe.com/docs/api/coupons/object
- */
-static async createCoupon(data) {
+  /**
+   * @todo Implement coupons/promotion codes
+   * @todo Check if we need to implement tax rates
+   * @todo Check which 'payment_behavior' we need to use
+   *
+   * Creates a new subscription on an existing customer. Each customer can have up to 500 active or scheduled subscriptions.
+   * When you create a subscription with collection_method=charge_automatically, the first invoice is finalized as part of the request. The payment_behavior parameter determines the exact behavior of the initial payment.
+   * To start subscriptions where the first invoice always begins in a draft status, use subscription schedules instead. Schedules provide the flexibility to model more complex billing configurations that change over time.
+   *
+   * @param {String} customerId - The ID of the customer to create a subscription for.
+   * @param {String} priceId - The ID of the price to subscribe the customer to.
+   * @param {String} transferAccount - The ID of the connected account that should receive the funds from the subscription. Only applicable if the application fee percentage is set. See the Connect documentation for details.
+   * @param {Number} applicationFee - A positive decimal (with at most two decimal places) between 1 and 100. This represents the percentage of the subscription invoice subtotal that will be transferred to the application owner’s Stripe account. The request must be made with an OAuth key or the Stripe-Account header in order to take an application fee. For more information, see the application fees documentation.
+   * @param {String} paymentMethod - The ID of the PaymentMethod to attach to the subscription. If not provided, defaults to the default payment method in the customer’s invoice settings.
+   * @returns {Promise<JSON>} - The newly created Subscription object, if the call succeeded. If the attempted charge fails, the subscription is created in an incomplete status.
+   *
+   * @see https://stripe.com/docs/api/subscriptions/create?lang=node
+   * @see https://stripe.com/docs/connect/subscriptions
+   */
+  async createSubscription(
+    customerId,
+    priceId,
+    transferAccount,
+    applicationFee,
+    paymentMethod
+  ) {
+    let subscription = await this.stripeClient.subscriptions.create({
+      customer: customerId,
+      items: [{ price: priceId }],
+      expand: ["latest_invoice.payment_intent"],
+      transfer_data: {
+        destination: transferAccount,
+      },
+      application_fee_percent: applicationFee,
+      default_payment_method: paymentMethod,
 
-return stripeClient.coupons.create({
-    amount_off: data.amount_off,
-    currency: data.currency,
-    duration: data.duration,
-    duration_in_months: data.duration_in_months,
-    max_redemptions: data.max_redemptions,
-    percent_off: data.percent_off,
-    redeem_by: data.redeem_by
-});
+      // payment_behavior: 'default_incomplete',
+    });
 
-}
+    return subscription;
+  }
 
-/**
- * @description Creates a promotion code that represents a discount that can be applied to a customer.
- * @param {Object} data - The data to create the promotion code
- * @param {String} data.code - The code of the promotion code
- * @param {String} data.coupon - The coupon of the promotion code
- * @param {String} data.max_redemptions - The max redemptions of the promotion code
- * @param {String} data.redeem_by - The redeem by of the promotion code
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/promotion_codes/create
- * @see https://stripe.com/docs/api/promotion_codes/object
- */
-static async createPromotionCode(data) {
+  /**
+   * Retrieves the subscription with the given ID.
+   *
+   * @param {String} subscriptionId - The ID of the subscription to retrieve.
+   * @returns {Promise<JSON>} - Returns the subscription object.
+   *
+   * @see https://stripe.com/docs/api/subscriptions/retrieve?lang=node
+   */
+  async getSubscription(subscriptionId) {
+    let subscription = await this.stripeClient.subscriptions.retrieve(
+      subscriptionId
+    );
 
-return stripeClient.promotionCodes.create({
-    code: data.code,
-    coupon: data.coupon,
-    max_redemptions: data.max_redemptions,
-    redeem_by: data.redeem_by
-});}
+    return subscription;
+  }
 
-/**
- * @description Creates a discount that can be applied to a customer.
- * @param {Object} data - The data to create the discount
- * @param {String} data.coupon - The coupon of the discount
- * @param {String} data.customer - The customer of the discount
- * @param {String} data.duration - The duration of the discount
- * @param {String} data.end - The end of the discount
- * @param {String} data.promotion_code - The promotion code of the discount
- * @param {String} data.start - The start of the discount
- * @returns {Promise} - The promise of the Stripe API
- * @see https://stripe.com/docs/api/discounts/create
- * @see https://stripe.com/docs/api/discounts/object
- */
-static async createDiscount(data) {
+  /**
+   * Search for subscriptions you’ve previously created using Stripe’s Search Query Language. Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up to an hour behind during outages. Search functionality is not available to merchants in India.
+   *
+   * @param {JSON} query - The search query string. See search query language and the list of supported query fields for subscriptions.
+   * @param {Number} limit - A limit on the number of objects to be returned. Limit can range between 1 and 100 items, and the default is 10 items.
+   * @param {Number} page - A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+   * @returns {Promise<JSON>} - Returns a list of subscriptions matching the search query.
+   *
+   * @see https://stripe.com/docs/api/subscriptions/search?lang=node
+   * @see https://stripe.com/docs/search#search-query-language
+   */
+  async getSubscriptionsByQuery(query, limit, page) {
+    let subscriptions = await this.stripeClient.subscriptions.search(
+      query,
+      limit,
+      page
+    );
 
-return stripeClient.discounts.create({
-    coupon: data.coupon,
-    customer: data.customer,
-    duration: data.duration,
-    end: data.end,
-    promotion_code: data.promotion_code,
-    start: data.start
-});
-}
-     */
+    return subscriptions;
+  }
 
+  /**
+   * @todo Move to StripeHelper
+   *
+   * Returns a list of subscriptions for a customer.
+   *
+   * @param {String} customerId - The ID of the customer to retrieve the subscriptions for.
+   * @returns {Promise<JSON>} - Returns a list of the customer's subscriptions. You can optionally request that the response include the total count of all subscriptions for the customer. To do so, specify include[]=total_count in your request.
+   *
+   * @see https://stripe.com/docs/api/subscriptions/list?lang=node
+   */
+  async getCustomerSubscriptions(customerId) {
+    let subscriptions = await this.stripeClient.subscriptions.list({
+      customer: customerId,
+    });
+    return subscriptions;
+  }
 
+  /**
+   * Retrieves the invoice with the given ID.
+   *
+   * @param {String} invoiceId - The ID of the invoice to retrieve.
+   * @returns {Promise<JSON>} - Returns an invoice object if a valid invoice ID was provided. Throws an error otherwise.
+   * The invoice object contains a lines hash that contains information about the subscriptions and invoice items that have been applied to the invoice, as well as any prorations that Stripe has automatically calculated. Each line on the invoice has an amount attribute that represents the amount actually contributed to the invoice’s total. For invoice items and prorations, the amount attribute is the same as for the invoice item or proration respectively. For subscriptions, the amount may be different from the plan’s regular price depending on whether the invoice covers a trial period or the invoice period differs from the plan’s usual interval.
+   * The invoice object has both a subtotal and a total. The subtotal represents the total before any discounts, while the total is the final amount to be charged to the customer after all coupons have been applied.
+   * The invoice also has a next_payment_attempt attribute that tells you the next time (as a Unix timestamp) payment for the invoice will be automatically attempted. For invoices with manual payment collection, that have been closed, or that have reached the maximum number of retries (specified in your subscriptions settings), the next_payment_attempt will be null.
+   *
+   * @see https://stripe.com/docs/api/invoices/retrieve?lang=node
+   */
+  async getInvoice(invoiceId) {
+    let invoice = await this.stripeClient.invoices.retrieve(invoiceId);
+    return invoice;
+  }
 
+  /**
+   * Search for invoices you’ve previously created using Stripe’s Search Query Language. Don’t use search in read-after-write flows where strict consistency is necessary. Under normal operating conditions, data is searchable in less than a minute. Occasionally, propagation of new or updated data can be up to an hour behind during outages. Search functionality is not available to merchants in India.
+   *
+   * @param {JSON} query - The search query string. See search query language and the list of supported query fields for invoices.
+   * @param {String} limit - A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+   * @param {String} page - A cursor for pagination across multiple pages of results. Don’t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+   * @returns {Promise<JSON>} - A dictionary with a data property that contains an array of up to limit invoices. If no objects match the query, the resulting array will be empty. See the related guide on expanding properties in lists.
+   *
+   * @see https://stripe.com/docs/api/invoices/list?lang=node
+   * @see https://stripe.com/docs/search#search-query-language
+   */
+  async getInvoicesByQuery(query, limit, page) {
+    let invoices = await this.stripeClient.invoices.search(query, limit, page);
 
+    return invoices;
+  }
 
+  /**
+   * @todo Move to StripeHelper
+   *
+   * Returns a list of invoices for a customer.
+   *
+   * @param {String} customerId - The ID of the customer to retrieve the invoices for.
+   * @returns {Promise<JSON>} - Returns a list of the customer's invoices. You can optionally request that the response include the total count of all invoices for the customer. To do so, specify include[]=total_count in your request.
+   *
+   * @see https://stripe.com/docs/api/invoices/list?lang=node
+   */
+  async getCustomerInvoices(customerId) {
+    let invoices = await this.stripeClient.invoices.list({
+      customer: customerId,
+    });
+    return invoices;
+  }
 
- 
+  // -------------------------------------------------------------------------------------------- //
+  //                                          WEB HOOKS                                           //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/payment_methods?lang=node                                   //
+  // -------------------------------------------------------------------------------------------- //
+
+  /**
+   * A webhook endpoint must have a url and a list of enabled_events. You may optionally specify the Boolean connect parameter. If set to true, then a Connect webhook endpoint that notifies the specified url about events from all connected accounts is created; otherwise an account webhook endpoint that notifies the specified url only about events from your account is created. You can also create webhook endpoints in the webhooks settings section of the Dashboard.
+   *
+   * @param {String} url - The URL of the webhook endpoint.
+   * @param {Array<String>} events - The list of events to enable for this endpoint. You may specify [’*’] to enable all events, except those that require explicit selection.
+   * @param {String} description - An optional description for the webhook endpoint. If not provided, the description will be set to the URL.
+   * @param {Boolean} connect - Whether this endpoint should receive events from connected accounts (true), or from your account (false). Defaults to false.
+   * @returns {Promise<JSON>} Returns the webhook endpoint object with the secret field populated.
+   *
+   * @see https://stripe.com/docs/api/webhook_endpoints/create?lang=node
+   */
+  async createWebhookEndpoint(url, events, description, connect) {
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.create({
+      url: url,
+      enabled_events: events,
+      description: description,
+      connect: connect != null ? connect : false,
+    });
+    return webhookEndpoint;
+  }
+
+  /**
+   * Retrieves the webhook endpoint with the given ID
+   *
+   * @param {String} webhookId
+   * @returns {Promise<JSON>} Returns a webhook endpoint if a valid webhook endpoint ID was provided. Throws an error otherwise.
+   *
+   * @see https://stripe.com/docs/api/webhook_endpoints/retrieve?lang=node
+   */
+  async getWebhookEndpoint(webhookId) {
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.retrieve(
+      webhookId
+    );
+    return webhookEndpoint;
+  }
+
+  /**
+   * Updates the webhook endpoint. You may edit the url, the list of enabled_events, and the status of your endpoint.
+   *
+   * @param {String} url - The URL of the webhook endpoint.
+   * @param {Array<String>} events - The list of events to enable for this endpoint. You may specify [’*’] to enable all events, except those that require explicit selection.
+   * @param {String} description - An optional description for the webhook endpoint. If not provided, the description will be set to the URL.
+   * @param {Boolean} connect - Whether this endpoint should receive events from connected accounts (true), or from your account (false). Defaults to false.
+   * @returns {Promise<JSON>} The updated webhook endpoint object if successful. Otherwise, this call throws an error.
+   *
+   * @see https://stripe.com/docs/api/webhook_endpoints/update?lang=node
+   */
+  async updateWebhookEndpoint(url, events, description, connect) {
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.update({
+      url: url,
+      enabled_events: events,
+      description: description,
+      connect: connect != null ? connect : false,
+    });
+    return webhookEndpoint;
+  }
+
+  /**
+   * Deletes the webhook endpoint with the given ID. You can also delete webhook endpoints via the webhook endpoint management page of the Stripe dashboard.
+   *
+   * @param {String} webhookId - The ID of the webhook endpoint to be deleted.
+   * @returns {Promise<JSON>} An object with the deleted webhook endpoints’s ID. Otherwise, this call throws an error, such as if the webhook endpoint has already been deleted.
+   *
+   * @see https://stripe.com/docs/api/webhook_endpoints/delete?lang=node
+   */
+  async deleteWebhookEndpoint(webhookId) {
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.del(
+      webhookId
+    );
+    return webhookEndpoint;
+  }
+
+  /**
+   * Returns a list of your webhook endpoints.
+   *
+   * @param {Number} endingBefore - A cursor for use in pagination. ending_before is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_bar, your subsequent call can include ending_before=obj_bar in order to fetch the previous page of the list.
+   * @param {Number} limit - A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+   * @param {Number} startinAfter - A cursor for use in pagination. starting_after is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include starting_after=obj_foo in order to fetch the next page of the list.
+   * @returns {Promise<JSON>} A object with a data property that contains an array of up to limit webhook endpoints, starting after webhook endpoint starting_after. Each entry in the array is a separate webhook endpoint object. If no more webhook endpoints are available, the resulting array will be empty. This request should never throw an error.
+   *
+   * @see https://stripe.com/docs/api/webhook_endpoints/list?lang=node
+   */
+  async listWebhookEndpoints(endingBefore, limit, startinAfter) {
+    let webhookEndpoints = await this.stripeClient.webhookEndpoints.list({
+      ending_before: endingBefore,
+      limit: limit,
+      starting_after: startinAfter,
+    });
+    return webhookEndpoints;
+  }
 }

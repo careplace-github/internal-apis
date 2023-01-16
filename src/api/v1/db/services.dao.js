@@ -5,7 +5,7 @@ import {MONGODB_collection_services} from "../../../config/constants/index.js";
 
 
 
-export default class ordersDAO extends DAO {
+export default class servicesDAO extends DAO {
 
   /**
    * @description Creates the db_connectionection to the MongoDB database.

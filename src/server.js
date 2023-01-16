@@ -38,7 +38,7 @@ import mongoose from "mongoose";
 
 import * as Error from "./api/v1/middlewares/errors/index.js";
 
-// Loads environment constants"
+// Loads Environment Constants
 import {
   env,
   host,
@@ -51,7 +51,7 @@ import {
   MONGODB_db_deletes,
 } from "./config/constants/index.js";
 
-// Import router exports
+// Import Router Exports
 import configAPI from "./api/v1/routes/config.route.js";
 import emailsAPI from "./api/v1/routes/emails.route.js";
 import filesAPI from "./api/v1/routes/files.route.js";
@@ -61,15 +61,17 @@ import companiesAPI from "./api/v1/routes/companies.route.js";
 import servicesAPI from "./api/v1/routes/services.route.js";
 import ordersAPI from "./api/v1/routes/orders.route.js";
 import calendarAPI from "./api/v1/routes/calendar.route.js";
+import webHooksAPI from "./api/v1/routes/hooks/webhooks.route.js";
 
+// Helpers
 import getServices from "./api/v1/helpers/services.helper.js";
 
-// Import logger
-import inputValidation from "./api/v1/middlewares/validators/inputValidation.middleware.js";
+// Import Middlewares
 import logger from "./logs/logger.js";
 import requestLogger from "./api/v1/middlewares/server/requestHandler.middleware.js";
 import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js";
 import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
+import bodyParser from "body-parser";
 
 const main = async () => {
   try {
@@ -112,10 +114,8 @@ const main = async () => {
     };
 
     logger.info(
-      `Attempting to connect to MongoDB Database: ${MONGODB_db_active}`
+      `Connecting to MongoDB Database '${MONGODB_db_active}'...`
     );
-
-    
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
@@ -126,7 +126,6 @@ const main = async () => {
     db_connection.connection.on("error", (err) => {
       throw new Error._503(`MongoDB Connection Error: ${err}`);
     });
-
 
     db_connection.connection.on("reconnected", (err) => {
       logger.info(`MongoDB Connection Reconnected: ${err}`);
@@ -144,10 +143,10 @@ const main = async () => {
       throw new Error._503(`MongoDB Connection Error: ${err}`);
     });
 
-    
-
     // Successfuly connected to MongoDB
-    logger.info(`Successfuly connected to MongoDB databse: '${MONGODB_db_active}'`);
+    logger.info(
+      `Connected to MongoDB Database '${MONGODB_db_active}' Successfully!`
+    );
     //Store the connection in a global variable
     global.db = db_connection.connection;
 
@@ -158,10 +157,13 @@ const main = async () => {
       //                                                                                              //
       //  @see                                                                                        //
       // -------------------------------------------------------------------------------------------- //
+
+      logger.info(`Initializing Express Application...`);
+
+      // Initialize Express Application
       var app = express();
 
-      // Apply application middlewares
-      app.use(express.json());
+      logger.info(`Express Application Initialized Successfully!`);
 
       // -------------------------------------------------------------------------------------------- //
       //         APPLY APPLICATION SECURITY MIDDLEWARES AND ATTACKS PROTECTION & HANDLING             //
@@ -170,6 +172,10 @@ const main = async () => {
       //  @see https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html        //
       //  @see https://nodejs.org/en/docs/guides/security                                             //
       // -------------------------------------------------------------------------------------------- //
+
+      logger.info(`Applying Application Security Middlewares...`);
+
+      //app.use('/api/v1/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -352,18 +358,37 @@ const main = async () => {
         })
       );
 
+      logger.info(`Application Security Middlewares Applied Successfully!`);
+
       // -------------------------------------------------------------------------------------------- //
       //                                 APPLY APPLICATION MIDDLEWARES                                //
       //                                                                                              //
       //                                                                                              //
-      //  @see                                                                                         //
+      //  @see                                                                                        //
       // -------------------------------------------------------------------------------------------- //
+
+      logger.info(`Applying Application Middlewares...`);
+
+      // Middleware to parse the body of the HTTP requests
+     // app.use(express.json());
+
+     app.use((req, res, next) => {
+      if (req.originalUrl === '/api/v1/webhooks/stripe/connect') {
+        next();
+      } else {
+        express.json()(req, res, next);
+      }
+    });
 
       // Middleware to log all the HTTP requests
       app.use(requestLogger);
 
       // Routes middlewares
+    
+
+      
       app.use(api_url, configAPI);
+      
       app.use(api_url, emailsAPI);
       app.use(api_url, filesAPI);
       app.use(api_url, authAPI);
@@ -372,6 +397,7 @@ const main = async () => {
       app.use(api_url, ordersAPI);
       app.use(api_url, servicesAPI);
       app.use(api_url, calendarAPI);
+      app.use(api_url, webHooksAPI);
 
       // Middleware to handle and log all the errors
       app.use(errorLogger);
@@ -382,6 +408,8 @@ const main = async () => {
       app.on("error", (error) => {
         throw new Error._500(`Internal Server Error: ${error.message}`);
       });
+
+      logger.info(`Application Middlewares Applied Successfully!`);
 
       // -------------------------------------------------------------------------------------------- //
       //                                 APPLY APPLICATION SIGNALS                                    //
@@ -410,11 +438,15 @@ const main = async () => {
       //  @see                                                                                        //
       // -------------------------------------------------------------------------------------------- //
 
+      logger.info("Fetching all the necessary assets...");
+
       /**
        * Gets all the services from the database and stores them in the cache
        */
-      logger.info("Getting all the necessary assets...");
       await getServices();
+
+      logger.info("Fetched all the necessary assets successfully!");
+
     } catch (error) {
       throw new Error._503(`Service Unavailable: ${error}`);
     }
@@ -427,11 +459,16 @@ const main = async () => {
       //  @see                                                                                        //
       // -------------------------------------------------------------------------------------------- //
 
+      logger.info(`Starting to listen for HTTP requests...`);
+
       // Starts listening for HTTP requests
       app.listen(SERVER_Port, () => {
-        logger.info(`Listening for HTTP requests on port: ${SERVER_Port}\n`);
+        logger.info(
+          `Successfully listening for HTTP requests on port: ${SERVER_Port}\n`
+        );
 
         logger.info(`Server started successfully! 🚀`);
+
       });
     } catch (error) {
       throw new Error._500(`Unable to start the HTTP Server: ${error}`);
@@ -439,6 +476,8 @@ const main = async () => {
   } catch (error) {
     throw new Error._500(`Internal Error: ${error}`);
   }
+
+ 
 };
 
 main();

@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
+import GeometryUtils from "../../utils/geometry.utils.js";
 import { ObjectId } from "mongodb";
 
 const Schema = mongoose.Schema;
+
+let Company;
 
 const companySchema = new Schema(
   {
@@ -96,9 +99,7 @@ const companySchema = new Schema(
 
     is_active: { type: Boolean, required: true, default: true },
 
-    created_at: { type: Date, required: true, default: Date.now() },
-
-    updated_at: { type: Date, required: true, default: Date.now() },
+    
   },
 
   {
@@ -118,7 +119,7 @@ companySchema.methods.providesServicesInArea = function (lat, lng) {
     return [point.lng, point.lat];
   });
 
-  const polygon = new Polygon(coordinates);
+ // const polygon = new Polygon(coordinates);
 
   //
 
@@ -126,4 +127,9 @@ companySchema.methods.providesServicesInArea = function (lat, lng) {
   return polygon.containsPoint([lng, lat]);
 };
 
-export default companySchema;
+/**
+ * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
+ * @see https://mongoosejs.com/docs/models.html#compiling
+ */
+export default Company = mongoose.model("Company", companySchema);
+

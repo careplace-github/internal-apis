@@ -65,6 +65,10 @@ const userSchema = new Schema(
       coordinates: { type: Array, required: true },
     },
 
+    stripe_information: {
+      customer_id: { type: String, required: false },
+    },
+
     settings: {
       language: {
         type: String,

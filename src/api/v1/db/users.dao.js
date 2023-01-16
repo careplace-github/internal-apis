@@ -6,7 +6,7 @@ import { MONGODB_collection_users } from "../../../config/constants/index.js";
 /**
  * @class Class to manage the EVENTS collection.
  */
-export default class EventsDAO extends DAO {
+export default class UsersDAO extends DAO {
   /**
    * @description Creates the db_connectionection to the MongoDB database.
    * @param {mongoose} db_connection

@@ -6,7 +6,9 @@
   "type": "module",
   "private": true,
   "nodemonConfig": {
-    "ignore": ["./src/assets/data/*.json"]
+    "ignore": [
+      "./src/assets/data/*.json"
+    ]
   },
   "scripts": {
     "prod": "node ./src/server.js",
@@ -19,9 +21,9 @@
     "type": "git",
     "url": "git+https://github.com/CarelyPT/crm-backend.git"
   },
-
-
-  "keywords": ["Careplace"],
+  "keywords": [
+    "Careplace"
+  ],
   "author": "CARELY, LDA.",
   "bugs": {
     "url": "https://github.com/CarelyPT/crm-backend/issues"
@@ -49,6 +51,7 @@
     "jwk-to-pem": "^2.0.5",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
+    "micro": "^10.0.1",
     "mongodb": "^4.7.0",
     "mongoose": "^6.8.0",
     "multer": "^1.4.5-lts.1",

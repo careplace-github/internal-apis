@@ -31,24 +31,9 @@ export default function responseHandler(response, req, res, next) {
       response.statusCode === null ||
       response.statusCode === ""
     ) {
-      response_.response = {
-        error: {
-          message: "Internal Server Error.",
-          type: "INTERNAL_SERVER_ERROR",
-        },
-        statusCode: 500,
+      response_.data = {
+        message: "No data returned from the server.",
       };
-
-      res.status(500).json({
-        error: {
-          message: response_.response.error.message,
-          type: response_.response.error.type,
-        },
-      });
-
-      logger.error(`HTTP Response: ${JSON.stringify(response_, null, 2)}\n`);
-
-      return;
     }
 
     res.status(response.statusCode).json(response.data);
