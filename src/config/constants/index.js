@@ -11,7 +11,11 @@ dotenv.config({ path: `./src/config/.env/.env.${env}` });
 // Application
 export const host = process.env.HOST;
 export const api_version = process.env.API_VERSION;
+
+
 export const api_url = process.env.API_URL;
+
+
 export const SERVER_Port = process.env.PORT || process.env.PORT_BACKUP;
 
 // MongoDB credentials
@@ -45,6 +49,7 @@ export const MONGODB_collection_events =
   process.env.MONGODB_COLLECTION_EVENTS_NS;
 export const MONGODB_collection_eventsSeries =
   process.env.MONGODB_COLLECTION_EVENTS_SERIES_NS;
+export const MONGODB_collection_relatives = process.env.MONGODB_COLLECTION_RELATIVES_NS;
 
 // AWS Credentials
 export const AWS_access_key_id = process.env.AWS_ACCESS_KEY_ID;
@@ -84,3 +89,5 @@ export const AWS_ses_tls_wrapper_port =
 // Stripe Credentials
 export const STRIPE_secret_key = process.env.STRIPE_SECRET_KEY;
 export const STRIPE_publishable_key = process.env.STRIPE_PUBLISHABLE_KEY;
+export const STRIPE_account_endpoint_secret = process.env.STRIPE_ACCOUNT_ENDPOINT_SECRET;
+export const STRIPE_connect_endpoint_secret = process.env.STRIPE_CONNECT_ENDPOINT_SECRET;

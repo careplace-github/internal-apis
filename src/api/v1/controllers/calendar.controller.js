@@ -13,25 +13,10 @@ import AuthHelper from "../helpers/auth.helper.js";
 export default class CalendarController {
   static async index_events(req, res, next) {
     try {
+      let token;
       let response = {};
 
-      if (req.headers.authorization) {
-        // Extract the token from the request header
-        let token = req.headers.authorization.split(" ")[1];
-
-        let authId = await AuthHelper.getAuthId(token, "cognito");
-
-        let usersDAO = new UsersDAO();
-
-        // Get user that cognitoId matches the authId
-        var user = await usersDAO.get_list({ cognito_id: { $eq: authId } });
-      } else {
-        throw new Error._401("No token provided.");
-      }
-
-      let filters = {
-        user: { $eq: user._id },
-      };
+      let filters = {};
       let options = {};
       let page = req.query.page != null ? req.query.page : null;
       let documentsPerPage =
@@ -39,6 +24,23 @@ export default class CalendarController {
       let populate = req.query.populate != null ? req.query.populate : null;
 
       let eventsDAO = new EventsDAO();
+      let usersDAO = new UsersDAO();
+
+      if (req.headers.authorization) {
+        // Extract the token from the request header
+        token = req.headers.authorization.split(" ")[1];
+
+        let authId = await AuthHelper.getAuthId(token, "cognito");
+
+        // Get user that cognitoId matches the authId
+        let user = await usersDAO.get_list({ cognito_id: { $eq: authId } });
+
+        filters = {
+          user: { $eq: user._id },
+        };
+      } else {
+        throw new Error._401("No token provided.");
+      }
 
       // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
       if (req.query.userId) {

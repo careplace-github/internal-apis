@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+let Relative;
+
 const relativeSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
@@ -105,4 +107,10 @@ relativeSchema.methods.getKinshipDegree = function (type) {
   return this.kinship_degree.type;
 };
 
-export default relativeSchema;
+/**
+ * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
+ * @see https://mongoosejs.com/docs/models.html#compiling
+ */
+export default Relative = mongoose.model("OrRelativeder", relativeSchema);
+
+
