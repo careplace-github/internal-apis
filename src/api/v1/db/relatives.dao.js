@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import Relative from "../models/userLogic/relatives.model.js";
 
-import { MONGODB_collection_relatives } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_RELATIVES_NS } from "../../../config/constants/index.js";
 
 /**
  * @class Class to manage the EVENTS collection.
@@ -13,6 +13,6 @@ export default class RelativesDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(Relative, MONGODB_collection_relatives);
+    super(Relative, MONGODB_COLLECTION_RELATIVES_NS);
   }
 }

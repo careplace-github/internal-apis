@@ -10,7 +10,8 @@ const router = express.Router();
 router.route("/auth/signup").post(AuthenticationController.signup);
 
 
-router.route("/auth/login").post(AuthenticationController.login);
+router.route("/auth/crm/login").post(AuthenticationController.crm_login);
+//router.route("/auth/marketplace/login").post(AuthenticationController.marketplace_login);
 
 router
   .route("/auth/change-password")

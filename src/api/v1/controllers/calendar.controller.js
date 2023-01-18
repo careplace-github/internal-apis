@@ -1,79 +1,48 @@
 // Import Data Access Objects
 import EventsDAO from "../db/events.dao.js";
 import UsersDAO from "../db/users.dao.js";
-import eventsSeriesDAO from "../db/eventsSeries.dao.js";
+import EventsSeriesDAO from "../db/eventsSeries.dao.js";
 // Import Utils
-import requestUtils from "../utils/request.utils.js";
-import errorUtils from "../utils/error.utils.js";
+import requestUtils from "../utils/server/request.utils.js";
+import errorUtils from "../utils/errors/error.utils.js";
 // Import logger
 import logger from "../../../logs/logger.js";
-import * as Error from "../middlewares/errors/index.js";
-import AuthHelper from "../helpers/auth.helper.js";
+import * as Error from "../helpers/errors/errors.helper.js";
+import AuthHelper from "../helpers/auth/auth.helper.js";
+import CRUD from "./crud.controller.js";
 
+/**
+ * Create a new instance of the EventsSeriesDAO
+ */
+const eventsSeriesDAO = new EventsSeriesDAO();
+
+/**
+ * Create a new instance of the CRUD class.
+ * This class has the basic CRUD operations/methods for the EventsSeriesDAO.
+ */
+const eventsCRUD = new CRUD(eventsSeriesDAO);
+
+
+/**
+ * Create a new instance of the AuthHelper class.
+ */
+const authHelper = new AuthHelper();
+
+
+/**
+ * @class CalendarController
+ */
 export default class CalendarController {
-  static async index_events(req, res, next) {
-    try {
-      let token;
-      let response = {};
+  
 
-      let filters = {};
-      let options = {};
-      let page = req.query.page != null ? req.query.page : null;
-      let documentsPerPage =
-        req.query.documentsPerPage != null ? req.query.documentsPerPage : null;
-      let populate = req.query.populate != null ? req.query.populate : null;
 
-      let eventsDAO = new EventsDAO();
-      let usersDAO = new UsersDAO();
-
-      if (req.headers.authorization) {
-        // Extract the token from the request header
-        token = req.headers.authorization.split(" ")[1];
-
-        let authId = await AuthHelper.getAuthId(token, "cognito");
-
-        // Get user that cognitoId matches the authId
-        let user = await usersDAO.get_list({ cognito_id: { $eq: authId } });
-
-        filters = {
-          user: { $eq: user._id },
-        };
-      } else {
-        throw new Error._401("No token provided.");
-      }
-
-      // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
-      if (req.query.userId) {
-        //filters.userId = req.query.userId;
-      }
-
-      // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
-      if (req.query.sortBy) {
-        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-        // Otherwise, we will by default sort the results by ascending order.
-        options.sort = {
-          [req.query.sortBy]: req.query.sortOrder == "desc" ? -1 : 1, // 1 = ascending, -1 = descending
-        };
-      }
-
-      const events = await eventsDAO.get_list(
-        filters,
-        options,
-        page,
-        documentsPerPage,
-        populate
-      );
-
-      response.statusCode = 200;
-      response.data = events;
-
-      next(response);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async create_event(req, res, next) {
+/**
+ * 
+ * @param {express.Request} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+  static async createEvent(req, res, next) {
     try {
       let response = {};
 
@@ -82,7 +51,7 @@ export default class CalendarController {
       let usersDAO = new UsersDAO();
 
       try {
-        let userExists = await usersDAO.get_one(event.user);
+        let userExists = await usersDAO.retrieve(event.user);
       } catch (err) {
         if (err.type === "NOT_FOUND" || err.name === "CastError") {
           throw new Error._400(
@@ -91,7 +60,7 @@ export default class CalendarController {
         }
       }
 
-      let eventAdded = await eventsDAO.add(event);
+      let eventAdded = await eventsDAO.create(event);
 
       response.statusCode = 201;
       response.data = eventAdded;
@@ -102,14 +71,14 @@ export default class CalendarController {
     }
   }
 
-  static async show_event(req, res, next) {
+  static async retrieveEvent(req, res, next) {
     let response = {};
 
     let event_id = req.params.id;
     let eventsDAO = new EventsDAO();
 
     try {
-      let event = await eventsDAO.get_one(event_id);
+      let event = await eventsDAO.retrieve(event_id);
 
       response.statusCode = 200;
       response.data = event;
@@ -129,7 +98,7 @@ export default class CalendarController {
     let usersDAO = new UsersDAO();
 
     try {
-      var eventExists = await eventsDAO.get_one(event_id);
+      var eventExists = await eventsDAO.retrieve(event_id);
     } catch (err) {
       if (err.type === "NOT_FOUND" || err.name === "CastError") {
         throw new Error._400("Event does not exist.");
@@ -137,7 +106,7 @@ export default class CalendarController {
     }
 
     try {
-      let userExists = await usersDAO.get_one(eventExists.user);
+      let userExists = await usersDAO.retrieve(eventExists.user);
     } catch (err) {
       if (err.type === "NOT_FOUND" || err.name === "CastError") {
         throw new Error._400(
@@ -160,7 +129,7 @@ export default class CalendarController {
           "\n"
       );
 
-      let updatedDocument = await eventsDAO.set(updatedEvent);
+      let updatedDocument = await eventsDAO.update(updatedEvent);
 
       response.statusCode = 200;
       response.data = updatedDocument;
@@ -172,7 +141,7 @@ export default class CalendarController {
     }
   }
 
-  static async destroy_event(req, res, next) {
+  static async destroyEvent(req, res, next) {
     let response = {};
 
     let event_id = req.params.id;
@@ -190,13 +159,20 @@ export default class CalendarController {
     }
   }
 
-  static async index_eventsSeries(req, res, next) {}
 
-  static async create_eventsSeries(req, res, next) {}
+  static async indexEvents(req, res, next) {}
 
-  static async show_eventsSeries(req, res, next) {}
 
-  static async update_eventsSeries(req, res, next) {}
 
-  static async destroy_eventsSeries(req, res, next) {}
+  static async createEventsSeries(req, res, next) {
+    await eventsCRUD.create(req, res, next);
+  }
+
+  static async retrieveEventsSeries(req, res, next) {}
+
+  static async updateEventsSeries(req, res, next) {}
+
+  static async destroyEventsSeries(req, res, next) {}
+
+  static async indexEventsSeries(req, res, next) {}
 }

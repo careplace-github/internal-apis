@@ -18,10 +18,11 @@ export default function responseHandler(response, req, res, next) {
       body: req.body,
     };
 
-    let response_ = {
+    let logResponse = {
       request: request,
       response: response.data,
     };
+
 
     if (
       response.data === undefined ||
@@ -31,16 +32,17 @@ export default function responseHandler(response, req, res, next) {
       response.statusCode === null ||
       response.statusCode === ""
     ) {
-      response_.data = {
+      response.data = {
         message: "No data returned from the server.",
       };
     }
 
     res.status(response.statusCode).json(response.data);
 
-    logger.info(`HTTP Response: \n ${JSON.stringify(response_, null, 2)}\n`);
+    logger.info(`HTTP Response: \n ${JSON.stringify(logResponse, null, 2)}\n`);
 
-    return;
+   // return;
+   next()
   }
 
   handleRequest();

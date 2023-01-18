@@ -1,7 +1,7 @@
 import logger from "../../../../logs/logger.js";
 import AuthHelper from "../../helpers/auth.helper.js";
 
-import requestUtils from "../../utils/request.utils.js";
+import requestUtils from "../../utils/server/request.utils.js";
 
 /**
  * @description Middleware to validate if a user is authenticated through the JWT token.

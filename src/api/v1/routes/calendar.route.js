@@ -8,31 +8,36 @@ import {
   UpdateEventValidator,
 } from "../validators/events.validator.js";
 
+import CreateEventSeriesValidator from "../validators/eventsSeries.validator.js";
+
 // Import Controller
 import CalendarController from "../controllers/calendar.controller.js";
 
 const router = express.Router();
 
+
+
 router
+
   .route("/calendar/events")
-  .get(CalendarController.index_events)
-  .post(AddEventValidator, InputValidation, CalendarController.create_event);
+  .get(CalendarController.indexEvents)
+  .post(AddEventValidator, InputValidation, CalendarController.createEvent);
 
 router
   .route("/calendar/events/:id")
-  .get(CalendarController.show_event)
+  .get(CalendarController.retrieveEvent)
   .put(UpdateEventValidator, InputValidation, CalendarController.update_event)
-  .delete(CalendarController.destroy_event);
+  .delete(CalendarController.destroyEvent);
 
 router
-  .route("/calendar/events_series")
-  .get(CalendarController.index_eventsSeries)
-  .post(CalendarController.create_eventsSeries);
+  .route("/calendar/events-series")
+  .get(CalendarController.indexEventsSeries)
+  .post(CreateEventSeriesValidator, InputValidation, CalendarController.createEventsSeries);
 
 router
-  .route("/calendar/events_series/:id")
-  .get(CalendarController.show_eventsSeries)
-  .put(CalendarController.update_eventsSeries)
-  .delete(CalendarController.destroy_eventsSeries);
+  .route("/calendar/events-series/:id")
+  .get(CalendarController.retrieveEventsSeries)
+  .put(CalendarController.updateEventsSeries)
+  .delete(CalendarController.destroyEventsSeries);
 
 export default router;

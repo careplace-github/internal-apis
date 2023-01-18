@@ -20,8 +20,6 @@ export default function RequestUtils(req, res, next) {
       statusCode: 100,
     };
 
-    req.request_id = req.ip;
-
     logger.info(`HTTP Request: \n ${JSON.stringify(request, null, 2)} \n`);
 
     next();

@@ -1,37 +1,33 @@
 import logger from "../../../../logs/logger.js";
-import BaseError from "../../utils/baseError.utils.js";
+import BaseError from "../../utils/errors/baseError.utils.js";
 
+/**
+ * @todo Send the error to the error tracking service. (e.g. Sentry)
+ * Errors Handler Middleware
+ */
 export default function errorHandler(err, req, res, next) {
   function handleRequest() {
-    /**
-     * Utils for error handling.
-     *
-     * @param {Error} error - The error object.
-     * @returns {JSON} - The error with the code and message.
-     *
-     * @example
-     *
-     * try {
-     *  // Do something
-     * } catch (err) {
-     *
-     * let error = errorUtils(err);
-     *
-     * res.status(error.statusCode).json(error);
-     *
-     * }
-     */
-
-    
+    logger.info(`Error Handler: \n ${JSON.stringify(err, null, 2)} \n`);
 
     /**
      * The `ErrorHandler` middleware comes first that the `ResponseHandler` middleware in the middleware stack.
      * So we need to check if the parameter `err` is an error and handle accordingly.
      */
-    if (err instanceof BaseError) {
-      logger.warn(`${err.stack} \n`);
-    } else if (err instanceof Error) {
-      logger.error(`${err.stack} \n`);
+    if (err instanceof Error) {
+      if (
+        err.name === "ReferenceError" ||
+        err.name === "TypeError" ||
+        err.name === "SyntaxError" ||
+        err.name === "RangeError" ||
+        err.name === "EvalError" ||
+        err.name === "URIError" ||
+        err.name === "AggregateError" ||
+        err.name === "CastError"
+      ) {
+        err.message = "Internal Server Error";
+        err.statusCode = 500;
+        err.type = "INTERNAL_SERVER_ERROR";
+      }
     } else {
       /**
        * In this case this is not an error.
@@ -43,14 +39,22 @@ export default function errorHandler(err, req, res, next) {
     let response = {
       data: {
         error: {
-          message: err.message,
-          type: err.type,
+          message: err.message ? err.message : "Internal Server Error",
+          type: err.type ? err.type : "INTERNAL_SERVER_ERROR",
         },
       },
-      statusCode: err.statusCode,
+      statusCode: err.statusCode ? err.statusCode : 500,
     };
 
     next(response);
+
+    /**
+     * @todo - Need to fully implement this.
+     * If the error is not operational, restart the server to avoid any further errors that might occur.
+     */
+    if (err.isOperational === false) {
+      process.exit(1);
+    }
   }
 
   handleRequest();
