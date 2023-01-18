@@ -1,12 +1,12 @@
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../../logs/logger.js";
 
 // Import utils
-import EmailHelper from "../helpers/email.helper.js";
-import requestUtils from "../utils/request.utils.js";
+import EmailHelper from "../../helpers/emails/email.helper.js";
+import requestUtils from "../../utils/server/request.utils.js";
 
 // Import  SES Service
-import SES from "../services/ses.service.js";
+import SES from "../../services/ses.service.js";
 
 
 

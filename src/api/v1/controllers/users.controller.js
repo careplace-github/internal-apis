@@ -7,17 +7,17 @@ import usersDAO from "../db/users.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 
 // Import Helpers
-import AuthHelper from "../helpers/auth.helper.js";
+import AuthHelper from "../helpers/auth/auth.helper.js";
 
 // Import Utils
 import password from "secure-random-password";
-import EmailHelper from "../helpers/email.helper.js";
+import EmailHelper from "../helpers/emails/email.helper.js";
 
 
 
 // Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../utils/server/request.utils.js";
 
 const app = "crm";
 

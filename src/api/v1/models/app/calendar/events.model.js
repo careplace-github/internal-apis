@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import * as Schemas from "../../../models/index.js";
-import * as Error from "../../../middlewares/errors/index.js";
+import * as Error from "../../../helpers/errors/errors.helper.js";
+
+
 
 const Schema = mongoose.Schema;
 
@@ -99,3 +101,4 @@ eventSchema.pre("findOneAndUpdate", function (next) {
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 export default Event = mongoose.model("Event", eventSchema);
+

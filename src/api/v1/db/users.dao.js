@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import User from "../models/userLogic/users.model.js";
 
-import { MONGODB_collection_users } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_USERS_NS } from "../../../config/constants/index.js";
 
 /**
  * @class Class to manage the EVENTS collection.
@@ -13,6 +13,6 @@ export default class UsersDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(User, MONGODB_collection_users);
+    super(User, MONGODB_COLLECTION_USERS_NS);
   }
 }

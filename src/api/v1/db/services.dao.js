@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import Service from "../models/admin/services.model.js";
 
-import {MONGODB_collection_services} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_SERVICES_NS} from "../../../config/constants/index.js";
 
 
 
@@ -13,6 +13,6 @@ export default class servicesDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(Service, MONGODB_collection_services);
+    super(Service, MONGODB_COLLECTION_SERVICES_NS);
   }
 }

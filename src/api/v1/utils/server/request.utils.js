@@ -1,10 +1,8 @@
-/**
- * @class
- * @classdesc - This class contains all the utility functions to help log the request
- */
 
- 
- export default function RequestUtils(req, res, next) {
+/**
+ * Utils for HTTP requests
+ */
+ export default async function RequestUtils(req, res, next) {
     const request = {
         request: {
             type: req.method,

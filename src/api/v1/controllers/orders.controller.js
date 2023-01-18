@@ -7,13 +7,13 @@ import CompaniesDAO from "../db/companies.dao.js";
 import UsersDAO from "../db/users.dao.js";
 import RelativesDAO from "../db/relatives.dao.js";
 
-// Import Helpers
-import AuthHelper from "../helpers/auth.helper.js";
+import * as Error from "../helpers/errors/errors.helper.js";
+import AuthHelper from "../helpers/auth/auth.helper.js";
 
 
 // Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../utils/server/request.utils.js";
 
 
 export default class OrdersController {
@@ -38,7 +38,7 @@ export default class OrdersController {
       }
 
       try {
-        let companyExists = await companiesDAO.get_one(order.company);
+        let companyExists = await companiesDAO.retrieve(order.company);
       } catch (error) {
         if (err.type === "NOT_FOUND" || err.name === "CastError") {
           throw new Error._400(
@@ -48,7 +48,7 @@ export default class OrdersController {
       }
 
       try {
-        let customerExists = await usersDAO.get_one(order.customer);
+        let customerExists = await usersDAO.retrieve(order.customer);
       } catch (error) {
         if (err.type === "NOT_FOUND" || err.name === "CastError") {
           throw new Error._400(
@@ -58,7 +58,7 @@ export default class OrdersController {
       }
 
       try {
-        let relativeExists = await relativesDAO.get_one(order.relative);
+        let relativeExists = await relativesDAO.retrieve(order.relative);
       } catch (error) {
         if (err.type === "NOT_FOUND" || err.name === "CastError") {
           throw new Error._400(
@@ -71,7 +71,7 @@ export default class OrdersController {
       let authId = await AuthHelper.getAuthId(token, "cognito");
 
       // Get user that cognitoId matches the authId
-      let user = await usersDAO.get_list({ cognito_id: { $eq: authId } });
+      let user = await usersDAO.query_list({ cognito_id: { $eq: authId } });
 
       if (user.role === "user") {
         // The user._id has to be the same as the order.customer or the order.client to create an order

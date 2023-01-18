@@ -1,37 +1,36 @@
-// Import the express module
-import Router from "express"
-import express from "express"
+import express from "express";
+import path from "path";
+import multer from "multer";
+import FilesController from "../controllers/files.controller.js";
 
-import multer from "multer"
-const upload = multer({ dest: "src/api/v1/uploads/" })
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./src/uploads");
+  },
+  filename: function (req, file, cb) {
+    /**
+     * Change the file name to the current date and time to avoid duplicate file names
+     */
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
 
+/**
+ * Multer is a middleware that handles multipart/form-data, which is primarily used for uploading files.
+ * It adds a body object and a file or files object to the request object.
+ * The body object contains the values of the text fields of the form, the file or files object contains the files uploaded via the form.
+ *
+ * @see https://www.npmjs.com/package/multer
+ */
+const upload = multer({ storage: storage });
 
-// Import controllers
-import FilesController from "../controllers/files.controller.js"
-
-
-const router = express.Router()
-
+const router = express.Router();
 
 router.route("/files")
-    .get(FilesController.index)
-    .post(  upload.single('file'), FilesController.create )
+    .post(upload.single("file"), FilesController.create);
 
+router.route("/files/:key")
+  .get(FilesController.retrieve)
+  .delete(FilesController.delete);
 
-// router to get user information by id
-router.route("/files/:id")
-    .get( FilesController.show)
-   
-
-
-
-
-
-    
-
-
-    
-  
-
-
-export default router
+export default router;

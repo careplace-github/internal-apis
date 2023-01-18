@@ -1,76 +1,134 @@
 import AWS from "aws-sdk";
-
 import fs from "fs";
+import * as Error from "../helpers/errors/errors.helper.js";
 
 import {
-  AWS_s3_bucket_name,
-  AWS_s3_region,
-  AWS_access_key_id,
-  AWS_secret_access_key,
+  AWS_S3_BUCKET_NAME,
+  AWS_S3_REGION,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACESS_KEY,
 } from "../../../config/constants/index.js";
 
+/**
+ * Creates a new S3 instance
+ *
+ * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
+ */
 const s3 = new AWS.S3({
-  accessKeyId: AWS_access_key_id,
-  secretAccessKey: AWS_secret_access_key,
-  region: AWS_s3_region,
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACESS_KEY,
+  region: AWS_S3_REGION,
 });
+
+/**
+ * Class to manage the AWS S3 Service
+ *
+ * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
+ */
 export default class S3 {
+  /**
+   * Constructor
+   */
+  constructor() {
+    this.s3 = s3;
+  }
 
-  
-  // Function to upload a file to S3
-  static async uploadFile(file) {
+  /**
+   * Uploads a file to the S3 bucket
+   *
+   * @param {File} file - File to upload.
+   * @returns {Promise<JSON>} - Promise that resolves to the response from the S3 bucket.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#upload-property
+   */
+  async uploadFile(file, ACL) {
     // New promise that catches the error
-    try {
-      // Read content from the file
-      const fileStream = fs.createReadStream(file.path);
 
-      console.log("BUCKET_NAME: ", AWS_s3_bucket_name);
-      console.log("region: ", AWS_s3_region);
-
-      const params = {
-        Bucket: AWS_s3_bucket_name,
-        Body: fileStream,
-        Key: file.originalname,
-
-        // ACL: "public-read",
-      };
-
-      const response = await s3.upload(params).promise();
-
-      // Delete the file from the uploads folder
-      fs.unlink(file.path, (err) => {
-        if (err) {
-          console.log(err);
-        }
-      });
-
-      return response;
-    } catch (error) {
-      console.log(error);
-      return error;
+    if (!file) {
+      throw new Error._400("No file found.");
     }
+
+    // Read content from the file
+    const fileStream = fs.createReadStream(file.path);
+
+    console.log("BUCKET_NAME: ", AWS_S3_BUCKET_NAME);
+    console.log("region: ", AWS_S3_REGION);
+
+    const params = {
+      Bucket: AWS_S3_BUCKET_NAME,
+      Body: fileStream,
+      Key: file.originalname,
+
+      /**
+       * ACL stands for Access Control List and is a list of permissions
+       */
+      ACL: ACL ? ACL : "private",
+    };
+
+    const response = await this.s3.upload(params).promise();
+
+    return response;
   }
 
-  static async getFile(key) {
+  /**
+   * Returns a file from the S3 bucket.
+   *
+   * @param {String} key - Key of the file to get.
+   * @returns {Promise<File>} - Promise that resolves to the file.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getObject-property
+   */
+  async getFile(key) {
     const params = {
-      Bucket: AWS_s3_bucket_name,
+      Bucket: AWS_S3_BUCKET_NAME,
       Key: key,
     };
-    return s3.getObject(params).promise();
+    return this.s3.getObject(params).promise();
   }
 
-  static async deleteFile(key) {
+  /**
+   * Deletes a file from the S3 bucket.
+   *
+   * @param {String} key - Key of the file to delete.
+   * @returns {Promise<JSON>} - Promise that resolves to the response from the S3 bucket.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObject-property
+   */
+  async deleteFile(key) {
     const params = {
-      Bucket: AWS_s3_bucket_name,
+      Bucket: AWS_S3_BUCKET_NAME,
       Key: key,
     };
-    return s3.deleteObject(params).promise();
+    return this.s3.deleteObject(params).promise();
   }
 
-  static async getFiles() {
+  /**
+   * Lists all the files in the S3 bucket
+   *
+   * @returns {Promise<JSON>} - Promise that resolves to the response from the S3 bucket.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
+   */
+  async getFiles() {
     const params = {
-      Bucket: AWS_s3_bucket_name,
+      Bucket: AWS_S3_BUCKET_NAME,
     };
-    return s3.listObjectsV2(params).promise();
+    return this.s3.listObjectsV2(params).promise();
+  }
+
+  /**
+   * Lists all the files in the S3 bucket that match the query
+   *
+   * @param {JSON} query - Query to match the files
+   * @returns {Promise<JSON>} - Promise that resolves to the response from the S3 bucket.
+   *
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
+   */
+  async getFilesByQuery(query) {
+    const params = {
+      Bucket: AWS_S3_BUCKET_NAME,
+      Prefix: query,
+    };
+    return this.s3.listObjectsV2(params).promise();
   }
 }

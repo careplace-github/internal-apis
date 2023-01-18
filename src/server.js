@@ -36,35 +36,35 @@ import rateLimit from "express-rate-limit";
 // Import mongoose
 import mongoose from "mongoose";
 
-import * as Error from "./api/v1/middlewares/errors/index.js";
+import * as Error from "./api/v1/helpers/errors/errors.helper.js";
 
 // Loads Environment Constants
 import {
-  env,
-  host,
-  api_version,
-  api_url,
-  SERVER_Port,
-  MONGODB_db_active_uri,
-  MONGODB_db_deletes_uri,
-  MONGODB_db_active,
-  MONGODB_db_deletes,
+  ENV,
+  HOST,
+  API_VERSION,
+  API_ROUTE,
+  API_URL,
+  SERVER_PORT,
+  MONGODB_DB_ACTIVE_URI,
+  MONGODB_DB_DELETES_URI,
+  MONGODB_DB_ACTIVE_NS,
+  MONGODB_DB_DELETES_NS,
 } from "./config/constants/index.js";
 
 // Import Router Exports
-import configAPI from "./api/v1/routes/config.route.js";
-import emailsAPI from "./api/v1/routes/emails.route.js";
-import filesAPI from "./api/v1/routes/files.route.js";
-import authAPI from "./api/v1/routes/authentication.route.js";
-import usersAPI from "./api/v1/routes/users.route.js";
-import companiesAPI from "./api/v1/routes/companies.route.js";
-import servicesAPI from "./api/v1/routes/services.route.js";
-import ordersAPI from "./api/v1/routes/orders.route.js";
-import calendarAPI from "./api/v1/routes/calendar.route.js";
-import webHooksAPI from "./api/v1/routes/hooks/webhooks.route.js";
+import configRoute from "./api/v1/routes/config.route.js";
+import filesRoute from "./api/v1/routes/files.route.js";
+import authRoute from "./api/v1/routes/authentication.route.js";
+import usersRoute from "./api/v1/routes/users.route.js";
+import companiesRoute from "./api/v1/routes/companies.route.js";
+import servicesRoute from "./api/v1/routes/services.route.js";
+import ordersRoute from "./api/v1/routes/orders.route.js";
+import calendarRoute from "./api/v1/routes/calendar.route.js";
+import webHooksRoute from "./api/v1/routes/hooks/webhooks.route.js";
 
 // Helpers
-import getServices from "./api/v1/helpers/services.helper.js";
+import getServices from "./api/v1/helpers/assets/services.helper.js";
 
 // Import Middlewares
 import logger from "./logs/logger.js";
@@ -84,11 +84,12 @@ const main = async () => {
      \n`);
 
     logger.info(`Server settings: `);
-    logger.info(`Running in '${env}' environment`);
-    logger.info(`Host: ${host} `);
-    logger.info(`API Version: ${api_version} `);
-    logger.info(`API URL: ${api_url} `);
-    logger.info(`Server Port: ${SERVER_Port} \n \n`);
+    logger.info(`Running in '${ENV}' environment`);
+    logger.info(`Host: ${HOST} `);
+    logger.info(`API Version: ${API_VERSION} `);
+    logger.info(`API Route: ${API_ROUTE} `);
+    logger.info(`API URL: ${API_URL} `);
+    logger.info(`Server Port: ${SERVER_PORT} \n \n`);
 
     logger.info(`Initializing the server... \n \n`);
 
@@ -113,12 +114,10 @@ const main = async () => {
       family: 4, // Use IPv4, skip trying IPv6
     };
 
-    logger.info(
-      `Connecting to MongoDB Database '${MONGODB_db_active}'...`
-    );
+    logger.info(`Connecting to MongoDB Database '${MONGODB_DB_ACTIVE_NS}'...`);
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
-    let db_connection = await mongoose.connect(MONGODB_db_active_uri, options);
+    let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
 
     /**
      *  Handle connection errors
@@ -145,7 +144,7 @@ const main = async () => {
 
     // Successfuly connected to MongoDB
     logger.info(
-      `Connected to MongoDB Database '${MONGODB_db_active}' Successfully!`
+      `Connected to MongoDB Database '${MONGODB_DB_ACTIVE_NS}' Successfully!`
     );
     //Store the connection in a global variable
     global.db = db_connection.connection;
@@ -370,34 +369,34 @@ const main = async () => {
       logger.info(`Applying Application Middlewares...`);
 
       // Middleware to parse the body of the HTTP requests
-     // app.use(express.json());
 
-     app.use((req, res, next) => {
-      if (req.originalUrl === '/api/v1/webhooks/stripe/connect') {
-        next();
-      } else {
-        express.json()(req, res, next);
-      }
-    });
+      // Check if the request is a webhook request
+      // A request is a webhook request if the original URL is /api/v1/webhooks/ + the name of the webhook
+
+      // Use JSON parser for all non-webhook routes
+
+      app.use((req, res, next) => {
+        if (req.originalUrl === "/api/v1/webhooks/stripe/connect") {
+          next();
+        } else {
+          express.json()(req, res, next);
+        }
+      });
 
       // Middleware to log all the HTTP requests
       app.use(requestLogger);
 
       // Routes middlewares
-    
 
-      
-      app.use(api_url, configAPI);
-      
-      app.use(api_url, emailsAPI);
-      app.use(api_url, filesAPI);
-      app.use(api_url, authAPI);
-      app.use(api_url, usersAPI);
-      app.use(api_url, companiesAPI);
-      app.use(api_url, ordersAPI);
-      app.use(api_url, servicesAPI);
-      app.use(api_url, calendarAPI);
-      app.use(api_url, webHooksAPI);
+      app.use(API_ROUTE, configRoute);
+      app.use(API_ROUTE, filesRoute);
+      app.use(API_ROUTE, authRoute);
+      app.use(API_ROUTE, usersRoute);
+      app.use(API_ROUTE, companiesRoute);
+      app.use(API_ROUTE, ordersRoute);
+      app.use(API_ROUTE, servicesRoute);
+      app.use(API_ROUTE, calendarRoute);
+      app.use(API_ROUTE, webHooksRoute);
 
       // Middleware to handle and log all the errors
       app.use(errorLogger);
@@ -446,7 +445,6 @@ const main = async () => {
       await getServices();
 
       logger.info("Fetched all the necessary assets successfully!");
-
     } catch (error) {
       throw new Error._503(`Service Unavailable: ${error}`);
     }
@@ -462,13 +460,12 @@ const main = async () => {
       logger.info(`Starting to listen for HTTP requests...`);
 
       // Starts listening for HTTP requests
-      app.listen(SERVER_Port, () => {
+      app.listen(SERVER_PORT, () => {
         logger.info(
-          `Successfully listening for HTTP requests on port: ${SERVER_Port}\n`
+          `Successfully listening for HTTP requests on port: ${SERVER_PORT}\n`
         );
 
         logger.info(`Server started successfully! 🚀`);
-
       });
     } catch (error) {
       throw new Error._500(`Unable to start the HTTP Server: ${error}`);
@@ -476,8 +473,6 @@ const main = async () => {
   } catch (error) {
     throw new Error._500(`Internal Error: ${error}`);
   }
-
- 
 };
 
 main();
