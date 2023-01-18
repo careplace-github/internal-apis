@@ -1,16 +1,27 @@
 // Import Cognito Service
-import Cognito from "../services/cognito.service.js";
+import cognito from "../services/cognito.service.js";
 
 // Import database access objects
 import usersDAO from "../db/users.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 
-import authHelper from "../helpers/auth.helper.js";
-
-// Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
-let app;
+import * as Error from "../helpers/errors/errors.helper.js";
+import authHelper from "../helpers/auth/auth.helper.js";
+import CRUD from "./crud.controller.js";
+import authUtils from "../utils/auth/auth.utils.js";
+
+/**
+ * Create a new instance of the UsersDAO.
+ */
+const UsersDAO = new usersDAO();
+
+/**
+ * Create a new instance of the AuthHelper.
+ */
+const AuthHelper = new authHelper();
+
+const Cognito = new cognito();
 
 export default class AuthenticationController {
   /**
@@ -36,7 +47,7 @@ export default class AuthenticationController {
       password: req.body.password,
       phoneNumber: req.body.phoneNumber,
       phoneNumberCountryCode: req.body.phoneNumberCountryCode,
-      gender : req.body.gender,
+      gender: req.body.gender,
       cognitoId: "",
     };
 
@@ -53,11 +64,8 @@ export default class AuthenticationController {
       app,
       newUser.email,
       newUser.password,
-      newUser.phoneNumber,
+      newUser.phoneNumber
     );
-
-
-    
 
     // If there is an error, return the error to the client
     if (cognitoResponse.error != null) {
@@ -84,7 +92,7 @@ export default class AuthenticationController {
       newUser.cognitoId = cognitoResponse.UserSub;
 
       // Attempting to add a new user to the database
-      mongodbResponse = await usersDAO.add(newUser);
+      mongodbResponse = await UsersDAO.create(newUser);
 
       // If there is an error, return the error to the client
       if (mongodbResponse.error != null) {
@@ -139,117 +147,151 @@ export default class AuthenticationController {
   /**
    * @description Signs in a user
    */
-  static async login(req, res, next) {
-    // try {
-    var request = requestUtils(req);
+  static async crm_login(req, res, next) {
+    try {
+      logger.info(
+        `Authentication Controller CRM_LOGIN Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
+      );
 
-    logger.info(
-      "Attempting to login the user: " + JSON.stringify(request, null, 2) + "\n"
-    );
+      let response = {};
+      let responseAux = {};
 
-    let cognitoResponse = {};
-    let response = {};
+      let app = "crm;";
+      let cognitoResponse = {};
+      let Cognito = new cognito(app);
 
-     app = await authHelper.getUserApp(req.body.email);
+      var payload = { email: req.body.email, password: req.body.password };
 
-    //console.log("app: ", app);
+      try {
+        cognitoResponse = await Cognito.authenticateUser(
+          app,
+          "USER_PASSWORD_AUTH",
+          payload
+        );
+      } catch (error) {
+        /**
+         * @todo Handle all exceptions
+         * @see
+         */
+        switch (error.code) {
+          case "UserNotFoundException":
+            break;
+          case "NotAuthorizedException":
+            break;
+          case "PasswordResetRequiredException":
+            break;
+          case "InvalidParameterException":
+            break;
+          case "InvalidPasswordException":
+            break;
+          case "UserNotConfirmedException":
+            break;
+          case "CodeMismatchException":
+            break;
+          case "ExpiredCodeException":
+            break;
+        }
 
-    var payload = { email: req.body.email, password: req.body.password };
+        response.statusCode = 400;
+        response.data = { error: error.message };
 
-    cognitoResponse = await Cognito.authenticateUser(
-      app,
-      "USER_PASSWORD_AUTH",
-      payload
-    );
+        next(response);
+      }
 
-    // If there is an error, return the error to the client
-    if (cognitoResponse.error != null) {
-      request.statusCode = 400;
-      request.response = { error: cognitoResponse.error.message };
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      return res.status(400).json({ error: cognitoResponse.error.message });
-    }
-
-    // User authenticated successfully
-    else {
-      logger.warn(JSON.stringify(cognitoResponse, null, 2) + "\n");
+      // User authenticated successfully
 
       // Check for challenges
       if (cognitoResponse.ChallengeName != null) {
         switch (cognitoResponse.ChallengeName) {
           case "NEW_PASSWORD_REQUIRED":
-            response.challenge = cognitoResponse.ChallengeName;
-            response.session = cognitoResponse.Session;
-
-            const test = Cognito.getSession(app, req.body.email);
-
-            break;
-
-          default:
-            response.hallenge = cognitoResponse.ChallengeName;
-            response.challengeParameters = cognitoResponse.ChallengeParameters;
-
+            /**
+             * @todo
+             */
             break;
         }
       }
 
       // No challenges
       else {
-       
-          response.accessToken = cognitoResponse.AuthenticationResult.AccessToken;
-          response.accessTokenExpiration = cognitoResponse.AuthenticationResult.ExpiresIn;
-          response.accessTokenType = cognitoResponse.AuthenticationResult.TokenType;
-          response.refreshToken = cognitoResponse.AuthenticationResult.RefreshToken;
-      
+        console.log("cognitoResponse: " + cognitoResponse);
+
+        responseAux.accessToken =
+          cognitoResponse.AuthenticationResult.AccessToken;
+        responseAux.accessTokenExpiration =
+          cognitoResponse.AuthenticationResult.ExpiresIn;
+        responseAux.accessTokenType =
+          cognitoResponse.AuthenticationResult.TokenType;
+        responseAux.refreshToken =
+          cognitoResponse.AuthenticationResult.RefreshToken;
       }
 
-      // Fetch user information from the database
-      const user = await usersDAO.get_one_by_email(req.body.email);
-      response.user = user;
+ 
+   /**
+    * 1) AUTHENTICATE USER -> GET ACCESS TOKEN
+    * 2) GET COGNITO ID FROM ACCESS TOKEN USING AUTH HELPER -> RETRIEVE USER FROM MONGODB
+    * 3) GET USER ROLES FROM USING REQ.BODY.EMAIL -> ADD TO USER OBJECT
+    */
+
+
+      let AuthUtils = new authUtils();
+
+      let  decodedToken = await AuthUtils.decodeJwtToken( cognitoResponse.AuthenticationResult.AccessToken);
+
+      let roles = decodedToken["cognito:groups"];
+      let cognitoId = decodedToken.sub;
+
+      console.log("cognitoId: " + JSON.stringify(cognitoId, null, 2));
 
       /**
-       *  // User information fetched successfully
-      if (user) {
-        // The role user is the only role not associated with a company
-        if (user.role != "user") {
-          // Fetch company information from the database
-          const company = await companiesDAO.get_one(user.companyId);
-
-          // Company information fetched successfully
-          if (company) {
-            user.company = company;
-          }
-        }
-        // Populate the response with the user information
-        response.user = user;
-      }
+       * @todo Implement with query_one instead of query_list
+       *
+       * Fetch user information from the database
        */
+      let user = await UsersDAO.query_list({
+        cognito_id: { $eq: cognitoId },
+      });
 
      
 
-      request.statusCode = 200;
-      request.response = response;
 
-      logger.info(JSON.stringify(request, null, 2) + "\n");
+      // Convert the user object to a JSON object
+      user = JSON.parse(JSON.stringify(user));
 
-      return res.status(200).json(response);
+       // Order each field alphabetically 
+      user = Object.keys(user).sort().reduce((obj, key) => {
+        obj[key] = user[key];
+        return obj;
+      }, {});
+      
+
+      // Remove the cognito_id from the user object
+      delete user.cognito_id;
+      delete user.cognitoId;
+
+      // Add the user role to the user object
+      user.roles = roles ? roles : ["crm-user"];
+
+      responseAux.user = user;
+
+      response.statusCode = 200;
+      response.data = responseAux;
+
+      next(response);
+
+
+
+      
+
+    } catch (error) {
+      next(error);
     }
   }
 
-  /**
-       *   } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
-      );
-
-      return res.status(500).json(error);
-    }
-       */
+  static async marketplace_login(req, res, next) {}
 
   /**
    * @description Changes a user's password
@@ -513,44 +555,42 @@ export default class AuthenticationController {
    */
   // Function to confirm the user's email address after registration using the confirmation code sent to the user's email address
   static async verifyUser(req, res, next) {
-    
-      var request = requestUtils(req);
+    var request = requestUtils(req);
 
-      logger.info(
-        "Attempting to confirm a Cognito user through the verification code sent to the user email: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-      app = await authHelper.getUserApp(req.body.email);
+    logger.info(
+      "Attempting to confirm a Cognito user through the verification code sent to the user email: " +
+        JSON.stringify(request, null, 2) +
+        "\n"
+    );
+    app = await AuthHelper.getUserApp(req.body.email);
 
-      const cognitoResponse = await Cognito.confirmUser(
-        app, 
-        req.body.email,
-        req.body.code
-      );
+    const cognitoResponse = await Cognito.confirmUser(
+      app,
+      req.body.email,
+      req.body.code
+    );
 
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error };
+    // If there is an error, return the error to the client
+    if (cognitoResponse.error != null) {
+      request.statusCode = 400;
+      request.response = { error: cognitoResponse.error };
 
-        logger.error(JSON.stringify(request, null, 2) + "\n");
+      logger.error(JSON.stringify(request, null, 2) + "\n");
 
-        return res.status(400).json({ error: cognitoResponse.error.message });
+      return res.status(400).json({ error: cognitoResponse.error.message });
 
-        // If there is no error, return the success message to the client
-      } else {
-        request.statusCode = 200;
-        request.response = {
-          message: "User confirmed successfully.",
-        };
+      // If there is no error, return the success message to the client
+    } else {
+      request.statusCode = 200;
+      request.response = {
+        message: "User confirmed successfully.",
+      };
 
-        logger.info(JSON.stringify(request, null, 2) + "\n");
+      logger.info(JSON.stringify(request, null, 2) + "\n");
 
-        return res.status(200).json({
-          message: "User confirmed successfully.",
-        });
-      }
-    
+      return res.status(200).json({
+        message: "User confirmed successfully.",
+      });
+    }
   }
 }

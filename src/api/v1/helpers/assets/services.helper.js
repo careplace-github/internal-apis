@@ -1,5 +1,5 @@
-import ServicesDAO from "../db/services.dao.js";
-import * as Error from "../middlewares/errors/index.js";
+import ServicesDAO from "../../db/services.dao.js";
+import * as Error from "../errors/errors.helper.js";
 import fs from "fs";
 
 /**
@@ -9,7 +9,7 @@ export default async function getServices() {
   let servicesDAO = new ServicesDAO();
 
   try {
-    var services = await servicesDAO.get_list();
+    var services = await servicesDAO.query_list();
   } catch (err) {
     throw new Error._500(err);
   }

@@ -1,10 +1,10 @@
 import { Timestamp } from "bson";
 import stripe from "stripe";
 
-import { STRIPE_secret_key, STRIPE_publishable_key } from "../../../config/constants/index.js";
+import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from "../../../config/constants/index.js";
 
 
-const stripeClient = stripe(STRIPE_secret_key);
+const stripeClient = stripe(STRIPE_SECRET_KEY);
 
 /**
  * Class to manage the Stripe API
@@ -110,6 +110,21 @@ export default class Stripe {
 
     return createdPrice;
   }
+
+
+
+  // -------------------------------------------------------------------------------------------- //
+  //                                        PAYMENT INTENTS                                       //
+  //                                                                                              //
+  // @see https://stripe.com/docs/api/payment_intents?lang=node                                   //
+  // -------------------------------------------------------------------------------------------- //
+
+
+
+  
+
+
+
 
   // -------------------------------------------------------------------------------------------- //
   //                                           CONNECT                                            //

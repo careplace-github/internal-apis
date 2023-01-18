@@ -1,5 +1,5 @@
 /**
- * Utils for error handling.
+ * Class with utility functions for dates.
  *
  * @param {Error} error - The error object.
  * @returns {JSON} - The error with the code and message.
@@ -16,7 +16,7 @@
  *
  * }
  */
-export default function ErrorUtils(err) {
+export default async function ErrorUtils(err) {
   let error = {
     type: err.name,
     message: err.message,

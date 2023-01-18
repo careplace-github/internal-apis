@@ -1,10 +1,10 @@
-import httpStatusCodes from "../assets/httpStatusCodes.js";
-import BaseError from "../../../utils/baseError.utils.js";
+import httpStatusCodes from "../httpStatusCodes.js"
+import BaseError from "../../../utils/errors/baseError.utils.js";
 
 export default class API401Error extends BaseError {
   constructor(
     message,
-    statusCode = httpStatusCodes.BAD_REQUEST,
+    statusCode = httpStatusCodes.UNAUTHORIZED,
     type = "UNAUTHORIZED",
     isOperational = true
   ) {

@@ -3,13 +3,13 @@
 // Import Services
 import Stripe from "./../../services/stripe.service.js";
 
-import * as Error from "./../../utils/baseError.utils.js";
+import * as Error from "../../utils/errors/baseError.utils.js";
 
 import { buffer } from "micro";
 
 import {
-  STRIPE_account_endpoint_secret,
-  STRIPE_connect_endpoint_secret,
+  STRIPE_ACCOUNT_ENDPOINT_SECRET,
+  STRIPE_CONNECT_ENDPOINT_SECRET,
 } from "../../../../config/constants/index.js";
 
 /**
@@ -54,7 +54,7 @@ export default class StripeController {
     event = await stripe.constructEvent(
       req.body,
       sig,
-      STRIPE_connect_endpoint_secret
+      STRIPE_CONNECT_ENDPOINT_SECRET
     );
 
     /**

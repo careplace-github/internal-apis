@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import Event from "../models/app/calendar/events.model.js";
 
-import {MONGODB_collection_events} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_EVENTS_NS} from "../../../config/constants/index.js";
 
 
 
@@ -17,7 +17,7 @@ export default class EventsDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(Event, MONGODB_collection_events);
+    super(Event, MONGODB_COLLECTION_EVENTS_NS);
 
    
 

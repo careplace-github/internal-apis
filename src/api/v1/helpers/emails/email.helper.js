@@ -2,19 +2,27 @@ import { readFileSync, promises as fsPromises } from "fs";
 import fs from "fs";
 
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../../logs/logger.js";
 
 // Gender id's
 const male = 0;
 const female = 1;
 
-export default class EmailUtils {
+/**
+ * Class with helper and utility functions for the SES email service.
+ */
+export default class EmailHelper {
+  /**
+   * Constructor
+   */
+  constructor() {}
+
   /**
    * @description - Reads the contents of a file and returns it as a string.
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<String>} - The email template as a string.
    */
-  static async getEmailTemplate(emailTemplate) {
+  async getEmailTemplate(emailTemplate) {
     let filename = `./src/emails/${emailTemplate}`;
 
     // Check if file has the correct extension
@@ -38,7 +46,7 @@ export default class EmailUtils {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @param {JSON} data - The data to be inserted in the email template.
    */
-  static async getEmailWithData(emailTemplate, data) {
+  async getEmailWithData(emailTemplate, data) {
     // Check if the email template is provided
     if (emailTemplate == null) {
       return { error: "Need to provide an email template." };
@@ -137,7 +145,7 @@ export default class EmailUtils {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<Array>} - An array containing the variables in the email template.
    */
-  static async getEmailVariables(emailTemplate) {
+  async getEmailVariables(emailTemplate) {
     // Get the email template
     const template = await this.getEmailTemplate(emailTemplate);
 
@@ -161,7 +169,7 @@ export default class EmailUtils {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<String>} - The subject of the email template.
    */
-  static async getEmailSubject(emailTemplate, data) {
+  async getEmailSubject(emailTemplate, data) {
     // Get the email template
     let template = await this.getEmailWithData(emailTemplate, data);
 
@@ -179,7 +187,7 @@ export default class EmailUtils {
    * @throws {Error} - If the email templates folder contains files that are not html.
    * @throws {Error} - If the email templates folder contains files that do not have the .html extension.
    */
-  static async getEmailTemplatesNames() {
+  async getEmailTemplatesNames() {
     // Get the email templates folder
     const emailTemplatesFolder = "./src/emails";
 
@@ -229,7 +237,7 @@ export default class EmailUtils {
    * @throws {Error} - If the email templates folder is empty.
    * @throws {Error} - If the email templates folder contains files that are not html.
    */
-  static async getEmailTemplates() {
+  async getEmailTemplates() {
     // Get the names of the email templates
     const emailTemplatesNames = await this.getEmailTemplatesNames();
 
@@ -256,20 +264,5 @@ export default class EmailUtils {
     );
 
     return emailTemplates;
-  }
-
-  static compressEmail(email) {
-    gulp.task("scripts", function () {
-      return gulp
-        .src("src/scripts/**/*.js")
-        .pipe(jshint(".jshintrc"))
-        .pipe(jshint.reporter("default"))
-        .pipe(concat("main.js"))
-        .pipe(gulp.dest("dist/assets/js"))
-        .pipe(rename({ suffix: ".min" }))
-        .pipe(uglify())
-        .pipe(gulp.dest("dist/assets/js"))
-        .pipe(notify({ message: "Scripts task complete" }));
-    });
   }
 }

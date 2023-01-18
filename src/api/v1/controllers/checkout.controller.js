@@ -1,20 +1,36 @@
 // Import Stripe Service
 import StripeService from "../services/stripe.service.js";
 
-import ordersDAO from "../db/ordersDAO.js";
+import OrdersDAO from "../db/ordersDAO.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/request.utils.js";
 
+import AuthHelper from "../helpers/auth/auth.helper.js";
+import CRUD from "./crud.controller.js";
 
+/**
+ * Create a new instance of the OrdersDAO.
+ */
+const ordersDAO = new OrdersDAO();
+
+/**
+ * Create a new instance of the CRUD class.
+ * This class has the basic CRUD operations/methods.
+ */
+const ordersCRUD = new CRUD(ordersDAO);
+
+/**
+ * Create a new instance of the AuthHelper class.
+ */
+const authHelper = new AuthHelper();
 
 /*
-*/
+ * @class CheckoutController
+ */
 export default class CheckoutController {
-
-static async createPaymentIntent(req, res, next) {
-
+  static async createPaymentIntent(req, res, next) {
     let payload = {};
 
     payload.amount = req.body.amount;
@@ -27,7 +43,6 @@ static async createPaymentIntent(req, res, next) {
     payload.receipt_email = req.body.receipt_email;
     payload.customer = req.body.customer;
     payload.payment_method = req.body.payment_method;
-    
 
     const paymentIntent = await StripeService.createPaymentIntent(payload);
 
@@ -44,14 +59,7 @@ static async createPaymentIntent(req, res, next) {
 
     }
      */
+  }
 
-  
-
-
-    
+  static async confirmPayment(req, res, next) {}
 }
-
-static async confirmPayment (req, res, next) {}
-
-    
-    }

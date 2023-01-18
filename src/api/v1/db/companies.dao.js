@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import Company from "../models/userLogic/companies.model.js";
 
-import { MONGODB_collection_companies } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_COMPANIES_NS } from "../../../config/constants/index.js";
 
 /**
  * @class Class to manage the Companies collection.
@@ -13,6 +13,6 @@ export default class CompaniesDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(Company, MONGODB_collection_companies);
+    super(Company, MONGODB_COLLECTION_COMPANIES_NS);
   }
 }

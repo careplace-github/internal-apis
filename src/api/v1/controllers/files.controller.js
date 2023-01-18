@@ -1,77 +1,104 @@
 import BucketService from "../services/bucket.service.js";
+import fs from "fs";
 
-// Import logger
-import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
-import filesDAO from "../db/files.dao.js";
+import * as Error from "../helpers/errors/errors.helper.js";
 
-
+/**
+ * Files Controller Class to manage the files endpoints of the API
+ */
 export default class FilesController {
+  /**
+   * Creates a new file in the S3 bucket.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
   static async create(req, res, next) {
-    let response;
-
     try {
+      let response = {};
+      let Bucket = new BucketService();
 
-      var request = requestUtils(req)
+      if (!req.file) {
+        throw new Error._400("Missing required file.");
+      }
 
       const file = req.file;
 
-      console.log("file: ", file);
+      let fileUpload = await Bucket.uploadFile(file);
 
-      response = await BucketService.uploadFile(file);
+      response.data = fileUpload;
 
-      console.log("sucsess response: ", response);
+      response.statusCode = 200;
 
-      // If there is no error, the file has been uploaded successfully
-
-      return res.status(200).json({
-        message: "File uploaded successfully",
-        data: response,
+      /**
+       * Delete the file from the "uploads" folder
+       */
+      fs.unlink(file.path, (err) => {
+        if (err) {
+          throw new Error._500(
+            "Internal Server Error.",
+            `Error removing file from uploads folder. \n ${err.stack} \n`
+          );
+        }
       });
+
+      next(response);
     } catch (error) {
       // If there is an error, the file has not been uploaded successfully
-      console.log("error response: ", response);
-      return res.status(500).json({
-        message: "File upload failed",
-        data: response,
-      });
-
       next(error);
     }
   }
 
-  static async show(req, res, next) {
+  /**
+   * Retrieves a file from the S3 bucket by its key.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async retrieve(req, res, next) {
     try {
+      let response = {};
+      let Bucket = new BucketService();
+
       const key = req.params.key;
-      
-      const getResponse = await BucketService.getFile(key, bucketName);
-      res.status(200).json(getResponse);
+
+      const file = await Bucket.getFile(key);
+
+      response.data = file;
+
+      response.statusCode = 200;
+
+      next(response);
     } catch (error) {
       next(error);
     }
   }
 
-  static async destroy(req, res, next) {
+  /**
+   * Deletes a file from the S3 bucket by its key.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async delete(req, res, next) {
     try {
+      let response = {};
+      let Bucket = new BucketService();
+
       const key = req.params.key;
-      const bucketName = BUCKET_NAME;
-      const deleteResponse = await BucketService.deleteFile(key, bucketName);
-      res.status(200).json(deleteResponse);
+
+      const deletedFile = await Bucket.deleteFile(key);
+
+      response.data = deletedFile;
+
+      response.statusCode = 200;
+
+      next(response);
     } catch (error) {
       next(error);
     }
   }
-
-  static async index(req, res, next) {
-    try {
-      
-      let files = filesDAO.get_list();
-      const getResponse = await BucketService.getFiles();
-      res.status(200).json(getResponse);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  
 }

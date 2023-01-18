@@ -1,6 +1,6 @@
 // Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../utils/server/request.utils.js";
 
 import servicesDAO from "../db/services.dao.js";
 

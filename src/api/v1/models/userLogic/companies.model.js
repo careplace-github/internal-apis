@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import GeometryUtils from "../../utils/geometry.utils.js";
+import GeometryUtils from "../../utils/data/geometry.utils.js";
 import { ObjectId } from "mongodb";
 
 const Schema = mongoose.Schema;

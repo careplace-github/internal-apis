@@ -3,7 +3,9 @@ import companiesDAO from "../db/companies.dao.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../utils/server/request.utils.js";
+
+
 
 export default class CompaniesController {
   static async index(req, res, next) {

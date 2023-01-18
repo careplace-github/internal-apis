@@ -1,7 +1,7 @@
 import DAO from "./DAO.js";
 import Order from "../models/app/orders/orders.model.js";
 
-import {MONGODB_collection_orders} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_ORDERS_NS} from "../../../config/constants/index.js";
 
 
 
@@ -13,6 +13,6 @@ export default class OrdersDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
-    super(Order, MONGODB_collection_orders);
+    super(Order, MONGODB_COLLECTION_ORDERS_NS);
   }
 }
