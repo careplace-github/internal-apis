@@ -4,7 +4,7 @@ import Cognito from "../services/cognito.service.js";
 // Import database access objects
 import OrdersDAO from "../db/orders.dao.js";
 import CompaniesDAO from "../db/companies.dao.js";
-import UsersDAO from "../db/users.dao.js";
+import UsersDAO from "../db/crmUsers.dao.js";
 import RelativesDAO from "../db/relatives.dao.js";
 
 import * as Error from "../utils/errors/http/index.js";

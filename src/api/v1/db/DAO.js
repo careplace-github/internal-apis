@@ -43,6 +43,13 @@ export default class DAO {
       switch (err.name) {
         case "ValidationError":
           throw new LayerError.INVALID_PARAMETER(err.message);
+        case "MongoServerError":
+          switch (err.code) {
+            case 11000:
+              throw new LayerError.INVALID_PARAMETER(
+                `Duplicate key error: ${JSON.stringify(err.keyValue, null, 2)}`
+              );
+          }
       }
     }
 
@@ -285,54 +292,48 @@ export default class DAO {
   }
 
   async query_one(filters, populate) {
+    logger.info(
+      `${this.Collection}DAO QUERY_ONE Request: \n ${JSON.stringify(
+        {
+          filters: filters,
+          populate: populate,
+        },
+        null,
+        2
+      )} \n}`
+    );
+
+    let document;
+
+    /**
+     * @see https://mongoosejs.com/docs/api.html#model_Model-find
+     */
+
     try {
-      logger.info(
-        `${this.Collection}DAO QUERY_ONE Request: \n ${JSON.stringify(
-          {
-            filters: filters,
-            populate: populate,
-          },
-          null,
-          2
-        )} \n}`
-      );
-
-      let document;
-
-      /**
-       * @see https://mongoosejs.com/docs/api.html#model_Model-find
-       */
-
-      try {
-        document = await this.Document.findOne(filters)
-          .populate(populate)
-          .exec();
-      } catch (error) {
-        switch (error.name) {
-          case "CastError":
-            throw new LayerError.INVALID_PARAMETER(error.message);
-
-          default:
-            throw new LayerError.INTERNAL_ERROR(error.message);
-        }
-      }
-
-      if (document === null) {
-        throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
-      }
-
-      logger.info(
-        `${this.Collection}DAO QUERY_ONE Response: \n ${JSON.stringify(
-          document,
-          null,
-          2
-        )} \n}`
-      );
-
-      return document;
+      document = await this.Document.findOne(filters).populate(populate).exec();
     } catch (error) {
-      throw new LayerError.INTERNAL_ERROR(error.message);
+      switch (error.name) {
+        case "CastError":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    if (document === null) {
+      throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
+    }
+
+    logger.info(
+      `${this.Collection}DAO QUERY_ONE Response: \n ${JSON.stringify(
+        document,
+        null,
+        2
+      )} \n}`
+    );
+
+    return document;
   }
 
   async retrieveModel(document_id) {

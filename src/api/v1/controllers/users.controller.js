@@ -3,7 +3,7 @@ import CognitoService from "../services/cognito.service.js";
 import SES from "../services/ses.service.js";
 
 // Import DAOs
-import usersDAO from "../db/users.dao.js";
+import crmUsersDAO from "../db/crmUsers.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 
 // Import Helpers
@@ -110,6 +110,20 @@ export default class UsersController {
       return res.status(500).json({ error: error });
     }
   }
+
+
+
+  static async addUserToMongoDb (req, res, next){
+
+    let CrmUsersDAO = new crmUsersDAO();
+
+    let user = req.body;
+
+    CrmUsersDAO.create(user);
+
+  }
+
+  
 
   /**
    * @debug

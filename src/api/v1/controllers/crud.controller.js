@@ -1,6 +1,6 @@
 import logger from "../../../logs/logger.js";
 import * as Error from "../utils/errors/http/index.js";
-import usersDAO from "../db/users.dao.js";
+import usersDAO from "../db/crmUsers.dao.js";
 import authUtils from "../utils/auth/auth.utils.js";
 
 export default class CRUD_Methods {
