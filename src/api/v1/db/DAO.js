@@ -7,7 +7,7 @@ import * as Schemas from "../models/index.js";
 import deletedDocumentSchema from "../models/_deletion_/deletion.model.js";
 import { MONGODB_DB_DELETES_URI } from "../../../config/constants/index.js";
 
-import * as Error from "../helpers/errors/errors.helper.js";
+import * as LayerError from "../utils/errors/layer/index.js";
 
 /**
  * Data Access Object Methods
@@ -24,7 +24,6 @@ export default class DAO {
       document_collection.slice(1, -1);
   }
 
-
   async create(document) {
     logger.info(
       `${this.Collection}DAO ADD Request: \n ${JSON.stringify(
@@ -36,30 +35,7 @@ export default class DAO {
 
     document._id = new mongoose.Types.ObjectId();
 
-    try {
-      var insertedDocument = await this.Document.create(document);
-    } catch (error) {
-      // Check if the error is due to a missing required attribute.
-      if (error.name === "ValidationError") {
-        let missingAttributes = [];
-        for (let attribute in error.errors) {
-          // Wrap the attribute in single quotes
-          let attributeWithQuotes = `'${attribute}'`;
-
-          // Add a space at the beggining of the attribute with exception of the first attribute.
-          let attributeWithSpaces =
-            missingAttributes.length > 0
-              ? ` ${attributeWithQuotes}`
-              : attributeWithQuotes;
-
-          missingAttributes.push(attributeWithSpaces);
-        }
-
-        throw new Error._400(
-          `${this.Type} validation failed. Missing attributes: ${missingAttributes}.`
-        );
-      }
-    }
+    var insertedDocument = await this.Document.create(document);
 
     // Convert the inserted document to a JSON object.
     let response = await insertedDocument.toObject();
@@ -81,18 +57,26 @@ export default class DAO {
   }
 
   async retrieve(document_id, populate) {
-    let test = Schemas.userSchema;
-
     logger.info(
-      `${this.Collection}DAO GET_ONE Request: \n { \n _id: ${document_id} \n} \n`
+      `${this.Collection}DAO RETRIEVE Request: \n { \n _id: ${document_id} \n} \n`
     );
 
-    let document = await this.Document.findById(document_id).populate(populate);
+    let document;
 
-    if (!document) {
-      throw new Error._404(
-        `${this.Type} not found with the id: ${document_id}`
-      );
+    /**
+     * @todo Check if it has something to do with the populate parameter.
+     */
+
+    try {
+      if (populate) {
+        document = await this.Document.findById(document_id).populate(populate);
+      } else {
+        document = await this.Document.findById(document_id);
+      }
+    } catch (err) {}
+
+    if (document == null) {
+      throw new LayerError.NOT_FOUND();
     }
 
     // Convert the document to a JSON object.
@@ -104,7 +88,7 @@ export default class DAO {
     delete response.updatedAt;
 
     logger.info(
-      `${this.Collection}DAO GET_ONE Response: \n ${JSON.stringify(
+      `${this.Collection}DAO RETRIEVE Response: \n ${JSON.stringify(
         response,
         null,
         2
@@ -116,7 +100,7 @@ export default class DAO {
 
   async update(document) {
     logger.info(
-      `${this.Collection}DAO SET Request: \n ${JSON.stringify(
+      `${this.Collection}DAO UPDATE Request: \n ${JSON.stringify(
         document,
         null,
         2
@@ -140,9 +124,7 @@ export default class DAO {
     );
 
     if (!updatedDocument) {
-      throw new Error._400(
-        `${this.Type} not found with the id: ${document._id}`
-      );
+      throw new LayerError.NOT_FOUND();
     }
 
     // Convert the document to a JSON object.
@@ -154,7 +136,7 @@ export default class DAO {
     delete response.updatedAt;
 
     logger.info(
-      `${this.Collection}DAO SET Response: \n ${JSON.stringify(
+      `${this.Collection}DAO SET UPDATE: \n ${JSON.stringify(
         response,
         null,
         2
@@ -171,22 +153,20 @@ export default class DAO {
 
     let document_exists = await this.Document.findById(document_id);
 
-    if (!document_exists) {
-      throw new Error._400(
-        `${this.Type} not found with the id: ${document_id}`
-      );
+    if (document_exists === null) {
+      throw new LayerError.NOT_FOUND();
     }
 
     let db_connection_deletes = await mongoose.createConnection(
       MONGODB_DB_DELETES_URI
     );
-    let DeletedDocument = await db_connection_deletes.model(
+    let deletedDocument = await db_connection_deletes.model(
       this.Collection,
 
       deletedDocumentSchema
     );
 
-    let documentToDelete = await DeletedDocument.create({
+    let documentToDelete = await deletedDocument.create({
       _id: new mongoose.Types.ObjectId(),
 
       document_type: document_exists.type,
@@ -227,137 +207,157 @@ export default class DAO {
     return response;
   }
 
-
   async query_list(filters, options, page, documentsPerPage, populate) {
-    logger.info(
-      `${this.Collection}DAO GET_LIST Request: \n ${JSON.stringify(
-        {
-          filters: filters,
-          options: options,
-          page: page,
-          documentsPerPage: documentsPerPage,
-          populate: populate,
-        },
-        null,
-        2
-      )} \n}`
-    );
+    try {
+      logger.info(
+        `${this.Collection}DAO QUERY_LIST Request: \n ${JSON.stringify(
+          {
+            filters: filters,
+            options: options,
+            page: page,
+            documentsPerPage: documentsPerPage,
+            populate: populate,
+          },
+          null,
+          2
+        )} \n}`
+      );
 
-    let query = {};
-
-    // Check if there is any attribute to filter by that does not exist in the document schema.
-    if (filters) {
-      for (const [key, value] of Object.entries(filters)) {
-        if (!this.Document.schema.obj[key]) {
-          throw new Error._400(
-            `The attribute '${key}' does not exist in the ${this.Type} schema.`
-          );
+      if (options) {
+        if (options.sort) {
+          options.sort = { [options.sort]: 1 };
         }
       }
-    }
 
-    if (options) {
-      if (options.sort) {
-        options.sort = { [options.sort]: 1 };
+      try {
+        /**
+         * @see https://mongoosejs.com/docs/api.html#model_Model-find
+         */
+        var documents = await this.Document.find(filters, null, options)
+          .skip(page * documentsPerPage)
+          .limit(documentsPerPage)
+          .populate(populate)
+          .exec();
+      } catch (error) {
+        throw new Error._500(error);
       }
-    }
 
+      if (documents === null) {
+        throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
+      }
+
+      // If there is only one document, return the document instead of an array with one document.
+      if (documents.length === 1) {
+        documents = documents[0];
+      }
+
+      // Convert each document of the array 'documents' to a JSON object.
+      for (let i = 0; i < documents.length; i++) {
+        documents[i] = await documents[i].toObject();
+
+        // Remove the fields that are not needed in the response.
+        delete documents[i].__v;
+        delete documents[i].createdAt;
+        delete documents[i].updatedAt;
+      }
+
+      logger.info(
+        `${this.Collection}DAO QUERY_LIST Response: \n ${JSON.stringify(
+          documents,
+          null,
+          2
+        )} \n}`
+      );
+
+      return documents;
+    } catch (error) {
+      throw new LayerError.INTERNAL_ERROR(error.message);
+    }
+  }
+
+  async query_one(filters, populate) {
     try {
+      logger.info(
+        `${this.Collection}DAO QUERY_ONE Request: \n ${JSON.stringify(
+          {
+            filters: filters,
+            populate: populate,
+          },
+          null,
+          2
+        )} \n}`
+      );
+
+      let document;
+
       /**
        * @see https://mongoosejs.com/docs/api.html#model_Model-find
        */
-      var documents = await this.Document.find(filters, null, options)
-        .skip(page * documentsPerPage)
-        .limit(documentsPerPage)
-        .populate(populate)
-        .exec();
-    } catch (error) {
-      throw new Error._500(error);
-    }
 
-    // If there is only one document, return the document instead of an array with one document.
-    if (documents.length === 1) {
-      documents = documents[0];
-    }
+      try {
+        document = await this.Document.findOne(filters)
+          .populate(populate)
+          .exec();
+      } catch (error) {
+        switch (error.name) {
+          case "CastError":
+            throw new LayerError.INVALID_PARAMETER(error.message);
 
-    logger.info(
-      `${this.Collection}DAO GET_LIST Response: \n ${JSON.stringify(
-        documents,
-        null,
-        2
-      )} \n}`
-    );
-
-    return documents;
-  }
-
-
-  async query_one(filters, options, page, documentsPerPage, populate) {
-    logger.info(
-      `${this.Collection}DAO GET_LIST Request: \n ${JSON.stringify(
-        {
-          filters: filters,
-          options: options,
-          page: page,
-          documentsPerPage: documentsPerPage,
-          populate: populate,
-        },
-        null,
-        2
-      )} \n}`
-    );
-
-    let query = {};
-
-    // Check if there is any attribute to filter by that does not exist in the document schema.
-    if (filters) {
-      for (const [key, value] of Object.entries(filters)) {
-        if (!this.Document.schema.obj[key]) {
-          throw new Error._400(
-            `The attribute '${key}' does not exist in the ${this.Type} schema.`
-          );
+          default:
+            throw new LayerError.INTERNAL_ERROR(error.message);
         }
       }
-    }
 
-    if (options) {
-      if (options.sort) {
-        options.sort = { [options.sort]: 1 };
+      if (document === null) {
+        throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
       }
-    }
 
-    try {
-      /**
-       * @see https://mongoosejs.com/docs/api.html#model_Model-find
-       */
-      var documents = await this.Document.findOne(filters, null, options)
-        .skip(page * documentsPerPage)
-        .limit(documentsPerPage)
-        .populate(populate)
-        .exec();
+      logger.info(
+        `${this.Collection}DAO QUERY_ONE Response: \n ${JSON.stringify(
+          document,
+          null,
+          2
+        )} \n}`
+      );
+
+      return document;
     } catch (error) {
-      throw new Error._500(error);
+      throw new LayerError.INTERNAL_ERROR(error.message);
     }
-
-    // If there is only one document, return the document instead of an array with one document.
-    if (documents.length === 1) {
-      documents = documents[0];
-    }
-
-
-
-
-    logger.info(
-      `${this.Collection}DAO GET_LIST Response: \n ${JSON.stringify(
-        documents,
-        null,
-        2
-      )} \n}`
-    );
-
-    return documents;
   }
 
+  async retrieveModel(document_id) {
+    logger.info(
+      `${this.Collection}DAO RETRIEVE_MODEL Request: \n { \n _id: ${document_id} \n} \n`
+    );
 
+    let model;
 
+    /**
+     * @todo Check if it has something to do with the populate parameter.
+     */
+
+    try {
+      if (populate) {
+        model = await this.Document.findById(document_id).populate(populate);
+      } else {
+        model = await this.Document.findById(document_id);
+        console.log(`Model: ${model}`)
+      }
+    } catch (err) {}
+
+    if (model === null) {
+      throw new LayerError.NOT_FOUND();
+    }
+
+    logger.info(
+      `${this.Collection}DAO RETRIEVE Response: \n ${JSON.stringify(
+        model,
+        null,
+        2
+      )}\n`
+    );
+
+    return model;
+  }
 }

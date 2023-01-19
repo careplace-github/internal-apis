@@ -3,7 +3,7 @@
 // Import Services
 import Stripe from "./../../services/stripe.service.js";
 
-import * as Error from "../../utils/errors/baseError.utils.js";
+import * as Error from "../../utils/errors/http/httpError.js";
 
 import { buffer } from "micro";
 

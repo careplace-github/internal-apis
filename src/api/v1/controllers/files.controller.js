@@ -1,10 +1,10 @@
 import BucketService from "../services/bucket.service.js";
 import fs from "fs";
 
-import * as Error from "../helpers/errors/errors.helper.js";
+import * as Error from "../utils/errors/http/index.js";
 
 /**
- * Files Controller Class to manage the files endpoints of the API
+ * Files Controller Class to manage the ``/files`` endpoints of the API.
  */
 export default class FilesController {
   /**

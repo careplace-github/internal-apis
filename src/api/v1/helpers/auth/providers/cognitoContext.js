@@ -5,7 +5,7 @@ import AuthUtils from "../../../utils/auth/auth.utils.js";
 // Import logger
 import logger from "../../../../../logs/logger.js";
 // Import errors helper
-import * as Error from "../../errors/errors.helper.js";
+import * as Error from "../../../utils/errors/http/index.js";
 
 /**
  * Crate a new instance of the Cognito Service.

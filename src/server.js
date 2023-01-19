@@ -36,7 +36,7 @@ import rateLimit from "express-rate-limit";
 // Import mongoose
 import mongoose from "mongoose";
 
-import * as Error from "./api/v1/helpers/errors/errors.helper.js";
+import * as Error from "./api/v1/utils/errors/http/index.js";
 
 // Loads Environment Constants
 import {
