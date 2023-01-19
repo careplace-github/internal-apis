@@ -111,37 +111,61 @@ export default class Cognito {
   }
 
   /**
-   * @description Send a confirmation code to the user email.
+   * @description Send a confirmation code to the user. For the CRM users the code is sent to the user email and for the Marketplace users the code is sent to the user phone number.
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
+   * @throws {LayerError.INVALID_PARAMETER} - If the user does not exist in the Cognito service.
    */
-  async resendVerificationCode(email) {
+  async sendConfirmationCode(email) {
+    logger.info(
+      `Cognito Service SEND_CONFIRMATION_CODE Request: \n email: ${email} \n`
+    );
+
+    const params = {
+      ClientId: this.clientId,
+      Username: email,
+    };
+
+    let response = {};
+
+    /**
+     * Check if the user exists in the Cognito service.
+     *
+     * We pay for email and SMS notifications so we want to avoid sending notifications to users that do not exist in the Cognito service.
+     */
     try {
-      const params = {
-        ClientId: this.clientId,
-        Username: email,
-      };
-
-      let response = {};
-
-      response = await this.congito.resendConfirmationCode(params).promise();
-
-      logger.info(
-        "COGNITO SERVICE RESEND_VERIFICATION_CODE SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
+      let userExists = await this.adminGetUser(email);
     } catch (error) {
-      logger.error(
-        "COGNITO SERVICE RESEND_VERIFICATION_CODE ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
+      switch (error.type) {
+        case "NOT_FOUND":
+          throw new LayerError.NOT_FOUND(error.message);
 
-      return { error: error };
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    try {
+      response = await this.congito.resendConfirmationCode(params).promise();
+    } catch (error) {
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      `Cognito Service SEND_CONFIRMATION_CODE Response: \n ${JSON.stringify(
+        response,
+        null,
+        2
+      )} \n`
+    );
+
+    return response;
   }
 
   /**
@@ -151,32 +175,42 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   async confirmUser(email, code) {
+    logger.info(
+      `Cogito Service CONFIRM_USER Request: \n email: ${email} \n code: ${code} \n`
+    );
+
+    const params = {
+      ClientId: this.clientId,
+
+      ConfirmationCode: code,
+      Username: email,
+    };
+    let response;
+
     try {
-      const params = {
-        ClientId: this.clientId,
-
-        ConfirmationCode: code,
-        Username: email,
-      };
-
-      const response = await this.congito.confirmSignUp(params).promise();
-
-      logger.info(
-        "COGNITO SERVICE CONFIRM_USER SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
+      response = await this.congito.confirmSignUp(params).promise();
     } catch (error) {
-      logger.error(
-        "COGNITO SERVICE ERROR CONFIRM_USER: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
 
-      return { error: error };
+        case "CodeMismatchException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      `Cogito Service CONFIRM_USER Response: \n ${JSON.stringify(
+        response,
+        null,
+        2
+      )} \n`
+    );
+
+    return response;
   }
 
   /**
@@ -437,6 +471,9 @@ export default class Cognito {
         case "InvalidParameterException":
           throw new LayerError.INVALID_PARAMETER(error.message);
 
+        case "UserNotConfirmedException":
+          throw new LayerError.UNAUTHORIZED(error.message);
+
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
@@ -640,6 +677,48 @@ export default class Cognito {
 
       return { error: error };
     }
+  }
+
+  /**
+   * Returns the user details from the Cognito service as an admin.
+   * @param {String} username - Username of the user.
+   * @returns {Promise<JSON>} - Cognito user details.
+   */
+  async adminGetUser(username) {
+    logger.info(
+      `Cognito Service ADMIN_GET_USER Request: \n ${JSON.stringify(
+        username,
+        null,
+        2
+      )}`
+    );
+
+    const params = {
+      UserPoolId: this.userPoolId,
+      Username: username,
+    };
+
+    let response;
+    try {
+      response = await this.congito.adminGetUser(params).promise();
+    } catch (error) {
+      console.log(error);
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "NotAuthorizedException":
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        case "InvalidParameterException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    return response;
   }
 
   /**
