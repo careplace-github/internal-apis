@@ -7,7 +7,7 @@ import CompaniesDAO from "../db/companies.dao.js";
 import UsersDAO from "../db/users.dao.js";
 import RelativesDAO from "../db/relatives.dao.js";
 
-import * as Error from "../helpers/errors/errors.helper.js";
+import * as Error from "../utils/errors/http/index.js";
 import AuthHelper from "../helpers/auth/auth.helper.js";
 
 

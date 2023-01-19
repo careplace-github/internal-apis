@@ -5,28 +5,6 @@ import eventSchema from "../models/app/calendar/events.model.js";
 //                                       ADD EVENT VALIDATOR                                    //
 // -------------------------------------------------------------------------------------------- //
 
-
-// If there is any other attribute that is not in the list of valid attributes, throw an error
-const AddEvent_AttributesValidation = check("*").custom((value, { req }) => {
-  // Get the list of valid attributes from the orderSchema
-  const validAttributes = Object.keys(eventSchema.obj);
-
-  // Get the list of attributes from the request body
-  const attributes = Object.keys(req.body);
-
-  // Check if there is any attribute that is not in the list of valid attributes
-  const extraAttributes = attributes.filter(
-    (attribute) => !validAttributes.includes(attribute)
-  );
-
-  if (extraAttributes.length > 0) {
-    throw new Error(
-      `Received invalid parameters: ${extraAttributes.join(", ")}`
-    );
-  }
-});
-
-
 const AddEvent_UserValidation = check("user").custom((value) => {
   /**
    * Check if the user is not empty
@@ -138,7 +116,6 @@ const AddEvent_EndIsAfterStart = check("end").custom((value, { req }) => {
 });
 
 export const AddEventValidator = [
-  AddEvent_AttributesValidation,
   AddEvent_UserValidation,
   AddEvent_TitleValidation,
   AddEvent_DescriptionValidation,
@@ -150,29 +127,6 @@ export const AddEventValidator = [
 // -------------------------------------------------------------------------------------------- //
 //                                    UPDATE EVENT VALIDATOR                                    //
 // -------------------------------------------------------------------------------------------- //
-
-
-// If there is any other attribute that is not in the list of valid attributes, throw an error
-const UpdateEvent_AttributesValidation = check("*").custom((value, { req }) => {
-  // Get the list of valid attributes from the orderSchema
-  const validAttributes = Object.keys(eventSchema.obj);
-
-  // Get the list of attributes from the request body
-  const attributes = Object.keys(req.body);
-
-  // Check if there is any attribute that is not in the list of valid attributes
-  const extraAttributes = attributes.filter(
-    (attribute) => !validAttributes.includes(attribute)
-  );
-
-  if (extraAttributes.length > 0) {
-    throw new Error(
-      `Received invalid parameters: ${extraAttributes.join(", ")}`
-    );
-  }
-});
-
-
 
 const UpdateEvent_UserValidation = check("user").custom((value) => {
   if (value !== "" && value !== null && value !== undefined) {
@@ -299,7 +253,6 @@ const UpdateEvent_EndIsAfterStart = check("end").custom((value, { req }) => {
 });
 
 export const UpdateEventValidator = [
-  UpdateEvent_AttributesValidation,
   UpdateEvent_UserValidation,
   UpdateEvent_TitleValidation,
   UpdateEvent_DescriptionValidation,

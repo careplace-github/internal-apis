@@ -1,5 +1,5 @@
 import logger from "../../../../logs/logger.js";
-import BaseError from "../../utils/errors/baseError.utils.js";
+import HTTP_Error from "../../utils/errors/http/httpError.js";
 
 /**
  * @todo Send the error to the error tracking service. (e.g. Sentry)

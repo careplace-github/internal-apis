@@ -15,29 +15,26 @@ import CalendarController from "../controllers/calendar.controller.js";
 
 const router = express.Router();
 
-
-
 router
-
   .route("/calendar/events")
-  .get(CalendarController.indexEvents)
+  .get(CalendarController.listEvents)
   .post(AddEventValidator, InputValidation, CalendarController.createEvent);
 
 router
   .route("/calendar/events/:id")
   .get(CalendarController.retrieveEvent)
   .put(UpdateEventValidator, InputValidation, CalendarController.update_event)
-  .delete(CalendarController.destroyEvent);
+  .delete(CalendarController.deleteEvent);
 
 router
   .route("/calendar/events-series")
-  .get(CalendarController.indexEventsSeries)
-  .post(CreateEventSeriesValidator, InputValidation, CalendarController.createEventsSeries);
+  .get(CalendarController.listEventsSeries)
+  .post(CalendarController.createEventSeries);
 
 router
   .route("/calendar/events-series/:id")
-  .get(CalendarController.retrieveEventsSeries)
-  .put(CalendarController.updateEventsSeries)
-  .delete(CalendarController.destroyEventsSeries);
+  .get(CalendarController.retrieveEventSeries)
+  .put(CalendarController.updateEventSeries)
+  .delete(CalendarController.deleteEventSeries);
 
 export default router;
