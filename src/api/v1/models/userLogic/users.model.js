@@ -4,8 +4,6 @@ const Schema = mongoose.Schema;
 
 let User;
 
-
-
 const userSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
@@ -25,19 +23,15 @@ const userSchema = new Schema(
 
     email_verified: { type: Boolean, required: false, default: false },
 
-    
     phone: { type: String, required: true, unique: true },
 
     phone_verified: { type: Boolean, required: false, default: false },
-
-
-
 
     birth_date: { type: Date, required: false },
 
     age: { type: Number, required: false },
 
-    gender: { type: String, required: true, enum: ["male","female","other"] },
+    gender: { type: String, required: true, enum: ["male", "female", "other"] },
 
     relatives: [{ type: Schema.ObjectId, ref: "relative", required: true }],
 
@@ -48,17 +42,17 @@ const userSchema = new Schema(
     },
 
     address: {
-      street: { type: String, required: true },
+      street: { type: String, required: false },
 
-      postal_code: { type: String, required: true },
+      postal_code: { type: String, required: false },
 
       state: { type: String, required: false },
 
-      city: { type: String, required: true },
+      city: { type: String, required: false },
 
       country: {
         type: String,
-        required: true,
+        required: false,
         enum: ["PT", "ES", "US", "UK"],
       },
 
@@ -127,13 +121,9 @@ userSchema.methods.getRole = function () {
   return this.role;
 };
 
-
 /**
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 
 export default User = mongoose.model("user", userSchema);
-
-
-

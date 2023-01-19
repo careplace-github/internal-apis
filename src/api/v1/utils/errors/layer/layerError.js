@@ -2,7 +2,7 @@
  * Class to manage Layer Errors.
  */
 export default class LayerError extends Error {
-  constructor(type, message) {
+  constructor(message, type) {
 
     super(message);
 

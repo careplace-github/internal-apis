@@ -1,13 +1,10 @@
-// Import Data Access Objects
 import EventsDAO from "../db/events.dao.js";
 import UsersDAO from "../db/users.dao.js";
 import EventsSeriesDAO from "../db/eventsSeries.dao.js";
-import logger from "../../../logs/logger.js";
 import * as Error from "../utils/errors/http/index.js";
 import AuthHelper from "../helpers/auth/auth.helper.js";
 import CRUD from "./crud.controller.js";
-
-import cognito from "../services/cognito.service.js";
+import logger from "../../../logs/logger.js";
 
 /**
  * Create a new instance of the EventsSeriesDAO
@@ -45,7 +42,7 @@ export default class CalendarController {
    *
    * @param {*} req - Request object.
    * @param {*} res - Response object.
-   * @param {*} next - Next function middleware.
+   * @param {*} next - Next middleware function.
    */
   static async createEvent(req, res, next) {
     try {
@@ -81,7 +78,7 @@ export default class CalendarController {
    *
    * @param {*} req - Request object.
    * @param {*} res - Response object.
-   * @param {*} next - Next function middleware.
+   * @param {*} next - Next middleware function.
    */
   static async retrieveEvent(req, res, next) {
     await eventsCRUD.retrieve(req, res, next);
@@ -92,7 +89,7 @@ export default class CalendarController {
    *
    * @param {*} req - Request object.
    * @param {*} res - Response object.
-   * @param {*} next - Next function middleware.
+   * @param {*} next - Next middleware function.
    */
   static async update_event(req, res, next) {
     await eventsCRUD.updateByUserId(req, res, next);
@@ -103,7 +100,7 @@ export default class CalendarController {
    *
    * @param {*} req - Request object.
    * @param {*} res - Response object.
-   * @param {*} next - Next function middleware.
+   * @param {*} next - Next middleware function.
    */
   static async deleteEvent(req, res, next) {
     await eventsCRUD.delete(req, res, next);
@@ -114,11 +111,15 @@ export default class CalendarController {
    *
    * @param {*} req - Request object.
    * @param {*} res - Response object.
-   * @param {*} next - Next function middleware.
+   * @param {*} next - Next middleware function.
    */
   static async listEvents(req, res, next) {
     await eventsCRUD.listByUserId(req, res, next);
   }
+
+  // -------------------------------------------------------------------------------------------- //
+  //                                           IN DEVELOPMENT                                     //
+  // -------------------------------------------------------------------------------------------- //
 
   static async createEventSeries(req, res, next) {
     try {

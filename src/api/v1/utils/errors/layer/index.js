@@ -1,3 +1,6 @@
 export {default as NOT_FOUND} from './handlers/notFoundError.js'
 export {default as INVALID_PARAMETER} from './handlers/invalidParameter.js'
 export {default as INTERNAL_ERROR} from './handlers/internalError.js'
+export {default as UNAUTHORIZED} from './handlers/unauthorizedError.js'
+export {default as INVALID_CODE} from './handlers/invalidCode.js'
+export {default as ATTEMPT_LIMIT} from './handlers/attemptLimit.js'

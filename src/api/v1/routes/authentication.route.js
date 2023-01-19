@@ -1,45 +1,51 @@
 import express from "express";
 import AuthenticationController from "../controllers/authentication.controller.js";
 
-
-
-
 const router = express.Router();
 
+// -------------------------------------------------------------------------------------------- //
+//                                      GENERAL AUTHENTICATION                                  //
+// -------------------------------------------------------------------------------------------- //
 
-router.route("/auth/signup").post(AuthenticationController.signup);
-
-
-router.route("/auth/crm/login").post(AuthenticationController.crm_login);
-//router.route("/auth/marketplace/login").post(AuthenticationController.marketplace_login);
-
+router.route("/auth/logout").post(AuthenticationController.logout);
 router
   .route("/auth/change-password")
-  .post( AuthenticationController.changePassword);
+  .post(AuthenticationController.changePassword);
+
+// -------------------------------------------------------------------------------------------- //
+//                                      CRM AUTHENTICATION                                      //
+// -------------------------------------------------------------------------------------------- //
+
+router.route("/auth/crm/login").post(AuthenticationController.login);
 
 router
-  .route("/auth/logout")
-  .post( AuthenticationController.logout);
-
-router
-  .route("/auth/forgot-password")
+  .route("/auth/crm/send/forgot-password-code")
   .post(AuthenticationController.sendForgotPasswordCode);
 
-// Resend code routes
+router
+  .route("/auth/crm/verify/forgot-password-code")
+  .post(AuthenticationController.verifyForgotPasswordCode);
+
+// -------------------------------------------------------------------------------------------- //
+//                                 MARKETPLACE AUTHENTICATION                                   //
+// -------------------------------------------------------------------------------------------- //
+
+router.route("/auth/marketplace/signup").post(AuthenticationController.signup);
 
 router
-  .route("/auth/resend/verification-code")
-  .post(AuthenticationController.resendVerificationCode);
+  .route("/auth/marketplace/send/confirmation-code")
+  .post(AuthenticationController.sendConfirmationCode);
+router
+  .route("/auth/marketplace/verify/confirmation-code")
+  .post(AuthenticationController.sendConfirmationCode);
+
+router.route("/auth/marketplace/login").post(AuthenticationController.login);
 
 router
-  .route("/auth/resend/forgot-password-code")
+  .route("/auth/marketplace/send/forgot-password-code")
   .post(AuthenticationController.sendForgotPasswordCode);
-
-// Verification Routes
-
-router.route("/auth/verify/user").post(AuthenticationController.verifyUser);
-
-router.route("/auth/verify/forgot-password")
+router
+  .route("/auth/marketplace/verify/forgot-password-code")
   .post(AuthenticationController.verifyForgotPasswordCode);
 
 export default router;
