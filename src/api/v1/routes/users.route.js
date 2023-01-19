@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.route("/users")
   .get(UsersController.index)
-  .post(UsersController.create);
+  .post(UsersController.addUserToMongoDb);
 
 router.route("/users/account")
   .get( UsersController.account);

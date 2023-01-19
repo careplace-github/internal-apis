@@ -37,7 +37,7 @@ router
   .post(AuthenticationController.sendConfirmationCode);
 router
   .route("/auth/marketplace/verify/confirmation-code")
-  .post(AuthenticationController.sendConfirmationCode);
+  .post(AuthenticationController.verifyConfirmationCode);
 
 router.route("/auth/marketplace/login").post(AuthenticationController.login);
 

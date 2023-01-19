@@ -1,5 +1,5 @@
 import EventsDAO from "../db/events.dao.js";
-import UsersDAO from "../db/users.dao.js";
+import UsersDAO from "../db/crmUsers.dao.js";
 import EventsSeriesDAO from "../db/eventsSeries.dao.js";
 import * as Error from "../utils/errors/http/index.js";
 import AuthHelper from "../helpers/auth/auth.helper.js";
