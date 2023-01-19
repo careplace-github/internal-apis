@@ -12,7 +12,7 @@ const router = express.Router();
 
 router
   .route("/services")
-  .get(ServicesController.index)
+  .get(ServicesController.listServices)
   //.post(ServicesController.create);
 
 router
