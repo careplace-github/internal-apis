@@ -11,7 +11,7 @@ import {
   AWS_SECRET_ACESS_KEY,
 } from "../../../config/constants/index.js";
 
-import * as Error from "../utils/errors/http/index.js";
+import * as LayerError from "../utils/errors/layer/index.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -34,64 +34,80 @@ export default class Cognito {
   /**
    * Constructor
    */
-  constructor(app) {
-    this.app = app;
+  constructor(clientId) {
     this.congito = CognitoClient;
+    this.clientId = clientId;
+    this.userPoolId =
+      this.clientId === AWS_COGNITO_CRM_CLIENT_ID
+        ? AWS_COGNITO_CRM_USER_POOL_ID
+        : AWS_COGNITO_MARKETPLACE_USER_POOL_ID;
   }
 
   /**
+   * Constructor
+   */
+
+  /**
    * @description Creates a new user in the Cognito Service. The user receives an email with a confirmation code.
-   * @param {string} app - Application name (crm or marketplace).
    * @param {string} userId - User id from the database.
    * @param {Object} user - User object.
    * @returns {Promise<JSON>} - MongoDB response.
    */
   async addUser(email, password, phoneNumber) {
-    // Catch the error if the user already exists
+    logger.info(`
+    Cognito Service ADD_USER Request: \n
+    email: ${email} \n
+    password: ${password} \n
+    phoneNumber: ${phoneNumber} \n
+    `);
+
+    const params = {
+      ClientId: this.clientId,
+      Password: password,
+      Username: email,
+
+      UserAttributes: [
+        {
+          Name: "email",
+          Value: email,
+        },
+
+        {
+          Name: "phone_number",
+          Value: phoneNumber,
+        },
+      ],
+    };
+
+    let response = {};
+
     try {
-      const params = {
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-        Password: password,
-        Username: email,
-
-        UserAttributes: [
-          {
-            Name: "email",
-            Value: email,
-          },
-
-          {
-            Name: "phone_number",
-            Value: phoneNumber,
-          },
-        ],
-      };
-
-      logger.info("APP NAME: " + app + "\n");
-
-      let response = {};
-
       response = await this.congito.signUp(params).promise();
-
-      logger.info(
-        "COGNITO SERVICE SIGN_UP SUCESS:" +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
     } catch (error) {
-      logger.error(
-        "COGNITO SERVICE SIGN_UP ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
+      logger.error(`ognito Service ADD_USER Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
 
-      return { error: error };
+      switch (error.code) {
+        case "UsernameExistsException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+          break;
+
+        case "InvalidParameterException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case "InvalidPasswordException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(`
+    Cognito Service ADD_USER Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
+
+    return response;
   }
 
   /**
@@ -102,10 +118,7 @@ export default class Cognito {
   async resendVerificationCode(email) {
     try {
       const params = {
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+        ClientId: this.clientId,
         Username: email,
       };
 
@@ -140,10 +153,7 @@ export default class Cognito {
   async confirmUser(email, code) {
     try {
       const params = {
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+        ClientId: this.clientId,
 
         ConfirmationCode: code,
         Username: email,
@@ -250,10 +260,7 @@ export default class Cognito {
   async adminConfirmUser(email) {
     try {
       const params = {
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: email,
       };
 
@@ -280,43 +287,55 @@ export default class Cognito {
   }
 
   /**
-   * @description Sends a "forgot password" code to the user email. This is also used to resend the code.
+   * Sends a "forgot password" code to the user.
+   * For the Marketplace users it sends the code to the user phone number.
+   * For the CRM users it sends the code to the user email.
+   * This is also used to resend the code.
+   *
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
+   * @throws {LayerError.NOT_FOUND} - If the user is not found.
+   *
+   * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_ForgotPassword.html
    */
   async sendForgotPasswordCode(email) {
+    logger.info(`Cognito Service SEND_FORGOT_PASSWORD_CODE Request: ${email}`);
+
+    const params = {
+      ClientId: this.clientId,
+      Username: email,
+    };
+
+    let cognitoResponse;
+
     try {
-      const params = {
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-        Username: email,
-      };
-
-      let response = {};
-
-      response.cognitoResponse = await this.congito
-        .forgotPassword(params)
-        .promise();
-      response.message = "Cognito forgot password code sent successfully";
-
-      logger.info(
-        "COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
+      cognitoResponse = await this.congito.forgotPassword(params).promise();
     } catch (error) {
-      logger.error(
-        "COGNITO SERVICE SEND_FORGOT_PASSWORD_CODE ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
+      logger.info(
+        `Cognito Service SEND_FORGOT_PASSWORD_CODE Error: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
       );
 
-      return { error: error };
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(`
+      Cognito Service SEND_FORGOT_PASSWORD_CODE Response: ${JSON.stringify(
+        cognitoResponse,
+        null,
+        2
+      )}`);
+
+    return cognitoResponse;
   }
 
   /**
@@ -327,35 +346,54 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   async changeUserPasswordWithCode(email, code, password) {
+    logger.info(
+      `Cognito Service CHANGE_USER_PASSWORD_WITH_CODE Request: ${JSON.stringify(
+        { email, code, password },
+        null,
+        2
+      )}`
+    );
+
+    const params = {
+      ClientId: this.clientId,
+      ConfirmationCode: code,
+      Password: password,
+      Username: email,
+    };
+
+    let response = {};
+
     try {
-      const params = {
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-        ConfirmationCode: code,
-        Password: password,
-        Username: email,
-      };
-
-      let response = {};
-
-      response.cognitoResponse = await this.congito
-        .confirmForgotPassword(params)
-        .promise();
-
-      response.message = "Cognito user password changed successfully";
-
+      response = await this.congito.confirmForgotPassword(params).promise();
+    } catch (error) {
       logger.info(
-        "COGNITO SERVICE CHANGE_USER_PASSWORD_WITH_CODE SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
+        `Cognito Service CHANGE_USER_PASSWORD_WITH_CODE Error: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
       );
 
-      return response;
-    } catch (error) {
-      throw new Error._500(error.message);
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "ExpiredCodeException":
+          throw new LayerError.INVALID_CODE(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(`
+        Cognito Service CHANGE_USER_PASSWORD_WITH_CODE Response: ${JSON.stringify(
+          response,
+          null,
+          2
+        )}`);
+
+    return response;
   }
 
   /**
@@ -367,40 +405,50 @@ export default class Cognito {
    * @see https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow.html
    */
   async authenticateUser(authflow, payload) {
+    const params = {
+      AuthFlow: authflow != null ? authflow : "USER_PASSWORD_AUTH",
+
+      AuthParameters: {
+        USERNAME: payload.email,
+        PASSWORD: payload.password,
+        REFRESH_TOKEN: payload.refreshToken,
+      },
+
+      ClientId: this.clientId,
+    };
+    let response;
+
     try {
-      const params = {
-        AuthFlow: authflow != null ? authflow : "USER_PASSWORD_AUTH",
-
-        AuthParameters: {
-          USERNAME: payload.email,
-          PASSWORD: payload.password,
-          REFRESH_TOKEN: payload.refreshToken,
-        },
-
-        /**
-         * app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-         */
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-      };
-
-      const response = await this.congito.initiateAuth(params).promise();
-
-      logger.info(
-        "COGNITO SERVICE AUTHENTICATE_USER SUCESS: " +
-          JSON.stringify(response, null, 2) +
+      response = await this.congito.initiateAuth(params).promise();
+    } catch (error) {
+      logger.error(
+        "Cognito Service AUTHENTICATE_USER Error: " +
+          JSON.stringify(error, null, 2) +
           "\n"
       );
 
-      return response;
-    } catch (error) {
-      logger.error(`Error: ${error.message}`);
-      return error;
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "NotAuthorizedException":
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        case "InvalidParameterException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      "COGNITO SERVICE AUTHENTICATE_USER SUCESS: " +
+        JSON.stringify(response, null, 2) +
+        "\n"
+    );
+
+    return response;
   }
 
   /**
@@ -412,40 +460,61 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   async changeUserPassword(accessToken, oldPassword, newPassword) {
+    logger.info(`
+      Cognito Service CHANGE_USER_PASSWORD Request: ${JSON.stringify(
+        { accessToken, oldPassword, newPassword },
+        null,
+        2
+      )}
+    `);
+
+    let response = {};
+
+    let cognitoResponse;
+    const params = {
+      AccessToken: accessToken,
+      PreviousPassword: oldPassword,
+      ProposedPassword: newPassword,
+    };
+
     try {
-      let response = {};
-      let authResponse = "access";
-
-      const params = {
-        AccessToken: accessToken,
-        PreviousPassword: oldPassword,
-        ProposedPassword: newPassword,
-      };
-
-      response.cognitoResponse = await this.congito
-        .changePassword(params)
-        .promise();
-
-      response.message = "Cognito user password changed successfully";
-
-      logger.info(
-        "COGNITO SERVICE CHANGE_USER_PASSWORD SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
+      cognitoResponse = await this.congito.changePassword(params).promise();
     } catch (error) {
-      logger.error(
-        "COGNITO SERVICE CHANGE_USER_PASSWORD ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
+      logger.info(`
+        Cognito Service CHANGE_USER_PASSWORD Error: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}
+      `);
 
-      return {
-        error: error,
-      };
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "NotAuthorizedException":
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        case "InvalidParameterException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case "LimitExceededException":
+          throw new LayerError.ATTEMPT_LIMIT(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(`
+      Cognito Service CHANGE_USER_PASSWORD Response: ${JSON.stringify(
+        cognitoResponse,
+        null,
+        2
+      )}
+    `);
+
+    return response;
   }
 
   /**
@@ -457,14 +526,8 @@ export default class Cognito {
     try {
       const params = {
         AuthFlow: "REFRESH_TOKEN_AUTH",
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        ClientId: this.clientId,
+        UserPoolId: this.userPoolId,
         AuthParameters: {
           REFRESH_TOKEN: refreshToken,
         },
@@ -499,34 +562,52 @@ export default class Cognito {
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
   async logoutUser(accessToken) {
+    logger.info(`
+        Cognito Service LOGOUT_USER Request: \n ${JSON.stringify(
+          accessToken,
+          null,
+          2
+        )}`);
+
+    const params = {
+      AccessToken: accessToken,
+    };
+
+    let response;
+
     try {
-      const params = {
-        AccessToken: accessToken,
-      };
-
-      let response = {};
-
-      response.cognitoResponse = await this.congito
-        .globalSignOut(params)
-        .promise();
-      response.message = "Cognito user logged out successfully";
-
-      logger.info(
-        "COGNITO SERVICE LOGOUT_USER SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-
-      return response;
+      response = await this.congito.globalSignOut(params).promise();
     } catch (error) {
       logger.error(
-        "COGNITO SERVICE LOGOUT_USER ERROR: " +
+        "Cognito Service LOGOUT_USER Error: " +
           JSON.stringify(error, null, 2) +
           "\n"
       );
 
-      return { error: error };
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "NotAuthorizedException":
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        case "InvalidParameterException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      `Cognito Service LOGOUT_USER Response: ${JSON.stringify(
+        response,
+        null,
+        2
+      )}`
+    );
+
+    return response;
   }
 
   /**
@@ -605,10 +686,7 @@ export default class Cognito {
   async adminDeleteUser(username) {
     try {
       const params = {
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: username,
       };
 
@@ -636,10 +714,7 @@ export default class Cognito {
     try {
       const params = {
         ChallengeName: challengeName,
-        ClientId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_CLIENT_ID
-            : AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+        ClientId: this.clientId,
         Session: session,
         ChallengeResponses: challengePayload,
       };
@@ -697,10 +772,7 @@ export default class Cognito {
   async getUserRoles(username) {
     try {
       const params = {
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: username,
       };
 
@@ -736,17 +808,14 @@ export default class Cognito {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#adminAddUserToGroup-property
    */
-  async AddUserToGroup(username, groupName) {
+  async addUserToGroup(username, groupName) {
     try {
       // Verify if the group exists in the following enum
       let groups = ["admin", "crm-user", "marketplace-user"];
 
       const params = {
         GroupName: groupName,
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: username,
       };
 
@@ -779,10 +848,7 @@ export default class Cognito {
             Value: attributeValue,
           },
         ],
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: username,
       };
 
@@ -910,10 +976,7 @@ export default class Cognito {
             Value: attributeValue,
           },
         ],
-        UserPoolId:
-          this.app === "crm"
-            ? AWS_COGNITO_CRM_USER_POOL_ID
-            : AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
+        UserPoolId: this.userPoolId,
         Username: username,
       };
 

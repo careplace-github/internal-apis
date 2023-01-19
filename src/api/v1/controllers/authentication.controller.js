@@ -10,6 +10,10 @@ import * as Error from "../utils/errors/http/index.js";
 import authHelper from "../helpers/auth/auth.helper.js";
 import CRUD from "./crud.controller.js";
 import authUtils from "../utils/auth/auth.utils.js";
+import {
+  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+} from "../../../config/constants/index.js";
 
 /**
  * Create a new instance of the UsersDAO.
@@ -25,257 +29,70 @@ const Cognito = new cognito();
 
 export default class AuthenticationController {
   /**
-   * @description Creates a new user in Cognito and MongoDB
+   * @todo Debuging
    */
-
   static async signup(req, res, next) {
-    // try {
-
-    var request = requestUtils(req);
-
-    const app = "marketplace";
-
-    logger.info(
-      "Attempting to signup the user: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
-
-    let newUser = {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      phoneNumber: req.body.phoneNumber,
-      phoneNumberCountryCode: req.body.phoneNumberCountryCode,
-      gender: req.body.gender,
-      cognitoId: "",
-    };
-
-    let cognitoResponse;
-    let mongodbResponse;
-
-    logger.info(
-      "Attempting to create new user: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
-
-    cognitoResponse = await Cognito.addUser(
-      app,
-      newUser.email,
-      newUser.password,
-      newUser.phoneNumber
-    );
-
-    // If there is an error, return the error to the client
-    if (cognitoResponse.error != null) {
-      request.statusCode = 400;
-      request.response = { error: cognitoResponse.error.message };
-
-      logger.error(
-        "Error adding a new Cognito user: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-
-      return res.status(400).json({ error: cognitoResponse.error.message });
-    }
-
-    // A new user has been created in Cognito
-    else {
-      logger.info(
-        "Successfully created a new Cognito user: " +
-          JSON.stringify(cognitoResponse, null, 2) +
-          "\n"
-      );
-
-      newUser.cognitoId = cognitoResponse.UserSub;
-
-      // Attempting to add a new user to the database
-      mongodbResponse = await UsersDAO.create(newUser);
-
-      // If there is an error, return the error to the client
-      if (mongodbResponse.error != null) {
-        logger.error(
-          "Error adding a new user to MongoDB: " + mongodbResponse.error + "\n"
-        );
-
-        request.statusCode = 400;
-        request.response = { error: mongodbResponse.error };
-
-        return res.status(400).json({ error: mongodbResponse.error });
-      } else {
-        // User has been added to MongoDB successfully
-        logger.info(
-          "Successfully created a new user in MongoDB: " +
-            JSON.stringify(mongodbResponse, null, 2) +
-            "\n"
-        );
-
-        // Cognito.resendVerificationCode(newUser.email);
-
-        request.statusCode = 200;
-        request.response = {
-          message: "User created successfully",
-          user: mongodbResponse,
-        };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(200).json({
-          message: "User created successfully",
-          user: mongodbResponse,
-        });
-      }
-    }
-
-    /**
-       *  } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
-      );
-
-      return res.status(500).json(error);
-      }
-
-       */
-  }
-
-  /**
-   * @description Signs in a user
-   */
-  static async crm_login(req, res, next) {
     try {
-      logger.info(
-        `Authentication Controller CRM_LOGIN Request: \n ${JSON.stringify(
-          req.body,
-          null,
-          2
-        )}`
-      );
-
       let response = {};
-      let responseAux = {};
 
-      let app = "crm;";
-      let cognitoResponse = {};
-      let Cognito = new cognito(app);
+      let clientId;
+      let Cognito;
 
-      var payload = { email: req.body.email, password: req.body.password };
+      if (req.url === `/auth/marketplace/signup`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      let newUser = req.body;
+      let cognitoResponse;
+      let UsersDAO = new usersDAO();
+      let mongodbResponse;
 
       try {
-        cognitoResponse = await Cognito.authenticateUser(
-          "USER_PASSWORD_AUTH",
-          payload
+        cognitoResponse = await Cognito.addUser(
+          newUser.email,
+          newUser.password,
+          newUser.phone
         );
-      } catch (error) {
-        /**
-         * @todo Handle all exceptions
-         * @see
-         */
-        switch (error.code) {
-          case "UserNotFoundException":
-            break;
-          case "NotAuthorizedException":
-            break;
-          case "PasswordResetRequiredException":
-            break;
-          case "InvalidParameterException":
-            break;
-          case "InvalidPasswordException":
-            break;
-          case "UserNotConfirmedException":
-            break;
-          case "CodeMismatchException":
-            break;
-          case "ExpiredCodeException":
-            break;
-        }
+      } catch (err) {
+        switch (err.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(err.message);
 
-        response.statusCode = 400;
-        response.data = { error: error.message };
-
-        next(response);
-      }
-
-      // User authenticated successfully
-
-      // Check for challenges
-      if (cognitoResponse.ChallengeName != null) {
-        switch (cognitoResponse.ChallengeName) {
-          case "NEW_PASSWORD_REQUIRED":
-            /**
-             * @todo
-             */
-            break;
+          default:
+            throw new Error._500(err.message);
         }
       }
 
-      // No challenges
-      else {
-        console.log("cognitoResponse: " + cognitoResponse);
+      try {
+        await Cognito.addUserToGroup(newUser.email,"marketplace-user")
+      } catch (err) {}
 
-        responseAux.accessToken =
-          cognitoResponse.AuthenticationResult.AccessToken;
-        responseAux.accessTokenExpiration =
-          cognitoResponse.AuthenticationResult.ExpiresIn;
-        responseAux.accessTokenType =
-          cognitoResponse.AuthenticationResult.TokenType;
-        responseAux.refreshToken =
-          cognitoResponse.AuthenticationResult.RefreshToken;
+      newUser.cognito_id = cognitoResponse.UserSub;
+
+      delete newUser.password;
+      delete newUser.confirmPassword;
+
+      try {
+        // Attempting to add a new user to the database
+        mongodbResponse = await UsersDAO.create(newUser);
+      } catch (err) {
+        switch (err.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(err.message);
+
+          default:
+            throw new Error._500(err.message);
+        }
       }
-
-      /**
-       * 1) AUTHENTICATE USER -> GET ACCESS TOKEN
-       * 2) GET COGNITO ID FROM ACCESS TOKEN USING AUTH HELPER -> RETRIEVE USER FROM MONGODB
-       * 3) GET USER ROLES FROM USING REQ.BODY.EMAIL -> ADD TO USER OBJECT
-       */
-
-      let AuthUtils = new authUtils();
-
-      let decodedToken = await AuthUtils.decodeJwtToken(
-        cognitoResponse.AuthenticationResult.AccessToken
-      );
-
-      let roles = decodedToken["cognito:groups"];
-      let cognitoId = decodedToken.sub;
-
-      console.log("cognitoId: " + JSON.stringify(cognitoId, null, 2));
-
-      /**
-       * @todo Implement with query_one instead of query_list
-       *
-       * Fetch user information from the database
-       */
-      let user = await UsersDAO.query_list({
-        cognito_id: { $eq: cognitoId },
-      });
-
-      // Convert the user object to a JSON object
-      user = JSON.parse(JSON.stringify(user));
-
-      // Order each field alphabetically
-      user = Object.keys(user)
-        .sort()
-        .reduce((obj, key) => {
-          obj[key] = user[key];
-          return obj;
-        }, {});
-
-      // Remove the cognito_id from the user object
-      delete user.cognito_id;
-      delete user.cognitoId;
-
-      // Add the user role to the user object
-      user.roles = roles ? roles : ["crm-user"];
-
-      responseAux.user = user;
 
       response.statusCode = 200;
-      response.data = responseAux;
+      response.data = {
+        user: mongodbResponse,
+      };
 
       next(response);
     } catch (error) {
@@ -283,270 +100,10 @@ export default class AuthenticationController {
     }
   }
 
-  static async marketplace_login(req, res, next) {}
-
   /**
-   * @description Changes a user's password
+   *  @todo Debuging
    */
-  static async changePassword(req, res, next) {
-    try {
-      var request = requestUtils(req);
-
-      logger.info(
-        "Attempting to change the user password: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-
-      const token = req.headers.authorization.split(" ")[1];
-
-      const cognitoResponse = await Cognito.changeUserPassword(
-        token,
-        req.body.oldPassword,
-        req.body.newPassword
-      );
-
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(400).json({ error: cognitoResponse.error.message });
-      }
-
-      // If there is no error, return the success message to the client
-      else {
-        request.statusCode = 200;
-        request.response = { message: "Password changed successfully" };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(200).json({
-          message: "Password changed successfully",
-        });
-      }
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.info(JSON.stringify(request, null, 2) + "\n");
-
-      // return the error to the client
-      return res.status(500).json({
-        error: error,
-      });
-    }
-  }
-
-  /**
-   * @description Logs out a user. Invalidates the user's token and refresh token.
-   */
-  static async logout(req, res, next) {
-    const token = req.headers.authorization.split(" ")[1];
-
-    var request = requestUtils(req);
-
-    logger.info(
-      "Attempting to logout the user: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
-    try {
-      const cognitoResponse = await Cognito.logoutUser(token);
-
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error.message };
-
-        logger.error(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(400).json({ error: cognitoResponse.error.message });
-      }
-
-      request.statusCode = 200;
-      request.response = { message: "User logged out successfully" };
-
-      logger.info(JSON.stringify(request, null, 2) + "\n");
-
-      return res.status(200).json({
-        message: "User logged out successfully",
-      });
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      // return the error to the client
-      return res.status(500).json({
-        error: error,
-      });
-    }
-  }
-
-  /**
-   * @description Sends a password reset code email to the user
-   */
-  static async sendForgotPasswordCode(req, res, next) {
-    var request = requestUtils(req);
-
-    logger.info(
-      "Attempting to send the forgot password code to the user: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
-
-    try {
-      const cognitoResponse = await Cognito.sendForgotPasswordCode(
-        "crm",
-        req.body.email
-      );
-
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error };
-        logger.error(JSON.stringify(request, null, 2) + "\n");
-        return res.status(400).json({ error: cognitoResponse.error });
-      } else {
-        request.statusCode = 200;
-        request.response = {
-          message: "Password reset email sent successfully.",
-        };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        // If there is no error, return the response to the client
-        return res.status(200).json({
-          message: "Password reset email sent successfully.",
-        });
-      }
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      // return the error to the client
-      return res.status(500).json({
-        error: error,
-      });
-    }
-  }
-
-  /**
-   * @description Resets a user's password using the code sent to the user's email address and the new password passed in the request body
-   */
-  static async verifyForgotPasswordCode(req, res, next) {
-    try {
-      var request = requestUtils(req);
-
-      logger.info(
-        "Attempting to reset the user password with the code sent to the user's email: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-
-      const cognitoResponse = await Cognito.changeUserPasswordWithCode(
-        "crm",
-        req.body.email,
-        req.body.code,
-        req.body.newPassword
-      );
-
-      logger.debug(JSON.stringify(cognitoResponse, null, 2) + "\n");
-
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error.message };
-
-        logger.error(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(400).json({
-          error: cognitoResponse.error.message,
-        });
-      } else {
-        request.statusCode = 200;
-        request.response = { message: "Password reset successfully." };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        // If there is no error, return the response to the client
-        return res.status(200).json({
-          message: "Password reset successfully",
-        });
-      }
-    } catch (e) {
-      request.response = { error: e };
-      request.statusCode = 500;
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      return res.status(500).json({
-        error: e,
-      });
-    }
-  }
-
-  /**
-   * @description Resends a verification code to the user's email address
-   */
-  static async resendVerificationCode(req, res, next) {
-    try {
-      var request = requestUtils(req);
-
-      logger.info(
-        "Attempting to resend the verification code to the user's email: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-
-      const cognitoResponse = await Cognito.resendVerificationCode(
-        req.body.email
-      );
-
-      // If there is an error, return the error to the client
-      if (cognitoResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoResponse.error };
-
-        logger.error(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(400).json({ error: cognitoResponse.error });
-      } else {
-        // If there is no error, return the response to the client
-        request.statusCode = 200;
-        request.response = {
-          message: "Verification code resent successfully.",
-        };
-
-        logger.info(JSON.stringify(request, null, 2) + "\n");
-
-        return res.status(200).json({
-          message: "Verification code resent successfully.",
-        });
-      }
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(JSON.stringify(request, null, 2) + "\n");
-
-      // return the error to the client
-      return res.status(500).json({
-        error: error,
-      });
-    }
-  }
-
-  /**
-   * @description Verifies a congito user's email address using the code sent to the user's email address.
-   */
-  // Function to confirm the user's email address after registration using the confirmation code sent to the user's email address
-  static async verifyUser(req, res, next) {
+  static async sendConfirmationCode(req, res, next) {
     var request = requestUtils(req);
 
     logger.info(
@@ -583,6 +140,364 @@ export default class AuthenticationController {
       return res.status(200).json({
         message: "User confirmed successfully.",
       });
+    }
+  }
+
+  /**
+   *  @todo Debuging
+   */
+  static async verifyConfirmationCode(req, res, next) {}
+
+  /**
+   * Login a user
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async login(req, res, next) {
+    try {
+      logger.info(
+        `Authentication Controller LOGIN Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
+      );
+
+      let response = {};
+      let responseAux = {};
+      let clientId;
+
+      let cognitoResponse = {};
+
+      /**
+       * Check if the login request if for the CRM or the Marketplace by checking the url
+       */
+
+      if (req.url === `/auth/crm/login`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      } else if (req.url === `/auth/marketplace/login`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      let Cognito = new cognito(clientId);
+
+      var payload = { email: req.body.email, password: req.body.password };
+
+      try {
+        cognitoResponse = await Cognito.authenticateUser(
+          "USER_PASSWORD_AUTH",
+          payload
+        );
+      } catch (error) {
+        logger.error(
+          `Authentication Controller LOGIN Error: \n ${JSON.stringify(
+            error,
+            null,
+            2
+          )}`
+        );
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401("Invalid username or password.");
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      // User authenticated successfully
+
+      // Check for challenges
+      if (cognitoResponse.ChallengeName != null) {
+        switch (cognitoResponse.ChallengeName) {
+          case "NEW_PASSWORD_REQUIRED":
+            /**
+             * @todo
+             */
+            break;
+        }
+      }
+
+      // No challenges
+      else {
+        responseAux.accessToken =
+          cognitoResponse.AuthenticationResult.AccessToken;
+        responseAux.accessTokenExpiration =
+          cognitoResponse.AuthenticationResult.ExpiresIn;
+        responseAux.accessTokenType =
+          cognitoResponse.AuthenticationResult.TokenType;
+        responseAux.refreshToken =
+          cognitoResponse.AuthenticationResult.RefreshToken;
+      }
+
+      let AuthUtils = new authUtils();
+
+      let decodedToken = await AuthUtils.decodeJwtToken(
+        cognitoResponse.AuthenticationResult.AccessToken
+      );
+
+      let roles = decodedToken["cognito:groups"];
+      let cognitoId = decodedToken.sub;
+
+      /**
+       * @todo Implement with query_one instead of query_list
+       *
+       * Fetch user information from the database
+       */
+      let user = await UsersDAO.query_list({
+        cognito_id: { $eq: cognitoId },
+      });
+
+      // Convert the user object to a JSON object
+      user = JSON.parse(JSON.stringify(user));
+
+      // Remove the cognito_id from the user object
+      delete user.cognito_id;
+      delete user.cognitoId;
+
+      // Add the user role to the user object
+      user.roles = roles ? roles : [];
+
+      responseAux.user = user;
+
+      response.statusCode = 200;
+      response.data = responseAux;
+
+      next(response);
+    } catch (error) {
+      logger.error(`Authentication Controller LOGIN Error: \n ${error.stack}`);
+      next(error);
+    }
+  }
+
+  /**
+   * Changes a user password.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   * @throws {Error._401} - Token has expired.
+   * @throws {Error._400} - Attempt limit exceeded.
+   */
+  static async changePassword(req, res, next) {
+    try {
+      let response = {};
+      let accessToken;
+
+      let cognitoResponse;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("Missing required authorization token.");
+      }
+
+      let Cognito = new cognito(accessToken);
+
+      try {
+        cognitoResponse = await Cognito.changeUserPassword(
+          accessToken,
+          req.body.oldPassword,
+          req.body.newPassword
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401(error.message);
+
+          case "ATTEMPT_LIMIT":
+            throw new Error._400(error.message);
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message: "Password changed successfully",
+      };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller CHANGE_PASSWORD Internal Error: \n ${error.stack}`
+      );
+      next(error);
+    }
+  }
+
+  /**
+   * Logout a user.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   * @throws {Error._401} - Token has expired.
+   */
+  static async logout(req, res, next) {
+    try {
+      let token;
+      let response = {};
+
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      try {
+        const cognitoResponse = await Cognito.logoutUser(token);
+      } catch (error) {
+        logger.error(
+          `Authentication Controller LOGOUT Error: \n ${JSON.stringify(
+            error,
+            null,
+            2
+          )}`
+        );
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401("Token has expired.");
+
+          default:
+            throw new Error._500("Internal server error.");
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = { message: "User logged out successfully" };
+
+      next(response);
+    } catch (error) {
+      logger.error(`Authentication Controller LOGOUT Error: ${error.stack}`);
+      next(error);
+    }
+  }
+
+  /**
+   * Sends a code to the user to reset their password.
+   * For the Marketplace users the code is sent to the user's phone.
+   * For the CRM users the code is sent to the user's email.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   */
+  static async sendForgotPasswordCode(req, res, next) {
+    try {
+      let response = {};
+
+      let clientId;
+      let Cognito;
+
+      if (req.url === `/auth/crm/send/forgot-password-code`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      } else if (req.url === `/auth/marketplace/send/forgot-password-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      try {
+        const cognitoResponse = await Cognito.sendForgotPasswordCode(
+          req.body.email
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found");
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message: "Password reset code sent successfully",
+      };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller SEND_FORGOT_PASSWORD_CODE Error: \n ${error.stack}`
+      );
+      next(error);
+    }
+  }
+
+  /**
+   * Verifies the code sent to the user to reset their password.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   */
+  static async verifyForgotPasswordCode(req, res, next) {
+    try {
+      let response = {};
+
+      let clientId;
+      let Cognito;
+
+      if (req.url === `/auth/crm/verify/forgot-password-code`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      } else if (req.url === `/auth/marketplace/verify/forgot-password-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      try {
+        const cognitoResponse = await Cognito.changeUserPasswordWithCode(
+          req.body.email,
+          req.body.code,
+          req.body.newPassword
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found");
+
+          case "INVALID_CODE":
+            throw new Error._400("Invalid code. Please request a new code.");
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = { message: "Password reseted successfully." };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller SEND_FORGOT_PASSWORD_CODE Error: \n ${error.stack}`
+      );
+      next(error);
     }
   }
 }

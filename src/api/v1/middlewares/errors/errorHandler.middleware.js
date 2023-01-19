@@ -7,7 +7,7 @@ import HTTP_Error from "../../utils/errors/http/httpError.js";
  */
 export default function errorHandler(err, req, res, next) {
   function handleRequest() {
-    logger.info(`Error Handler: \n ${JSON.stringify(err, null, 2)} \n`);
+    logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`);
 
     /**
      * The `ErrorHandler` middleware comes first that the `ResponseHandler` middleware in the middleware stack.
@@ -33,13 +33,16 @@ export default function errorHandler(err, req, res, next) {
        * In this case this is not an error.
        * So we need to pass the response (in this case called the parameter `err`) to the `ResponseHandler` middleware.
        */
+
+      logger.info(`No error found. Passed to the ResponseHandler Middleware.`);
+
       next(err);
     }
 
     let response = {
       data: {
         error: {
-          message: err.message ? err.message : "Internal Server Error",
+          message: err.message && err.type != "INTERNAL_SERVER_ERROR" ? err.message : "Internal Server Error",
           type: err.type ? err.type : "INTERNAL_SERVER_ERROR",
         },
       },

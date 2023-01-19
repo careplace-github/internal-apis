@@ -35,7 +35,16 @@ export default class DAO {
 
     document._id = new mongoose.Types.ObjectId();
 
-    var insertedDocument = await this.Document.create(document);
+    try {
+      var insertedDocument = await this.Document.create(document);
+    } catch (err) {
+      logger.error(`
+      ${this.Collection}DAO ADD Error: \n ${JSON.stringify(err, null, 2)} \n`);
+      switch (err.name) {
+        case "ValidationError":
+          throw new LayerError.INVALID_PARAMETER(err.message);
+      }
+    }
 
     // Convert the inserted document to a JSON object.
     let response = await insertedDocument.toObject();
@@ -342,7 +351,7 @@ export default class DAO {
         model = await this.Document.findById(document_id).populate(populate);
       } else {
         model = await this.Document.findById(document_id);
-        console.log(`Model: ${model}`)
+        console.log(`Model: ${model}`);
       }
     } catch (err) {}
 
