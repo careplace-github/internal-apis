@@ -6,7 +6,7 @@ import usersDAO from "../db/users.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 
 import logger from "../../../logs/logger.js";
-import * as Error from "../helpers/errors/errors.helper.js";
+import * as Error from "../utils/errors/http/index.js";
 import authHelper from "../helpers/auth/auth.helper.js";
 import CRUD from "./crud.controller.js";
 import authUtils from "../utils/auth/auth.utils.js";
@@ -168,7 +168,6 @@ export default class AuthenticationController {
 
       try {
         cognitoResponse = await Cognito.authenticateUser(
-          app,
           "USER_PASSWORD_AUTH",
           payload
         );
@@ -229,17 +228,17 @@ export default class AuthenticationController {
           cognitoResponse.AuthenticationResult.RefreshToken;
       }
 
- 
-   /**
-    * 1) AUTHENTICATE USER -> GET ACCESS TOKEN
-    * 2) GET COGNITO ID FROM ACCESS TOKEN USING AUTH HELPER -> RETRIEVE USER FROM MONGODB
-    * 3) GET USER ROLES FROM USING REQ.BODY.EMAIL -> ADD TO USER OBJECT
-    */
-
+      /**
+       * 1) AUTHENTICATE USER -> GET ACCESS TOKEN
+       * 2) GET COGNITO ID FROM ACCESS TOKEN USING AUTH HELPER -> RETRIEVE USER FROM MONGODB
+       * 3) GET USER ROLES FROM USING REQ.BODY.EMAIL -> ADD TO USER OBJECT
+       */
 
       let AuthUtils = new authUtils();
 
-      let  decodedToken = await AuthUtils.decodeJwtToken( cognitoResponse.AuthenticationResult.AccessToken);
+      let decodedToken = await AuthUtils.decodeJwtToken(
+        cognitoResponse.AuthenticationResult.AccessToken
+      );
 
       let roles = decodedToken["cognito:groups"];
       let cognitoId = decodedToken.sub;
@@ -255,18 +254,16 @@ export default class AuthenticationController {
         cognito_id: { $eq: cognitoId },
       });
 
-     
-
-
       // Convert the user object to a JSON object
       user = JSON.parse(JSON.stringify(user));
 
-       // Order each field alphabetically 
-      user = Object.keys(user).sort().reduce((obj, key) => {
-        obj[key] = user[key];
-        return obj;
-      }, {});
-      
+      // Order each field alphabetically
+      user = Object.keys(user)
+        .sort()
+        .reduce((obj, key) => {
+          obj[key] = user[key];
+          return obj;
+        }, {});
 
       // Remove the cognito_id from the user object
       delete user.cognito_id;
@@ -281,11 +278,6 @@ export default class AuthenticationController {
       response.data = responseAux;
 
       next(response);
-
-
-
-      
-
     } catch (error) {
       next(error);
     }

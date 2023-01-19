@@ -1,6 +1,6 @@
 //import registerUserValitation from "./validators/users.validator"
 import { validationResult } from "express-validator";
-import * as Error from "../../helpers/errors/errors.helper.js";
+import * as Error from "../../utils/errors/http/index.js";
 
 export default function (req, res, next) {
   const errors = validationResult(req);

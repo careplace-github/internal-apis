@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import fs from "fs";
-import * as Error from "../helpers/errors/errors.helper.js";
+import * as Error from "../utils/errors/http/index.js";
 
 import {
   AWS_S3_BUCKET_NAME,

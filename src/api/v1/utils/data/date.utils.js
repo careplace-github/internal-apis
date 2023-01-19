@@ -34,15 +34,15 @@ export default class DateUtils {
   async getNextRecurrentDate(date, recurrencyType) {
     const newDate = new Date(date);
     switch (recurrencyType) {
-      case "weekly":
+      case 1:
         newDate.setDate(newDate.getDate() + 7);
         return newDate;
         break;
-      case "biweekly":
+      case 2:
         newDate.setDate(newDate.getDate() + 14);
         return newDate;
         break;
-      case "monthly":
+      case 4:
         newDate.setMonth(newDate.getMonth() + 1);
         return newDate;
     }

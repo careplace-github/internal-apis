@@ -1,7 +1,7 @@
 // Import logger
 import logger from "../../../../logs/logger.js";
 // Import errors helper
-import * as Error from "../errors/errors.helper.js";
+import * as Error from "../../utils/errors/http/index.js";
 // Authentication Provider
 import CognitoContext from "./providers/cognitoContext.js";
 

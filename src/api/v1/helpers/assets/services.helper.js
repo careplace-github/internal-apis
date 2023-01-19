@@ -1,5 +1,5 @@
 import ServicesDAO from "../../db/services.dao.js";
-import * as Error from "../errors/errors.helper.js";
+import * as Error from "../../utils/errors/http/index.js";
 import fs from "fs";
 
 /**
