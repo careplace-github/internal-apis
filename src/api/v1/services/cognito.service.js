@@ -809,34 +809,56 @@ export default class Cognito {
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#adminAddUserToGroup-property
    */
   async addUserToGroup(username, groupName) {
-    try {
-      // Verify if the group exists in the following enum
-      let groups = ["admin", "crm-user", "marketplace-user"];
+    logger.info(
+      `Cognito Service ADD_USER_TO_GROUP Request: \n ${JSON.stringify(
+        { username, groupName },
+        null,
+        2
+      )} \n`
+    );
 
-      const params = {
-        GroupName: groupName,
-        UserPoolId: this.userPoolId,
-        Username: username,
-      };
+    // Verify if the group exists in the following enum
+    let groups = ["admin", "crm-user", "marketplace-user"];
 
-      const response = await this.congito.adminAddUserToGroup(params).promise();
+    let response;
 
-      logger.info(
-        "COGNITO SERVICE ADD_USER_TO_GROUP SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
+    if (!groups.includes(groupName)) {
+      throw new LayerError.INVALID_PARAMETER(
+        `Invalid group name: ${groupName}`
       );
-
-      return response;
-    } catch (error) {
-      logger.error(
-        "COGNITO SERVICE ADD_USER_TO_GROUP ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
-
-      return { error: error };
     }
+
+    const params = {
+      GroupName: groupName,
+      UserPoolId: this.userPoolId,
+      Username: username,
+    };
+
+    try {
+      response = await this.congito.adminAddUserToGroup(params).promise();
+    } catch (error) {
+      switch (error.code) {
+        case "UserNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "GroupNotFoundException":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case "NotAuthorizedException":
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_SERVER_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      "COGNITO SERVICE ADD_USER_TO_GROUP SUCESS: " +
+        JSON.stringify(response, null, 2) +
+        "\n"
+    );
+
+    return response;
   }
 
   async addUserCustomAttribute(username, attributeName, attributeValue) {
