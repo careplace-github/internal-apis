@@ -123,7 +123,7 @@ const main = async () => {
      *  Handle connection errors
      */
     db_connection.connection.on("error", (err) => {
-      throw new Error._503(`MongoDB Connection Error: ${err}`);
+      throw new Error._500(`MongoDB Connection Error: ${err}`);
     });
 
     db_connection.connection.on("reconnected", (err) => {
@@ -131,15 +131,15 @@ const main = async () => {
     });
 
     db_connection.connection.on("disconnected", (err) => {
-      throw new Error._503(`MongoDB Connection Error: ${err}`);
+      throw new Error._500(`MongoDB Connection Error: ${err}`);
     });
 
     db_connection.connection.on("timeout", (err) => {
-      throw new Error._503(`MongoDB Connection Error: ${err}`);
+      throw new Error._500(`MongoDB Connection Error: ${err}`);
     });
 
     db_connection.connection.on("close", (err) => {
-      throw new Error._503(`MongoDB Connection Error: ${err}`);
+      throw new Error._500(`MongoDB Connection Error: ${err}`);
     });
 
     // Successfuly connected to MongoDB
