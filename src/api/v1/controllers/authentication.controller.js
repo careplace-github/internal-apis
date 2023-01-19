@@ -67,9 +67,18 @@ export default class AuthenticationController {
         }
       }
 
+      let roles;
       try {
-        await Cognito.addUserToGroup(newUser.email,"marketplace-user")
-      } catch (err) {}
+        roles = await Cognito.addUserToGroup(newUser.email, "marketplace-user");
+      } catch (err) {
+        switch (err.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(err.message);
+
+          default:
+            throw new Error._500(err.message);
+        }
+      }
 
       newUser.cognito_id = cognitoResponse.UserSub;
 
