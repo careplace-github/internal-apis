@@ -1,13 +1,38 @@
 import CognitoService from "../services/cognito.service.js";
 import companiesDAO from "../db/companies.dao.js";
 
+import crmUsersDAO from "../db/crmUsers.dao.js";
+import CRUD from "./crud.controller.js";
+
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/server/request.utils.js";
 
 
 
+
 export default class CompaniesController {
+
+
+
+  static async getUsers(req, res, next) {
+    const CrmUsersDAO = new crmUsersDAO();
+    const CrmUsersCRUD = new CRUD(CrmUsersDAO);
+
+    await CrmUsersCRUD.listByCompanyId(req, res, next);
+  }
+
+
+
+
+/**
+ * @deprecated
+ */
+
+
+
+
+
   static async index(req, res, next) {
     try {
       var request = requestUtils(req);
@@ -67,7 +92,7 @@ export default class CompaniesController {
     }
   }
 
-  static async show(req, res, next) {
+  static async retrieve(req, res, next) {
     try {
       const companyId = req.params.id;
 
@@ -104,7 +129,7 @@ export default class CompaniesController {
     }
   }
 
-  static async destroy(req, res, next) {
+  static async delete(req, res, next) {
     try {
       const companyId = req.params.id;
       // Check if company already exists by verifying the company id

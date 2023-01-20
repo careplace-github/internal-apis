@@ -1,8 +1,10 @@
 import { Timestamp } from "bson";
 import stripe from "stripe";
 
-import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from "../../../config/constants/index.js";
-
+import {
+  STRIPE_SECRET_KEY,
+  STRIPE_PUBLISHABLE_KEY,
+} from "../../../config/constants/index.js";
 
 const stripeClient = stripe(STRIPE_SECRET_KEY);
 
@@ -32,7 +34,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/payment_methods/customer_list?lang=node
    */
   async getCustomerPaymentMethods(customerId, type) {
-    let paymentMethods = await this.stripeClient.customer.listPaymentMethods(
+    let paymentMethods = await this.stripeClient.customers.listPaymentMethods(
       customerId,
 
       { type: type }
@@ -111,20 +113,11 @@ export default class Stripe {
     return createdPrice;
   }
 
-
-
   // -------------------------------------------------------------------------------------------- //
   //                                        PAYMENT INTENTS                                       //
   //                                                                                              //
   // @see https://stripe.com/docs/api/payment_intents?lang=node                                   //
   // -------------------------------------------------------------------------------------------- //
-
-
-
-  
-
-
-
 
   // -------------------------------------------------------------------------------------------- //
   //                                           CONNECT                                            //
@@ -192,10 +185,7 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
    */
-  async listConnectedAccountExternalAccountsOfBankAccounts(
-    accountId,
-    bankAccountId
-  ) {
+  async listConnectedAccountExternalAccountsOfBankAccounts(accountId) {
     const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
       accountId,
       {
@@ -304,7 +294,6 @@ export default class Stripe {
 
     return bankAccountToken;
   }
-
 
   /**
    * Creates a single-use token that represents a credit card’s details. This token can be used in place of a credit card object with any API method. These tokens can be used only once: by creating a new Charge object, or by attaching them to a Customer object.
@@ -428,9 +417,6 @@ export default class Stripe {
    * @see https://stripe.com/docs/webhooks/signatures?lang=node
    */
   async constructEvent(event, signature, endpointSecret) {
-
-  
-
     let stripeEvent = await this.stripeClient.webhooks.constructEvent(
       event,
       signature,
