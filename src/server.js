@@ -119,6 +119,8 @@ const main = async () => {
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
 
+    
+
     /**
      *  Handle connection errors
      */

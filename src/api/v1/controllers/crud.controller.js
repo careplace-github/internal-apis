@@ -2,6 +2,10 @@ import logger from "../../../logs/logger.js";
 import * as Error from "../utils/errors/http/index.js";
 import usersDAO from "../db/crmUsers.dao.js";
 import authUtils from "../utils/auth/auth.utils.js";
+import cognito from "../services/cognito.service.js";
+import mongoose from "mongoose";
+
+let ObjectId = mongoose.Types.ObjectId;
 
 export default class CRUD_Methods {
   /**
@@ -364,17 +368,30 @@ export default class CRUD_Methods {
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
 
-      let companyId = decodedToken["custom:company"];
+      let Cognito = new cognito();
+
+      let companyId = await Cognito.getUserCustomAttribute(
+        decodedToken.sub,
+        "company"
+      );
+
+      // let companyId = decodedToken["custom:company"];
 
       let documents = await this.DAO.query_list({
-        company: { $eq: companyId },
+        company: {$eq: companyId} 
+      },
+      {
+        select: "-__v -company -settings -createdAt -updatedAt -cognito_id"
       });
+
+    
 
       response.statusCode = 200;
       response.data = documents;
 
       next(response);
     } catch (err) {
+      console.log(`EROOR: ${err}`);
       next(err);
     }
   }
