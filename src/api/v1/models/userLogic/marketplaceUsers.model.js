@@ -18,9 +18,6 @@ const marketplaceUserSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      sparse: true,
-      index: true,
-      dropDups: true,
     },
 
     email_verified: { type: Boolean, required: false, default: false },

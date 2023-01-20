@@ -8,7 +8,7 @@ const relativeSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    relative: { type: Schema.ObjectId, ref: "user", required: true },
+    user: { type: Schema.ObjectId, ref: "user", required: true },
 
     kinship_degree: {
       // What is the kinship degree of the relative to this user
@@ -92,9 +92,6 @@ const relativeSchema = new Schema(
       },
     },
 
-    created_at: { type: Date, required: true, default: Date.now() },
-
-    updated_at: { type: Date, required: true, default: Date.now() },
   },
 
   {
@@ -111,6 +108,6 @@ relativeSchema.methods.getKinshipDegree = function (type) {
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
-export default Relative = mongoose.model("OrRelativeder", relativeSchema);
+export default Relative = mongoose.model("Relative", relativeSchema);
 
 

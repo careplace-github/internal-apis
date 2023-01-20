@@ -24,6 +24,7 @@ export default function errorHandler(err, req, res, next) {
         err.name === "AggregateError" ||
         err.name === "CastError"
       ) {
+        console.log(`JavaScript Error: ${err}`);
         err.message = "Internal Server Error";
         err.statusCode = 500;
         err.type = "INTERNAL_SERVER_ERROR";
