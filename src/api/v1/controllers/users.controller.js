@@ -4,20 +4,24 @@ import SES from "../services/ses.service.js";
 
 // Import DAOs
 import crmUsersDAO from "../db/crmUsers.dao.js";
+import MarketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 
-// Import Helpers
-import AuthHelper from "../helpers/auth/auth.helper.js";
+import authUtils from "../utils/auth/auth.utils.js";
+import {
+  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+} from "../../../config/constants/index.js";
 
 // Import Utils
 import password from "secure-random-password";
 import EmailHelper from "../helpers/emails/email.helper.js";
 
-
-
 // Import logger
 import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/server/request.utils.js";
+
+import * as Error from "../utils/errors/http/index.js";
 
 const app = "crm";
 
@@ -111,20 +115,6 @@ export default class UsersController {
     }
   }
 
-
-
-  static async addUserToMongoDb (req, res, next){
-
-    let CrmUsersDAO = new crmUsersDAO();
-
-    let user = req.body;
-
-    CrmUsersDAO.create(user);
-
-  }
-
-  
-
   /**
    * @debug
    * @description
@@ -147,8 +137,7 @@ export default class UsersController {
       })
     );
 
-    logger.info( 
-      "Temporary password: " + temporaryPassword + "\n");
+    logger.info("Temporary password: " + temporaryPassword + "\n");
 
     if (user.role == "admin") {
       return res.status(400).json({ error: "Cannot create admin user." });
@@ -182,7 +171,7 @@ export default class UsersController {
       app,
       user.email,
       temporaryPassword,
-      user.phoneNumber,
+      user.phoneNumber
     );
 
     // Error creating user in Cognito.
@@ -249,16 +238,11 @@ export default class UsersController {
     }
 
     // Add the new user to the company.
-    
 
     const addCompanyUser = await companiesDAO.add_user(
       user.company._id,
       newUser._id
     );
-
-    
-
-
 
     // Variables to be inserted into email template
     const emailData = {
@@ -297,7 +281,7 @@ export default class UsersController {
    * @debug
    * @description Returns the user information from the user id in the request params
    */
-  static async show(req, res, next) {
+  static async retrieve(req, res, next) {
     try {
       var request = requestUtils(req);
 
@@ -413,7 +397,7 @@ export default class UsersController {
    * @debug
    * @description
    */
-  static async destroy(req, res, next) {
+  static async delete(req, res, next) {
     try {
       var request = requestUtils(req);
 
@@ -437,172 +421,96 @@ export default class UsersController {
    * @description Returns the user information based on the token
    */
   static async account(req, res, next) {
-    //  try {
-    var request = requestUtils(req);
-
-    logger.info(
-      "Users Controller getAccount: " + JSON.stringify(request, null, 2) + "\n"
-    );
-
-    const token = req.headers.authorization.split(" ")[1];
-
-    const authId = await AuthHelper.getAuthId(token, "cognito");
-
-    const user = await usersDAO.get_one_by_auth_id(authId, "cognito");
-
-    // User found
-    if (user) {
-    
-     
-
-      request.statusCode = 200;
-      request.response = user;
-
-      logger.info(
-        "USERS-DAO GET_USER_BY_AUTH_ID RESULT: " +
-          JSON.stringify(user, null, 2) +
-          "\n"
-      );
-
-      // Return the user with company information
-      res.status(200).json(user);
-    }
-    // User not found
-    else {
-      request.statusCode = 404;
-      request.response = { message: "Couldn't fetch user account." };
-
-      logger.warn(
-        "Users Controller getAccount error: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
-
-      res.status(404).json({ message: "Couldn't fetch user account." });
-    }
-
-    /**
-       *  } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
-      );
-
-      return res.status(500).json(error);
-    }
-       */
-  }
-
-  /**
-   * @description Returns an array of Caregivers of a Company that are available for the given order. In the request params the order id is passed. The order id is used to get the order information. The order information is used to get the company id. The company id is used to get the caregivers of the company. The id of the caregivers are used to get the caregiver information and their events. The events are used to check if the caregiver is available for the given order. The caregivers that are available are returned. 
-   */
-  static async availableCaregivers(req, res, next) {
-
-    var request = requestUtils(req);
-
-    logger.info(
-      "Users Controller availableCaregivers: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
-
     try {
-      const orderId = req.params.orderId;
-
-      // Get order information
-      const order = await ordersDAO.get_one(orderId);
-
-      // Order found
-      if (order) {
-        // Get company id
-        const companyId = order.companyId;
-
-        // Get caregivers of the company
-        const caregivers = await usersDAO.get_caregivers(companyId);
-
-        // Caregivers found
-        if (caregivers) {
-          // Array of available caregivers
-          const availableCaregivers = [];
-
-          // Iterate through the caregivers
-          for (let i = 0; i < caregivers.length; i++) {
-            // Get caregiver information
-            const caregiver = await usersDAO.get_one(caregivers[i]._id);
-
-            // Get caregiver events
-            const events = await eventsDAO.get_events_by_user_id(
-              caregivers[i]._id
-            );
-
-            // Check if the caregiver is available for the given order
-            const available = await this.isAvailable(
-              caregiver,
-              events,
-              order.start,
-              order.end
-            );
-
-            // Caregiver is available
-            if (available) {
-              // Add caregiver to the array of available caregivers
-              availableCaregivers.push(caregiver);
-            }
-          }
-
-          request.statusCode = 200;
-          request.response = availableCaregivers;
-
-          logger.info(
-            "USERS-DAO AVAILABLE_CAREGIVERS RESULT: " +
-              JSON.stringify(availableCaregivers, null, 2) +
-              "\n"
-          );
-
-          // Return the array of available caregivers
-          res.status(200).json(availableCaregivers);
-        }
-        // No caregivers found
-        else {
-          request.statusCode = 404;
-          request.response = { message: "No caregivers found." };
-
-          logger.warn(
-            "Users Controller availableCaregivers error: " +
-              JSON.stringify(request, null, 2) +
-              "\n"
-          );
-
-          res.status(404).json({ message: "No caregivers found." });
-        }
-      }
-      // Order not found
-      else {
-        request.statusCode = 404;
-        request.response = { message: "Order not found." };
-
-        logger.warn(
-          "Users Controller availableCaregivers error: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
-
-        res.status(404).json({ message: "Order not found." });
-
-      }
-
-    } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+      logger.info(
+        `Users Controller ACCOUNT Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
       );
 
-      return res.status(500).json(error);
+      let response = {};
+      let responseAux = {};
+
+      let cognitoId;
+      let app;
+      let accessToken;
+
+      let cognitoResponse = {};
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthUtils = new authUtils();
+      let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
+      cognitoId = decodedToken.sub;
+
+      let clientId = decodedToken.client_id;
+
+      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
+        app = "crm";
+      } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        app = "marketplace";
+      }
+
+      let user;
+
+      try {
+        if (app === "crm") {
+          let CrmUsersDAO = new crmUsersDAO();
+
+          user = await CrmUsersDAO.query_one(
+            {
+              cognito_id: { $eq: cognitoId },
+            },
+            {
+              path: "company",
+              model: "Company",
+              populate: [
+                {
+                  path: "services",
+                  model: "Service",
+                  select: "-__v -created_at -updated_at -translations",
+                },
+                {
+                  path: "team",
+                  model: "crm_users",
+                  select:
+                    "-__v -createdAt -updatedAt -cognito_id -settings -company",
+                },
+              ],
+              select: "-__v -createdAt -updatedAt",
+            }
+          );
+        } else if (app === "marketplace") {
+          let marketplaceUsersDAO = new marketplaceUsersDAO();
+
+          user = await marketplaceUsersDAO.query_one({
+            cognito_id: { $eq: cognitoId },
+          });
+        }
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found.");
+          default:
+            throw new Error._500(error);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        user: user,
+      };
+
+      next(response);
+    } catch (error) {
+      console.log(error);
+      next(error);
     }
   }
-
 }
