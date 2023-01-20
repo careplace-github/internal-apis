@@ -28,7 +28,7 @@ const companySchema = new Schema(
 
     service_area: { type: Array, required: false },
 
-    team: [{ type: Schema.ObjectId, ref: "User", required: false }],
+    team: [{ type: Schema.ObjectId, ref: "crm_users", required: false }],
 
     address: {
       street: { type: String, required: true },
