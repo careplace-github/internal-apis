@@ -37,7 +37,9 @@ export default function responseHandler(response, req, res, next) {
       };
     }
 
-    res.status(response.statusCode).json(response.data);
+    let statusCode = response.statusCode ? response.statusCode : 500;
+
+    res.status(statusCode).json(response.data);
 
     logger.info(`HTTP Response: \n ${JSON.stringify(logResponse, null, 2)}\n`);
 

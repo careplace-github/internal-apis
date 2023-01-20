@@ -402,11 +402,12 @@ const main = async () => {
 
       // Middleware to handle and log all the errors
       app.use(errorLogger);
-      // Middleware to log all the HTTP responses
-      app.use(responseLogger);
+      // Middleware to handle and log all the HTTP responses
+     app.use(responseLogger);
 
       // Middleware to throw internal server errors
       app.on("error", (error) => {
+        console.log(`Internal Server Error: ${error}`);
         throw new Error._500(`Internal Server Error: ${error.message}`);
       });
 
@@ -428,6 +429,7 @@ const main = async () => {
         // Handle SIGUSR1 signal
       });
     } catch (error) {
+      console.log(`Unable to start Express Application: ${error}`);
       throw new Error._500(`Unable to start Express Application: ${error}`);
     }
 
@@ -470,9 +472,11 @@ const main = async () => {
         logger.info(`Server started successfully! 🚀`);
       });
     } catch (error) {
+      console.log(`Unable to start the HTTP Server: ${error}`);
       throw new Error._500(`Unable to start the HTTP Server: ${error}`);
     }
   } catch (error) {
+    console.log(`Internal Error: ${error}`);
     throw new Error._500(`Internal Error: ${error}`);
   }
 };
