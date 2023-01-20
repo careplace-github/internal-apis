@@ -166,8 +166,16 @@ export default class DAO {
     logger.info(
       `${this.Collection}DAO DELETE Request: \n { \n _id: ${document_id} \n}`
     );
+    let document_exists;
 
-    let document_exists = await this.Document.findById(document_id);
+    try {
+      document_exists = await this.Document.findById(document_id);
+    } catch (err) {
+      switch (err.name) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
+      }
+    }
 
     if (document_exists === null) {
       throw new LayerError.NOT_FOUND();
@@ -181,19 +189,33 @@ export default class DAO {
 
       deletedDocumentSchema
     );
+    let documentToDelete;
+    try {
+      documentToDelete = await deletedDocument.create({
+        _id: new mongoose.Types.ObjectId(),
 
-    let documentToDelete = await deletedDocument.create({
-      _id: new mongoose.Types.ObjectId(),
+        document_type: this.Type,
 
-      document_type: document_exists.type,
+        // Collection name from the model
+        document_collection: document_exists.collection.collectionName,
 
-      // Collection name from the model
-      document_collection: document_exists.collection.collectionName,
+        document_deleted: document_exists,
+      });
+    } catch (err) {
+      switch (err.name) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
+      }
+    }
 
-      document_deleted: document_exists,
-    });
-
-    await document_exists.deleteOne();
+    try {
+      await document_exists.deleteOne();
+    } catch (err) {
+      switch (err.name) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
+      }
+    }
 
     logger.info(
       `${this.Collection}DAO DELETE Deleted Document: \n ${JSON.stringify(
@@ -287,6 +309,7 @@ export default class DAO {
 
       return documents;
     } catch (error) {
+      console.log(error);
       throw new LayerError.INTERNAL_ERROR(error.message);
     }
   }

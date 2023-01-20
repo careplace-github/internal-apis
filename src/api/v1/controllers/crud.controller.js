@@ -30,13 +30,14 @@ export default class CRUD_Methods {
 
       let document = req.body;
 
-      let documentAdded = await this.DAO.add(document);
+      let documentAdded = await this.DAO.create(document);
 
       response.statusCode = 201;
       response.data = documentAdded;
 
       next(response);
     } catch (err) {
+      console.log("ERO: " + err);
       next(err);
     }
   }
@@ -56,7 +57,7 @@ export default class CRUD_Methods {
     try {
       let response = {};
 
-      let documentId = req.params.id;
+      let documentId = await req.params.id;
 
       let documentRetrieved;
       try {
@@ -93,12 +94,14 @@ export default class CRUD_Methods {
     try {
       let response = {};
 
-      let documentId = req.params.id;
+      let documentId = await req.params.id;
       let document = req.body;
+      let documentExists;
 
       try {
-        var documentExists = await this.DAO.retrieve(documentId);
+        documentExists = await this.DAO.retrieve(documentId);
       } catch (err) {
+        console.log(err);
         if (err.type === "NOT_FOUND") {
           throw new Error._400(`${this.DAO.Type} does not exist.`);
         }
@@ -140,8 +143,11 @@ export default class CRUD_Methods {
       try {
         deletedDocument = await this.DAO.delete(documentId);
       } catch (err) {
-        if (err.type === "NOT_FOUND") {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+        switch (err.type) {
+          case "NOT_FOUND":
+            throw new Error._400(`${this.DAO.Type} does not exist.`);
+          default:
+            throw new Error._500(err.message);
         }
       }
 
@@ -150,6 +156,7 @@ export default class CRUD_Methods {
 
       next(response);
     } catch (err) {
+      console.log("ERO: " + err);
       next(err);
     }
   }
@@ -355,36 +362,56 @@ export default class CRUD_Methods {
    */
   async listByCompanyId(req, res, next) {
     try {
+      console.log("TEste");
+
       let response = {};
       let accessToken;
+      let companyId;
+      let documents;
 
       let AuthUtils = new authUtils();
 
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(" ")[1];
       } else {
-        throw new Error._402("No Authorization header found.");
+        throw new Error._401("No Authorization header found.");
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
 
       let Cognito = new cognito();
 
-      let companyId = await Cognito.getUserCustomAttribute(
-        decodedToken.sub,
-        "company"
-      );
+      console.log(`Decoded Token: ${JSON.stringify(decodedToken)}`);
 
-      // let companyId = decodedToken["custom:company"];
+      try {
+        companyId = await Cognito.getUserCustomAttribute(
+          decodedToken.sub,
+          "company"
+        );
+      } catch (err) {
+        console.log(`ERROR 4: ${err}`);
+        switch (err.type) {
+          default:
+            throw new Error._500(err.message);
+        }
+      }
 
-      let documents = await this.DAO.query_list({
-        company: {$eq: companyId} 
-      },
-      {
-        select: "-__v -company -settings -createdAt -updatedAt -cognito_id"
-      });
-
-    
+      try {
+        documents = await this.DAO.query_list(
+          {
+            company: { $eq: companyId },
+          },
+          {
+            select: "-createdAt -updatedAt -__v ",
+          }
+        );
+      } catch (err) {
+        console.log(`ERROR 5: ${err}`);
+        switch (err.type) {
+          default:
+            throw new Error._500(err.message);
+        }
+      }
 
       response.statusCode = 200;
       response.data = documents;

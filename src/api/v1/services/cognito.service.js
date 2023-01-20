@@ -415,6 +415,9 @@ export default class Cognito {
         case "ExpiredCodeException":
           throw new LayerError.INVALID_CODE(error.message);
 
+        case "CodeMismatchException":
+          throw new LayerError.INVALID_CODE(error.message);
+
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
@@ -1010,7 +1013,6 @@ export default class Cognito {
         (attribute) => attribute.Name === attributeName
       );
     }
-
 
     // Return the attribute value
 
