@@ -983,74 +983,44 @@ export default class Cognito {
     }
   }
 
-  async getUserCustomAttributes(username, attributes) {
-    try {
-      const params = {
-        UserPoolId: AWS_COGNITO_CRM_USER_POOL_ID,
-        Username: username,
-      };
+  async getUserCustomAttribute(username, attributeName) {
+    const params = {
+      UserPoolId: AWS_COGNITO_CRM_USER_POOL_ID,
+      Username: username,
+    };
 
-      /**
-       * The attribute names are in the format "custom:attributeName"
-       * Check if the attributes (from the param attributes) have the "custom:" prefix
-       * If not, add it
-       */
-      if (attributes) {
-        for (let i = 0; i < attributes.length; i++) {
-          const attribute = attributes[i];
-
-          if (!attribute.startsWith("custom:")) {
-            attributes[i] = "custom:" + attribute;
-          }
-        }
-      }
-
-      let customAttributes = [];
-
-      const response = await this.congito.adminGetUser(params).promise();
-
-      /**
-       * Check if the user has the attributes (from the param attributes) and add them to the customAttributes object
-       */
-      if (response.UserAttributes && attributes) {
-        for (let i = 0; i < attributes.length; i++) {
-          const attribute = attributes[i];
-          const userAttribute = response.UserAttributes.find(
-            (userAttribute) => userAttribute.Name === attribute
-          );
-
-          if (userAttribute) {
-            customAttributes.push({
-              name: userAttribute.Name,
-              value: userAttribute.Value,
-            });
-          }
-        }
-
-        /**
-         * If there is only one attribute, return the value instead of the object
-         */
-        if (customAttributes.length === 1) {
-          customAttributes = customAttributes[0].value;
-        }
-      }
-
-      logger.info(
-        "COGNITO SERVICE GET_USER_CUSTOM_ATTRIBUTES SUCESS: " +
-          JSON.stringify(customAttributes, null, 2) +
-          "\n"
-      );
-
-      return customAttributes;
-    } catch (error) {
-      logger.error(
-        "COGNITO SERVICE GET_USER_CUSTOM_ATTRIBUTES ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
-
-      return { error: error };
+    /**
+     * The attribute name is in the format "custom:attributeName"
+     * Check if the attributes (from the param attributes) have the "custom:" prefix
+     * If not, add it
+     */
+    if (!attributeName.startsWith("custom:")) {
+      attributeName = "custom:" + attributeName;
     }
+
+    let customAttribute;
+
+    const response = await this.congito.adminGetUser(params).promise();
+
+    /**
+     * Check if the user has the attribute
+     */
+    if (response.UserAttributes) {
+      customAttribute = response.UserAttributes.filter(
+        (attribute) => attribute.Name === attributeName
+      );
+    }
+
+
+    // Return the attribute value
+
+    logger.info(
+      "COGNITO SERVICE GET_USER_CUSTOM_ATTRIBUTES SUCESS: " +
+        JSON.stringify(customAttribute, null, 2) +
+        "\n"
+    );
+
+    return customAttribute[0].Value;
   }
 
   /**

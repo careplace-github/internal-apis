@@ -14,11 +14,14 @@ router
  // .get(validateAuth, validateRole(["admin"]), companiesController.getCompanies)
   .post(companiesController.create);
 
+
+  router.route("/companies/users").get(companiesController.getUsers);
+
 router
   .route("/companies/:id")
-  .get(companiesController.show)
+  .get(companiesController.retrieve)
   .put( companiesController.update)
-  .delete(companiesController.destroy
+  .delete(companiesController.delete
   );
 
 export default router;

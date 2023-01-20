@@ -16,6 +16,7 @@ import {
 // Import Utils
 import password from "secure-random-password";
 import EmailHelper from "../helpers/emails/email.helper.js";
+import stripe from "../services/stripe.service.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -501,6 +502,48 @@ export default class UsersController {
             throw new Error._500(error);
         }
       }
+
+      /**
+       * Get External Accounts from Stripe
+       */
+      let Stripe = new stripe();
+      let connectedAccountId = user.company.stripe_information.account_id;
+      let externalAccounts;
+
+      try {
+        externalAccounts =
+          await Stripe.listConnectedAccountExternalAccountsOfBankAccounts(
+            connectedAccountId
+          );
+
+          console.log(`EXTERNAL ACCOUNTS: ${JSON.stringify(externalAccounts, null, 2)}`)
+      } catch (error) {
+        switch (error.type) {
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+      let customerId = user.company.stripe_information.customer_id;
+      let paymentMethods;
+
+      try {
+        paymentMethods = await Stripe.getCustomerPaymentMethods(customerId);
+        console.log(`PAYMENT METHODS: ${JSON.stringify(paymentMethods, null, 2)}`)
+      } catch (error) {
+        switch (error.type) {
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      // Convert user to JSON
+      user = user.toJSON();
+
+      user.company.stripe_information.external_accounts = externalAccounts.data;
+      user.company.stripe_information.payment_methods = paymentMethods.data;
+      delete user.createdAt;
+      delete user.updatedAt;
+      delete user.__v;
 
       response.statusCode = 200;
       response.data = {
