@@ -29,11 +29,6 @@ const ses = new AWS.SES({
 });
 
 /**
- * Creates a new NodemailerHelper instance
- */
-const transporter = new NodemailerHelper(ses);
-
-/**
  * Class to manage the AWS SES Service
  */
 export default class SES {
@@ -42,8 +37,10 @@ export default class SES {
    */
   constructor() {
     this.ses = ses;
-    this.emailHelper = emailHelper;
-    this.transporter = transporter;
+  }
+
+  async getSES() {
+    return this.ses;
   }
 
   /**
@@ -74,25 +71,29 @@ export default class SES {
           },
           Text: {
             Charset: "UTF-8",
-            Data: textBody,
-          },
-          Subject: {
-            Charset: "UTF-8",
-            Data: subject,
+            Data: textBody ? textBody : "htmlBody",
           },
         },
 
-        // suporte@careplace.pt
-        Source: AWS_SES_SENDER_EMAIL,
-        ReplyToAddresses: [AWS_SES_REPLY_TO_EMAIL],
-
-        // Email Address, CC and BCC
-        Destination: {
-          ToAddresses: receiverEmails,
-          CcAddresses: ccEmails,
-          BccAddresses: bccEmails,
+        // Subject
+        Subject: {
+          Charset: "UTF-8",
+          Data: subject,
         },
       },
+
+      // Email Address, CC and BCC
+      Destination: {
+        ToAddresses: receiverEmails,
+        CcAddresses: ccEmails,
+        BccAddresses: bccEmails,
+      },
+
+      // ReplyTo
+      ReplyToAddresses: ["suporte@careplace.pt"],
+
+      // Source
+      Source: "Careplace <noreply@careplace.pt>",
     };
 
     return this.ses.sendEmail(params).promise();
