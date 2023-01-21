@@ -1,8 +1,18 @@
 import { readFileSync, promises as fsPromises } from "fs";
 import fs from "fs";
-
+import nodemailer from "nodemailer";
 // Import logger
 import logger from "../../../../logs/logger.js";
+
+import {
+  AWS_SES_SENDER_EMAIL,
+  AWS_SES_REPLY_TO_EMAIL,
+} from "../../../../config/constants/index.js";
+// let aws = require("@aws-sdk/client-ses");
+import htmlToText from "html-to-text";
+import aws from "aws-sdk/clients/ses.js";
+
+import SES_Service from "../../services/ses.service.js";
 
 // Gender id's
 const male = 0;
@@ -23,7 +33,7 @@ export default class EmailHelper {
    * @returns {Promise<String>} - The email template as a string.
    */
   async getEmailTemplate(emailTemplate) {
-    let filename = `./src/emails/${emailTemplate}`;
+    let filename = `./src/assets/emails/${emailTemplate}`;
 
     // Check if file has the correct extension
     if (!filename.endsWith(".html")) {
@@ -46,7 +56,7 @@ export default class EmailHelper {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @param {JSON} data - The data to be inserted in the email template.
    */
-  async getEmailWithData(emailTemplate, data) {
+  async getEmailTemplateWithData(emailTemplate, data) {
     // Check if the email template is provided
     if (emailTemplate == null) {
       return { error: "Need to provide an email template." };
@@ -58,7 +68,7 @@ export default class EmailHelper {
     }
 
     // Get the email template
-    let template = await this.getEmailTemplate(emailTemplate);
+    let htmlBody = await this.getEmailTemplate(emailTemplate);
 
     // Get the keys of the data object
     let keys = Object.keys(data);
@@ -72,72 +82,27 @@ export default class EmailHelper {
 
       // Replace the variables with the respective values
       // The same variable may appear multiple times in the email template
-      while (template.includes(`{{${key}}}`)) {
-        template = template.replace(`{{${key}}}`, value);
+      while (htmlBody.includes(`{{${key}}}`)) {
+        htmlBody = htmlBody.replace(`{{${key}}}`, value);
       }
     });
 
-    //logger.info("Email Template: " + template + "\n");
+    
 
     // Get the subject
-    let subject = template.match(/<title>(.*?)<\/title>/g);
+    let subject = htmlBody.match(/<title>(.*?)<\/title>/g);
 
     // Remove the <title> tags
-    subject[0] = subject[0].replace("<title>", "").replace("</title>", "");
-    subject[1] = subject[1].replace("<title>", "").replace("</title>", "");
+    subject = subject[0].replace("<title>", "").replace("</title>", "");
 
-    // Get scripts from the email template and log them to the console
-    let scripts = template.match(/<script>(.*?)<\/script>/g);
+    
+    
 
-    // Iterate over the scripts
-    // Remove the <script> tags and the </script> tags from the scripts
-    // also remove "" from the scripts
-    scripts.forEach((script, index) => {
-      scripts[index] = script
-        .replace("<script>", "")
-        .replace("</script>", "")
-        .replace(/"/g, "");
-
-      if (data.gender == "male") {
-        // Remove every script that as an odd index
-        if (index % 2 != 0) {
-          scripts[index] = "";
-        }
-      } else {
-        // Remove every script that as an even index
-        if (index % 2 == 0) {
-          scripts[index] = "";
-        }
-      }
-    });
-
-    // Replace the scripts in the email template with the scripts from the array
-    scripts.forEach((script) => {
-      template = template.replace(/<script>(.*?)<\/script>/, script);
-    });
-
-    // Compress the email body
-    // template = template.replace(/(\r\n|\n|\r)/gm, "");
-
-    // logger.info("Subject: " + subject + "\n");
-
-    // Check if the subject is empty or null or undefined
-    if (
-      data.gender === "" ||
-      data.gender === null ||
-      data.gender === undefined
-    ) {
-      data.gender = "male";
-    }
     if (subject === "" || subject === null || subject === undefined) {
       subject = "Careplace";
-    } else if (data.gender == "female") {
-      // Male = 0 ; Female = 1
-      subject = subject[1];
-    } else {
-      subject = subject[0];
-    }
-    return { body: template, subject: subject };
+    } 
+    
+    return { htmlBody: htmlBody, subject: subject };
   }
 
   /**
@@ -171,7 +136,7 @@ export default class EmailHelper {
    */
   async getEmailSubject(emailTemplate, data) {
     // Get the email template
-    let template = await this.getEmailWithData(emailTemplate, data);
+    let template = await this.getEmailTemplateWithData(emailTemplate, data);
 
     // Get the subject
     // The subject is in the format <title>Subject</title>
@@ -264,5 +229,61 @@ export default class EmailHelper {
     );
 
     return emailTemplates;
+  }
+
+  /**
+   * Sends an email with attachments
+   *
+   * @param {Array<String>} receiverEmails - Array of emails to send the email to.
+   * @param {String} subject - Subject of the email.
+   * @param {import("aws-sdk/clients/ses.js").HtmlPart} htmlBody - HTML body of the email.
+   * @param {String} textBody - Text body of the email.
+   * @param {Array<File>} attachments - Array of attachments to send the email to.
+   * @param {Array<String>} ccEmails - Array of emails to send the email in CC to.
+   * @param {Array<String>} bccEmails - Array of emails to send the email in BCC to.
+   * @returns {Promise<JSON>} - Promise that resolves to the response from the SES service.
+   *
+   * @see https://nodemailer.com/transports/ses/
+   * @see https://github.com/andris9/nodemailer-html-to-text
+   */
+  async sendEmailWithAttachment(
+    receiverEmail,
+    subject,
+    htmlBody,
+    textBody,
+    attachments,
+    ccEmails,
+    bccEmails
+  ) {
+    let SES = new SES_Service();
+    let ses = await SES.getSES();
+    const transporter = nodemailer.createTransport({
+      SES: { ses, aws },
+    });
+
+    // transporter.use("compile", htmlToText.htmlToText());
+
+    const mailOptions = {
+      from: AWS_SES_SENDER_EMAIL,
+      to: receiverEmail,
+      replyTo: AWS_SES_REPLY_TO_EMAIL,
+      cc: ccEmails,
+      bcc: bccEmails,
+      subject: subject,
+      html: htmlBody,
+      //      text: textBody,
+      attachments: attachments,
+    };
+
+    let response = await transporter.sendMail(mailOptions);
+
+    for (let attachment of attachments) {
+     var filePath = attachment.path;
+
+      fs.unlink.bind(fs, filePath)
+      
+    }
+
+    return response;
   }
 }

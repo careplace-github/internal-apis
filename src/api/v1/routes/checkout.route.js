@@ -8,12 +8,6 @@ import express from "express";
 import CheckoutController from "../controllers/checkout.controller.js";
 const router = express.Router();
 
-/**
- * @debug
- */
-router
-.route("/checkout/payment-intent")
-.post(CheckoutController.createPaymentIntent);
 
 
 router

@@ -10,6 +10,8 @@ const router = express.Router();
 
 router.route("/companies").get(companiesController.listCompanies);
 
+router.route("/companies/:id/dashboard").get(companiesController.getDashboard);
+
 router.route("/companies/orders").get(companiesController.getOrders);
 
 router
@@ -17,6 +19,10 @@ router
   .get(OrdersController.retrieve)
   .put(OrdersController.update)
   .delete(OrdersController.delete);
+
+  router
+  .route("/companies/orders/:id/send-quote")
+    .post(OrdersController.sendQuote);
 
 router.route("/companies/users").get(companiesController.getUsers);
 

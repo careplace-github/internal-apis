@@ -75,9 +75,13 @@ export const AWS_S3_REGION = process.env.AWS_S3_REGION || process.env.AWS_REGION
 export const AWS_SES_REGION = process.env.AWS_SES_REGION || process.env.AWS_REGION;
 export const AWS_SES_SENDER_EMAIL = process.env.AWS_SES_SENDER_EMAIL;
 export const AWS_SES_REPLY_TO_EMAIL = process.env.AWS_SES_REPLY_TO_EMAIL;
+export const AWS_SES_ORDERS_BCC_EMAIL = process.env.AWS_SES_ORDERS_BCC_EMAIL;
 
 // Stripe Credentials
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 export const STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY;
 export const STRIPE_ACCOUNT_ENDPOINT_SECRET = process.env.STRIPE_ACCOUNT_ENDPOINT_SECRET;
 export const STRIPE_CONNECT_ENDPOINT_SECRET = process.env.STRIPE_CONNECT_ENDPOINT_SECRET;
+export const STRIPE_PRODUCT_ID = process.env.STRIPE_PRODUCT_ID;
+export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID;
+export const STRIPE_APPLICATION_FEE = process.env.STRIPE_APPLICATION_FEE;
