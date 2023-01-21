@@ -1,157 +1,144 @@
+import StripeService from "../../services/stripe.service.js";
 
+import LayerError from "../../utils/errors/layer/layerError.js";
 
-class StripeHelper {
-  constructor() {}
-}
+import axios from "axios";
 
-const getCompanySales = {
-  async getCompanySales(stripe_account_id, options, filters) {
-    // Create an Enum of year, month, week
-    // Create an Enum of total, byYear, byMonth, byWeek
+import fs from "fs";
 
-    let options_ = {
-      /**
-       * groupBy = year => subGroupBy = month || week || none
-       * groupBy = month => subGroupBy = week || none
-       * groupBy = none => subGroupBy = none
-       *
-       *
-       * groupBy = year && subGroupBy = month:
-       * [{
-       * year: "2022",
-       * sales: [{
-       * month: "2022-11",
-       * total: "2500"
-       * },{
-       * month: "2022-12",
-       * total: "2500"
-       * }]
-       *
-       * },{
-       * year: "2023",
-       * sales: [{
-       * month: "2023-01",
-       * total: "2500"
-       * }]
-       *
-       * }]
-       *
-       *
-       * groupBy = year && subGroupBy = week:
-       * [{
-       * year: "2022",
-       * sales: [{
-       * week: "2022-12-20",
-       * total: "2500"
-       * },{
-       * week: "2022-12-27",
-       * total: "2500"
-       * }]
-       *
-       * },{
-       * year: "2023",
-       * sales: [{
-       * week: "2023-01-01",
-       * total: "2500"
-       * }]
-       *
-       * }]
-       *
-       *
-       * groupBy = month && subGroupBy = week:
-       * [{
-       * month: "2022-12",
-       * sales: [{
-       * week: "2022-12-20",
-       * total: "2500"
-       *
-       *
-       *
-       *
-       *
-       *
-       *
-       */
-      groupBy: "year" || "month" || "none",
-      subGroupBy: "year" || "month" || "week" || "none",
-
-      /**
-       * groupBy = year => monthCap = null && dayCap = null
-       * groupBy = month => dayCap = null
-       */
-      yearCap: "2022",
-      monthCap: "2022-01",
-      dayCap: "2022-01-01",
-
-      /**
-       * Returns the total revenue for a specific year, month or week.
-       */
-      year: "2022",
-      month: "2022-01",
-      week: "2022-01-01",
-    };
-
-    let filters_ = {
-      groupBy: "Month",
-    };
-
-    console.log("ANALYTICS")
-  },
-};
-
-const getTotalSalesByCompany = {
-  async getTotalSalesByCompany(stripe_account_id) {},
-};
-
-const getUserOrders = {
-  async getUserOrders(stripe_customer_id) {},
-};
-
-const getReceipt = {
-  async getReceipt(stripe_subscription_id) {
-    // Downloads file from url
-    let download = async (url, path, callback) => {
-      const writer = fs.create;
-      const response = await axios({
-        url,
-        method: "GET",
-
-        responseType: "stream",
-      });
-
-      response.data.pipe(writer);
-
-      return new Promise((resolve, reject) => {
-        writer.on("finish", resolve);
-        writer.on("error", reject);
-      });
-    };
-
-    return download(url, path);
-  },
-};
-
-class StripeAnalytics extends StripeHelper {
+export default class StripeHelper {
   constructor() {
-    super();
+    const Stripe = new StripeService();
+
+    this.Stripe = Stripe;
+  }
+
+  async getReceiptLink(subscriptionId) {
+    let subscription = await this.Stripe.getSubscription(subscriptionId);
+
+    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice);
+
+    let charge = await this.Stripe.getCharge(invoice.charge);
+
+    let receiptUrl = charge.receipt_url.replace("?s=ap", "") + "/pdf?s=em";
+
+    return receiptUrl;
+  }
+
+  async getOrderNumber(subscriptionId) {
+    let subscription = await this.Stripe.getSubscription(subscriptionId);
+
+    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice);
+
+    let orderNumber = invoice.receipt_number.replace("-", "");
+
+    return orderNumber;
+  }
+
+  async getReceipt(subscriptionId) {
+    let receiptUrl = await this.getReceiptLink(subscriptionId);
+
+    /**
+     * Download the receipt and save it as a file into `./src/downloads/
+     */
+    let receiptFile = await axios.get(receiptUrl, {
+      responseType: "arraybuffer",
+    });
+
+    /**
+     * 2689-5764
+     * -> 26895764
+     */
+    let orderNumber = await this.getOrderNumber(subscriptionId);
+
+    let receiptFileName = `careplace-receipt-${orderNumber}.pdf`;
+    let receiptFilePath = `./src/downloads/${receiptFileName}`;
+
+    fs.writeFileSync(receiptFilePath, receiptFile.data, {
+      encoding: "binary",
+    });
+
+    let receipt = {
+      filename: receiptFileName,
+
+      path: receiptFilePath,
+    };
+
+    return receipt;
+  }
+
+  async getConnectedAccountActiveSubscriptions(accountId) {
+    let subscriptions = await this.Stripe.getSubscriptionsByConnectedAcountId(
+      accountId,
+      {
+        status: "active",
+      }
+    );
+
+    return subscriptions;
+  }
+
+  async getConnectedAccountCurrentMRR(accountId) {
+    let subscriptions = await this.getConnectedAccountActiveSubscriptions(
+      accountId
+    );
+
+    let currentMRR = 0;
+
+    subscriptions.forEach((subscription) => {
+      currentMRR += subscription.plan.amount;
+    });
+
+    return currentMRR;
+  }
+
+  /**
+   *
+   * Output:
+   *
+   * [
+   * {Month: 1, totalRevenue: 1000},
+   * {Month: 2, totalRevenue: 2000},
+   * [...]
+   * ]
+   *
+   * It should not have the same month twice
+   * Each month should correspond to a calendar month (1 = January, 2 = February, etc.)
+   * This should be done by getting the invoices (that were paid) and summing up the total amount of each invoice by month
+   *
+   *
+   *
+   */
+
+  async getConnectAccountTotalRevenueByMonth(accountId) {
+    let invoices = await this.Stripe.getInvoicesByConnectedAccountId(
+      accountId,
+      {
+        status: "paid",
+      }
+    );
+
+    let totalRevenueByMonth = [];
+
+    invoices.forEach((invoice) => {
+      let month = new Date(invoice.created * 1000).getMonth() + 1;
+
+      let totalRevenue = invoice.amount_paid;
+
+      let monthExists = totalRevenueByMonth.find(
+        (totalRevenueByMonth) => totalRevenueByMonth.Month === month
+      );
+
+      if (monthExists) {
+        monthExists.totalRevenue += totalRevenue;
+
+        return;
+      }
+
+      totalRevenueByMonth.push({
+        Month: month,
+        totalRevenue: totalRevenue,
+      });
+    });
   }
 }
-
-// Add the methods to the prototypes
-Object.assign(StripeAnalytics.prototype, getCompanySales);
-Object.assign(StripeAnalytics.prototype, getTotalSalesByCompany);
-Object.assign(StripeAnalytics.prototype, getUserOrders);
-
-
-class StripeUtils extends StripeHelper {
-  constructor() {
-    super();
-  }
-}
-
-Object.assign(StripeUtils.prototype, getReceipt);
-
-
-
-
-export { StripeAnalytics, StripeUtils };

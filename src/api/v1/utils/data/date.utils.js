@@ -8,7 +8,6 @@ import logger from "../../../../logs/logger.js";
  * Class with utility functions for dates.
  */
 export default class DateUtils {
-
   async getWeekDayNumber(weekDay) {
     switch (weekDay) {
       case "Monday":
@@ -71,4 +70,120 @@ export default class DateUtils {
     newDate.setDate(newDate.getDate() + ((1 + 7 - newDate.getDay()) % 7) + 7);
     return newDate;
   }
+
+  /**
+   *
+   * @example
+   *
+   * schedule = [
+   * {
+   * weekDay: 1,
+   * startTime: "08:00",
+   * endTime: "12:00",
+   * },
+   * {
+   * weekDay: 3,
+   * startTime: "08:00",
+   * endTime: "12:00",
+   * },
+   * {
+   * weekDay: 6,
+   * startTime: "08:00",
+   * endTime: "12:00",
+   * },
+   * ]
+   *
+   * response = `Segundas-feiras: 08:00 - 12:00; Quartas-feiras: 08:00 - 12:00; Sextas-feiras: 08:00 - 12:00`;
+   */
+  async getScheduleRecurrencyText(schedule) {
+    console.log(`SCHEDULE: ${JSON.stringify(schedule)}`);
+
+    const weekDayNumberToWeekDayText = {
+      1: "Segundas-feiras",
+      2: "Terças-feiras",
+      3: "Quartas-feiras",
+      4: "Quintas-feiras",
+      5: "Sextas-feiras",
+      6: "Sábados",
+      7: "Domingos",
+    };
+
+    let response = "";
+
+    for (let i = 0; i < schedule.length; i++) {
+      const scheduleItem = schedule[i];
+
+      const weekDayText = weekDayNumberToWeekDayText[scheduleItem.week_day];
+      const startTime = scheduleItem.start_time;
+      const endTime = scheduleItem.end_time;
+
+      if (i === 0) {
+        response += `${weekDayText}: ${startTime} - ${endTime}`;
+      } else {
+        response += `; ${weekDayText}: ${startTime} - ${endTime}`;
+      }
+
+      
+    }
+
+    console.log(`SCHEDULE RESPONSE : ${response}`);
+
+      return response;
+
+  }
+
+  /**
+   * @example
+   * input: 1674260545
+   * 1674260545 = 2023-01-21T00:29:05.000Z
+   * output: Jan 21, 2023
+   *
+   * @see https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+   */
+  async getDateFromUnixTimestamp(unixTimestamp) {
+    console.log(`unixTimestamp: ${unixTimestamp}`);
+
+    const date = new Date(unixTimestamp * 1000);
+
+    console.log(`date: ${date}`);
+
+    const months = [
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
+    ];
+
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
+  }
+
+
+
+  /**
+   * 
+   * 2023-01-21T00:29:05.000Z
+   * 
+   * -> 21/01/2023
+   * 
+   */
+  async convertDateToReadableString(date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  }
+
+
 }

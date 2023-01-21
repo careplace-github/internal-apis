@@ -71,4 +71,17 @@ export default class OrdersController {
     let OrdersCRUD = new CrudController(OrdersDAO);
     await OrdersCRUD.delete(req, res, next);
   }
+
+  /**
+   * Uses Stripe service to create a subscription with a payment intent for the order.customer (as a customer) and the order.company (as a connected account).
+   * Send an email to the order.customer with the payment intent client secret.
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  static async sendQuote(req, res, next) {
+
+    
+  }
 }

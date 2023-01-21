@@ -26,6 +26,8 @@ const orderSchema = new Schema(
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
     order_status: { type: String, required: true, default: "new" },
 
+    order_total: { type: Number, required: false },
+
     services: [{ type: Schema.ObjectId, ref: "Service", required: true }],
 
     // Json with all the information about the order schedule
@@ -39,8 +41,6 @@ const orderSchema = new Schema(
         required: true,
         default: Date.now() + 31536000000,
       },
-
-      
 
       // 0 -> Every 0 weeks -> Not recurrent, one time only order.
       // 1 -> Every 1 week -> Weekly
@@ -57,7 +57,11 @@ const orderSchema = new Schema(
       // week_day must be a number betwen 1 and 7
       schedule: [
         {
-          week_day: { type: Number, required: true, enum: [1, 2, 3, 4, 5, 6, 7]},
+          week_day: {
+            type: Number,
+            required: true,
+            enum: [1, 2, 3, 4, 5, 6, 7],
+          },
           start_time: { type: String, required: true },
           end_time: { type: String, required: true },
         },
@@ -66,11 +70,9 @@ const orderSchema = new Schema(
 
     screening_visit: {
       date: { type: Date, required: false },
-       // Pending; Scheduled; completed; Canceled
+      // Pending; Scheduled; completed; Canceled
       status: { type: String, required: true, default: "pending" },
       event: { type: Schema.ObjectId, ref: "Event", required: false },
-     
-      
     },
 
     actual_start_date: { type: Date, required: false },
@@ -114,8 +116,6 @@ const orderSchema = new Schema(
 
       coordinates: { type: Array, required: true },
     },
-
-   
   },
   {
     timestamps: true,
@@ -154,4 +154,3 @@ orderSchema.methods.updateStripePaymentIntent = async function (
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 export default Order = mongoose.model("Order", orderSchema);
-

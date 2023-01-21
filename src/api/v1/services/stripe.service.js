@@ -6,8 +6,6 @@ import {
   STRIPE_PUBLISHABLE_KEY,
 } from "../../../config/constants/index.js";
 
-const stripeClient = stripe(STRIPE_SECRET_KEY);
-
 /**
  * Class to manage the Stripe API
  *
@@ -15,6 +13,7 @@ const stripeClient = stripe(STRIPE_SECRET_KEY);
  */
 export default class Stripe {
   constructor() {
+    const stripeClient = stripe(STRIPE_SECRET_KEY);
     this.stripeClient = stripeClient;
   }
 
@@ -52,8 +51,22 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/payment_methods/create?lang=node
    */
-  async createPaymentMethod(type, paymentMethod) {
-    let payload = {};
+  async createPaymentMethod(type, paymentMethod, billingAddress) {
+    let payload = {
+      type: type,
+      [paymentMethod]: paymentMethod,
+      billing_details: {
+        name: billingAddress.name,
+        email: billingAddress.email,
+        address: {
+          line1: billingAddress.street,
+          city: billingAddress.city,
+          state: billingAddress.state,
+          postal_code: billingAddress.postal_code,
+          country: billingAddress.country,
+        },
+      },
+    };
 
     payload.type = type;
     payload[paymentMethod] = paymentMethod;
@@ -63,6 +76,78 @@ export default class Stripe {
     );
 
     return createdPaymentMethod;
+  }
+
+  async createPaymentMethodWithToken(type, token, billingAddress) {
+    let payload = {
+      type: type,
+      card: { token: token },
+
+      billing_details: {
+        name: billingAddress.name,
+        email: billingAddress.email,
+        address: {
+          line1: billingAddress.street,
+          city: billingAddress.city,
+          state: billingAddress.state,
+          postal_code: billingAddress.postal_code,
+          country: billingAddress.country,
+        },
+      },
+    };
+
+    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(
+      payload
+    );
+
+    return createdPaymentMethod;
+  }
+
+  /**
+   * Returns the subscriptions for a given connected account.
+   *
+   * @see https://stripe.com/docs/api/subscriptions/list?lang=node
+   */
+  async getSubscriptionsByConnectedAcountId(connectedAccountId, filters = {}) {
+    let subscriptions = await this.stripeClient.subscriptions.list({
+      limit: filters.limit !== null ? filters.limit : 1000,
+      starting_after: filters.starting_after !== null ? filters.starting_after : null,
+      status: filters.status !== null ? filters.status : null,
+      created: filters.created !== null ? filters.created : null,
+
+      customer: connectedAccountId,
+    });
+
+    return subscriptions.data;
+  }
+
+  async getReceiptsByConnectedAcountId(connectedAccountId, filters = {}) {
+    let receipts = await this.stripeClient.balanceTransactions.list({
+      limit: filters.limit !== null ? filters.limit : 1000,
+      starting_after: filters.starting_after !== null ? filters.starting_after : null,
+      status: filters.status !== null ? filters.status : null,
+      created: filters.created !== null ? filters.created : null,
+
+      customer: connectedAccountId,
+    });
+
+    return receipts.data;
+  }
+
+/**
+ * @see https://stripe.com/docs/api/invoices/list?lang=node
+ */
+  async getInvoicesByConnectedAccountId(connectedAccountId, filters = {}) {
+    let invoices = await this.stripeClient.invoices.list({
+      limit: filters.limit !== null ? filters.limit : 1000,
+      starting_after: filters.starting_after !== null ? filters.starting_after : null,
+      status: filters.status !== null ? filters.status : null,
+      created: filters.created !== null ? filters.created : null,
+
+      customer: connectedAccountId,
+    });
+
+    return invoices.data;
   }
 
   /**
@@ -101,6 +186,8 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/prices/create?lang=node
    */
   async createPrice(productId, price, currency, recurrency) {
+    console.log("createPrice ", productId, price, currency, recurrency);
+
     let createdPrice = await this.stripeClient.prices.create({
       product: productId,
       unit_amount: price,
@@ -108,6 +195,8 @@ export default class Stripe {
       recurring: {
         interval: recurrency,
       },
+
+      tax_behavior: "inclusive",
     });
 
     return createdPrice;
@@ -458,6 +547,15 @@ export default class Stripe {
     applicationFee,
     paymentMethod
   ) {
+    console.log(
+      "createSubscription",
+      customerId,
+      priceId,
+      transferAccount,
+      applicationFee,
+      paymentMethod
+    );
+
     let subscription = await this.stripeClient.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -468,10 +566,32 @@ export default class Stripe {
       application_fee_percent: applicationFee,
       default_payment_method: paymentMethod,
 
-      // payment_behavior: 'default_incomplete',
+      automatic_tax: {
+        enabled: true,
+      },
+
+      collection_method: "charge_automatically",
     });
 
     return subscription;
+  }
+
+  async sendInvoice(invoiceId) {
+    let invoice = await this.stripeClient.invoices.sendInvoice(invoiceId);
+
+    return invoice;
+  }
+
+  async getInvoice(invoiceId) {
+    let invoice = await this.stripeClient.invoices.retrieve(invoiceId);
+
+    return invoice;
+  }
+
+  async getCharge(chargeId) {
+    let charge = await this.stripeClient.charges.retrieve(chargeId);
+
+    return charge;
   }
 
   /**
