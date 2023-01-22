@@ -5,17 +5,15 @@ import express from "express";
 
 
 // Import controllers
-import CheckoutController from "../controllers/checkout.controller.js";
+import StripeController from "../controllers/stripe.controller.js";
 const router = express.Router();
 
 
 
 router
-  .route("/checkout/order/:id/payment-intent")
-  .post(CheckoutController.createPaymentIntent);
+  .route("/checkout/orders/:id/payment-intent")
+  .post(StripeController.createSubscriptionPaymentIntent);
 
-router
-  .route("/checkout/order/:id/confirm-payment")
-  .post(CheckoutController.confirmPayment);
+
 
 export default router;

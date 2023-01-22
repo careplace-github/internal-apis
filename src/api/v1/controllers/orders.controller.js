@@ -23,12 +23,6 @@ import requestUtils from "../utils/server/request.utils.js";
  */
 
 export default class OrdersController {
-  static async listCompanyOrders(req, res, next) {
-    let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
-    await OrdersCRUD.listByCompanyId(req, res, next);
-  }
-
   static async create(req, res, next) {
     let OrdersDAO = new ordersDAO();
     let OrdersCRUD = new CrudController(OrdersDAO);
@@ -47,18 +41,18 @@ export default class OrdersController {
     let order = await OrdersDAO.retrieve(req.params.id);
     let updatedOrder = req.body;
 
-    if (updatedOrder.company && (order.company !== updatedOrder.company)) {
+    if (updatedOrder.company && order.company !== updatedOrder.company) {
       throw new Error.BadRequest("You cannot change the company of an order.");
     }
-    if (updatedOrder.user && (order.user !== updatedOrder.user)) {
+    if (updatedOrder.user && order.user !== updatedOrder.user) {
       throw new Error.BadRequest("You cannot change the user of an order.");
     }
-    if (updatedOrder.relatives && (order.relatives !== updatedOrder.relatives)) {
+    if (updatedOrder.relatives && order.relatives !== updatedOrder.relatives) {
       throw new Error.BadRequest(
         "You cannot change the relatives of an order."
       );
     }
-    if (updatedOrder.caregiver && (order.caregiver !== updatedOrder.caregiver)) {
+    if (updatedOrder.caregiver && order.caregiver !== updatedOrder.caregiver) {
       throw new Error.BadRequest(
         "You cannot change the caregiver of an order."
       );
@@ -72,16 +66,13 @@ export default class OrdersController {
     await OrdersCRUD.delete(req, res, next);
   }
 
-  /**
-   * Uses Stripe service to create a subscription with a payment intent for the order.customer (as a customer) and the order.company (as a connected account).
-   * Send an email to the order.customer with the payment intent client secret.
-   * 
-   * @param {*} req 
-   * @param {*} res 
-   * @param {*} next 
-   */
-  static async sendQuote(req, res, next) {
-
-    
+  static async listOrdersByCompany(req, res, next) {
+    let OrdersDAO = new ordersDAO();
+    let OrdersCRUD = new CRUD(OrdersDAO);
+    await OrdersCRUD.listByCompanyId(req, res, next);
   }
+
+  static async sendQuote(req, res, next) {}
+
+
 }
