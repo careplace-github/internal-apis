@@ -110,6 +110,9 @@ export default class DateUtils {
 
     let response = "";
 
+    // Order the schedule by week day
+    schedule.sort((a, b) => a.week_day - b.week_day);
+
     for (let i = 0; i < schedule.length; i++) {
       const scheduleItem = schedule[i];
 
@@ -122,14 +125,11 @@ export default class DateUtils {
       } else {
         response += `; ${weekDayText}: ${startTime} - ${endTime}`;
       }
-
-      
     }
 
     console.log(`SCHEDULE RESPONSE : ${response}`);
 
-      return response;
-
+    return response;
   }
 
   /**
@@ -168,14 +168,12 @@ export default class DateUtils {
     return `${month} ${day}, ${year}`;
   }
 
-
-
   /**
-   * 
+   *
    * 2023-01-21T00:29:05.000Z
-   * 
+   *
    * -> 21/01/2023
-   * 
+   *
    */
   async convertDateToReadableString(date) {
     const day = date.getDate();
@@ -184,6 +182,4 @@ export default class DateUtils {
 
     return `${day}/${month}/${year}`;
   }
-
-
 }

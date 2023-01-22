@@ -1,7 +1,7 @@
 // Import database access objects
 
 // Import Services
-import Stripe from "../../services/stripe.service.js";
+import stripe from "../../services/stripe.service.js";
 
 import * as Error from "../../utils/errors/http/httpError.js";
 
@@ -12,6 +12,19 @@ import {
   STRIPE_CONNECT_ENDPOINT_SECRET,
 } from "../../../../config/constants/index.js";
 
+import logger from "../../../../logs/logger.js";
+import stripeHelper from "../../helpers/services/stripe.helper.js";
+import emailHelper from "../../helpers/emails/email.helper.js";
+import dateUtils from "../../utils/data/date.utils.js";
+
+import OrdersDAO from "../../db/orders.dao.js";
+
+import {
+  STRIPE_APPLICATION_FEE,
+  STRIPE_PRODUCT_ID,
+} from "../../../../config/constants/index.js";
+import ordersDAO from "../../db/orders.dao.js";
+
 /**
  * Controller for Stripe Webhooks
  *
@@ -20,7 +33,7 @@ import {
  * @see https://stripe.com/docs/webhooks/quickstart?lang=node
  * @see https://stripe.com/docs/webhooks/test
  */
-export default class StripeController {
+export default class StripeWebhooksController {
   static async account(req, res, next) {}
 
   /**
@@ -37,7 +50,12 @@ export default class StripeController {
   static async connect(req, res, next) {
     let sig;
     let event;
-    let stripe = new Stripe();
+    let Stripe = new stripe();
+
+    let EmailHelper = new emailHelper();
+    let DateUtils = new dateUtils();
+    let StripeHelper = new stripeHelper();
+    let OrdersDAO = new ordersDAO();
 
     if (req.headers) {
       if (req.headers["stripe-signature"]) {
@@ -51,7 +69,7 @@ export default class StripeController {
 
     // let reqBuffer = await buffer(req);
 
-    event = await stripe.constructEvent(
+    event = await Stripe.constructEvent(
       req.body,
       sig,
       STRIPE_CONNECT_ENDPOINT_SECRET
@@ -67,49 +85,42 @@ export default class StripeController {
        * Occurs when a user disconnects from your account and can be used to trigger required cleanup on your server. Available for Standard accounts.
        */
       case "account.application.deauthorized	":
-        
         break;
 
       /**
        *	Allows you to monitor changes to connected account requirements and status changes. Available for Standard, Express, and Custom accounts.
        */
       case "account.updated":
-       
         break;
 
       /**
        *	If you use the Persons API, allows you to monitor changes to requirements and status changes for individuals. Available for Express and Custom accounts.
        */
       case "person.updated":
-        
         break;
 
       /**
        *	Occurs when a payment intent results in a successful charge. Available for all payments, including destination and direct charges
        */
       case "payment_intent.succeeded":
-       
         break;
 
       /**
        *	Occurs when your Stripe balance has been updated (for example, when funds you’ve added from your bank account are available for transfer to your connected account).
        */
       case "balance.available":
-        
         break;
 
       /**
        *Occurs when a bank account or debit card attached to a connected account is updated, which can impact payouts. Available for Express and Custom accounts.
        */
       case "account.external_account.updated":
-       
         break;
 
       /**
        *	Occurs when a payout fails. When a payout fails, the external account involved will be disabled, and no automatic or manual payouts can go through until the external account is updated.
        */
       case "payout.failed":
-        
         break;
     }
 
@@ -123,36 +134,30 @@ export default class StripeController {
        * Sent when a Customer is successfully created.
        */
       case "customer.created":
-      
         break;
 
       /**
        *	Sent when the subscription is created. The subscription status may be incomplete if customer authentication is required to complete the payment or if you set payment_behavior to default_incomplete. For more details, read about subscription payment behavior.
        */
       case "customer.subscription.created":
-        console.log("YEAH BUDYYYYYYYY. LIGHT WEIGHT BUDYYYY");
-        
         break;
 
       /**
        * Sent when a customer’s subscription ends.
        */
       case "customer.subscription.deleted":
-        
         break;
 
       /**
        * 	Sent three days before the trial period ends. If the trial is less than three days, this event is triggered.
        */
       case "customer.subscription.trial_will_end":
-       
         break;
 
       /**
        * Sent when the subscription is successfully started, after the payment is confirmed. Also sent whenever a subscription is changed. For example, adding a coupon, applying a discount, adding an invoice item, and changing plans all trigger this event.
        */
       case "customer.subscription.updated":
-       
         break;
 
       /**
@@ -160,7 +165,6 @@ export default class StripeController {
        * Respond to the notification by sending a request to the Finalize an invoice API.
        */
       case "invoice.created":
-       
         break;
 
       /**
@@ -169,7 +173,6 @@ export default class StripeController {
        * Depending on your settings, Stripe automatically charges the default payment method or attempts collection. Read more about emails after finalization.
        */
       case "invoice.finalized":
-        
         break;
 
       /**
@@ -181,21 +184,100 @@ export default class StripeController {
        */
 
       case "invoice.finalization_failed":
-        
         break;
 
       /**
        * Sent when the invoice is successfully paid. You can provision access to your product when you receive this event and the subscription status is active.
        */
       case "invoice.paid":
-        
+        let subscriptionId = event.data.object.subscription;
+        let chargeId = event.data.object.charge;
+
+        let receipt = await StripeHelper.getReceipt(subscriptionId);
+
+        let receiptDate = await DateUtils.getDateFromUnixTimestamp(
+          event.data.object.created
+        );
+
+        let order;
+
+        while (order === null || order === undefined) {
+          order = await OrdersDAO.query_one({
+            stripe_subscription_id: subscriptionId,
+          });
+
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
+
+        logger.info(`Schedule Information: ${order}`);
+
+        let schedule = await DateUtils.getScheduleRecurrencyText(
+          order.schedule_information.schedule
+        );
+
+        let receiptLink = await StripeHelper.getReceiptLink(subscriptionId);
+
+        let startDate = await DateUtils.convertDateToReadableString(
+          order.actual_start_date
+        );
+
+        let paymentMethod = await StripeHelper.getPaymentMethodByChargeId(
+          chargeId
+        );
+        let billingAddress = await StripeHelper.getBillingAddressByChargeId(
+          chargeId
+        );
+
+        logger.inf;
+
+        let emailPayload = {
+          name: event.data.object.customer_name,
+          startDate: startDate,
+          schedule: schedule,
+
+          // Make sure that the ammounts have 2 decimal places
+          subTotal: (event.data.object.total_excluding_tax / 100).toFixed(2),
+          taxAmmount: (event.data.object.tax / 100).toFixed(2),
+          orderTotal: (event.data.object.total / 100).toFixed(2),
+
+          clientEmail: event.data.object.customer_email,
+
+          orderNumber: event.data.object.number.replace("A53F4B19-", ""),
+          receiptDate: receiptDate,
+          receiptLink: receiptLink,
+
+          paymentMethod:
+            paymentMethod.card.brand !== null
+              ? paymentMethod.card.brand.toUpperCase()
+              : "SEPA Direct Debit",
+
+          street: billingAddress.line1,
+          postalCode: billingAddress.postal_code,
+          city: billingAddress.city,
+          country: billingAddress.country,
+        };
+
+        let email = await EmailHelper.getEmailTemplateWithData(
+          `order_payment_confirmation`,
+          emailPayload
+        );
+
+        await EmailHelper.sendEmailWithAttachment(
+          paymentMethod.billing_details.email,
+          email.subject,
+          email.htmlBody,
+          null,
+          [receipt],
+          null,
+          "orders@staging.careplace.pt"
+        );
+
         break;
 
       /**
        * Sent when the invoice requires customer authentication. Learn how to handle the subscription when the invoice requires action.
        */
       case "invoice.payment_action_required":
-       
         break;
 
       /**
@@ -205,35 +287,30 @@ export default class StripeController {
        * Update the default payment method on the subscription.
        */
       case "invoice.payment_failed":
-        
         break;
 
       /**
        * Sent a few days prior to the renewal of the subscription. The number of days is based on the number set for Upcoming renewal events in the Dashboard. You can still add extra invoice items, if needed.
        */
       case "invoice.upcoming":
-       
         break;
 
       /**
        * Sent when a payment succeeds or fails. If payment is successful the paid attribute is set to true and the status is paid. If payment fails, paid is set to false and the status remains open. Payment failures also trigger a invoice.payment_failed event.
        */
       case "invoice.updated":
-       
         break;
 
       /**
        * Sent when a PaymentIntent is created.
        */
       case "payment_intent.created":
-        
         break;
 
       /**
        * Sent when a PaymentIntent has successfully completed payment.
        */
       case "payment_intent.succeeded":
-        
         break;
 
       default:
@@ -243,6 +320,5 @@ export default class StripeController {
     }
 
     res.sendStatus(200);
-    
   }
 }
