@@ -17,6 +17,7 @@ import {
 import password from "secure-random-password";
 import EmailHelper from "../helpers/emails/email.helper.js";
 import stripe from "../services/stripe.service.js";
+import authHelper from "../helpers/auth/auth.helper.js";
 
 // Import logger
 import logger from "../../../logs/logger.js";
@@ -446,11 +447,19 @@ export default class UsersController {
         throw new Error._400("No authorization token provided.");
       }
 
-      let AuthUtils = new authUtils();
-      let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
-      cognitoId = decodedToken.sub;
+      let AuthHelper = new authHelper();
 
-      let clientId = decodedToken.client_id;
+      let clientId = await AuthHelper.getClientId(accessToken);
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      let phoneVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "phone_number_verified";
+      }).Value;
+
+      let emailVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "email_verified";
+      }).Value;
 
       if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
         app = "crm";
@@ -516,7 +525,9 @@ export default class UsersController {
             connectedAccountId
           );
 
-          console.log(`EXTERNAL ACCOUNTS: ${JSON.stringify(externalAccounts, null, 2)}`)
+        console.log(
+          `EXTERNAL ACCOUNTS: ${JSON.stringify(externalAccounts, null, 2)}`
+        );
       } catch (error) {
         switch (error.type) {
           default:
@@ -528,7 +539,9 @@ export default class UsersController {
 
       try {
         paymentMethods = await Stripe.getCustomerPaymentMethods(customerId);
-        console.log(`PAYMENT METHODS: ${JSON.stringify(paymentMethods, null, 2)}`)
+        console.log(
+          `PAYMENT METHODS: ${JSON.stringify(paymentMethods, null, 2)}`
+        );
       } catch (error) {
         switch (error.type) {
           default:
@@ -541,6 +554,8 @@ export default class UsersController {
 
       user.company.stripe_information.external_accounts = externalAccounts.data;
       user.company.stripe_information.payment_methods = paymentMethods.data;
+      user.phone_verified = phoneVerified;
+      user.email_verified = emailVerified;
       delete user.createdAt;
       delete user.updatedAt;
       delete user.__v;
@@ -555,5 +570,40 @@ export default class UsersController {
       console.log(error);
       next(error);
     }
+  }
+
+  static async addPaymentMethod(req, res, next) {
+    try {
+      let accessToken;
+
+      let paymentMethodToken = req.body.token;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let customerId = user.stripe_information.customer_id;
+
+      let Stripe = new stripe();
+
+      await Stripe.attachPaymentMethodToCustomer(token, customerId);
+
+      let response = {
+        statusCode: 200,
+        data: paymentMethodToken,
+      };
+    } catch (error) {}
+  }
+
+
+
+  static async deletePaymentMethod(req, res, next) {
+   
   }
 }

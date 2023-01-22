@@ -1,7 +1,7 @@
 // Import database access objects
 
 // Import Services
-import Stripe from "./../../services/stripe.service.js";
+import Stripe from "../../services/stripe.service.js";
 
 import * as Error from "../../utils/errors/http/httpError.js";
 

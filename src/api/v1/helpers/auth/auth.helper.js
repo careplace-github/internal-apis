@@ -1,18 +1,24 @@
 // Import logger
 import logger from "../../../../logs/logger.js";
 // Import errors helper
-import * as Error from "../../utils/errors/http/index.js";
+import * as LayerError from "../../utils/errors/layer/index.js";
 // Authentication Provider
-import CognitoContext from "./providers/cognitoContext.js";
 
-import { AUTH_PROVIDER } from "../../../../config/constants/index.js";
+import CognitoService from "../../services/cognito.service.js";
 
+import authUtils from "../../utils/auth/auth.utils.js";
 
+import {
+  AWS_COGNITO_CRM_GROUPS,
+  AWS_COGNITO_MARKETPLACE_GROUPS,
+  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+} from "../../../../config/constants/index.js";
 
-/**
- * Create a new instance of the CognitoService.
- */
-const cognitoContext = new CognitoContext();
+import marketplaceUsersDao from "../../db/marketplaceUsers.dao.js";
+import crmUsersDao from "../../db/crmUsers.dao.js";
+
+let AuthUtils = new authUtils();
 
 /**
  * Class with utility functions for authentication.
@@ -24,22 +30,8 @@ export default class AuthHelper {
    *
    * @param {String} accessToken - JWT token.
    */
-  constructor(accessToken) {
-    /**
-     * @AuthProvider
-     */
-    this.accessToken = accessToken;
-    this.authProvider = this.getAuthProvider();
-  }
-
-  getAuthProvider() {
-    switch (AUTH_PROVIDER) {
-      case "cognito":
-        return cognitoContext;
-
-      default:
-        throw new Error._500(`Internal Server Error`, `Invalid auth provider.`);
-    }
+  constructor() {
+    this.AuthUtils = AuthUtils;
   }
 
   /**
@@ -54,13 +46,49 @@ export default class AuthHelper {
         `Authentication Helper GET_AUTH_USER Request: \n ${accessToken}`
       );
 
-      const authUser = await this.authProvider.getAuthUser(accessToken);
+      let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+
+      let clientId = decodedToken["client_id"];
+
+      let username = decodedToken["username"];
+
+      let Cognito = new CognitoService(clientId);
+
+      const authUser = await Cognito.adminGetUser(username);
 
       logger.info(`Authentication Helper GET_AUTH_USER RESULT: \n ${authUser}`);
 
       return authUser;
     } catch (error) {
-      throw new Error._500(`Internal Server Error: ${error}`);
+      throw new LayerError.INTERNAL_ERROR(`Internal Server Error: ${error}`);
+    }
+  }
+
+  async getUserAttributes(accessToken) {
+    try {
+      logger.info(
+        `Authentication Helper GET_USER_ATTRIBUTES Request: \n ${accessToken}`
+      );
+
+      let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+
+      let clientId = decodedToken["client_id"];
+
+      let username = decodedToken["username"];
+
+      let Cognito = new CognitoService(clientId);
+
+      const user = await Cognito.adminGetUser(username);
+
+      let userAttributes = user.UserAttributes;
+
+      logger.info(
+        `Authentication Helper GET_USER_ATTRIBUTES RESULT: \n ${userAttributes}`
+      );
+
+      return userAttributes;
+    } catch (error) {
+      throw new LayerError.INTERNAL_ERROR(`Internal Server Error: ${error}`);
     }
   }
 
@@ -80,22 +108,6 @@ export default class AuthHelper {
     }
   }
 
-  async getApp(accessToken) {
-    try {
-      logger.info(`Authentication Helper GET_APP Request: \n ${accessToken}`);
-
-      let authProvider = new CognitoContext();
-
-      const app = await authProvider.getApp(accessToken);
-
-      logger.info(`Authentication Helper GET_APP RESULT: \n ${app}`);
-
-      return app;
-    } catch (error) {
-      throw new Error._500(`Internal Server Error: ${error}`);
-    }
-  }
-
   async getAuthId(accessToken) {
     try {
       logger.info(
@@ -109,6 +121,57 @@ export default class AuthHelper {
       return authId;
     } catch (error) {
       throw new Error._500(`Internal Server Error: ${error}`);
+    }
+  }
+
+  async getClientId(accessToken) {
+    try {
+      logger.info(`Authentication Helper GET_APP Request: \n ${accessToken}`);
+
+      let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+
+      let clientId = decodedToken["client_id"];
+
+      logger.info(`Authentication Helper GET_APP RESULT: \n ${clientId}`);
+
+      return clientId;
+    } catch (error) {
+      throw new LayerError.INTERNAL_ERROR(`Internal Server Error: ${error}`);
+    }
+  }
+
+  async getUserFromDB(accessToken) {
+    try {
+      logger.info(
+        `Authentication Helper GET_USER_FROM_DB Request: \n ${accessToken}`
+      );
+
+      let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+
+      let clientId = decodedToken["client_id"];
+
+      let username = decodedToken["username"];
+
+      let user;
+
+      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
+        let CrmUsersDao = new crmUsersDao();
+        user = await CrmUsersDao.query_one({
+          cognito_id: { $eq: username },
+        });
+      } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        let MarketplaceUsersDao = new marketplaceUsersDao();
+
+        user = await MarketplaceUsersDao.query_one({
+          cognito_id: { $eq: username },
+        });
+      }
+
+      logger.info(`Authentication Helper GET_USER_FROM_DB RESULT: \n ${user}`);
+
+      return user;
+    } catch (error) {
+      throw new LayerError.INTERNAL_ERROR(`Internal Server Error: ${error}`);
     }
   }
 }

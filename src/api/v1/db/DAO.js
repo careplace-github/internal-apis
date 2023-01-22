@@ -245,7 +245,7 @@ export default class DAO {
     return response;
   }
 
-  async query_list(filters, options, page, documentsPerPage, populate) {
+  async query_list(filters, options, page, documentsPerPage, populate, select) {
     try {
       logger.info(
         `${this.Collection}DAO QUERY_LIST Request: \n ${JSON.stringify(
@@ -272,12 +272,14 @@ export default class DAO {
          * @see https://mongoosejs.com/docs/api.html#model_Model-find
          */
         var documents = await this.Document.find(filters, null, options)
+          .select(select)
           .skip(page * documentsPerPage)
           .limit(documentsPerPage)
+
           .populate(populate)
           .exec();
       } catch (error) {
-        throw new Error._500(error);
+        throw new LayerError.INTERNAL_ERROR(error);
       }
 
       if (documents === null) {

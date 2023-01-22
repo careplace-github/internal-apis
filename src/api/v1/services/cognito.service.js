@@ -651,38 +651,6 @@ export default class Cognito {
   }
 
   /**
-   * @description Refreshes the user access token.
-   * @param {String} accessToken - User access token.
-   * @returns {Promise<JSON>} - Cognito user details.
-   */
-  async getUser(accessToken) {
-    try {
-      const params = {
-        AccessToken: accessToken,
-      };
-
-      let response = {};
-
-      response.cognitoResponse = await this.congito.getUser(params).promise();
-      response.message = "Cognito user details retrieved successfully";
-
-      logger.info(
-        "COGNITO SERVICE GET_USER SUCESS: " +
-          JSON.stringify(response, null, 2) +
-          "\n"
-      );
-    } catch (error) {
-      logger.error(
-        "COGNITO SERVICE GET_USER ERROR: " +
-          JSON.stringify(error, null, 2) +
-          "\n"
-      );
-
-      return { error: error };
-    }
-  }
-
-  /**
    * Returns the user details from the Cognito service as an admin.
    * @param {String} username - Username of the user.
    * @returns {Promise<JSON>} - Cognito user details.
