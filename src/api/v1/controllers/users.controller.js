@@ -528,7 +528,7 @@ export default class UsersController {
 
       try {
         externalAccounts =
-          await Stripe.listConnectedAccountExternalAccountsOfBankAccounts(
+          await Stripe.listExternalAccounts(
             connectedAccountId
           );
 

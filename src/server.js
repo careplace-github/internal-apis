@@ -64,6 +64,7 @@ import ordersRoute from "./api/v1/routes/orders.route.js";
 import calendarRoute from "./api/v1/routes/calendar.route.js";
 import webHooksRoute from "./api/v1/routes/hooks/webhooks.route.js";
 import checkoutRoute from "./api/v1/routes/checkout.route.js";
+import paymentMethodsRoute from "./api/v1/routes/paymentMethods.route.js";
 
 // Helpers
 import getServices from "./api/v1/helpers/assets/services.helper.js";
@@ -399,6 +400,7 @@ const main = async () => {
       app.use(API_ROUTE, ordersRoute);
       app.use(API_ROUTE, servicesRoute);
       app.use(API_ROUTE, calendarRoute);
+      app.use(API_ROUTE, paymentMethodsRoute);
       app.use(API_ROUTE, checkoutRoute);
       app.use(API_ROUTE, webHooksRoute);
 

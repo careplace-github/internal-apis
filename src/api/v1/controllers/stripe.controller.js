@@ -32,11 +32,13 @@ import logger from "../../../logs/logger.js";
 import * as Error from "../utils/errors/http/index.js";
 
 export default class StripeController {
-  static async addPaymentMethod(req, res, next) {
+  static async createPaymentMethod(req, res, next) {
     try {
       let accessToken;
 
-      let paymentMethodToken = req.body.token;
+      let paymentMethodToken = req.body.payment_method_token;
+
+      let billingAddress = req.body.billing_address;
 
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(" ")[1];
@@ -50,18 +52,166 @@ export default class StripeController {
 
       let customerId = user.stripe_information.customer_id;
 
-      let Stripe = new stripe();
+      let Stripe = new StripeService();
 
-      await Stripe.attachPaymentMethodToCustomer(token, customerId);
+      let createPaymentMethod = await Stripe.createPaymentMethodWithToken(
+        "card",
+        paymentMethodToken,
+        billingAddress
+      );
+
+      let paymentMethodAttached = await Stripe.attachPaymentMethodToCustomer(
+        createPaymentMethod.id,
+        customerId
+      );
 
       let response = {
         statusCode: 200,
-        data: paymentMethodToken,
+        data: paymentMethodAttached,
       };
-    } catch (error) {}
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async deletePaymentMethod(req, res, next) {}
+  static async retrievePaymentMethod(req, res, next) {
+    try {
+      let paymentMethodId = req.params.id;
+
+      let accessToken;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let Stripe = new StripeService();
+
+      let paymentMethod = await Stripe.getPaymentMethod(paymentMethodId);
+
+      let response = {
+        statusCode: 200,
+        data: paymentMethod,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deletePaymentMethod(req, res, next) {
+    try {
+      let accessToken;
+
+      let paymentMethodId = req.params.id;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let customerId = user.stripe_information.customer_id;
+
+      let Stripe = new StripeService();
+
+      // Check if the payment method is attached to the customer trying to delete it.
+      let paymentMethod = await Stripe.getPaymentMethod(paymentMethodId);
+
+      if (paymentMethod.customer !== customerId) {
+        throw new Error._403(
+          "You are not authorized to delete this payment method."
+        );
+      }
+      let paymentMethodDeleted = await Stripe.deletePaymentMethod(
+        paymentMethodId,
+        customerId
+      );
+
+      let response = {
+        statusCode: 200,
+        data: paymentMethodDeleted,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async listPaymentMethods(req, res, next) {
+    try {
+      let accessToken;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let customerId = user.stripe_information.customer_id;
+
+      let Stripe = new StripeService();
+
+      let paymentMethods = await Stripe.listPaymentMethods(customerId);
+
+      let response = {
+        statusCode: 200,
+        data: paymentMethods,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createExternalAccount (req, res, next) {
+    try {
+      let accessToken;
+
+      let externalAccountToken = req.body.external_account_token;
+
+      let billingAddress = req.body.billing_address;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let companyId = await AuthHelper.getUserAttributes(accessToken);
+
+      logger.info("Company ID: " + companyId);
+
+      exit(0);
+    
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async retrieveExternalAccount (req, res, next) {}
+
+  static async deleteExternalAccount (req, res, next) {}
+
+  static async listExternalAccounts (req, res, next) {}
 
   /**
    * Uses Stripe service to create a subscription with a payment intent for the order.customer (as a customer) and the order.company (as a connected account).
@@ -75,13 +225,6 @@ export default class StripeController {
 
   static async createSubscriptionPaymentIntent(req, res, next) {
     try {
-      /**
-       * Get the order id from the request params.
-       * Retrieve the order from the database.
-       *
-       *
-       */
-
       let response = {};
 
       let orderId = req.params.id;
