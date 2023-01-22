@@ -6,6 +6,7 @@ import express from "express";
 import CompaniesController from "../controllers/companies.controller.js";
 import OrdersController from "../controllers/orders.controller.js";
 import UsersController from "../controllers/users.controller.js";
+import StripeController from "../controllers/stripe.controller.js";
 
 const router = express.Router();
 
@@ -26,6 +27,14 @@ router
   .post(OrdersController.sendQuote);
 
 router.route("/companies/users").get(UsersController.listUsersByCompany);
+
+router.route("/companies/external-accounts")
+.post(StripeController.createExternalAccount)
+.get(StripeController.listExternalAccounts);
+
+router.route("/companies/external-accounts/:id")
+.get(StripeController.retrieveExternalAccount)
+.delete(StripeController.deleteExternalAccount);
 
 
 

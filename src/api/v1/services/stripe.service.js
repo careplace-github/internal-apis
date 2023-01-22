@@ -34,7 +34,7 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/payment_methods/customer_list?lang=node
    */
-  async getCustomerPaymentMethods(customerId, type) {
+  async listPaymentMethods(customerId, type = null) {
     let paymentMethods = await this.stripeClient.customers.listPaymentMethods(
       customerId,
 
@@ -88,7 +88,10 @@ export default class Stripe {
     return paymentMethod;
   }
 
-  async createPaymentMethodWithToken(type, token, billingAddress) {
+  async
+
+
+  async createPaymentMethodWithToken(type, token, billingAddress = {}) {
     let payload = {
       type: type,
       card: { token: token },
@@ -155,12 +158,28 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/payment_methods/attach?lang=node
    */
   async attachPaymentMethodToCustomer(paymentMethodId, customerId) {
+
+    logger.info(`Stripe Service ATTACH_PAYMENT_METHOD_TO_CUSTOMER Request: ${JSON.stringify(paymentMethodId, null, 2)} ${customerId}`)
+
     let attachedPaymentMethod = await this.stripeClient.paymentMethods.attach(
       paymentMethodId,
       { customer: customerId }
     );
 
     return attachedPaymentMethod;
+  }
+
+  async deletePaymentMethod(paymentMethodId) {
+
+    logger.info(`Stripe Service DELETE_PAYMENT_METHOD Request: ${JSON.stringify(paymentMethodId, null, 2)}`)
+
+    let deletedPaymentMethod = await this.stripeClient.paymentMethods.detach(
+      paymentMethodId
+    );
+
+    return deletedPaymentMethod;
+
+
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -295,7 +314,7 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
    */
-  async listConnectedAccountExternalAccountsOfBankAccounts(accountId) {
+  async listExternalAccounts(accountId) {
     const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
       accountId,
       {
@@ -305,6 +324,12 @@ export default class Stripe {
 
     return bankAccounts;
   }
+
+  async createExternalAccount(accountId, token) {}
+
+  async getExternalAccount(accountId, bankAccountId) {}
+
+  async deleteExternalAccount(accountId, bankAccountId) {}
 
   /**
    * You can see a list of the cards that belong to a connected account. The 10 most recent external accounts are available on the account object. If you need more than 10, you can use this API method and the limit and starting_after parameters to page through additional cards.
