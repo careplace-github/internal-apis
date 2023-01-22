@@ -1,5 +1,6 @@
 import crmUsersDAO from "../db/crmUsers.dao.js";
 import ordersDAO from "../db/orders.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 import CRUD from "./crud.controller.js";
 
 // Import logger
@@ -8,11 +9,20 @@ import requestUtils from "../utils/server/request.utils.js";
 import StripeService from "../services/stripe.service.js";
 import stripeHelper from "../helpers/services/stripe.helper.js";
 
-import * as Errors from "../utils/errors/http/index.js";
-import * as LayerErrors from "../utils/errors/layer/index.js";
+import authHelper from "../helpers/auth/auth.helper.js";
+
+import * as Error from "../utils/errors/http/index.js";
+import * as LayerError from "../utils/errors/layer/index.js";
 
 export default class CompaniesController {
-  static async retrieve(req, res, next) {}
+  static async retrieve(req, res, next) {
+
+    let CompaniesDAO = new companiesDAO();
+    let CompaniesCRUD = new CRUD(CompaniesDAO);
+
+    await CompaniesCRUD.retrieve(req, res, next);
+
+  }
   static async getUsers(req, res, next) {
     const CrmUsersDAO = new crmUsersDAO();
     const CrmUsersCRUD = new CRUD(CrmUsersDAO);
@@ -26,53 +36,36 @@ export default class CompaniesController {
     await OrdersCRUD.listByCompanyId(req, res, next);
   }
 
-  static async getDashboard(req, res, next) {
-    const { accountId } = req.params.id;
+  static async searchCompanies(req, res, next) {
+    let filters = {};
+    let options = {};
+    let page = req.query.page ? req.query.page : 1;
+    let documentsPerPage = req.query.documentsPerPage ? req.query.documentsPerPage : 10;
 
-    let companyId = "63a204a3973d8aadd5a664b0";
 
-    let OrdersDAO = new ordersDAO();
 
-    let pendingOrders = await OrdersDAO.query_list({
-      companyId: companyId,
-      status: "pending",
-    }).then((orders) => {
-    
-      return orders.length;
-    });
+      // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
+      if (req.query.sortBy) {
+        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
+        // Otherwise, we will by default sort the results by ascending order.
+        options.sort = {
+          [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
 
-    console.log(`Length of pending orders: ${pendingOrders}`)
 
-    let StripeHelper = new stripeHelper();
 
-    let numberOfActiveClients =
-      await StripeHelper.getConnectedAccountActiveSubscriptions(accountId).then(
-        (subscriptions) => {
-          
-          return subscriptions.length;
-        }
-      );
+    let CompaniesDAO = new companiesDAO();
+   let companies = await CompaniesDAO.query_list(filters, options, page, documentsPerPage, null, "-_id -plan -legal_information -team -stripe_information -billing_address")
 
-    let MRR = await StripeHelper.getConnectedAccountCurrentMRR(accountId);
-
-    let annualRevenue = await StripeHelper.getConnectAccountTotalRevenueByMonth(
-      accountId
-    );
-
-    let response = {};
-
-    response.statusCode = 200;
-    response.data = {
-      pendingOrders: pendingOrders !== null && pendingOrders !== undefined ? pendingOrders : 0,
-      activeClients: numberOfActiveClients !== null && numberOfActiveClients !== undefined ? numberOfActiveClients : 0,
-      MRR: MRR !== null && MRR !== undefined ? MRR : 0,
-      annualRevenue: annualRevenue !== null && annualRevenue !== undefined ? annualRevenue : [],
-    };
+    let response = {
+      data: companies,
+      statusCode: 200,
+    }
 
     next(response);
+    
   }
-
-  static async listCompanies(req, res, next) {}
 
   /**
    * @deprecated

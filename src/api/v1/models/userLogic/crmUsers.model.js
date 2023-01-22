@@ -18,11 +18,7 @@ const crmUserSchema = new Schema(
 
     email: { type: String, required: true, unique: true },
 
-    email_verified: { type: Boolean, required: false, default: false },
-
     phone: { type: String, required: true, unique: true },
-
-    phone_verified: { type: Boolean, required: false, default: false },
 
     birth_date: { type: Date, required: false },
 
@@ -97,8 +93,6 @@ const crmUserSchema = new Schema(
 /**
  * Methods
  */
-
-
 
 /**
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'

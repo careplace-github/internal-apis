@@ -82,21 +82,21 @@ const orderSchema = new Schema(
     stripe_subscription_id: { type: String, required: false },
 
     billing_address: {
-      street: { type: String, required: true },
+      street: { type: String, required: false },
 
-      postal_code: { type: String, required: true },
+      postal_code: { type: String, required: false },
 
       state: { type: String, required: false },
 
-      city: { type: String, required: true },
+      city: { type: String, required: false },
 
       country: {
         type: String,
-        required: true,
+        required: false,
         enum: ["PT", "ES", "US", "UK"],
       },
 
-      coordinates: { type: Array, required: true },
+      coordinates: { type: Array, required: false },
     },
 
     address: {

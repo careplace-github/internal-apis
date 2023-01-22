@@ -108,46 +108,31 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/subscriptions/list?lang=node
    */
-  async getSubscriptionsByConnectedAcountId(connectedAccountId, filters = {}) {
-    let subscriptions = await this.stripeClient.subscriptions.list({
-      limit: filters.limit !== null ? filters.limit : 1000,
-      starting_after: filters.starting_after !== null ? filters.starting_after : null,
-      status: filters.status !== null ? filters.status : null,
-      created: filters.created !== null ? filters.created : null,
+  async listSubscriptions(filters = {}) {
+    let subscriptions;
 
-      customer: connectedAccountId,
-    });
+    subscriptions = await this.stripeClient.subscriptions.list(filters);
 
     return subscriptions.data;
   }
 
-  async getReceiptsByConnectedAcountId(connectedAccountId, filters = {}) {
-    let receipts = await this.stripeClient.balanceTransactions.list({
-      limit: filters.limit !== null ? filters.limit : 1000,
-      starting_after: filters.starting_after !== null ? filters.starting_after : null,
-      status: filters.status !== null ? filters.status : null,
-      created: filters.created !== null ? filters.created : null,
+  /**
+   * @see https://stripe.com/docs/api/invoices/list?lang=node
+   */
+  async listInvoices(filters = {}) {
+    let invoices;
 
-      customer: connectedAccountId,
-    });
-
-    return receipts.data;
-  }
-
-/**
- * @see https://stripe.com/docs/api/invoices/list?lang=node
- */
-  async getInvoicesByConnectedAccountId(connectedAccountId, filters = {}) {
-    let invoices = await this.stripeClient.invoices.list({
-      limit: filters.limit !== null ? filters.limit : 1000,
-      starting_after: filters.starting_after !== null ? filters.starting_after : null,
-      status: filters.status !== null ? filters.status : null,
-      created: filters.created !== null ? filters.created : null,
-
-      customer: connectedAccountId,
-    });
+    invoices = await this.stripeClient.invoices.list(filters);
 
     return invoices.data;
+  }
+
+  async listCharges(filters = {}) {
+    let charges;
+
+    charges = await this.stripeClient.charges.list(filters);
+
+    return charges.data;
   }
 
   /**
@@ -770,7 +755,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/webhook_endpoints/delete?lang=node
    */
   async deleteWebhookEndpoint(webhookId) {
-    let webhookEndpoint = await this.stripeClient.webhookEndpoints.del(
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.delete(
       webhookId
     );
     return webhookEndpoint;
