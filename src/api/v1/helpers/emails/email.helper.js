@@ -87,21 +87,16 @@ export default class EmailHelper {
       }
     });
 
-    
-
     // Get the subject
     let subject = htmlBody.match(/<title>(.*?)<\/title>/g);
 
     // Remove the <title> tags
     subject = subject[0].replace("<title>", "").replace("</title>", "");
 
-    
-    
-
     if (subject === "" || subject === null || subject === undefined) {
       subject = "Careplace";
-    } 
-    
+    }
+
     return { htmlBody: htmlBody, subject: subject };
   }
 
@@ -278,10 +273,9 @@ export default class EmailHelper {
     let response = await transporter.sendMail(mailOptions);
 
     for (let attachment of attachments) {
-     var filePath = attachment.path;
+      var filePath = attachment.path;
 
-      fs.unlink.bind(fs, filePath)
-      
+      fs.unlink.bind(fs, filePath);
     }
 
     return response;

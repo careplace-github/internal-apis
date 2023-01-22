@@ -90,6 +90,8 @@ export default class StripeController {
 
       let promotionCode = req.body.promotion_code;
 
+      let taxId = req.body.tax_id;
+
       let Stripe = new StripeService();
       let StripeHelper = new stripeHelper(Stripe);
 
@@ -168,6 +170,27 @@ export default class StripeController {
        */
       await Stripe.attachPaymentMethodToCustomer(paymentMethodId, customerId);
 
+      if (taxId !== undefined && taxId !== null && taxId !== "") {
+        // Check if the customer already has the tax id
+        let customerTaxIds = await Stripe.getCustomerTaxIds(customerId);
+
+        let taxIdExists = false;
+
+        let taxIdAux = "PT" + taxId;
+
+        for (let i = 0; i < customerTaxIds.data.length; i++) {
+          if (customerTaxIds.data[i].value === taxIdAux) {
+            taxIdExists = true;
+            break;
+          }
+        }
+
+        if (taxIdExists === false) {
+          // Create a tax id for the customer
+          await Stripe.createCustomerTaxId(customerId, taxId);
+        }
+      }
+
       /**
        * Create a price for the product.
        */
@@ -187,8 +210,6 @@ export default class StripeController {
       let stripePromotionCode;
       let newApplicationFee;
 
-      logger.info("PROMO: " + promotionCode);
-
       if (
         promotionCode !== undefined &&
         promotionCode !== null &&
@@ -196,10 +217,6 @@ export default class StripeController {
       ) {
         stripePromotionCode = await StripeHelper.getPromotionCodeByName(
           promotionCode
-        );
-
-        logger.info(
-          `Promotion Code AQUI: ${JSON.stringify(stripePromotionCode, null, 2)}`
         );
 
         coupon = stripePromotionCode.coupon;
@@ -265,114 +282,6 @@ export default class StripeController {
 
       next(response);
 
-      let receipt = await StripeHelper.getReceipt(subscription.id);
-
-      let EmailHelper = new emailHelper();
-
-      let DateUtils = new dateUtils();
-
-      let schedule = await DateUtils.getScheduleRecurrencyText(
-        order.schedule_information.schedule
-      );
-
-      /**
-       * Remove last 4 digits from order number
-       *
-       * @example
-       * A53F4B19-0038
-       * -> A53F4B19
-       */
-      let orderNumber = await StripeHelper.getOrderNumber(subscription.id);
-
-      let receiptDate = await DateUtils.getDateFromUnixTimestamp(
-        subscription.latest_invoice.created
-      );
-
-      let receiptLink = await StripeHelper.getReceiptLink(subscription.id);
-
-      let startDate = await DateUtils.convertDateToReadableString(
-        order.actual_start_date
-      );
-
-      let emailPayload = {
-        name: paymentMethod.billing_details.name,
-        startDate: startDate,
-        schedule: schedule,
-        subTotal:
-          promotionCode === null || promotionCode === undefined
-            ? (parseInt(subscription.plan.amount) / 100 / 1.23)
-                .toFixed(2)
-                .toString()
-            : (
-                (parseInt(subscription.plan.amount) / 100 -
-                  coupon.amount_off / 100) /
-                1.23
-              )
-                .toFixed(2)
-                .toString(),
-
-        // Portuguese VAT (IVA) = 23% -> 100-23 = 77%
-        taxAmmount:
-          promotionCode === null || promotionCode === undefined
-            ? (
-                parseInt(subscription.plan.amount) / 100 -
-                parseInt(subscription.plan.amount) / 100 / 1.23
-              )
-                .toFixed(2)
-                .toString()
-            : (
-                parseInt(subscription.plan.amount) / 100 -
-                coupon.amount_off / 100 -
-                (parseInt(subscription.plan.amount) / 100 -
-                  coupon.amount_off / 100) /
-                  1.23
-              )
-                .toFixed(2)
-                .toString(),
-
-        orderTotal:
-          promotionCode === null || promotionCode === undefined
-            ? (parseInt(subscription.plan.amount) / 100).toFixed(2).toString()
-            : (
-                parseInt(subscription.plan.amount) / 100 -
-                coupon.amount_off / 100
-              )
-                .toFixed(2)
-                .toString(),
-
-        clientEmail: paymentMethod.billing_details.email,
-
-        orderNumber: orderNumber,
-        receiptDate: receiptDate,
-        receiptLink: receiptLink,
-        // if null, then it's a bank transfer
-        // how to I caps lock a string?
-        // https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
-        paymentMethod:
-          paymentMethod.card.brand !== null
-            ? paymentMethod.card.brand.toUpperCase()
-            : "SEPA Direct Debit",
-        street: paymentMethod.billing_details.address.line1,
-        postalCode: paymentMethod.billing_details.address.postal_code,
-        city: paymentMethod.billing_details.address.city,
-        country: paymentMethod.billing_details.address.country,
-      };
-
-      let email = await EmailHelper.getEmailTemplateWithData(
-        `order_payment_confirmation`,
-        emailPayload
-      );
-
-      await EmailHelper.sendEmailWithAttachment(
-        paymentMethod.billing_details.email,
-        email.subject,
-        email.htmlBody,
-        null,
-        [receipt],
-        null,
-        "orders@staging.careplace.pt"
-      );
-
       /**
        * After the coupon is applied, update the subscription with the normal application fee so that the next payment is charged with the normal application fee.
        */
@@ -381,6 +290,9 @@ export default class StripeController {
         proration_behavior: "none", // Do not prorate the subscription. Charge the customer the full amount for the new plan.
       });
 
+      /**
+       * Attach the stripe subscription id to the order.
+       */
       await OrdersDAO.update(order);
     } catch (err) {
       console.log(err);
