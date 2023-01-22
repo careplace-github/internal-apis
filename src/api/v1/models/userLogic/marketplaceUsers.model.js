@@ -20,11 +20,11 @@ const marketplaceUserSchema = new Schema(
       unique: true,
     },
 
-    email_verified: { type: Boolean, required: false, default: false },
+    
 
     phone: { type: String, required: true, unique: true },
 
-    phone_verified: { type: Boolean, required: false, default: false },
+    
 
     birth_date: { type: Date, required: false },
 

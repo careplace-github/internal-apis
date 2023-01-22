@@ -8,11 +8,11 @@ import OrdersController from "../controllers/orders.controller.js";
 
 const router = express.Router();
 
-router.route("/companies").get(companiesController.listCompanies);
-
-router.route("/companies/:id/dashboard").get(companiesController.getDashboard);
+router.route("/companies/search").get(companiesController.searchCompanies);
 
 router.route("/companies/orders").get(companiesController.getOrders);
+
+router.route("/companies/:id").get(companiesController.retrieve);
 
 router
   .route("/companies/orders/:id")
@@ -20,12 +20,12 @@ router
   .put(OrdersController.update)
   .delete(OrdersController.delete);
 
-  router
+router
   .route("/companies/orders/:id/send-quote")
-    .post(OrdersController.sendQuote);
+  .post(OrdersController.sendQuote);
 
 router.route("/companies/users").get(companiesController.getUsers);
 
-//router.route("/companies/:id").get(companiesController.retrieve);
+
 
 export default router;
