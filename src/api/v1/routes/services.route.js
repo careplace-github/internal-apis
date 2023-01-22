@@ -13,11 +13,6 @@ const router = express.Router();
 router
   .route("/services")
   .get(ServicesController.listServices)
-  //.post(ServicesController.create);
-
-router
-  .route("/services/:id")
- // .get(ServicesController.show)
-  // .delete(ServicesController.update);
+  
 
 export default router;

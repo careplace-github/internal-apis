@@ -419,6 +419,13 @@ export default class UsersController {
     }
   }
 
+  static async listUsersByCompany(req, res, next) {
+    const CrmUsersDAO = new crmUsersDAO();
+    const CrmUsersCRUD = new CRUD(CrmUsersDAO);
+
+    await CrmUsersCRUD.listByCompanyId(req, res, next);
+  }
+
   /**
    * @description Returns the user information based on the token
    */
@@ -570,40 +577,5 @@ export default class UsersController {
       console.log(error);
       next(error);
     }
-  }
-
-  static async addPaymentMethod(req, res, next) {
-    try {
-      let accessToken;
-
-      let paymentMethodToken = req.body.token;
-
-      if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
-      } else {
-        throw new Error._400("No authorization token provided.");
-      }
-
-      let AuthHelper = new authHelper();
-
-      let user = await AuthHelper.getUserFromDB(accessToken);
-
-      let customerId = user.stripe_information.customer_id;
-
-      let Stripe = new stripe();
-
-      await Stripe.attachPaymentMethodToCustomer(token, customerId);
-
-      let response = {
-        statusCode: 200,
-        data: paymentMethodToken,
-      };
-    } catch (error) {}
-  }
-
-
-
-  static async deletePaymentMethod(req, res, next) {
-   
   }
 }

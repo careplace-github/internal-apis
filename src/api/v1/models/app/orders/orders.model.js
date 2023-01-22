@@ -68,6 +68,27 @@ const orderSchema = new Schema(
       ],
     },
 
+    /**
+     * Address of the client (relative) that is receiving the service.
+     */
+    address: {
+      street: { type: String, required: true },
+
+      postal_code: { type: String, required: true },
+
+      state: { type: String, required: true },
+
+      city: { type: String, required: true },
+
+      country: {
+        type: String,
+        required: true,
+        enum: ["PT", "ES", "US", "UK"],
+      },
+
+      coordinates: { type: Array, required: true },
+    },
+
     screening_visit: {
       date: { type: Date, required: false },
       // Pending; Scheduled; completed; Canceled
@@ -80,42 +101,6 @@ const orderSchema = new Schema(
     observations: { type: String, required: false },
 
     stripe_subscription_id: { type: String, required: false },
-
-    billing_address: {
-      street: { type: String, required: false },
-
-      postal_code: { type: String, required: false },
-
-      state: { type: String, required: false },
-
-      city: { type: String, required: false },
-
-      country: {
-        type: String,
-        required: false,
-        enum: ["PT", "ES", "US", "UK"],
-      },
-
-      coordinates: { type: Array, required: false },
-    },
-
-    address: {
-      street: { type: String, required: true },
-
-      postal_code: { type: String, required: true },
-
-      state: { type: String, required: false },
-
-      city: { type: String, required: true },
-
-      country: {
-        type: String,
-        required: true,
-        enum: ["PT", "ES", "US", "UK"],
-      },
-
-      coordinates: { type: Array, required: true },
-    },
   },
   {
     timestamps: true,

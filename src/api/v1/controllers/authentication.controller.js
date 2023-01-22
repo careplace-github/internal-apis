@@ -592,4 +592,10 @@ export default class AuthenticationController {
       next(error);
     }
   }
+
+
+
+
+
+  static async adminLogin(req, res, next) {}
 }

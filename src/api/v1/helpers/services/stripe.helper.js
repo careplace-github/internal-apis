@@ -1,11 +1,13 @@
 import StripeService from "../../services/stripe.service.js";
 
-import LayerError from "../../utils/errors/layer/layerError.js";
+import * as LayerError from "../../utils/errors/layer/index.js";
 
 import axios from "axios";
 import logger from "../../../../logs/logger.js";
 
 import fs from "fs";
+
+import { STRIPE_APPLICATION_FEE } from "../../../../config/constants/index.js";
 
 export default class StripeHelper {
   constructor() {
@@ -333,5 +335,49 @@ export default class StripeHelper {
     });
 
     return data;
+  }
+
+  async getPromotionCodeByName(name) {
+    let promotionCodes = await this.Stripe.listPromotionCodes();
+
+    let promotionCode = promotionCodes.find(
+      (promotionCode) => promotionCode.code === name
+    );
+
+    return promotionCode;
+  }
+
+  /**
+   * Only works with Coupons that have a fixed amount discount. It doesn't work with Coupons that have a percentage discount.
+   */
+  async calculateApplicationFeeWithPromotionCode(amount, promotionCodeId) {
+    let promotionCode = await this.Stripe.getPromotionCode(promotionCodeId, {
+      expand: ["restrictions", "coupon"],
+    });
+
+    let coupon = promotionCode.coupon;
+
+    let applicationAmmount =
+      amount * (STRIPE_APPLICATION_FEE / 100) - coupon.amount_off / 100;
+
+    /**
+     * A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice subtotal that will be transferred to the application owner’s Stripe account.
+     *
+     * @see https://stripe.com/docs/api/subscriptions/object#subscription_object-application_fee_percent
+     */
+    let newApplicationFee = (
+      (applicationAmmount * 100) /
+      (amount - coupon.amount_off / 100)
+    ).toFixed(2);
+
+    logger.info(`Cupao: ${JSON.stringify(coupon, null, 2)}`);
+
+    if (newApplicationFee > 100 || newApplicationFee < 0) {
+      throw new LayerError.INVALID_PARAMETER(
+        `Unable to apply promotion code to this order. Minimum order value is: ${promotionCode.restrictions.minimum_amount / 100}€`
+      );
+    }
+
+    return newApplicationFee;
   }
 }

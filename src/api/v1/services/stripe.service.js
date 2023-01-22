@@ -6,6 +6,9 @@ import {
   STRIPE_PUBLISHABLE_KEY,
 } from "../../../config/constants/index.js";
 
+
+import logger from "../../../logs/logger.js";
+
 /**
  * Class to manage the Stripe API
  *
@@ -185,6 +188,33 @@ export default class Stripe {
     });
 
     return createdPrice;
+  }
+
+  async getCoupon(couponId, filters = {}) {
+    let coupon = await this.stripeClient.coupons.retrieve(couponId, filters);
+
+    return coupon;
+  }
+
+  async listCoupons(filters = {}) {
+    let coupons;
+
+    coupons = await this.stripeClient.coupons.list(filters);
+
+    return coupons.data;
+  }
+
+
+  async getPromotionCode(promotionCodeId, filter = {}){
+    return this.stripeClient.promotionCodes.retrieve(promotionCodeId, filter);
+  }
+
+  async listPromotionCodes(filters = {}) {
+    let promotionCodes;
+
+    promotionCodes = await this.stripeClient.promotionCodes.list(filters);
+
+    return promotionCodes.data;
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -530,16 +560,12 @@ export default class Stripe {
     priceId,
     transferAccount,
     applicationFee,
-    paymentMethod
+    paymentMethod,
+    promotionCode
   ) {
-    console.log(
-      "createSubscription",
-      customerId,
-      priceId,
-      transferAccount,
-      applicationFee,
-      paymentMethod
-    );
+
+    logger.info("AQUI DENTRO PROMO: " + promotionCode)
+    
 
     let subscription = await this.stripeClient.subscriptions.create({
       customer: customerId,
@@ -555,8 +581,20 @@ export default class Stripe {
         enabled: true,
       },
 
+      //coupon: coupon,
+      promotion_code: promotionCode,
+
       collection_method: "charge_automatically",
     });
+
+    return subscription;
+  }
+
+  async updateSubscription(subscriptionId, options) {
+    let subscription = await this.stripeClient.subscriptions.update(
+      subscriptionId,
+      options
+    );
 
     return subscription;
   }
