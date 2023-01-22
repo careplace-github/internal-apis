@@ -15,59 +15,61 @@ import * as Error from "../utils/errors/http/index.js";
 import * as LayerError from "../utils/errors/layer/index.js";
 
 export default class CompaniesController {
-  static async retrieve(req, res, next) {
+  static async create(req, res, next) {
+    let CompaniesDAO = new companiesDAO();
+    let CompaniesCRUD = new CRUD(CompaniesDAO);
 
+    await CompaniesCRUD.create(req, res, next);
+  }
+
+  static async retrieve(req, res, next) {
     let CompaniesDAO = new companiesDAO();
     let CompaniesCRUD = new CRUD(CompaniesDAO);
 
     await CompaniesCRUD.retrieve(req, res, next);
-
-  }
-  static async getUsers(req, res, next) {
-    const CrmUsersDAO = new crmUsersDAO();
-    const CrmUsersCRUD = new CRUD(CrmUsersDAO);
-
-    await CrmUsersCRUD.listByCompanyId(req, res, next);
   }
 
-  static async getOrders(req, res, next) {
-    let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CRUD(OrdersDAO);
-    await OrdersCRUD.listByCompanyId(req, res, next);
+  static async update(req, res, next) {
+    let CompaniesDAO = new companiesDAO();
+    let CompaniesCRUD = new CRUD(CompaniesDAO);
+
+    await CompaniesCRUD.update(req, res, next);
   }
 
   static async searchCompanies(req, res, next) {
     let filters = {};
     let options = {};
     let page = req.query.page ? req.query.page : 1;
-    let documentsPerPage = req.query.documentsPerPage ? req.query.documentsPerPage : 10;
+    let documentsPerPage = req.query.documentsPerPage
+      ? req.query.documentsPerPage
+      : 10;
 
-
-
-      // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
-      if (req.query.sortBy) {
-        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-        // Otherwise, we will by default sort the results by ascending order.
-        options.sort = {
-          [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
-        };
-      }
-
-
+    // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
+    if (req.query.sortBy) {
+      // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
+      // Otherwise, we will by default sort the results by ascending order.
+      options.sort = {
+        [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+      };
+    }
 
     let CompaniesDAO = new companiesDAO();
-   let companies = await CompaniesDAO.query_list(filters, options, page, documentsPerPage, null, "-_id -plan -legal_information -team -stripe_information -billing_address")
+    let companies = await CompaniesDAO.query_list(
+      filters,
+      options,
+      page,
+      documentsPerPage,
+      null,
+      "-_id -plan -legal_information -team -stripe_information -billing_address"
+    );
 
     let response = {
       data: companies,
       statusCode: 200,
-    }
+    };
 
     next(response);
-    
   }
 
-  /**
-   * @deprecated
-   */
+  
 }
