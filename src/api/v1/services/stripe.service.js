@@ -6,7 +6,6 @@ import {
   STRIPE_PUBLISHABLE_KEY,
 } from "../../../config/constants/index.js";
 
-
 import logger from "../../../logs/logger.js";
 
 /**
@@ -79,6 +78,14 @@ export default class Stripe {
     );
 
     return createdPaymentMethod;
+  }
+
+  async getPaymentMethod(paymentMethodId) {
+    let paymentMethod = await this.stripeClient.paymentMethods.retrieve(
+      paymentMethodId
+    );
+
+    return paymentMethod;
   }
 
   async createPaymentMethodWithToken(type, token, billingAddress) {
@@ -204,8 +211,7 @@ export default class Stripe {
     return coupons.data;
   }
 
-
-  async getPromotionCode(promotionCodeId, filter = {}){
+  async getPromotionCode(promotionCodeId, filter = {}) {
     return this.stripeClient.promotionCodes.retrieve(promotionCodeId, filter);
   }
 
@@ -383,6 +389,21 @@ export default class Stripe {
     return customer;
   }
 
+  async createCustomerTaxId(customerId, taxId) {
+    // Add "PT" to the tax id
+    taxId = "PT" + taxId;
+
+    let customerTaxId = await this.stripeClient.customers.createTaxId(
+      customerId,
+      {
+        type: "eu_vat",
+        value: taxId,
+      }
+    );
+
+    return customerTaxId;
+  }
+
   /**
    * Creates a single-use token that represents a bank account’s details. This token can be used with any API method in place of a bank account object. This token can be used only once, by attaching it to a Custom account.
    *
@@ -527,6 +548,8 @@ export default class Stripe {
       endpointSecret
     );
 
+    logger.info(`Stripe Event: ${JSON.stringify(stripeEvent, null, 2)}`);
+
     return stripeEvent;
   }
 
@@ -537,10 +560,6 @@ export default class Stripe {
   // -------------------------------------------------------------------------------------------- //
 
   /**
-   * @todo Implement coupons/promotion codes
-   * @todo Check if we need to implement tax rates
-   * @todo Check which 'payment_behavior' we need to use
-   *
    * Creates a new subscription on an existing customer. Each customer can have up to 500 active or scheduled subscriptions.
    * When you create a subscription with collection_method=charge_automatically, the first invoice is finalized as part of the request. The payment_behavior parameter determines the exact behavior of the initial payment.
    * To start subscriptions where the first invoice always begins in a draft status, use subscription schedules instead. Schedules provide the flexibility to model more complex billing configurations that change over time.
@@ -563,9 +582,7 @@ export default class Stripe {
     paymentMethod,
     promotionCode
   ) {
-
-    logger.info("AQUI DENTRO PROMO: " + promotionCode)
-    
+    logger.info("AQUI DENTRO PROMO: " + promotionCode);
 
     let subscription = await this.stripeClient.subscriptions.create({
       customer: customerId,
@@ -597,6 +614,12 @@ export default class Stripe {
     );
 
     return subscription;
+  }
+
+  async getCustomerTaxIds(customerId) {
+    let taxId = await this.stripeClient.customers.listTaxIds(customerId);
+
+    return taxId;
   }
 
   async sendInvoice(invoiceId) {

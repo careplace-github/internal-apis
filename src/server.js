@@ -121,8 +121,6 @@ const main = async () => {
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
 
-    
-
     /**
      *  Handle connection errors
      */
@@ -397,7 +395,7 @@ const main = async () => {
       app.use(API_ROUTE, authRoute);
       app.use(API_ROUTE, usersRoute);
       app.use(API_ROUTE, companiesRoute);
-      app.use(API_ROUTE, dashboardRoute)
+      app.use(API_ROUTE, dashboardRoute);
       app.use(API_ROUTE, ordersRoute);
       app.use(API_ROUTE, servicesRoute);
       app.use(API_ROUTE, calendarRoute);
@@ -407,7 +405,7 @@ const main = async () => {
       // Middleware to handle and log all the errors
       app.use(errorLogger);
       // Middleware to handle and log all the HTTP responses
-     app.use(responseLogger);
+      app.use(responseLogger);
 
       // Middleware to throw internal server errors
       app.on("error", (error) => {

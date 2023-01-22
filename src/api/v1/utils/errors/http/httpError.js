@@ -1,4 +1,3 @@
-
 /**
  * Class to handle HTTP related errors.
  */
@@ -13,7 +12,6 @@ export default class HTTP_Error extends Error {
     this.isOperational = isOperational;
     this.statusCode = statusCode;
     this.description = description;
-
 
     Error.captureStackTrace(this);
   }

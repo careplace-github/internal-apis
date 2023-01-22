@@ -374,10 +374,30 @@ export default class StripeHelper {
 
     if (newApplicationFee > 100 || newApplicationFee < 0) {
       throw new LayerError.INVALID_PARAMETER(
-        `Unable to apply promotion code to this order. Minimum order value is: ${promotionCode.restrictions.minimum_amount / 100}€`
+        `Unable to apply promotion code to this order. Minimum order value is: ${
+          promotionCode.restrictions.minimum_amount / 100
+        }€`
       );
     }
 
     return newApplicationFee;
+  }
+
+  async getPaymentMethodByChargeId(chargeId) {
+    let charge = await this.Stripe.getCharge(chargeId);
+
+    let paymentMethod = await this.Stripe.getPaymentMethod(
+      charge.payment_method
+    );
+
+    return paymentMethod;
+  }
+
+  async getBillingAddressByChargeId(chargeId) {
+    let paymentMethod = await this.getPaymentMethodByChargeId(chargeId);
+
+    let billingAddress = paymentMethod.billing_details.address;
+
+    return billingAddress;
   }
 }
