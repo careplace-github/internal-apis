@@ -7,7 +7,7 @@ import companiesDAO from "../db/companies.dao.js";
 import usersDAO from "../db/crmUsers.dao.js";
 import relativesDAO from "../db/relatives.dao.js";
 
-import CrudController from "./crud.controller.js";
+import CRUD from "./crud.controller.js";
 
 import * as Error from "../utils/errors/http/index.js";
 import AuthHelper from "../helpers/auth/auth.helper.js";
@@ -18,26 +18,26 @@ import requestUtils from "../utils/server/request.utils.js";
 
 /**
  *  let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
+    let OrdersCRUD = new CRUD(OrdersDAO);
     await OrdersCRUD.listByCompanyId(req, res, next);
  */
 
 export default class OrdersController {
   static async create(req, res, next) {
     let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
+    let OrdersCRUD = new CRUD(OrdersDAO);
     await OrdersCRUD.create(req, res, next);
   }
 
   static async retrieve(req, res, next) {
     let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
+    let OrdersCRUD = new CRUD(OrdersDAO);
     await OrdersCRUD.retrieve(req, res, next);
   }
 
   static async update(req, res, next) {
     let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
+    let OrdersCRUD = new CRUD(OrdersDAO);
     let order = await OrdersDAO.retrieve(req.params.id);
     let updatedOrder = req.body;
 
@@ -62,7 +62,7 @@ export default class OrdersController {
 
   static async delete(req, res, next) {
     let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CrudController(OrdersDAO);
+    let OrdersCRUD = new CRUD(OrdersDAO);
     await OrdersCRUD.delete(req, res, next);
   }
 
@@ -73,6 +73,4 @@ export default class OrdersController {
   }
 
   static async sendQuote(req, res, next) {}
-
-
 }
