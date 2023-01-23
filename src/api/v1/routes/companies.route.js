@@ -14,6 +14,16 @@ router.route("/companies/search").get(CompaniesController.searchCompanies);
 
 router.route("/companies/orders").get(OrdersController.listOrdersByCompany);
 
+router
+  .route("/companies/external-accounts")
+  .post(StripeController.createExternalAccount)
+  .get(StripeController.listExternalAccounts);
+
+router
+  .route("/companies/external-accounts/:id")
+  .get(StripeController.retrieveExternalAccount)
+  .delete(StripeController.deleteExternalAccount);
+
 router.route("/companies/:id").get(CompaniesController.retrieve);
 
 router
@@ -27,15 +37,5 @@ router
   .post(OrdersController.sendQuote);
 
 router.route("/companies/users").get(UsersController.listUsersByCompany);
-
-router.route("/companies/external-accounts")
-.post(StripeController.createExternalAccount)
-.get(StripeController.listExternalAccounts);
-
-router.route("/companies/external-accounts/:id")
-.get(StripeController.retrieveExternalAccount)
-.delete(StripeController.deleteExternalAccount);
-
-
 
 export default router;

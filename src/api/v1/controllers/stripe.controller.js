@@ -178,13 +178,15 @@ export default class StripeController {
     }
   }
 
-  static async createExternalAccount (req, res, next) {
+  static async createExternalAccount(req, res, next) {
     try {
       let accessToken;
 
       let externalAccountToken = req.body.external_account_token;
 
       let billingAddress = req.body.billing_address;
+
+      let CompaniesDAO = new companiesDAO();
 
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(" ")[1];
@@ -194,12 +196,31 @@ export default class StripeController {
 
       let AuthHelper = new authHelper();
 
-      let companyId = await AuthHelper.getUserAttributes(accessToken);
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
-      logger.info("Company ID: " + companyId);
+      let companyId = userAttributes.find(
+        (obj) => obj.Name === "custom:company"
+      ).Value;
 
-      exit(0);
-    
+      let company = await CompaniesDAO.query_one({
+        id: companyId,
+      });
+
+      let accountId = company.stripe_information.account_id;
+
+      let Stripe = new StripeService();
+
+      logger.info(`ACCOUNT ID: ${accountId}`);
+
+      let createExternalAccount = await Stripe.createExternalAccount(
+        accountId,
+        externalAccountToken
+      );
+
+      let response = {
+        statusCode: 200,
+        data: createExternalAccount,
+      };
 
       next(response);
     } catch (error) {
@@ -207,11 +228,149 @@ export default class StripeController {
     }
   }
 
-  static async retrieveExternalAccount (req, res, next) {}
+  static async retrieveExternalAccount(req, res, next) {
+    try {
+      let accessToken;
 
-  static async deleteExternalAccount (req, res, next) {}
+      let externalAccountId = req.params.id;
 
-  static async listExternalAccounts (req, res, next) {}
+      let CompaniesDAO = new companiesDAO();
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      let companyId = userAttributes.find(
+        (obj) => obj.Name === "custom:company"
+      ).Value;
+
+      let company = await CompaniesDAO.query_one({
+        id: companyId,
+      });
+
+      let accountId = company.stripe_information.account_id;
+
+      let Stripe = new StripeService();
+
+      let externalAccount = await Stripe.getExternalAccount(
+        accountId,
+        externalAccountId
+      );
+
+      let response = {
+        statusCode: 200,
+        data: externalAccount,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteExternalAccount(req, res, next) {
+    try {
+      let accessToken;
+
+      let externalAccountId = req.params.id;
+
+      let CompaniesDAO = new companiesDAO();
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      let companyId = userAttributes.find(
+        (obj) => obj.Name === "custom:company"
+      ).Value;
+
+      let company = await CompaniesDAO.query_one({
+        id: companyId,
+      });
+
+      let accountId = company.stripe_information.account_id;
+
+      let Stripe = new StripeService();
+
+      let externalAccount = await Stripe.getExternalAccount(
+        accountId,
+        externalAccountId
+      );
+
+      if (externalAccount.account !== accountId) {
+        throw new Error._403(
+          "You are not authorized to delete this external account."
+        );
+      }
+
+      let externalAccountDeleted = await Stripe.deleteExternalAccount(
+        accountId,
+        externalAccountId
+      );
+
+      let response = {
+        statusCode: 200,
+        data: externalAccountDeleted,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async listExternalAccounts(req, res, next) {
+    try {
+      let accessToken;
+
+      let CompaniesDAO = new companiesDAO();
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      let companyId = userAttributes.find(
+        (obj) => obj.Name === "custom:company"
+      ).Value;
+
+      let company = await CompaniesDAO.query_one({
+        id: companyId,
+      });
+
+      let accountId = company.stripe_information.account_id;
+
+      let Stripe = new StripeService();
+
+      let externalAccounts = await Stripe.listExternalAccounts(accountId);
+
+      let response = {
+        statusCode: 200,
+        data: externalAccounts,
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   /**
    * Uses Stripe service to create a subscription with a payment intent for the order.customer (as a customer) and the order.company (as a connected account).
