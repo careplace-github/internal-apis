@@ -26,6 +26,12 @@ router
 
 router.route("/companies/:id").get(CompaniesController.retrieve);
 
+router.route("/companies/orders/:id/accept").post(OrdersController.acceptOrder);
+
+router.route("/companies/orders/:id/decline").post(OrdersController.declineOrder);
+
+router.route("/companies/orders/:id/send-quote").post(OrdersController.sendQuote);
+
 router
   .route("/companies/orders/:id")
   .get(OrdersController.retrieve)

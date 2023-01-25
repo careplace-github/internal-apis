@@ -56,7 +56,13 @@ export default class AuthHelper {
 
       const authUser = await Cognito.adminGetUser(username);
 
-      logger.info(`Authentication Helper GET_AUTH_USER RESULT: \n ${authUser}`);
+      logger.info(
+        `Authentication Helper GET_AUTH_USER RESULT: \n ${JSON.stringify(
+          authUser,
+          null,
+          2
+        )}`
+      );
 
       return authUser;
     } catch (error) {
@@ -83,7 +89,11 @@ export default class AuthHelper {
       let userAttributes = user.UserAttributes;
 
       logger.info(
-        `Authentication Helper GET_USER_ATTRIBUTES RESULT: \n ${userAttributes}`
+        `Authentication Helper GET_USER_ATTRIBUTES RESULT: \n ${JSON.stringify(
+          userAttributes,
+          null,
+          2
+        )}`
       );
 
       return userAttributes;

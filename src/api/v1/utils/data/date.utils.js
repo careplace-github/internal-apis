@@ -141,11 +141,7 @@ export default class DateUtils {
    * @see https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
    */
   async getDateFromUnixTimestamp(unixTimestamp) {
-    console.log(`unixTimestamp: ${unixTimestamp}`);
-
     const date = new Date(unixTimestamp * 1000);
-
-    console.log(`date: ${date}`);
 
     const months = [
       "Jan",
@@ -176,10 +172,36 @@ export default class DateUtils {
    *
    */
   async convertDateToReadableString(date) {
+    date = new Date(date);
+
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
     return `${day}/${month}/${year}`;
+  }
+
+  async convertDateToReadableString2(date) {
+    date = new Date(date);
+
+    const months = [
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
+    ];
+
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
   }
 }
