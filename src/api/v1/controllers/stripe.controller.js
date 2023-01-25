@@ -428,7 +428,7 @@ export default class StripeController {
             model: "Company",
           },
           {
-            path: "customer",
+            path: "user",
             model: "marketplace_users",
           },
         ]
@@ -441,7 +441,7 @@ export default class StripeController {
       token = token.toString();
 
       let accountId = order.company.stripe_information.account_id;
-      let customerId = order.customer.stripe_information.customer_id;
+      let customerId = order.user.stripe_information.customer_id;
       // Convert amount to interger
       let amount = parseFloat(order.order_total) * 100;
 

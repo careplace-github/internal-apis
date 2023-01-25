@@ -57,7 +57,9 @@ const companySchema = new Schema(
 
     legal_information: {
       // The legal name of the company
-      business_name: { type: String, required: true },
+      name: { type: String, required: true },
+
+      director: { type: Schema.ObjectId, ref: "User", required: false },
 
       // NIPC in Portugal, NIF in Spain, in USA it's the SSN, IN UK it's the VAT number, etc
       tax_number: { type: String, required: true },
@@ -80,7 +82,7 @@ const companySchema = new Schema(
       customer_id: { type: String, required: true, unique: true },
     },
 
-    is_active: { type: Boolean, required: true, default: true },
+    is_active: { type: Boolean, required: true, default: false },
 
     
   },

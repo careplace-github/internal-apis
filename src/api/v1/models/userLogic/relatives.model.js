@@ -61,7 +61,7 @@ const relativeSchema = new Schema(
 
     name: { type: String, required: true },
 
-    birth_date: { type: Date, required: true },
+    birthdate: { type: Date, required: true },
 
     age: { type: Number, required: true },
 

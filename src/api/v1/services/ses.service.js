@@ -57,7 +57,7 @@ export default class SES {
     receiverEmails,
     subject,
     htmlBody,
-    textBody,
+    textBody = "",
     ccEmails,
     bccEmails
   ) {
