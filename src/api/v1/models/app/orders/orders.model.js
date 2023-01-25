@@ -14,17 +14,26 @@ const orderSchema = new Schema(
     caregiver: { type: Schema.ObjectId, ref: "User", required: false },
 
     // The customer is the user that is paying for the order
-    customer: { type: Schema.ObjectId, ref: "User", required: true },
+    user: { type: Schema.ObjectId, ref: "User", required: true },
 
     // The client is the user that is receiving the service (home care support).
-    client: { type: Schema.ObjectId, ref: "Relative", required: true },
+    relative: { type: Schema.ObjectId, ref: "Relative", required: true },
 
-    // New -> Customer Created Order && Pending Company Acceptance
-    // Pending -> Company Accepted && Schedule Visit Process
+    
+    // New -> Order Created
+    // Declined -> Company Declined 
+    // Canceled -> Customer Canceled
+    // Accepted -> Company Accepted
+    //
+
+
+   
+    // 
+    // 
     // Canceled -> Company Canceled || Customer Canceled
     // Active -> Visit Done && Customer Paid
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
-    order_status: { type: String, required: true, default: "new" },
+    order_status: { type: String, required: true, default: "pending" },
 
     order_total: { type: Number, required: false },
 
@@ -76,7 +85,7 @@ const orderSchema = new Schema(
 
       postal_code: { type: String, required: true },
 
-      state: { type: String, required: true },
+      state: { type: String, required: false },
 
       city: { type: String, required: true },
 

@@ -202,24 +202,63 @@ export default class StripeWebhooksController {
         let order;
 
         while (order === null || order === undefined) {
-          order = await OrdersDAO.query_one({
-            stripe_subscription_id: subscriptionId,
-          });
+          order = await OrdersDAO.query_one(
+            {
+              stripe_subscription_id: subscriptionId,
+            },
+            [
+              {
+                path: "relative",
+                model: "Relative",
+              },
+              {
+                path: "company",
+                model: "Company",
+                populate: {
+                  path: "legal_information",
+                  populate: {
+                    path: "director",
+                    model: "crm_users",
+                  },
+                },
+              },
+              {
+                path: "services",
+                model: "Service",
+              },
+              {
+                path: "user",
+                model: "marketplace_users",
+              },
+            ]
+          );
 
           await new Promise((resolve) => setTimeout(resolve, 250));
         }
 
-        logger.info(`Schedule Information: ${order}`);
+        let orderServices = [];
+
+        // Create a string with the services names
+        // Example: "Cleaning, Laundry, Shopping"
+        orderServices = order.services
+          .map((service) => {
+            return service.name;
+          })
+          .join(", ");
+
+        let birthdate = await DateUtils.convertDateToReadableString(
+          order.relative.birthdate
+        );
+
+        let orderStart = await DateUtils.convertDateToReadableString2(
+          order.schedule_information.start_date
+        );
 
         let schedule = await DateUtils.getScheduleRecurrencyText(
           order.schedule_information.schedule
         );
 
         let receiptLink = await StripeHelper.getReceiptLink(subscriptionId);
-
-        let startDate = await DateUtils.convertDateToReadableString(
-          order.actual_start_date
-        );
 
         let paymentMethod = await StripeHelper.getPaymentMethodByChargeId(
           chargeId
@@ -230,42 +269,98 @@ export default class StripeWebhooksController {
 
         logger.inf;
 
-        let emailPayload = {
-          name: event.data.object.customer_name,
-          startDate: startDate,
-          schedule: schedule,
+        let userEmailPayload = {
+          name: order.user.name,
+          company: order.company.business_profile.name,
 
-          // Make sure that the ammounts have 2 decimal places
-          subTotal: (event.data.object.total_excluding_tax / 100).toFixed(2),
-          taxAmmount: (event.data.object.tax / 100).toFixed(2),
-          orderTotal: (event.data.object.total / 100).toFixed(2),
+          link: receiptLink,
 
           clientEmail: event.data.object.customer_email,
 
+          // Make sure that the ammounts have 2 decimal places
+          subTotal: (event.data.object.total_excluding_tax / 100).toFixed(2),
+          taxAmount: (event.data.object.tax / 100).toFixed(2),
+          total: (event.data.object.total / 100).toFixed(2),
+
           orderNumber: event.data.object.number.replace("A53F4B19-", ""),
           receiptDate: receiptDate,
-          receiptLink: receiptLink,
 
           paymentMethod:
             paymentMethod.card.brand !== null
               ? paymentMethod.card.brand.toUpperCase()
               : "SEPA Direct Debit",
 
-          street: billingAddress.line1,
-          postalCode: billingAddress.postal_code,
-          city: billingAddress.city,
-          country: billingAddress.country,
+          relativeName: order.relative.name,
+          relativeBirthdate: birthdate,
+          relativeMedicalInformation:
+            order.relative.medical_information !== undefined &&
+            order.relative.medical_information !== null
+              ? relative.medical_information
+              : "n/a",
+
+          relativeStreet: order.relative.address.street,
+          relativeCity: order.relative.address.city,
+          relativePostalCode: order.relative.address.postal_code,
+          relativeCountry: order.relative.address.country,
         };
 
-        let email = await EmailHelper.getEmailTemplateWithData(
-          `order_payment_confirmation`,
-          emailPayload
+        let marketplaceOrderPayedEmail =
+          await EmailHelper.getEmailTemplateWithData(
+            "marketplace_order_payed",
+            userEmailPayload
+          );
+
+        await EmailHelper.sendEmailWithAttachment(
+          paymentMethod.billing_details.email,
+          marketplaceOrderPayedEmail.subject,
+          marketplaceOrderPayedEmail.htmlBody,
+          null,
+          [receipt],
+          null,
+          "orders@staging.careplace.pt"
+        );
+
+        let companyEmailPayload = {
+          name: order.company.legal_information.director.name,
+          company: order.company.business_profile.name,
+
+          link: `https://sales.careplace.pt/orders/${order._id}`,
+
+          // Make sure that the ammounts have 2 decimal places
+          subTotal: (event.data.object.total_excluding_tax / 100).toFixed(2),
+          taxAmount: (event.data.object.tax / 100).toFixed(2),
+          total: (event.data.object.total / 100).toFixed(2),
+
+          orderStart: orderStart,
+          orderSchedule: schedule,
+          orderServices: orderServices,
+
+          relativeName: order.relative.name,
+          relativeBirthdate: birthdate,
+          relativeMedicalInformation:
+            order.relative.medical_information !== undefined &&
+            order.relative.medical_information !== null
+              ? relative.medical_information
+              : "n/a",
+
+          relativeStreet: order.relative.address.street,
+          relativeCity: order.relative.address.city,
+          relativePostalCode: order.relative.address.postal_code,
+          relativeCountry: order.relative.address.country,
+
+          userName: order.user.name,
+          userPhone: order.user.phone,
+        };
+
+        let crmOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
+          "crm_order_payed",
+          companyEmailPayload
         );
 
         await EmailHelper.sendEmailWithAttachment(
           paymentMethod.billing_details.email,
-          email.subject,
-          email.htmlBody,
+          crmOrderPayedEmail.subject,
+          crmOrderPayedEmail.htmlBody,
           null,
           [receipt],
           null,
