@@ -17,6 +17,9 @@ router.route("/companies/search").get(CompaniesController.searchCompanies);
 
 router.route("/companies/orders").get(OrdersController.listOrdersByCompany);
 
+
+router.route("/companies/users").get(UsersController.listUsersByCompany);
+
 router
   .route("/companies/external-accounts")
   .post(StripeController.createExternalAccount)
@@ -45,6 +48,6 @@ router
   .route("/companies/orders/:id/send-quote")
   .post(OrdersController.sendQuote);
 
-router.route("/companies/users").get(UsersController.listUsersByCompany);
+
 
 export default router;

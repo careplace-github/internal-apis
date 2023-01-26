@@ -6,6 +6,7 @@ import SES from "../services/ses.service.js";
 import crmUsersDAO from "../db/crmUsers.dao.js";
 import MarketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
 import companiesDAO from "../db/companies.dao.js";
+import CRUD from "./crud.controller.js";
 
 import authUtils from "../utils/auth/auth.utils.js";
 import {
