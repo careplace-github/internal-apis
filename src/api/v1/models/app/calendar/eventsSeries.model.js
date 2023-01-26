@@ -9,7 +9,7 @@ const eventSeriesSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    user: { type: Schema.ObjectId, ref: "User", required: true },
+    user: { type: Schema.ObjectId, ref: "crm_users", required: true },
 
     /**
      * Recurrency type
@@ -44,6 +44,18 @@ const eventSeriesSchema = new Schema(
       end_date: { type: Date, required: false },
       end_occurrences: { type: Number, required: false },
     },
+
+
+
+
+    title: { type: String, required: true },
+    description: { type: String, required: false },
+    location: { type: String, required: false },
+
+    textColor: { type: String, required: false },
+    
+
+
   },
 
   {

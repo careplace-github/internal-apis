@@ -30,7 +30,6 @@ import cors from "cors";
 import hpp from "hpp";
 import xss from "xss-clean";
 
-import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 
 // Import mongoose
@@ -75,6 +74,10 @@ import requestLogger from "./api/v1/middlewares/server/requestHandler.middleware
 import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js";
 import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
 import bodyParser from "body-parser";
+import mongoSanitize from "express-mongo-sanitize";
+
+// Documentation
+import swaggerDocs from "./documentation/swagger.js";
 
 const main = async () => {
   try {
@@ -186,6 +189,8 @@ const main = async () => {
        */
       app.use(hpp());
       app.use(helmet());
+
+      app.use(mongoSanitize());
 
       /**
        * Prevents Cross-Site Scripting (XSS) attacks
@@ -470,10 +475,12 @@ const main = async () => {
       // Starts listening for HTTP requests
       app.listen(SERVER_PORT, () => {
         logger.info(
-          `Successfully listening for HTTP requests on port: ${SERVER_PORT}\n`
+          `Successfully listening for HTTP requests on port: ${SERVER_PORT}`
         );
 
-        logger.info(`Server started successfully! 🚀`);
+        swaggerDocs(app, SERVER_PORT);
+
+        logger.info(`\n Server started successfully! 🚀`);
       });
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);

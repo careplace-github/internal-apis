@@ -8,7 +8,7 @@ const relativeSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    user: { type: Schema.ObjectId, ref: "user", required: true },
+    user: { type: Schema.ObjectId, ref: "marketplace_users", required: true },
 
     kinship_degree: {
       // What is the kinship degree of the relative to this user
@@ -57,7 +57,7 @@ const relativeSchema = new Schema(
       },
     },
 
-    avatar: { type: String, required: false },
+    profile_picture: { type: String, required: false },
 
     name: { type: String, required: true },
 
