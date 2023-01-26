@@ -57,7 +57,6 @@ import filesRoute from "./api/v1/routes/files.route.js";
 import authRoute from "./api/v1/routes/authentication.route.js";
 import usersRoute from "./api/v1/routes/users.route.js";
 import companiesRoute from "./api/v1/routes/companies.route.js";
-import dashboardRoute from "./api/v1/routes/dashboard.route.js";
 import servicesRoute from "./api/v1/routes/services.route.js";
 import ordersRoute from "./api/v1/routes/orders.route.js";
 import calendarRoute from "./api/v1/routes/calendar.route.js";
@@ -401,7 +400,7 @@ const main = async () => {
       app.use(API_ROUTE, authRoute);
       app.use(API_ROUTE, usersRoute);
       app.use(API_ROUTE, companiesRoute);
-      app.use(API_ROUTE, dashboardRoute);
+
       app.use(API_ROUTE, ordersRoute);
       app.use(API_ROUTE, servicesRoute);
       app.use(API_ROUTE, calendarRoute);
