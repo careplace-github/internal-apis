@@ -460,6 +460,10 @@ export default class UsersController {
 
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
+      cognitoId = userAttributes.find((attribute) => {
+        return attribute.Name === "sub";
+      }).Value;
+
       let phoneVerified = userAttributes.find((attribute) => {
         return attribute.Name === "phone_number_verified";
       }).Value;
@@ -545,7 +549,7 @@ export default class UsersController {
       let paymentMethods;
 
       try {
-        paymentMethods = await Stripe.getCustomerPaymentMethods(customerId);
+        paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
         console.log(
           `PAYMENT METHODS: ${JSON.stringify(paymentMethods, null, 2)}`
         );
