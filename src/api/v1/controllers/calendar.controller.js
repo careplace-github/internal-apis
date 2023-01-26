@@ -2,7 +2,7 @@ import EventsDAO from "../db/events.dao.js";
 import UsersDAO from "../db/crmUsers.dao.js";
 import EventsSeriesDAO from "../db/eventsSeries.dao.js";
 import * as Error from "../utils/errors/http/index.js";
-import AuthHelper from "../helpers/auth/auth.helper.js";
+import authHelper from "../helpers/auth/auth.helper.js";
 import CRUD from "./crud.controller.js";
 import logger from "../../../logs/logger.js";
 
@@ -31,7 +31,7 @@ const eventsCRUD = new CRUD(eventsDAO);
 /**
  * Create a new instance of the AuthHelper class.
  */
-const authHelper = new AuthHelper();
+const AuthHelper = new authHelper();
 
 /**
  * Calendar Controller Class to manage the ``/calendar`` endpoints of the API.
@@ -52,15 +52,22 @@ export default class CalendarController {
       let eventsDAO = new EventsDAO();
       let usersDAO = new UsersDAO();
 
-      try {
-        let userExists = await usersDAO.retrieve(event.user);
-      } catch (err) {
-        if (err.type === "NOT_FOUND" || err.name === "CastError") {
-          throw new Error._400(
-            "User does not exist. Need a valid User to create an event."
-          );
-        }
+      let accessToken;
+
+     
+  
+      
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._401("Missing required access token.");
       }
+
+    
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      event.user = user;
 
       let eventAdded = await eventsDAO.create(event);
 
