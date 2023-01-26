@@ -33,7 +33,7 @@ const orderSchema = new Schema(
     // Canceled -> Company Canceled || Customer Canceled
     // Active -> Visit Done && Customer Paid
     // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
-    order_status: { type: String, required: true, default: "pending" },
+    status: { type: String, required: true, default: "pending" },
 
     order_total: { type: Number, required: false },
 
@@ -71,8 +71,8 @@ const orderSchema = new Schema(
             required: true,
             enum: [1, 2, 3, 4, 5, 6, 7],
           },
-          start_time: { type: String, required: true },
-          end_time: { type: String, required: true },
+          start: { type: String, required: true },
+          end: { type: String, required: true },
         },
       ],
     },

@@ -20,6 +20,14 @@ export default function RequestUtils(req, res, next) {
       statusCode: 100,
     };
 
+    /**
+     * Do not log requests made to the API Docs
+     */
+    if(req.originalUrl.startsWith(`/api/v1/docs`)) {
+      next()
+      return;
+    }
+
     logger.info(`HTTP Request: \n ${JSON.stringify(request, null, 2)} \n`);
 
     next();

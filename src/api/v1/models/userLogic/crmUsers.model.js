@@ -51,20 +51,7 @@ const crmUserSchema = new Schema(
     },
 
     settings: {
-      language: {
-        type: String,
-        required: true,
-        default: "pt",
-        enum: ["pt", "en"],
-      },
-      currency: {
-        type: String,
-        required: true,
-        default: "EUR",
-        enum: ["EUR", "USD"],
-      },
-      timeZone: { type: String, required: true, default: "Europe/Lisbon" },
-      timeZoneFomated: { type: String, required: true, default: "GMT" },
+      
       theme: {
         type: String,
         required: true,
@@ -74,7 +61,7 @@ const crmUserSchema = new Schema(
 
       notifications: {
         email: { type: Boolean, required: true, default: true },
-        phone: { type: Boolean, required: true, default: true },
+        sms: { type: Boolean, required: true, default: true },
         push: { type: Boolean, required: true, default: true },
       },
     },
