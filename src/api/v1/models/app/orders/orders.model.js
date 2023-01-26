@@ -11,10 +11,10 @@ const orderSchema = new Schema(
 
     company: { type: Schema.ObjectId, ref: "Company", required: true },
 
-    caregiver: { type: Schema.ObjectId, ref: "User", required: false },
+    caregiver: { type: Schema.ObjectId, ref: "Caregiver", required: false },
 
     // The customer is the user that is paying for the order
-    user: { type: Schema.ObjectId, ref: "User", required: true },
+    user: { type: Schema.ObjectId, ref: "marketplace_users", required: true },
 
     // The client is the user that is receiving the service (home care support).
     relative: { type: Schema.ObjectId, ref: "Relative", required: true },

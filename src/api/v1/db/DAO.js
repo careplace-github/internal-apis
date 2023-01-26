@@ -286,11 +286,6 @@ export default class DAO {
         throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
       }
 
-      // If there is only one document, return the document instead of an array with one document.
-      if (documents.length === 1) {
-        documents = documents[0];
-      }
-
       // Convert each document of the array 'documents' to a JSON object.
       for (let i = 0; i < documents.length; i++) {
         documents[i] = await documents[i].toObject();
