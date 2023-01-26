@@ -7,8 +7,11 @@ import CompaniesController from "../controllers/companies.controller.js";
 import OrdersController from "../controllers/orders.controller.js";
 import UsersController from "../controllers/users.controller.js";
 import StripeController from "../controllers/stripe.controller.js";
+import DashboardController from "../controllers/dashboard.controller.js";
 
 const router = express.Router();
+
+router.route("/companies/dashboard").get(DashboardController.getDashboard);
 
 router.route("/companies/search").get(CompaniesController.searchCompanies);
 
