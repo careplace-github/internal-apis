@@ -47,7 +47,7 @@ export default class DashboardController {
     let accountId = company.stripe_information.account_id;
 
     let pendingOrders = await OrdersDAO.query_list({
-      companyId: companyId,
+      company: companyId,
       status: "pending",
     }).then((orders) => {
       return orders.length;
