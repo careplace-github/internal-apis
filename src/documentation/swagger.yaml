@@ -14,6 +14,7 @@ servers:
     default: true
   - url: "http://www.staging.api.careplace.pt"
     description: Staging Environment
+
 tags:
   - name: Authentication
     description: Authentication operations
@@ -36,131 +37,6 @@ tags:
   - name: Admin
     description: Admin operations
 paths:
-  /auth/logout:
-    post:
-      tags:
-        - Authentication
-      summary: Logout
-      description: Logs out current logged in user session
-      operationId: logout
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-      responses:
-        "200":
-          description: Ok
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: User logged out successfully
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Missing or invalid token
-
-    get:
-      tags:
-        - pet
-      summary: Add a new pet to the store
-      description: Add a new pet to the store
-      operationId: addPet
-      requestBody:
-        description: Create a new pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Pet"
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/Pet"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/Pet"
-        required: true
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pet"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Pet"
-        "405":
-          description: Invalid input
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-  /auth/change-password:
-    post:
-      tags:
-        - Authentication
-      summary: Change password
-      description: Changes the password of the current logged in user
-      operationId: changePassword
-      requestBody:
-        description: Change password
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                oldPassword:
-                  type: string
-                  example: "123456"
-                newPassword:
-                  type: string
-                  example: "123456"
-
-        required: true
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-      responses:
-        "200":
-          description: Ok
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Password changed successfully
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Missing or invalid token
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Invalid old password
   /auth/crm/login:
     post:
       tags:
@@ -177,11 +53,10 @@ paths:
               properties:
                 email:
                   type: string
-                  example: "john.whick@careplace.pt"
+                  example: owner@staging.careplace.pt
                 password:
                   type: string
-                  example: "123456"
-
+                  example: CareplaceDemo-123!
         required: true
         security:
           - jwt_context:
@@ -220,11 +95,10 @@ paths:
               properties:
                 email:
                   type: string
-                  example: "john.whick@gmail.com"
+                  example: user@staging.careplace.pt
                 password:
                   type: string
-                  example: "123456"
-
+                  example: CareplaceDemo-123!
         required: true
         security:
           - jwt_context:
@@ -247,498 +121,2288 @@ paths:
                   message:
                     type: string
                     example: Missing or invalid token
-  
-
-  /pet/findByStatus:
-    get:
-      tags:
-        - pet
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
-      parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: false
-          explode: true
-          schema:
-            type: string
-            default: available
-            enum:
-              - available
-              - pending
-              - sold
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pet"
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pet"
-        "400":
-          description: Invalid status value
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-  /pet/findByTags:
-    get:
-      tags:
-        - pet
-      summary: Finds Pets by tags
-      description: >-
-        Multiple tags can be provided with comma separated strings. Use tag1,
-        tag2, tag3 for testing.
-      operationId: findPetsByTags
-      parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pet"
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Pet"
-        "400":
-          description: Invalid tag value
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-  "/pet/{petId}":
-    get:
-      tags:
-        - pet
-      summary: Find pet by ID
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to return
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pet"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Pet"
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Pet not found
-      security:
-        - api_key: []
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
+  /auth/crm/send/forgot-password-code:
     post:
       tags:
-        - pet
-      summary: Updates a pet in the store with form data
-      description: ""
-      operationId: updatePetWithForm
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: name
-          in: query
-          description: Name of pet that needs to be updated
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Status of pet that needs to be updated
-          schema:
-            type: string
-      responses:
-        "405":
-          description: Invalid input
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-    delete:
-      tags:
-        - pet
-      summary: Deletes a pet
-      description: delete a pet
-      operationId: deletePet
-      parameters:
-        - name: api_key
-          in: header
-          description: ""
-          required: false
-          schema:
-            type: string
-        - name: petId
-          in: path
-          description: Pet id to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        "400":
-          description: Invalid pet value
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-  "/pet/{petId}/uploadImage":
-    post:
-      tags:
-        - pet
-      summary: uploads an image
-      description: ""
-      operationId: uploadFile
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: additionalMetadata
-          in: query
-          description: Additional Metadata
-          required: false
-          schema:
-            type: string
+        - Authentication
+      summary: CRM Forgot Password
+      description: Sends a forgot password code to the CRM user email.
+      operationId: crmForgotPassword
       requestBody:
+        description: Send forgot password code to the CRM user email
         content:
-          application/octet-stream:
+          application/json:
             schema:
-              type: string
-              format: binary
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
       responses:
         "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
-      security:
-        - jwt_context:
-            - "write:pets"
-            - "read:pets"
-  /store/inventory:
-    get:
-      tags:
-        - store
-      summary: Returns pet inventories by status
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
-      responses:
-        "200":
-          description: successful operation
+          description: Ok
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+  /auth/marketplace/send/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Forgot Password
+      description: Sends a forgot password code to the Marketplace user email.
+      operationId: marketplaceForgotPassword
+      requestBody:
+        description: Send forgot password code to the Marketplace user email
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: owner@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+  /auth/crm/verify/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: CRM Verify Forgot Password
+      description: >-
+        Verifies the forgot password code sent to the CRM user email and changes
+        the password.
+      operationId: crmForgotPassword
+      requestBody:
+        description: >-
+          Verify forgot password code sent to the CRM user email and change the
+          password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: owner@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/marketplace/verify/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Verify Forgot Password
+      description: >-
+        Verifies the forgot password code sent to the Marketplace user email and
+        changes the password.
+      operationId: crmForgotPassword
+      requestBody:
+        description: >-
+          Verify forgot password code sent to the Marketplace user email and
+          change the password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/marketplace/send/confirmation-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Send Confirmation Code
+      description: >-
+        Sends a confirmation code to the Marketplace user phone number. This
+        code is used to confirm the phone number address so that the user can
+        login. This endpoint should also be used to resend the confirmation
+        code.
+      operationId: marketplaceSendConfirmationCode
+      requestBody:
+        description: Send confirmation code to the Marketplace phone number.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Confirmation code sent successfully.
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User does not exist.
+                  type:
+                    type: string
+                    example: BAD_REQUEST
+  /auth/marketplace/verify/confirmation-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Verify Confirmation Code
+      description: >-
+        Verifies the confirmation code sent to the Marketplace user phone number
+        and confirms the phone number  so that the user can login.
+      operationId: marketplaceVerifyConfirmationCode
+      requestBody:
+        description: >-
+          Verify confirmation code sent to the Marketplace user phone number and
+          confirm the phone number  so that the user can login.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout
+      description: Logs out current logged in user session
+      operationId: logout
       security:
-        - api_key: []
-  /store/order:
-    post:
-      tags:
-        - store
-      summary: Place an order for a pet
-      description: Place a new order in the store
-      operationId: placeOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Order"
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/Order"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/Order"
+        - jwt_context:
+            - "write:pets"
+            - "read:pets"
       responses:
         "200":
-          description: successful operation
+          description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Order"
-        "405":
-          description: Invalid input
-  "/store/order/{orderId}":
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User logged out successfully
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token
+  /auth/change-password:
+    post:
+      tags:
+        - Authentication
+      summary: Change password
+      description: Changes the password of the current logged in user
+      operationId: changePassword
+      requestBody:
+        description: Change password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+      security:
+        - jwt_context:
+            - "write:pets"
+            - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password changed successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid old password
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token
+
+  /users/account:
     get:
       tags:
-        - store
-      summary: Find purchase order by ID
-      description: >-
-        For valid response try integer IDs with value <= 5 or > 10. Other values
-        will generate exceptions.
-      operationId: getOrderById
+        - Users
+      summary: Get user account
+      description: Get user account.
+      operationId: getUserAccount
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+
+  /users/orders:
+    get:
+      tags:
+        - Users
+      summary: Get user orders
+      description: Get user orders.
+      operationId: getUserOrders
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/users/orders/{orderId}":
+    get:
+      tags:
+        - Users
+      summary: Get user order
+      description: Get user order.
+      operationId: getUserOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
         - name: orderId
           in: path
-          description: ID of order that needs to be fetched
+          description: Order ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         "200":
-          description: successful operation
+          description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Order"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Order"
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
         "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-    delete:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/users/orders/{orderId}/cancel":
+    post:
       tags:
-        - store
-      summary: Delete purchase order by ID
-      description: >-
-        For valid response try integer IDs with value < 1000. Anything above
-        1000 or nonintegers will generate API errors
-      operationId: deleteOrder
+        - Users
+      summary: Cancel user order
+      description: Cancel user order.
+      operationId: cancelUserOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
         - name: orderId
           in: path
-          description: ID of the order that needs to be deleted
+          description: Order ID
           required: true
           schema:
-            type: integer
-            format: int64
-      responses:
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: Order not found
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/User"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/User"
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: "#/components/schemas/User"
+            type: string
       responses:
         "200":
-          description: Successful operation
+          description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-            application/xml:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Order cancelled successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        default:
-          description: successful operation
-  /user/login:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+
+  "/users/relatives":
     get:
       tags:
-        - user
-      summary: Logs user into the system
-      description: ""
-      operationId: loginUser
+        - Users
+      summary: Get user relatives
+      description: Get user relatives.
+      operationId: getUserRelatives
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
-        - name: username
+        - name: userId
           in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
+          description: User ID
+          required: true
           schema:
             type: string
       responses:
         "200":
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
+          description: Ok
           content:
-            application/xml:
-              schema:
-                type: string
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  relatives:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Relative"
         "400":
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
       tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ""
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: successful operation
-  "/user/{username}":
-    get:
-      tags:
-        - user
-      summary: Get user by user name
-      description: ""
-      operationId: getUserByName
+        - Users
+      summary: Create user relative
+      description: Create user relative.
+      operationId: createUserRelative
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
-        - name: username
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create user relative.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example:
+  "/users/relatives/{relativeId}":
+    get:
+      tags:
+        - Users
+      summary: Get user relative
+      description: Get user relative.
+      operationId: getUserRelative
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: relativeId
           in: path
-          description: "The name that needs to be fetched. Use user1 for testing. "
+          description: Relative ID
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: successful operation
+          description: Ok
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  relative:
+                    $ref: "#/components/schemas/Relative"
         "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
     put:
       tags:
-        - user
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
+        - Users
+      summary: Update user relative
+      description: Update user relative.
+      operationId: updateUserRelative
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
-        - name: username
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: relativeId
           in: path
-          description: name that need to be deleted
+          description: Relative ID
           required: true
           schema:
             type: string
       requestBody:
-        description: Update an existent user in the store
+        description: Update user relative.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/User"
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        default:
-          description: successful operation
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example:
     delete:
       tags:
-        - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
+        - Users
+      summary: Delete user relative
+      description: Delete user relative.
+      operationId: deleteUserRelative
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
       parameters:
-        - name: username
+        - name: userId
+          in: query
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: relativeId
           in: path
-          description: The name that needs to be deleted
+          description: Relative ID
           required: true
           schema:
             type: string
       responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Relative deleted successfully
         "400":
-          description: Invalid username supplied
-        "404":
-          description: User not found
+          description: Bad Request
+          content: application
+
+  /companies/search:
+    get:
+      tags:
+        - Companies
+      summary: Search companies
+      description: Search companies by name.
+      operationId: searchCompanies
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: name
+          in: query
+          description: Company name
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  companies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/{companyId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company
+      description: Get company by id.
+      operationId: getCompany
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: companyId
+          in: path
+          description: Company id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company:
+                    $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/dashboard:
+    get:
+      tags:
+        - Companies
+      summary: Get company dashboard
+      description: Get company dashboard.
+      operationId: getCompanyDashboard
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company:
+                    $ref: "#/components/schemas/Company"
+
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/orders:
+    get:
+      tags:
+        - Companies
+      summary: Get company orders
+      description: Get company orders.
+      operationId: getCompanyOrders
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company order
+      description: Create company order.
+      operationId: createCompanyOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        description: Create company order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company order
+      description: Get company order by id.
+      operationId: getCompanyOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Companies
+      summary: Update company order
+      description: Update company order by id.
+      operationId: updateCompanyOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Order object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company order
+      description: >-
+        Delete company order by id. This only works for orders that were created
+        by the company. Orders that were created by the user (from the
+        Marketplace) can only be declined by using the
+        '/companies/orders/{orderId}/decline' endpoint.
+      operationId: deleteCompanyOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/oders/{orderId}/decline":
+    post:
+      tags:
+        - Companies
+      summary: Reject order
+      description: Reject order by id.
+      operationId: rejectOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/oders/{orderId}/accept":
+    post:
+      tags:
+        - Companies
+      summary: Accept order
+      description: Accept order by id.
+      operationId: acceptOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/send-quote":
+    post:
+      tags:
+        - Companies
+      summary: Send quote
+      description: Send quote by id.
+      operationId: sendQuote
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quote:
+                  type: string
+                  example: 100
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/schedule-visit":
+    post:
+      tags:
+        - Companies
+      summary: Schedule visit
+      description: Schedule visit by id.
+      operationId: scheduleVisit
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                time:
+                  type: string
+                  example: 600
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/users:
+    get:
+      tags:
+        - Companies
+      summary: Get company users
+      description: Get company users.
+      operationId: getCompanyUsers
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company user
+      description: Create company user.
+      operationId: createCompanyUser
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: null
+  "/companies/users/{userId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company user
+      description: Get company user by id.
+      operationId: getCompanyUser
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Companies
+      summary: Update company user
+      description: Update company user by id.
+      operationId: updateCompanyUser
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: null
+                role:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company user
+      description: Delete company user by id.
+      operationId: deleteCompanyUser
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+  /companies/external-accounts:
+    get:
+      tags:
+        - Companies
+      summary: Get company external accounts
+      description: Get company external accounts.
+      operationId: getCompanyExternalAccounts
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccounts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ExternalAccount"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company external account
+      description: Create company external account.
+      operationId: createCompanyExternalAccount
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalAccountId:
+                  type: string
+                  example: 123
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount:
+                    $ref: "#/components/schemas/ExternalAccount"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/external-accounts/{externalAccountId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company external account
+      description: Get company external account by id.
+      operationId: getCompanyExternalAccount
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: externalAccountId
+          in: path
+          description: External account id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount:
+                    $ref: "#/components/schemas/ExternalAccount"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company external account
+      description: Delete company external account by id.
+      operationId: deleteCompanyExternalAccount
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: externalAccountId
+          in: path
+          description: External account id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount:
+                    $ref: |+
+                      #/components
+
+
+  '/checkout/orders/{orderId}"':
+    get:
+      tags:
+        - Checkout
+      summary: Get order
+      description: Get order by id.
+      operationId: getOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/checkout/orders/{orderId}/payment-intent":
+    post:
+      tags:
+        - Checkout
+      summary: Create payment intent
+      description: Create payment intent for order.
+      operationId: createPaymentIntent
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create payment intent for order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paymentMethodId:
+                  type: string
+                  example: pm_1Hq0Z2JZ2Z2Z2Z2Z2Z2Z2Z2Z
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentIntent:
+                    $ref: "#/components/schemas/PaymentIntent"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Create order
+      description: Create order.
+      operationId: createOrder
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        description: Create order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /payment-methods:
+    get:
+      tags:
+        - Payment Methods
+      summary: Get all payment methods
+      description: Get all payment methods for the logged in user.
+      operationId: getPaymentMethods
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentMethods:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PaymentMethod"
+                  total:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Payment Methods
+      summary: Create a payment method
+      description: >-
+        Create a payment method. At the moment it only supports credit/debit
+        cards. To create the payment_method_token the Client Application needs
+        to use the Stripe JS library. @see https://stripe.com/docs/stripe-js
+      operationId: createPaymentMethod
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        description: Create a payment method
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Visa
+                type:
+                  type: string
+                  example: CREDIT_CARD
+                cardNumber:
+                  type: string
+                  example: 1234567890123456
+                expirationDate:
+                  type: string
+                  example: 2020-12-31T00:00:00.000Z
+                cvv:
+                  type: string
+                  example: 123
+                holderName:
+                  type: string
+                  example: John Doe
+                holderDocument:
+                  type: string
+                  example: 123456789
+                holderPhone:
+                  type: string
+                  example: 123456789
+                holderEmail:
+                  type: string
+                  example: d
+  "/payment-methods/{paymentMethodId}":
+    get:
+      tags:
+        - Payment Methods
+      summary: Get a payment method
+      description: Get a payment method
+      operationId: getPaymentMethod
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: Payment method id
+          required: true
+          schema:
+            type: string
+            example: 5e7f7b9b0f8b9c0017b0b0b8
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentMethod:
+                    $ref: "#/components/schemas/PaymentMethod"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Payment Methods
+      summary: Delete a payment method
+      description: Delete a payment method
+      operationId: deletePaymentMethod
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: Payment method id
+          required: true
+          schema:
+            type: string
+            example: 5e7f7b9b0f8b9c0017b0b0b8
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Payment method deleted successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /calendar/events:
+    get:
+      tags:
+        - Calendar
+      summary: Get all events
+      description: Get all events for the logged in user.
+      operationId: getEvents
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  total:
+                    type: integer
+                    example: 1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Missing required access token.
+                      type:
+                        type: string
+                        example: UNAUTHORIZED
+                   
+                   
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Calendar
+      summary: Create an event
+      description: Create an event
+      operationId: createEvent
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        description: Create an event
+        content:
+          application/json:
+            schema:
+              ref: "#/components/schemas/Event"
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    ref: "#/components/schemas/Event"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/calendar/events/{eventId}":
+    get:
+      tags:
+        - Calendar
+      summary: Get an event
+      description: Get an event
+      operationId: getEvent
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: 5e1f9b9b9b9b9b9b9b9b9b9b
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Calendar
+      summary: Update an event
+      description: Update an event
+      operationId: updateEvent
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      params:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: 5e1f9b9b9b9b9b9b9b9b9b9b
+      requestBody:
+        description: Update an event
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                  example: 5e1f9b9b9b9b9b9b9b9b9b9b
+                title:
+                  type: string
+                  example: Event title
+                description:
+                  type: string
+                  example: Event description
+                start:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                end:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                allDay:
+                  type: boolean
+                  example: false
+                textColor:
+                  type: string
+                  example: "#FFFFFF"
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    ref: "#/components/schemas/Event"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Calendar
+      summary: Delete an event
+      description: Delete an event
+      operationId: deleteEvent
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: 5e1f9b9b9b9b9b9b9b9b9b9b
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Event deleted
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /services:
+    get:
+      tags:
+        - Services
+      summary: Get all services
+      description: Get all services
+      operationId: getServices
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Service"
+                  total:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /files:
+    post:
+      tags:
+        - Files
+      summary: Upload a file
+      description: Upload a file
+      operationId: uploadFile
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      requestBody:
+        description: Upload a file
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    example: 17066.pdf
+                  url: 
+                    type: string
+                    example: https://careplace-staging.s3.eu-west-3.amazonaws.com/17066.pdf
+                  version: 
+                    type: string
+                    example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
+                  
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Unexpected field: files"
+                      type:
+                        type: string
+                        example: BAD_REQUEST
+                    
+                    
+  "/files/{fileId}":
+    delete:
+      tags:
+        - Files
+      summary: Delete a file
+      description: Deletes a file
+      operationId: deleteFile
+      security:
+        - jwt_context:
+            - "write"
+            - "read"
+      parameters:
+        - name: fileId
+          in: path
+          description: File ID
+          required: true
+          schema:
+            type: string
+            example: 5f7b9f0b-8b1e-4b5f-9f0b-8b1e4b5f9f0b
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  DeleteMarker:
+                    type: boolean
+                    example: true
+                  VersionId:
+                    type: string
+                    example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
+                    
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid file
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+
 components:
   schemas:
     CRM_User:
@@ -754,22 +2418,19 @@ components:
           type: string
           example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
         company:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/Company"
         name:
           type: string
-          example: John Wick
+          example: Henrique Fonseca
         email:
           type: string
-          example: john.wick@careplace.pt
+          example: owner@staging.careplace.pt
         phone:
           type: string
           example: 912345678
-        birth_date:
+        birthdate:
           type: date
-          exampe: 1347-03-27T00:00:00.000Z
-        age:
-          type: integer
-          example: 675
+          exampe: 2001-01-22T00:00:00.000Z
         gender:
           type: string
           example: male
@@ -797,19 +2458,15 @@ components:
               example: PT
               enum:
                 - PT
-                - ES
-                - FR
-                - DE
-                - IT
-                - UK
-                - US
             coordinates:
-              type: array
-              items:
-                type: string
-                example:
-                  - 38.71667
-                  - -9.13333
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 38.7222524
+                long:
+                  type: number
+                  example: -9.1393366
         settings:
           type: object
           properties:
@@ -851,24 +2508,18 @@ components:
         profile_picture:
           type: string
           example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
-        company:
-          type: string
-          example: 63cad0df068be823de4ad559
         name:
           type: string
-          example: John Wick
+          example: João Antão
         email:
           type: string
-          example: john.wick@careplace.pt
+          example: user@staging.careplace.pt
         phone:
           type: string
           example: 912345678
-        birth_date:
+        birthdate:
           type: date
-          exampe: 1347-03-27T00:00:00.000Z
-        age:
-          type: integer
-          example: 675
+          exampe: 2002-10-03T00:00:00.000Z
         gender:
           type: string
           example: male
@@ -876,10 +2527,6 @@ components:
             - male
             - female
             - other
-        relatives:
-          type: array
-          items:
-            $ref: "#/components/schemas/Relative"
         address:
           type: object
           properties:
@@ -900,19 +2547,16 @@ components:
               example: PT
               enum:
                 - PT
-                - ES
-                - FR
-                - DE
-                - IT
-                - UK
-                - US
             coordinates:
-              type: array
-              items:
-                type: string
-                example:
-                  - 38.71667
-        stripe_information: 
+              type: object
+              properties:
+                lat:
+                  type: string
+                  example: 38.71667
+                long:
+                  type: string
+                  example: -9.13333
+        stripe_information:
           type: object
           properties:
             customer_id:
@@ -960,64 +2604,58 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Event"
-        reviews:
-          type: array
-          items:
-            $ref: "#/components/schemas/Review"
+        
     Relative:
       type: object
       properties:
         user:
           $ref: "#/components/schemas/Marketplace_User"
-        kinship_degree: null
-        type: object
-        properties:
-          from:
-            type: string
-            example: son
-            enum:
-              - father
-              - mother
-              - brother
-              - sister
-              - son
-              - daughter
-              - uncle
-              - aunt
-              - nephew
-              - niece
-              - grandparent
-              - grandchild
-              - other
-          to:
-            type: string
-            example: father
-            enum:
-              - father
-              - mother
-              - brother
-              - sister
-              - son
-              - daughter
-              - uncle
-              - aunt
-              - nephew
-              - niece
-              - grandparent
-              - grandchild
-              - other
         profile_picture:
           type: string
           example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
         name:
           type: string
           example: John Wick
+        kinship_degree:
+          type: object
+          properties:
+            from_user:
+              type: string
+              example: son
+              enum:
+                - father
+                - mother
+                - brother
+                - sister
+                - son
+                - daughter
+                - uncle
+                - aunt
+                - nephew
+                - niece
+                - grandparent
+                - grandchild
+                - other
+            to_user:
+              type: string
+              example: father
+              enum:
+                - father
+                - mother
+                - brother
+                - sister
+                - son
+                - daughter
+                - uncle
+                - aunt
+                - nephew
+                - niece
+                - grandparent
+                - grandchild
+                - other
         birthdate:
           type: date
           example: 1347-03-27T00:00:00.000Z
-        age:
-          type: integer
-          example: 42
         gender:
           type: string
           example: male
@@ -1028,45 +2666,12 @@ components:
         medical_conditions:
           type: string
           example: todo
-        address:
-          type: object
-          properties:
-            street:
-              type: string
-              example: Rua Adriano Correia de Oliveira 4A
-            postal_code:
-              type: string
-              example: 1234-567
-            city:
-              type: string
-              example: Lisboa
-            state:
-              type: string
-              example: CA
-            country:
-              type: string
-              example: PT
-              enum:
-                - PT
-                - ES
-                - FR
-                - DE
-                - IT
-                - UK
-                - US
-            coordinates:
-              type: array
-              items:
-                type: string
-                example:
-                  - 38.71667
-                  - -9.13333
-          createdAt:
-            type: timestamp
-            example: 2019-03-27T12:00:00.000Z
-          updatedAt:
-            type: timestamp
-            example: 2019-03-27T12:00:00.000Z
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
     Company:
       type: object
       properties:
@@ -1084,7 +2689,7 @@ components:
               example: geral@company.pt
             phone:
               type: string
-              example: 912345678
+              example: 9CareplaceDemo-123!78
             website:
               type: string
               example: www.company.pt
@@ -1092,9 +2697,9 @@ components:
               type: string
               example: >-
                 https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
-              banner:
-                type: string
-                example: >-
+            banner:
+              type: string
+              example: >-
                   https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
         services:
           type: array
@@ -1105,52 +2710,71 @@ components:
           items:
             type: object
             properties:
-              latitude:
+              lat:
                 type: string
                 example: 38.71667
-              longitude:
+              long:
                 type: string
                 example: -9.13333
         team:
           type: array
           items:
             $ref: "#/components/schemas/CRM_User"
-        address:
+        
+        legal_information:
           type: object
           properties:
-            street:
+            name: 
               type: string
-              example: Rua Adriano Correia de Oliveira 4A
-            postal_code:
+              example: CAREPLACE, LDA.
+            director:
+              $ref: "#/components/schemas/CRM_User"
+            tax_id:
               type: string
-              example: 1234-567
-            city:
+              example: 123456789
+            business_structure:
               type: string
-              example: Lisboa
-            state:
+              example: Sociedade por Quotas
+            address:
+              type: object
+              properties:
+                street:
+                  type: string
+                  example: Rua Adriano Correia de Oliveira 4A
+                postal_code:
+                  type: string
+                  example: 1234-567
+                city:
+                  type: string
+                  example: Lisboa
+                state:
+                  type: string
+                  example: CA
+                country:
+                  type: string
+                  example: PT
+                  enum:
+                    - PT
+                coordinates:
+                  type: object
+                  properties:
+                    lat:
+                      type: string
+                      example: 38.71667
+                    long:
+                      type: string
+                      example: -9.13333
+        
+        stripe_information:
+          type: object
+          properties:
+            account_id:
               type: string
-              example: CA
-            country:
+              example: acct_63cad0df068be823de4ad559
+            customer_id:
               type: string
-              example: PT
-              enum:
-                - PT
-                - ES
-                - FR
-                - DE
-                - IT
-                - UK
-                - US
-            coordinates:
-              type: array
-              items:
-                type: string
-                example:
-                  - 38.71667
-                  - -9.13333
-        email:
-          type: string
-          example: null
+              example: cus_63cad0df068be823de4ad559
+
         createdAt:
           type: timestamp
           example: 2019-03-27T12:00:00.000Z
@@ -1188,12 +2812,12 @@ components:
         textColor:
           type: string
           example: "#000000"
-          createdAt:
-            type: timestamp
-            example: 2019-03-27T12:00:00.000Z
-          updatedAt:
-            type: timestamp
-            example: 2019-03-27T12:00:00.000Z
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
     Event_Series:
       type: object
       properties:
@@ -1287,121 +2911,113 @@ components:
             - cancelled
             - completed
         order_total:
+          description: Total price of the order
           type: number
           example: 100
+          required: true  
+          
         services:
           type: array
           items:
             $ref: "#/components/schemas/Service"
-          schedule_information:
-            type: object
-            properties:
-              start_date:
-                type: timestamp
-                example: 2019-03-27T12:00:00.000Z
-              end_date:
-                type: timestamp
-                example: 2019-03-27T12:00:00.000Z
-              recurrency_type:
-                type: integer
-                example: 1
-                enum:
-                  - 1
-                  - 2
-                  - 4
-              schedule:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    week_day:
-                      type: integer
-                      example: 1
-                      enum:
-                        - 1
-                        - 2
-                        - 3
-                        - 4
-                        - 5
-                        - 6
-                        - 7
-                    start:
-                      type: timestamp
-                      example: 2019-03-27T12:00:00.000Z
-                    end:
-                      type: timestamp
-                      example: 2019-03-27T12:00:00.000Z
-              address:
+        schedule_information:
+          type: object
+          properties:
+            start_date:
+              type: timestamp
+              example: 2019-03-27T12:00:00.000Z
+            end_date:
+              type: timestamp
+              example: 2019-03-27T12:00:00.000Z
+            recurrency_type:
+              type: integer
+              example: 1
+              enum:
+                - 1
+                - 2
+                - 4
+            schedule:
+              type: array
+              items:
                 type: object
                 properties:
-                  street:
-                    type: string
-                    example: 123 Main St
-                  city:
-                    type: string
-                    example: New York
-                  state:
-                    type: string
-                    example: NY
-                  zip:
-                    type: string
-                    example: "10001"
-                  country:
-                    type: string
-                    example: USA
-                  coordinates:
-                    type: object
-                    properties:
-                      lat:
-                        type: number
-                        example: 40.7128
-                      lng:
-                        type: number
-                        example: 74.006
-              screening_visit:
-                $ref: "#/components/schemas/Event"
-              observations:
-                type: string
-                example: John is a very nice guy
-              stripe_subscription_id:
-                type: string
-                example: sub_1234567890
-              created_at:
-                type: timestamp
-                example: 2019-03-27T12:00:00.000Z
-              updated_at:
-                type: timestamp
-                example: 2019-03-27T12:00:00.000Z
-    ApiResponse:
+                  week_day:
+                    type: integer
+                    example: 1
+                    enum:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                      - 5
+                      - 6
+                      - 7
+                  start:
+                    type: timestamp
+                    example: 2019-03-27T12:00:00.000Z
+                  end:
+                    type: timestamp
+                    example: 2019-03-27T12:00:00.000Z
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: Rua Adriano Correia de Oliveira 4A
+            postal_code:
+              type: string
+              example: 1234-567
+            city:
+              type: string
+              example: Lisboa
+            state:
+              type: string
+              example: CA
+            country:
+              type: string
+              example: PT
+              enum:
+                - PT
+            coordinates:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 38.7222524
+                long:
+                  type: number
+                  example: -9.1393366
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Service:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
-        type:
+        _id:
           type: string
-        message:
+          example: 63cad0df068be823de4ad559
+        name:
           type: string
-      xml:
-        name: "##default"
-  requestBodies:
-    Pet:
-      description: Pet object that needs to be added to the store
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Pet"
-        application/xml:
-          schema:
-            $ref: "#/components/schemas/Pet"
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/User"
+          example: Bathing
+        description:
+          type: string
+          example: Bathing
+        short_description:
+          type: string
+          example: Bathing
+        image:
+          type: string
+          example: "https://www.google.com"
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+
   securitySchemes:
     jwt_context:
       type: http

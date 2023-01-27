@@ -16,6 +16,7 @@ export default function RequestUtils(req, res, next) {
       params: req.params,
       query: req.query,
       body: req.body,
+      file: req.file,
 
       statusCode: 100,
     };

@@ -247,6 +247,13 @@ export default class OrdersController {
     await OrdersCRUD.delete(req, res, next);
   }
 
+
+  static async listOrdersByUser(req, res, next) {
+    let OrdersDAO = new ordersDAO();
+    let OrdersCRUD = new CRUD(OrdersDAO);
+    await OrdersCRUD.listByUserId(req, res, next);
+  }
+
   static async listOrdersByCompany(req, res, next) {
     let OrdersDAO = new ordersDAO();
     let OrdersCRUD = new CRUD(OrdersDAO);
@@ -282,10 +289,12 @@ export default class OrdersController {
         }
       );
 
+     
+      let order = await OrdersDAO.retrieve(req.params.id);
+
       if (companyId != order.company) {
         throw new Error._403("You are not authorized to accept this order.");
       }
-      let order = await OrdersDAO.retrieve(req.params.id);
 
       if (order.status != "pending") {
         throw new Error._400("You cannot accept this order.");

@@ -7,14 +7,30 @@ import HTTP_Error from "../../utils/errors/http/httpError.js";
  */
 export default function errorHandler(err, req, res, next) {
   function handleRequest() {
-    logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`);
+    logger.info(
+      `Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`
+    );
+
+    logger.info(err instanceof Error);
 
     /**
      * The `ErrorHandler` middleware comes first that the `ResponseHandler` middleware in the middleware stack.
      * So we need to check if the parameter `err` is an error and handle accordingly.
      */
     if (err instanceof Error) {
-      if (
+      if (err.name == "MulterError") {
+        switch (err.code) {
+          case "LIMIT_UNEXPECTED_FILE":
+            err.message = `${err.message}: ${err.field}`;
+            err.statusCode = 400;
+            err.type = "BAD_REQUEST";
+            break;
+
+          default:
+            err.statusCode = 400;
+            err.type = "BAD_REQUEST";
+        }
+      } else if (
         err.name === "ReferenceError" ||
         err.name === "TypeError" ||
         err.name === "SyntaxError" ||
@@ -43,7 +59,10 @@ export default function errorHandler(err, req, res, next) {
     let response = {
       data: {
         error: {
-          message: err.message && err.type != "INTERNAL_SERVER_ERROR" ? err.message : "Internal Server Error",
+          message:
+            err.message && err.type != "INTERNAL_SERVER_ERROR"
+              ? err.message
+              : "Internal Server Error",
           type: err.type ? err.type : "INTERNAL_SERVER_ERROR",
         },
       },
