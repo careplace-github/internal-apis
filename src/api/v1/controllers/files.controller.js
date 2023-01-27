@@ -19,15 +19,21 @@ export default class FilesController {
       let response = {};
       let Bucket = new BucketService();
 
-      if (!req.file) {
+      const file = req.file;
+
+      if (file == null || file == undefined) {
         throw new Error._400("Missing required file.");
       }
 
-      const file = req.file;
+     
 
       let fileUpload = await Bucket.uploadFile(file);
 
-      response.data = fileUpload;
+      response.data = {
+        key: fileUpload.Key,
+        url: fileUpload.Location,
+        version: fileUpload.VersionId,
+      };
 
       response.statusCode = 200;
 
@@ -36,7 +42,7 @@ export default class FilesController {
        */
       fs.unlink(file.path, (err) => {
         if (err) {
-          throw new Error._500(
+          logger.warn(
             "Internal Server Error.",
             `Error removing file from uploads folder. \n ${err.stack} \n`
           );

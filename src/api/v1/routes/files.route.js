@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import multer from "multer";
 import FilesController from "../controllers/files.controller.js";
-
+import * as Error from "../utils/errors/http/index.js";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./src/uploads");
@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
   },
 });
 
+
 /**
  * Multer is a middleware that handles multipart/form-data, which is primarily used for uploading files.
  * It adds a body object and a file or files object to the request object.
@@ -26,10 +27,12 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-router.route("/files")
-    .post(upload.single("file"), FilesController.create);
+router
+  .route("/files")
+  .post(upload.single("file"), FilesController.create);
 
-router.route("/files/:key")
+router
+  .route("/files/:key")
   .get(FilesController.retrieve)
   .delete(FilesController.delete);
 

@@ -296,7 +296,7 @@ export default class CRUD_Methods {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(" ")[1];
       } else {
-        throw new Error._402("No Authorization header found.");
+        throw new Error._401("Missing required access token.");
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);

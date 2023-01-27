@@ -30,42 +30,36 @@ const companySchema = new Schema(
 
     team: [{ type: Schema.ObjectId, ref: "crm_users", required: false }],
 
-    address: {
-      street: { type: String, required: true },
-
-      postal_code: { type: String, required: true },
-
-      state: { type: String, required: false },
-
-      city: { type: String, required: true },
-
-      country: {
-        type: String,
-        required: true,
-        enum: ["PT", "ES", "US", "UK"],
-      },
-
-      coordinates: { type: Array, required: true },
-    },
-
-    
-    /**
-     *   contactInformation: {
-      owner: { type: Schema.ObjectId, ref: "user", required: false },
-    },
-     */
 
     legal_information: {
       // The legal name of the company
       name: { type: String, required: true },
 
-      director: { type: Schema.ObjectId, ref: "User", required: false },
+      director: { type: Schema.ObjectId, ref: "crm_users", required: false },
 
       // NIPC in Portugal, NIF in Spain, in USA it's the SSN, IN UK it's the VAT number, etc
       tax_number: { type: String, required: true },
 
       // Business legal structure should be written on the company's country language
       business_structure: { type: String, required: true },
+
+      address: {
+        street: { type: String, required: true },
+  
+        postal_code: { type: String, required: true },
+  
+        state: { type: String, required: false },
+  
+        city: { type: String, required: true },
+  
+        country: {
+          type: String,
+          required: true,
+          enum: ["PT", "ES", "US", "UK"],
+        },
+  
+        coordinates: { type: Array, required: true },
+      },
     },
 
     stripe_information: {
