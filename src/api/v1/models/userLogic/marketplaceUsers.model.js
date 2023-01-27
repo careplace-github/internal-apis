@@ -26,7 +26,7 @@ const marketplaceUserSchema = new Schema(
 
     
 
-    birth_date: { type: Date, required: false },
+    birthdate: { type: Date, required: false },
 
     age: { type: Number, required: false },
 
@@ -46,7 +46,7 @@ const marketplaceUserSchema = new Schema(
       country: {
         type: String,
         required: false,
-        enum: ["PT", "ES", "US", "UK"],
+        enum: ["PT"],
       },
 
       coordinates: { type: Array, required: true },
@@ -57,20 +57,7 @@ const marketplaceUserSchema = new Schema(
     },
 
     settings: {
-      language: {
-        type: String,
-        required: true,
-        default: "pt",
-        enum: ["pt", "en"],
-      },
-      currency: {
-        type: String,
-        required: true,
-        default: "EUR",
-        enum: ["EUR", "USD"],
-      },
-      timeZone: { type: String, required: true, default: "Europe/Lisbon" },
-      timeZoneFomated: { type: String, required: true, default: "GMT" },
+    
       theme: {
         type: String,
         required: true,
@@ -80,7 +67,7 @@ const marketplaceUserSchema = new Schema(
 
       notifications: {
         email: { type: Boolean, required: true, default: true },
-        phone: { type: Boolean, required: true, default: true },
+        sms: { type: Boolean, required: true, default: true },
         push: { type: Boolean, required: true, default: true },
       },
     },
