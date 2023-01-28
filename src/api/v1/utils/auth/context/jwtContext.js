@@ -42,7 +42,8 @@ export default class JwtContext {
 
       const currentTime = new Date().getTime() / 1000;
 
-      return decodedToken.exp > currentTime;
+      return (decodedToken.exp > currentTime);
+
     } catch (error) {
       throw new Error.InternalServerError("Internal Server Error");
     }

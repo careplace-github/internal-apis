@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import multer from "multer";
 import FilesController from "../controllers/files.controller.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 import * as Error from "../utils/errors/http/index.js";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -29,11 +30,11 @@ const router = express.Router();
 
 router
   .route("/files")
-  .post(upload.single("file"), FilesController.create);
+  .post(AuthenticationGuard, upload.single("file"), FilesController.create);
 
 router
   .route("/files/:key")
-  .get(FilesController.retrieve)
-  .delete(FilesController.delete);
+  .get(AuthenticationGuard, FilesController.retrieve)
+  .delete(AuthenticationGuard, FilesController.delete);
 
 export default router;

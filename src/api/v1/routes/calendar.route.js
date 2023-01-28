@@ -3,6 +3,7 @@ import express from "express";
 
 // Import Middlewares
 import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 import {
   AddEventValidator,
   UpdateEventValidator,
@@ -17,24 +18,24 @@ const router = express.Router();
 
 router
   .route("/calendar/events")
-  .get(CalendarController.listEvents)
-  .post(AddEventValidator, InputValidation, CalendarController.createEvent);
+  .get(InputValidation, CalendarController.listEvents)
+  .post(InputValidation, AddEventValidator, InputValidation, CalendarController.createEvent);
 
 router
   .route("/calendar/events/:id")
-  .get(CalendarController.retrieveEvent)
-  .put(UpdateEventValidator, InputValidation, CalendarController.update_event)
-  .delete(CalendarController.deleteEvent);
+  .get(InputValidation, CalendarController.retrieveEvent)
+  .put(InputValidation, UpdateEventValidator, InputValidation, CalendarController.update_event)
+  .delete(InputValidation, CalendarController.deleteEvent);
 
 router
   .route("/calendar/events-series")
-  .get(CalendarController.listEventsSeries)
-  .post(CalendarController.createEventSeries);
+  .get(InputValidation, CalendarController.listEventsSeries)
+  .post(InputValidation, CalendarController.createEventSeries);
 
 router
   .route("/calendar/events-series/:id")
-  .get(CalendarController.retrieveEventSeries)
-  .put(CalendarController.updateEventSeries)
-  .delete(CalendarController.deleteEventSeries);
+  .get(InputValidation, CalendarController.retrieveEventSeries)
+  .put(InputValidation, CalendarController.updateEventSeries)
+  .delete(InputValidation, CalendarController.deleteEventSeries);
 
 export default router;
