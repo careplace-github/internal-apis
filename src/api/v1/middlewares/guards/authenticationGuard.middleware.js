@@ -41,7 +41,7 @@ export default function validateAuth(req, res, next) {
         if (isLoggedIn) {
           next();
         } else {
-          throw new Error._401("User is not logged in.");
+          throw new Error._401("Access token is expired.");
         }
       } else {
         throw new Error._401("Missing required access token.");
