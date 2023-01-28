@@ -2,17 +2,18 @@ import express from "express";
 
 // Import Controller
 import StripeController from "../controllers/stripe.controller.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 
 const router = express.Router();
 
 router
   .route("/payment-methods")
-  .post(StripeController.createPaymentMethod)
-  .get(StripeController.listPaymentMethods);
+  .post(AuthenticationGuard, StripeController.createPaymentMethod)
+  .get(AuthenticationGuard, StripeController.listPaymentMethods);
 
 router
   .route("/payment-methods/:id")
-  .get(StripeController.retrievePaymentMethod)
-  .delete(StripeController.deletePaymentMethod);
+  .get(AuthenticationGuard, StripeController.retrievePaymentMethod)
+  .delete(AuthenticationGuard, StripeController.deletePaymentMethod);
 
 export default router;
