@@ -4,7 +4,7 @@ import express from "express";
 // Import Middlewares
 import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
 
-
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 
 // Import Controller
 import CompaniesController from "../controllers/companies.controller.js";
