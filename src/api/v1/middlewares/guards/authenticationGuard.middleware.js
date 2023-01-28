@@ -1,15 +1,14 @@
 import logger from "../../../../logs/logger.js";
-import AuthHelper from "../../helpers/auth.helper.js";
-
-import requestUtils from "../../utils/server/request.utils.js";
+import authUtils from "../../utils/auth/auth.utils.js";
+import * as Error from "../../utils/errors/http/index.js";
 
 /**
- * @description Middleware to validate if a user is authenticated through the JWT token.
- * JWT token is passed in the header of the request
- * The token is validated by the expiration date and the signature.
- * If the token is valid, the request is passed to the next middleware.
- * If the token is invalid, a 401 Unauthorized is returned.
- * If the token is not present, a 400 Unauthorized is returned.
+ * @description Middleware to validate if a user is authenticated through the JWT accessToken.
+ * JWT accessToken is passed in the header of the request
+ * The accessToken is validated by the expiration date and the signature.
+ * If the accessToken is valid, the request is passed to the next middleware.
+ * If the accessToken is invalid, a 401 Unauthorized is returned.
+ * If the accessToken is not present, a 400 Unauthorized is returned.
  *
  * @param {*} req - The request object.
  * @param {*} res - The response object.
@@ -18,91 +17,41 @@ import requestUtils from "../../utils/server/request.utils.js";
  */
 export default function validateAuth(req, res, next) {
   async function handleRequest() {
-    //  try {
-    var request = requestUtils(req);
+    try {
+      let AuthUtils = new authUtils();
 
-    logger.info(
-      "Authentication Validation Middleware: " +
-        JSON.stringify(request, null, 2) +
-        "\n"
-    );
+      let accessToken;
+      let decodedToken;
 
-    // Check if the request contains a header field "Bearer"
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.split(" ")[0] === "Bearer"
-    ) {
-      // Extract the token from the header
-      const token = req.headers.authorization.split(" ")[1];
+      // Check if the request contains a header field "Bearer"
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.split(" ")[0] === "Bearer"
+      ) {
+        // Extract the accessToken from the header
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("Missing or invalid token.");
+      }
 
-      // Token provided
-      if (token) {
-        const response = await AuthHelper.isLoggedIn(token);
+      // accessToken provided
+      if (accessToken !== null && accessToken !== undefined) {
+        let isLoggedIn = await AuthUtils.isValidJwtToken(accessToken);
 
-        // Token validated
-        if (response.error == null) {
-          // User is logged in
-          if (response) {
-            request.response = { message: "User authenticated." };
-            request.statusCode = 200;
-
-            logger.info(JSON.stringify(request, null, 2) + "\n");
-
-            // Pass the request to the next middleware
-            next();
-          }
-
-          // User is not logged in
-          else {
-            request.response = { message: "Token expired" };
-            request.statusCode = 401;
-
-            logger.warn(JSON.stringify(request, null, 2) + "\n");
-
-            res.status(401).send("Token expired");
-          }
-          // An error occurred while validating the token
+        if (isLoggedIn) {
+          next();
         } else {
-          request.statudCode = 401;
-          request.response = { error: response.error };
-
-          logger.warn(JSON.stringify(request, null, 2) + "\n");
-
-          res.status(401).send({ error: response.error });
+          throw new Error._401("User is not logged in.");
         }
+      } else {
+        throw new Error._401("Missing required access token.");
       }
-      // If there is no token, respond appropriately
-      else {
-        request.response = { message: "No token provided" };
-        request.statusCode = 400;
-
-        logger.warn(JSON.stringify(request, null, 2) + "\n");
-
-        res.status(400).send("No token provided.");
-      }
-    }
-    // If there is no header field "Bearer", respond appropriately
-    else {
-      request.response = { message: "Invalid token" };
-      request.statusCode = 400;
-
-      logger.warn(JSON.stringify(request, null, 2) + "\n");
-
-      res.status(400).send("Invalid token");
-    }
-
-    /**
-       *  } catch (error) {
-      request.statusCode = 500;
-      request.response = { error: error };
-
+    } catch (error) {
       logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
+        `Authentication Guard Middleware Internal Server Error: ${error.stack}`
       );
-
-      res.status(500).send("Internal error");
+      next(error);
     }
-       */
   }
   // Call the async function
   handleRequest();

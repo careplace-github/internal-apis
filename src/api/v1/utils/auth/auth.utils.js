@@ -37,7 +37,7 @@ export default class AuthUtils {
     const isValidToken = await jwtContext.isValidToken(accessToken);
 
     logger.info(
-      `Authentication Utils IS_VALID_JWT_TOKEN Response: \n ${accessToken}`
+      `Authentication Utils IS_VALID_JWT_TOKEN Response: \n ${isValidToken}`
     );
 
     return isValidToken;

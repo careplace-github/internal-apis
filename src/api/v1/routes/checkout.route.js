@@ -1,6 +1,7 @@
 // Import the express module
 import Router from "express";
 import express from "express";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 
 
 
@@ -12,7 +13,7 @@ const router = express.Router();
 
 router
   .route("/checkout/orders/:id/payment-intent")
-  .post(StripeController.createSubscriptionPaymentIntent);
+  .post(AuthenticationGuard, StripeController.createSubscriptionPaymentIntent);
 
 
 
