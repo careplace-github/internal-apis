@@ -8,7 +8,7 @@ import logger from "../logs/logger.js";
 import YAML from "yamljs";
 
 
-const swaggerSpec = YAML.load("./src/documentation/swagger.yaml");
+const swaggerSpec = YAML.load("./src/documentation/swagger-stag.yaml");
 
 function swaggerDocs(app, port) {
   // Swagger page
