@@ -8,6 +8,7 @@ import {
   UpdateOrderValidator,
 } from "../validators/orders.validator.js";
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
 
 // Import Controller
 import OrdersController from "../controllers/orders.controller.js";
@@ -15,7 +16,7 @@ import OrdersController from "../controllers/orders.controller.js";
 const router = express.Router();
 
 router.route("/orders")
-  .post(AuthenticationGuard, OrdersController.create);
+  .post(AuthenticationGuard, AccessGuard("marketplace"), OrdersController.create);
 
 
 

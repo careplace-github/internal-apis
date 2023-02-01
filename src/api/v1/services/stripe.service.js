@@ -35,13 +35,21 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/payment_methods/customer_list?lang=node
    */
   async listPaymentMethods(customerId, type = null) {
-    let paymentMethods = await this.stripeClient.customers.listPaymentMethods(
-      customerId,
+    let paymentMethods;
 
-      { type: type }
-    );
+    if (type !== null && type !== undefined) {
+      paymentMethods = await this.stripeClient.customers.listPaymentMethods(
+        customerId,
 
-    return paymentMethods;
+        { type: type }
+      );
+    } else {
+      paymentMethods = await this.stripeClient.customers.listPaymentMethods(
+        customerId
+      );
+    }
+
+    return paymentMethods.data;
   }
 
   /**

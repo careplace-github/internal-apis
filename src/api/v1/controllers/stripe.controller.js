@@ -138,7 +138,10 @@ export default class StripeController {
 
       let response = {
         statusCode: 200,
-        data: paymentMethodDeleted,
+        data: {
+          deleted: true,
+          deleted_payment_method: paymentMethodDeleted,
+        },
       };
 
       next(response);
@@ -161,7 +164,15 @@ export default class StripeController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      let customerId = user.stripe_information.customer_id;
+     
+
+      let customerId = user.stripe_information?.customer_id;
+
+      if(customerId === null ||customerId === undefined) {
+        throw new Error._400("No customer id found.");
+      }
+
+      
 
       let Stripe = new StripeService();
 

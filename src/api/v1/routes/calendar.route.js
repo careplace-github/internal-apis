@@ -13,29 +13,84 @@ import CreateEventSeriesValidator from "../validators/eventsSeries.validator.js"
 
 // Import Controller
 import CalendarController from "../controllers/calendar.controller.js";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
 
 const router = express.Router();
 
 router
   .route("/calendar/events")
-  .get(InputValidation, CalendarController.listEvents)
-  .post(InputValidation, AddEventValidator, InputValidation, CalendarController.createEvent);
+  .get(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    
+    
+    CalendarController.listEvents
+  )
+  .post(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    AddEventValidator,
+    InputValidation,
+    CalendarController.createEvent
+  );
 
 router
   .route("/calendar/events/:id")
-  .get(InputValidation, CalendarController.retrieveEvent)
-  .put(InputValidation, UpdateEventValidator, InputValidation, CalendarController.update_event)
-  .delete(InputValidation, CalendarController.deleteEvent);
+  .get(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.retrieveEvent
+  )
+  .put(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    UpdateEventValidator,
+    InputValidation,
+    CalendarController.update_event
+  )
+  .delete(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.deleteEvent
+  );
 
 router
   .route("/calendar/events-series")
-  .get(InputValidation, CalendarController.listEventsSeries)
-  .post(InputValidation, CalendarController.createEventSeries);
+  .get(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.listEventsSeries
+  )
+  .post(
+    AuthenticationGuard,
+    InputValidation,
+    CalendarController.createEventSeries
+  );
 
 router
   .route("/calendar/events-series/:id")
-  .get(InputValidation, CalendarController.retrieveEventSeries)
-  .put(InputValidation, CalendarController.updateEventSeries)
-  .delete(InputValidation, CalendarController.deleteEventSeries);
+  .get(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.retrieveEventSeries
+  )
+  .put(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.updateEventSeries
+  )
+  .delete(
+    AuthenticationGuard,
+    AccessGuard("crm"),
+    InputValidation,
+    CalendarController.deleteEventSeries
+  );
 
 export default router;
