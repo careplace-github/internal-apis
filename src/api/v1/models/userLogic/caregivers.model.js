@@ -2,33 +2,59 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const caregiverSchema = new Schema({
-  _id: Schema.Types.ObjectId,
+const caregiverSchema = new Schema(
+  {
+    _id: Schema.Types.ObjectId,
 
-  user: { type: Schema.ObjectId, ref: "User", required: true },
+    name: { type: String, required: true },
 
-  services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
+    email: { type: String, required: true, unique: true },
 
-  schedule: [{ type: Schema.ObjectId, ref: "Event", required: false }],
+    phone: { type: String, required: true, unique: true },
 
-  rating: { type: Number, required: false },
+    birthdate: { type: Date, required: true },
 
-  reviews: [{ type: Schema.ObjectId, ref: "Review", required: false }],
+    gender: { type: String, required: true, enum: ["male", "female", "other"] },
 
+    company: { type: Schema.ObjectId, ref: "Company", required: true },
 
-  created_at: { type: Date, required: true, default: Date.now() },
+    services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
-    updated_at: { type: Date, required: true, default: Date.now() },
+    address: {
+      street: { type: String, required: false },
 
-}
-,
-{
+      postal_code: { type: String, required: false },
 
-  timestamps: true, 
-  toJSON: { virtuals: true }, 
-  toObject: { virtuals: true },
-}
+      state: { type: String, required: false },
 
+      city: { type: String, required: false },
+
+      country: {
+        type: String,
+        required: false,
+        enum: ["PT"],
+      },
+
+      coordinates: {
+        latitude: { type: Number, required: false },
+        longitude: { type: Number, required: false },
+      },
+    },
+
+    role: {
+      type: String,
+      required: true,
+      enum: ["caregiver"],
+      default: "caregiver",
+    },
+
+    profile_picture: { type: String, required: false },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 // methods

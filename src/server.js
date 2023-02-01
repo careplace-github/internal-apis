@@ -479,7 +479,7 @@ const main = async () => {
 
         swaggerDocs(app, SERVER_PORT);
 
-        logger.info(`\n Server started successfully! 🚀`);
+        logger.info(`Server started successfully! 🚀`);
       });
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);

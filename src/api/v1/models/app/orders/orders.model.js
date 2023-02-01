@@ -19,24 +19,6 @@ const orderSchema = new Schema(
     // The client is the user that is receiving the service (home care support).
     relative: { type: Schema.ObjectId, ref: "Relative", required: true },
 
-    
-    // New -> Order Created
-    // Declined -> Company Declined 
-    // Canceled -> Customer Canceled
-    // Accepted -> Company Accepted
-    //
-
-
-   
-    // 
-    // 
-    // Canceled -> Company Canceled || Customer Canceled
-    // Active -> Visit Done && Customer Paid
-    // Inactive -> Order Was Active && (Company Canceled || Customer Canceled)
-    status: { type: String, required: true, default: "pending" },
-
-    order_total: { type: Number, required: false },
-
     services: [{ type: Schema.ObjectId, ref: "Service", required: true }],
 
     // Json with all the information about the order schedule
@@ -80,6 +62,20 @@ const orderSchema = new Schema(
     /**
      * Address of the client (relative) that is receiving the service.
      */
+
+    // new -> Order Created
+    // declined -> Company Declined
+    // canceled -> Customer Canceled
+    // accepted -> Company Accepted
+    // pending
+    // payment_pending
+    // active
+    status: { type: String, required: true, default: "new" },
+
+    decline_reason: { type: String, required: false },
+
+    order_total: { type: Number, required: false },
+
     address: {
       street: { type: String, required: true },
 
@@ -99,17 +95,15 @@ const orderSchema = new Schema(
     },
 
     screening_visit: {
-      date: { type: Date, required: false },
-      // Pending; Scheduled; completed; Canceled
-      status: { type: String, required: true, default: "pending" },
-      event: { type: Schema.ObjectId, ref: "Event", required: false },
+      type: Schema.ObjectId,
+      ref: "Event",
+      required: true,
+      default: null,
     },
 
-    actual_start_date: { type: Date, required: false },
+    observations: { type: String, required: true, default: null },
 
-    observations: { type: String, required: false },
-
-    stripe_subscription_id: { type: String, required: false },
+    stripe_subscription_id: { type: String, required: true, default: null },
   },
   {
     timestamps: true,

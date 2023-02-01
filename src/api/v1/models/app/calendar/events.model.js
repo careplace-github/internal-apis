@@ -12,14 +12,17 @@ const eventSchema = new Schema(
     _id: Schema.Types.ObjectId,
     user: { type: Schema.ObjectId, ref: "user", required: true },
 
+    company: { type: Schema.ObjectId, ref: "company", required: false },
+
     series: { type: Schema.ObjectId, ref: "eventSeries", required: false },
 
     // Validate if the title is a string and if it is not empty.
     title: { type: String, required: true },
     description: { type: String, required: false },
-    allDay: { type: Boolean, required: true, default: false },
+
     start: { type: Date, required: true },
     end: { type: Date, required: true },
+    allDay: { type: Boolean, required: true, default: false },
 
     location: { type: String, required: false },
 

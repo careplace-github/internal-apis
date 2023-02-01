@@ -10,8 +10,6 @@ const marketplaceUserSchema = new Schema(
 
     cognito_id: { type: String, required: true, unique: true },
 
-    profile_picture: { type: String, required: false },
-
     name: { type: String, required: true },
 
     email: {
@@ -20,11 +18,7 @@ const marketplaceUserSchema = new Schema(
       unique: true,
     },
 
-    
-
     phone: { type: String, required: true, unique: true },
-
-    
 
     birthdate: { type: Date, required: false },
 
@@ -57,7 +51,6 @@ const marketplaceUserSchema = new Schema(
     },
 
     settings: {
-    
       theme: {
         type: String,
         required: true,
@@ -72,9 +65,7 @@ const marketplaceUserSchema = new Schema(
       },
     },
 
-    createdAt: { type: Date, required: true, default: Date.now() },
-
-    updatedAt: { type: Date, required: true, default: Date.now() },
+    profile_picture: { type: String, required: false },
   },
 
   {
@@ -83,10 +74,12 @@ const marketplaceUserSchema = new Schema(
   }
 );
 
-
 /**
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 
-export default marketplaceUser = mongoose.model("marketplace_users", marketplaceUserSchema);
+export default marketplaceUser = mongoose.model(
+  "marketplace_users",
+  marketplaceUserSchema
+);

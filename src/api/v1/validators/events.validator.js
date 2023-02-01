@@ -5,24 +5,6 @@ import eventSchema from "../models/app/calendar/events.model.js";
 //                                       ADD EVENT VALIDATOR                                    //
 // -------------------------------------------------------------------------------------------- //
 
-const AddEvent_UserValidation = check("user").custom((value) => {
-  /**
-   * Check if the user is not empty
-   */
-  if (value === "" || value === null || value === undefined) {
-    throw new Error("Missing required parameter: 'user'.");
-  }
-
-  /**
-   * Check if the user is a string
-   */
-  if (typeof value !== "string") {
-    throw new Error("The 'user' parameter must be a string.");
-  }
-
-  return true;
-});
-
 const AddEvent_TitleValidation = check("title").custom((value) => {
   /**
    * Check if the title is not empty
@@ -62,16 +44,6 @@ const AddEvent_StartValidation = check("start").custom((value) => {
     throw new Error("The 'start' parameter must be a date.");
   }
 
-  /**
-   * Check if the date is in the format YYYY-MM-DDT00:00
-   */
-  const dateRegex = new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
-  if (!dateRegex.test(value)) {
-    throw new Error(
-      "The 'start' parameter must be in the format YYYY-MM-DDT00:00."
-    );
-  }
-
   return true;
 });
 
@@ -92,16 +64,6 @@ const AddEvent_EndValidation = check("end").custom((value) => {
     throw new Error("The 'end' parameter must be a date.");
   }
 
-  /**
-   * Check if the date is in the format YYYY-MM-DDT00:00
-   */
-  const dateRegex = new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
-  if (!dateRegex.test(value)) {
-    throw new Error(
-      "The 'end' parameter must be in the format YYYY-MM-DDT00:00."
-    );
-  }
-
   return true;
 });
 
@@ -116,7 +78,6 @@ const AddEvent_EndIsAfterStart = check("end").custom((value, { req }) => {
 });
 
 export const AddEventValidator = [
-  AddEvent_UserValidation,
   AddEvent_TitleValidation,
   AddEvent_DescriptionValidation,
   AddEvent_StartValidation,
@@ -127,22 +88,6 @@ export const AddEventValidator = [
 // -------------------------------------------------------------------------------------------- //
 //                                    UPDATE EVENT VALIDATOR                                    //
 // -------------------------------------------------------------------------------------------- //
-
-const UpdateEvent_UserValidation = check("user").custom((value) => {
-  if (value !== "" && value !== null && value !== undefined) {
-    /**
-     * Check if the user is a string
-     */
-    if (typeof value !== "string") {
-      throw new Error("The 'user' parameter must be a string.");
-    }
-  }
-  if (value === "" || value === null) {
-    throw new Error("Missing required parameter: 'user'.");
-  }
-
-  return true;
-});
 
 const UpdateEvent_TitleValidation = check("title").custom((value) => {
   if (value !== "" && value !== null && value !== undefined) {
@@ -185,16 +130,6 @@ const UpdateEvent_StartValidation = check("start").custom((value) => {
     if (isNaN(date.getTime())) {
       throw new Error("The 'start' parameter must be a date.");
     }
-
-    /**
-     * Check if the date is in the format YYYY-MM-DDT00:00
-     */
-    const dateRegex = new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
-    if (!dateRegex.test(value)) {
-      throw new Error(
-        "The 'start' parameter must be in the format YYYY-MM-DDT00:00."
-      );
-    }
   }
 
   if (value === "" || value === null) {
@@ -213,16 +148,6 @@ const UpdateEvent_EndValidation = check("end").custom((value) => {
 
     if (isNaN(date.getTime())) {
       throw new Error("The 'end' parameter must be a date.");
-    }
-
-    /**
-     * Check if the date is in the format YYYY-MM-DDT00:00
-     */
-    const dateRegex = new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
-    if (!dateRegex.test(value)) {
-      throw new Error(
-        "The 'end' parameter must be in the format YYYY-MM-DDT00:00."
-      );
     }
   }
 
@@ -253,7 +178,6 @@ const UpdateEvent_EndIsAfterStart = check("end").custom((value, { req }) => {
 });
 
 export const UpdateEventValidator = [
-  UpdateEvent_UserValidation,
   UpdateEvent_TitleValidation,
   UpdateEvent_DescriptionValidation,
   UpdateEvent_StartValidation,
