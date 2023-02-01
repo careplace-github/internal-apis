@@ -246,69 +246,80 @@ export default class DAO {
   }
 
   async query_list(filters, options, page, documentsPerPage, populate, select) {
-    try {
-      logger.info(
-        `${this.Collection}DAO QUERY_LIST Request: \n ${JSON.stringify(
-          {
-            filters: filters,
-            options: options,
-            page: page,
-            documentsPerPage: documentsPerPage,
-            populate: populate,
-          },
-          null,
-          2
-        )} \n}`
-      );
+    logger.info(
+      `${this.Collection}DAO QUERY_LIST Request: \n ${JSON.stringify(
+        {
+          filters: filters,
+          options: options,
+          page: page,
+          documentsPerPage: documentsPerPage,
+          populate: populate,
+        },
+        null,
+        2
+      )} \n}`
+    );
 
-      if (options) {
-        if (options.sort) {
-          options.sort = { [options.sort]: 1 };
-        }
+    if (options) {
+      if (options.sort) {
+        options.sort = { [options.sort]: 1 };
       }
-
-      try {
-        /**
-         * @see https://mongoosejs.com/docs/api.html#model_Model-find
-         */
-        var documents = await this.Document.find(filters, null, options)
-          .select(select)
-          .skip(page * documentsPerPage)
-          .limit(documentsPerPage)
-
-          .populate(populate)
-          .exec();
-      } catch (error) {
-        throw new LayerError.INTERNAL_ERROR(error);
-      }
-
-      if (documents === null) {
-        throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
-      }
-
-      // Convert each document of the array 'documents' to a JSON object.
-      for (let i = 0; i < documents.length; i++) {
-        documents[i] = await documents[i].toObject();
-
-        // Remove the fields that are not needed in the response.
-        delete documents[i].__v;
-        delete documents[i].createdAt;
-        delete documents[i].updatedAt;
-      }
-
-      logger.info(
-        `${this.Collection}DAO QUERY_LIST Response: \n ${JSON.stringify(
-          documents,
-          null,
-          2
-        )} \n}`
-      );
-
-      return documents;
-    } catch (error) {
-      console.log(error);
-      throw new LayerError.INTERNAL_ERROR(error.message);
     }
+
+    try {
+      /**
+       * @see https://mongoosejs.com/docs/api.html#model_Model-find
+       */
+      var documents = await this.Document.find(filters, null, options)
+        .select(select)
+        .skip(page * documentsPerPage)
+        .limit(documentsPerPage)
+
+        .populate(populate)
+        .exec();
+    } catch (error) {
+
+      logger.error(
+        `${this.Collection}DAO QUERY_LIST Error: \n ${JSON.stringify(
+          error,
+          null,
+          2
+        )} \n}`
+      );
+
+      switch (error.name) {
+        case "CastError":
+          throw new LayerError.NOT_FOUND(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    if (documents === null) {
+      throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
+    }
+
+    // Convert each document of the array 'documents' to a JSON object.
+    for (let i = 0; i < documents.length; i++) {
+      documents[i] = await documents[i].toObject();
+
+      // Remove the fields that are not needed in the response.
+      delete documents[i].__v;
+      delete documents[i].createdAt;
+      delete documents[i].updatedAt;
+      delete documents[i].cognito_id;
+    }
+
+    logger.info(
+      `${this.Collection}DAO QUERY_LIST Response: \n ${JSON.stringify(
+        documents,
+        null,
+        2
+      )} \n}`
+    );
+
+    return documents;
   }
 
   async query_one(filters, populate) {

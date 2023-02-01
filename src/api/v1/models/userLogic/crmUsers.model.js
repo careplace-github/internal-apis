@@ -10,27 +10,17 @@ const crmUserSchema = new Schema(
 
     cognito_id: { type: String, required: true, unique: true },
 
-    profile_picture: { type: String, required: false },
-
-    company: { type: Schema.ObjectId, ref: "Company", required: true },
-
     name: { type: String, required: true },
 
     email: { type: String, required: true, unique: true },
 
     phone: { type: String, required: true, unique: true },
 
-    birth_date: { type: Date, required: false },
-
-    age: { type: Number, required: false },
+    birth_date: { type: Date, required: true },
 
     gender: { type: String, required: true, enum: ["male", "female", "other"] },
 
-    caregiver_information: {
-      type: Schema.ObjectId,
-      ref: "Caregiver",
-      required: false,
-    },
+    company: { type: Schema.ObjectId, ref: "Company", required: true },
 
     address: {
       street: { type: String, required: false },
@@ -44,14 +34,48 @@ const crmUserSchema = new Schema(
       country: {
         type: String,
         required: false,
-        enum: ["PT", "ES", "US", "UK"],
+        enum: ["PT"],
       },
 
-      coordinates: { type: Array, required: true },
+      coordinates: {
+        latitude: { type: Number, required: false },
+        longitude: { type: Number, required: false },
+      },
     },
 
+    /**
+     * @todo
+     * Diretor
+     * Direção Técnica
+     * Assistente Social
+     */
+    role: {
+      type: String,
+      required: true,
+      enum: ["technical_direction", "social_worker"],
+      default: "technical_direction",
+    },
+
+    accesses: [
+      {
+        access: {
+          type: String,
+          required: true,
+          enum: [
+            "dashboard",
+            "schedule",
+            "orders",
+            "collaborators",
+            "invoicing",
+            "chat",
+          ],
+        },
+        view: { type: Boolean, required: true, default: true },
+        edit: { type: Boolean, required: true, default: null },
+      },
+    ],
+
     settings: {
-      
       theme: {
         type: String,
         required: true,
@@ -66,9 +90,7 @@ const crmUserSchema = new Schema(
       },
     },
 
-    createdAt: { type: Date, required: true, default: Date.now() },
-
-    updatedAt: { type: Date, required: true, default: Date.now() },
+    profile_picture: { type: String, required: false },
   },
 
   {

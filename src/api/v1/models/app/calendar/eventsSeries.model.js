@@ -11,6 +11,8 @@ const eventSeriesSchema = new Schema(
 
     user: { type: Schema.ObjectId, ref: "crm_users", required: true },
 
+    company: { type: Schema.ObjectId, ref: "companies", required: true },
+
     /**
      * Recurrency type
      * 1 - Weekly - Every week

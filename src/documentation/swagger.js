@@ -25,7 +25,7 @@ function swaggerDocs(app, port) {
   
   
 
-  logger.info(`Swagger docs available at http://localhost:${port}/api/v1/docs`);
+  logger.info(`Swagger docs available at http://localhost:${port}/api/v1/docs \n`);
 }
 
 export default swaggerDocs;

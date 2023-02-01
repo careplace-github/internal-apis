@@ -5,7 +5,7 @@
     "description": "",
     "image": "",
     "name": "Lar em casa",
-    "shortDescription": "Assistência 24 horas / 7 dias / 365 dias por ano."
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
   },
   {
     "translations": [],
@@ -13,7 +13,7 @@
     "description": "",
     "image": "",
     "name": "Cuidados de higiene e conforto pessoal",
-    "shortDescription": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
   },
   {
     "translations": [],
@@ -21,7 +21,7 @@
     "description": "",
     "image": "",
     "name": "Cuidados especializados",
-    "shortDescription": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
   },
   {
     "translations": [],
@@ -29,7 +29,7 @@
     "description": "",
     "image": "",
     "name": "Confeção de refeições",
-    "shortDescription": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
   },
   {
     "translations": [],
@@ -37,7 +37,7 @@
     "description": "",
     "image": "",
     "name": "Higienização do domicílio",
-    "shortDescription": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
   },
   {
     "translations": [],
@@ -45,7 +45,7 @@
     "description": "",
     "image": "",
     "name": "Tratamento de roupas",
-    "shortDescription": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
   },
   {
     "translations": [],
@@ -53,7 +53,7 @@
     "description": "",
     "image": "",
     "name": "Acompanhamento em deslocação ao exterior",
-    "shortDescription": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
   },
   {
     "translations": [],
@@ -61,7 +61,7 @@
     "description": "",
     "image": "",
     "name": "Aquisição de bens e serviços",
-    "shortDescription": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
   },
   {
     "translations": [],
@@ -69,6 +69,6 @@
     "description": "",
     "image": "",
     "name": "Venda e aluguer de equipamentos",
-    "shortDescription": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
   }
 ]

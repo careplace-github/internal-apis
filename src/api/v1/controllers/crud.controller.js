@@ -152,11 +152,13 @@ export default class CRUD_Methods {
       }
 
       response.statusCode = 200;
-      response.data = deletedDocument;
+      response.data = {
+        deleted: true,
+        deleted_document: deletedDocument,
+      };
 
       next(response);
     } catch (err) {
-      console.log("ERO: " + err);
       next(err);
     }
   }
@@ -321,16 +323,18 @@ export default class CRUD_Methods {
         }
       }
 
-      console.log(`USER: ${user._id}`);
-
       try {
         documents = await this.DAO.query_list({
-          user: { $eq: user._id },
+          user: user._id,
         });
       } catch (err) {
         switch (err.type) {
           case "INVALID_PARAMETER":
             throw new Error._400(err.message);
+
+          case "NOT_FOUND":
+            documents = [];
+            break;
 
           default:
             throw new Error._500(err.message);
