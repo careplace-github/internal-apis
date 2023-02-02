@@ -53,7 +53,6 @@ const crmUserSchema = new Schema(
       type: String,
       required: true,
       enum: ["technical_direction", "social_worker"],
-      default: "technical_direction",
     },
 
     accesses: [
@@ -107,5 +106,4 @@ const crmUserSchema = new Schema(
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
-
 export default crmUser = mongoose.model("crm_users", crmUserSchema);

@@ -4,6 +4,7 @@ import SES from "../services/ses.service.js";
 
 // Import DAOs
 import crmUsersDAO from "../db/crmUsers.dao.js";
+import caregiversDAO from "../db/caregivers.dao.js";
 import MarketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 import CRUD from "./crud.controller.js";
@@ -25,6 +26,7 @@ import logger from "../../../logs/logger.js";
 import requestUtils from "../utils/server/request.utils.js";
 
 import * as Error from "../utils/errors/http/index.js";
+import { response } from "express";
 
 const app = "crm";
 
@@ -421,10 +423,52 @@ export default class UsersController {
   }
 
   static async listUsersByCompany(req, res, next) {
-    const CrmUsersDAO = new crmUsersDAO();
-    const CrmUsersCRUD = new CRUD(CrmUsersDAO);
+    try {
+      let companyUsers = [];
+      let AuthHelper = new authHelper();
+      let CrmUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let companyId;
 
-    await CrmUsersCRUD.listByCompanyId(req, res, next);
+      let accessToken = req.headers.authorization.split(" ")[1];
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      companyId = user.company._id;
+
+      let crmUsers = await CrmUsersDAO.query_list(
+        {
+          company: companyId,
+        },
+        {
+          name: 1,
+        }
+      );
+
+      let caregivers = await CaregiversDAO.query_list(
+        {
+          company: companyId,
+        },
+        {
+          name: 1,
+        }
+      );
+
+      for (let i = 0; i < crmUsers.length; i++) {
+        companyUsers.push(crmUsers[i]);
+      }
+
+      for (let i = 0; i < caregivers.length; i++) {
+        companyUsers.push(caregivers[i]);
+      }
+
+      response.statusCode = 200;
+      response.data = companyUsers;
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
   /**
@@ -532,10 +576,9 @@ export default class UsersController {
       let externalAccounts;
 
       try {
-        externalAccounts =
-          await Stripe.listExternalAccounts(
-            connectedAccountId
-          );
+        externalAccounts = await Stripe.listExternalAccounts(
+          connectedAccountId
+        );
 
         console.log(
           `EXTERNAL ACCOUNTS: ${JSON.stringify(externalAccounts, null, 2)}`

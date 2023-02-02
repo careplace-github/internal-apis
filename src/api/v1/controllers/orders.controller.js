@@ -93,7 +93,7 @@ export default class OrdersController {
       }
 
       order.user = user._id;
-      order.status = "pending";
+      order.status = "new";
 
       order.address = {
         street: relative.address.street,
