@@ -164,15 +164,11 @@ export default class StripeController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-     
-
       let customerId = user.stripe_information?.customer_id;
 
-      if(customerId === null ||customerId === undefined) {
+      if (customerId === null || customerId === undefined) {
         throw new Error._400("No customer id found.");
       }
-
-      
 
       let Stripe = new StripeService();
 
@@ -371,6 +367,7 @@ export default class StripeController {
       let Stripe = new StripeService();
 
       let externalAccounts = await Stripe.listExternalAccounts(accountId);
+      externalAccounts = externalAccounts.data;
 
       let response = {
         statusCode: 200,
@@ -379,6 +376,7 @@ export default class StripeController {
 
       next(response);
     } catch (error) {
+      logger.error(error.stack);
       next(error);
     }
   }

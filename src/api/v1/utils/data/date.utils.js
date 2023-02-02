@@ -78,18 +78,18 @@ export default class DateUtils {
    * schedule = [
    * {
    * weekDay: 1,
-   * startTime: "08:00",
-   * endTime: "12:00",
+   * start: "2020-10-10T08:00:00.000Z",
+   * end: "2020-10-10T12:00:00.000Z",
    * },
    * {
    * weekDay: 3,
-   * startTime: "08:00",
-   * endTime: "12:00",
+   * start: "2020-10-10T08:00:00.000Z",
+   * end: "2020-10-10T12:00:00.000Z",
    * },
    * {
    * weekDay: 6,
-   * startTime: "08:00",
-   * endTime: "12:00",
+   * start: "2020-10-10T08:00:00.000Z",
+   * end: "2020-10-10T12:00:00.000Z",
    * },
    * ]
    *
@@ -98,33 +98,32 @@ export default class DateUtils {
   async getScheduleRecurrencyText(schedule) {
     console.log(`SCHEDULE: ${JSON.stringify(schedule)}`);
 
-    const weekDayNumberToWeekDayText = {
-      1: "Segundas-feiras",
-      2: "Terças-feiras",
-      3: "Quartas-feiras",
-      4: "Quintas-feiras",
-      5: "Sextas-feiras",
-      6: "Sábados",
-      7: "Domingos",
-    };
-
     let response = "";
 
-    // Order the schedule by week day
-    schedule.sort((a, b) => a.week_day - b.week_day);
+    let weekDays = [
+      "Segundas-feiras",
+      "Terças-feiras",
+      "Quartas-feiras",
+      "Quintas-feiras",
+      "Sextas-feiras",
+      "Sábados",
+      "Domingos",
+    ];
 
     for (let i = 0; i < schedule.length; i++) {
       const scheduleItem = schedule[i];
 
-      const weekDayText = weekDayNumberToWeekDayText[scheduleItem.week_day];
-      const startTime = scheduleItem.start_time;
-      const endTime = scheduleItem.end_time;
+      const weekDay = scheduleItem.week_day;
 
-      if (i === 0) {
-        response += `${weekDayText}: ${startTime} - ${endTime}`;
-      } else {
-        response += `; ${weekDayText}: ${startTime} - ${endTime}`;
-      }
+      const start = scheduleItem.start;
+      const end = scheduleItem.end;
+
+      const weekDayText = weekDays[weekDay - 1];
+
+      const startText = await this.getTimeFromDate(start);
+      const endText = await this.getTimeFromDate(end);
+
+      response += `${weekDayText}: ${startText} - ${endText}`;
     }
 
     console.log(`SCHEDULE RESPONSE : ${response}`);
@@ -135,7 +134,7 @@ export default class DateUtils {
   /**
    * @example
    * input: 1674260545
-   * 1674260545 = 2023-01-21T00:29:05.000Z
+   * 1674260545 = 2023-01-21T00:00:00.000Z
    * output: Jan 21, 2023
    *
    * @see https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
@@ -203,5 +202,50 @@ export default class DateUtils {
     const day = date.getDate();
     const year = date.getFullYear();
     return `${month} ${day}, ${year}`;
+  }
+
+  /**
+   * @example
+   * input: "2023-01-21T08:30:00.000Z"
+   * output: "08:30"
+   */
+  async getTimeFromDate(date) {
+    date = new Date(date);
+
+    /**
+     * The date is in UTC, so we need to convert it to the local timezone
+     */
+    date = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    /**
+     * @example
+     * 8:30 -> 08:30
+     */
+    if (hours < 10 && minutes >= 10) {
+      return `0${hours}:${minutes}`;
+    } else if (hours >= 10 && minutes < 10) {
+      /**
+       * @example
+       * 08:5 -> 08:05
+       */
+      return `${hours}:0${minutes}`;
+    } else if (hours < 10 && minutes < 10) {
+      /**
+       * @example
+       * 8:5 -> 08:05
+       */
+      return `0${hours}:0${minutes}`;
+    }
+
+    /**
+     * @example
+     * 08:30 -> 08:30
+     *
+     * No need to add 0 to hours and minutes
+     */
+    return `${hours}:${minutes}`;
   }
 }

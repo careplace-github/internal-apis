@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+let Caregiver;
+
 const caregiverSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
@@ -45,7 +47,6 @@ const caregiverSchema = new Schema(
       type: String,
       required: true,
       enum: ["caregiver"],
-      default: "caregiver",
     },
 
     profile_picture: { type: String, required: false },
@@ -86,4 +87,8 @@ caregiverSchema.methods.isAvailable = function (events) {
   return available;
 };
 
-export default caregiverSchema;
+/**
+ * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
+ * @see https://mongoosejs.com/docs/models.html#compiling
+ */
+export default Caregiver = mongoose.model("Caregiver", caregiverSchema);

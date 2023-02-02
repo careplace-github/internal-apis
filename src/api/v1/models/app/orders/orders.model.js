@@ -29,15 +29,15 @@ const orderSchema = new Schema(
       // The default value is 1 year after the start date
       end_date: {
         type: Date,
-        required: true,
-        default: Date.now() + 31536000000,
+        required: false,
+        default: null,
       },
 
       // 0 -> Every 0 weeks -> Not recurrent, one time only order.
       // 1 -> Every 1 week -> Weekly
       // 2 -> Every 2 weeks -> Biweekly
       // 4 -> Every 4 weeks -> Monthly
-      recurrency_type: {
+      recurrence: {
         type: Number,
         required: true,
         enum: [0, 1, 2, 4],
@@ -67,10 +67,9 @@ const orderSchema = new Schema(
     // declined -> Company Declined
     // canceled -> Customer Canceled
     // accepted -> Company Accepted
-    // pending
-    // payment_pending
-    // active
-    status: { type: String, required: true, default: "new" },
+    // payment_pending -> Company Accepted, waiting for payment
+    // active -> Payment received, order is active
+    status: { type: String, required: true, default: "new", enum: ["new", "declined", "cancelled", "accepted", "payment_pending", "active"] },
 
     decline_reason: { type: String, required: false },
 
@@ -97,13 +96,13 @@ const orderSchema = new Schema(
     screening_visit: {
       type: Schema.ObjectId,
       ref: "Event",
-      required: true,
+      required: false,
       default: null,
     },
 
-    observations: { type: String, required: true, default: null },
+    observations: { type: String, required: false, default: null },
 
-    stripe_subscription_id: { type: String, required: true, default: null },
+    stripe_subscription_id: { type: String, required: false, default: null },
   },
   {
     timestamps: true,

@@ -166,9 +166,16 @@ export default class AuthHelper {
 
       if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
         let CrmUsersDao = new crmUsersDao();
-        user = await CrmUsersDao.query_one({
-          cognito_id: { $eq: username },
-        });
+        user = await CrmUsersDao.query_one(
+          {
+            cognito_id: { $eq: username },
+          },
+
+          {
+            path: "company",
+            model: "Company",
+          }
+        );
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
         let MarketplaceUsersDao = new marketplaceUsersDao();
 
