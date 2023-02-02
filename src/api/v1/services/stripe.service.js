@@ -482,7 +482,19 @@ export default class Stripe {
    */
   async createBankAccountToken(bankAccount) {
     let bankAccountToken = await this.stripeClient.tokens.create({
-      bank_account: bankAccount,
+      bank_account: {
+        account_holder_name: bankAccount.account_holder_name || null,
+        account_holder_type: bankAccount.account_holder_type || null,
+        country: bankAccount.country || null,
+        currency: bankAccount.currency || null,
+        routing_number: bankAccount.routing_number || null,
+        account_number: bankAccount.account_number || null,
+
+        // Optional
+        account_holder_type: bankAccount.account_holder_type || null,
+        default_for_currency: bankAccount.default_for_currency || null,
+        metadata: bankAccount.metadata || null,
+      },
     });
 
     return bankAccountToken;
