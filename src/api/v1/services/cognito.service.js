@@ -898,7 +898,7 @@ export default class Cognito {
           throw new LayerError.INVALID_PARAMETER(error.message);
 
         default:
-          throw new LayerError.INTERNAL_SERVER_ERROR(error.message);
+          throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
 

@@ -63,6 +63,7 @@ import calendarRoute from "./api/v1/routes/calendar.route.js";
 import webHooksRoute from "./api/v1/routes/hooks/webhooks.route.js";
 import checkoutRoute from "./api/v1/routes/checkout.route.js";
 import paymentMethodsRoute from "./api/v1/routes/paymentMethods.route.js";
+import relativesRoute from "./api/v1/routes/relatives.route.js";
 
 // Helpers
 import getServices from "./api/v1/helpers/assets/services.helper.js";
@@ -400,6 +401,7 @@ const main = async () => {
       app.use(API_ROUTE, authRoute);
       app.use(API_ROUTE, usersRoute);
       app.use(API_ROUTE, companiesRoute);
+      app.use(API_ROUTE, relativesRoute);
 
       app.use(API_ROUTE, ordersRoute);
       app.use(API_ROUTE, servicesRoute);
