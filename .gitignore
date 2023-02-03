@@ -2,5 +2,5 @@ node_modules
 .DS_Store
 /src/uploads
 /src/downloads
-/src/logs
+/src/logs/*
 

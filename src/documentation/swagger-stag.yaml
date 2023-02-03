@@ -4,15 +4,15 @@ info:
   description: |-
     Careplace REST API Documentation - OpenAPI Specification 3.0.3.
     This REST API is used to manage all Careplace applications.
-  termsOfService: 'https://www.careplace.pt/termos-e-condicoes'
+  termsOfService: "https://www.careplace.pt/termos-e-condicoes"
   contact:
     email: admin@careplace.pt
   version: 1.0.0
 servers:
-  - url: 'http://localhost:8080/api/v1'
+  - url: "http://localhost:8080/api/v1"
     description: Development Environment
     default: true
-  - url: 'http://www.staging.api.careplace.pt'
+  - url: "http://www.staging.api.careplace.pt"
     description: Staging Environment
 tags:
   - name: Authentication
@@ -34,6 +34,68 @@ tags:
   - name: Admin
     description: Admin operations
 paths:
+  /auth/marketplace/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Signup
+      description: >-
+        Creates a new user in the Marketplace. <br>
+      operationId: marketplaceSignup
+      requestBody:
+        description: Signup user to the Marketplace
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: email@domain.com
+                phone:
+                  type: string
+                  example: "912345678"
+                password:
+                  type: string
+                  example: CareplaceDemo-123!
+                address:
+                  type: object
+                  properties:
+                    country:
+                      type: string
+                      example: PT
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/Marketplace_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token
+
   /auth/crm/login:
     post:
       tags:
@@ -64,10 +126,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -88,7 +150,7 @@ paths:
                     type: string
                     example: >-
                       eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.dVJmuIT3Z9_ms2dqTSH9FwKts1tdEQCmYg13JP7aGspx2wQ0amKYDXYQ2o1CxM3BwtkeiS_1kSpxU8vkmPW9Hlt0GNURrx-wAjiEnVBCx9tEKkheyh1-8kyiBjjxNCSZNwyM_uydYQ1HZ8P1ZHCocKAGL3gIUHhjK4qeyBPFlKKCw4a9RwXzTF5d8Ly7Jl5rGUNhop1tJsBPbCtqa0duE4VtS87ezV96U5pDNfp-QYNDsX0tHJfGkyhVp9RXSKnQMqg5gX1kssKqUtLJJi3SDt2RgW2ea7DUnGSsmhGkW77ffVkqPQw8b0YtxaFoHj1iQLnxl5MxY85RTuQcrLwawg.E94ltQ9u-C24p_yS.PDKswUIXYmTg9uvAzKDoCeYlb1ksQTlgyJhAWu1oHOVjCdcY1jrx7gk_03NXSQvDpWtZ0KJggq1USyPnCy7OZYgmYsrwcr5Lc5qUb74IVoG2-rfB1q9UZS_YCaC2WNOSlxiZBEfhPKGZeTsIZ-W1hsiWexbdA_KB0dItYkmMZ3IrwY7l7RfnyaM_Riv9puAHVIINt6MlnKbhz-P2s4VU-IGQCG3L539xhTz4XiarHVvb5lNn0fX23PkoONw_oUHpRN39-ot6Z4wye0bap0fSD4vVAA0EWvylsmqugINM6egyTJbGFDmT33leuq1ntPip3-KC_iizfO5XZPNY_g2GA6xXPV8auBZXlsvXhT3VpfrhwZ-5IbuPBcFjlWHWPbuwQUW5qgTCK3Clamhe9UDMEgzb7n0WuyhseoJBiFeZ9DWCBCtvriPRNd2xSPAy_sMW-TB2CY3uqtBndjF2AvYpWDN-HhO52QtUy8gI52Cgjtb1fCqKi2BIoCLuVBhJw1PqQrBM0XuZMw1hSl2hvODHLaqJYlBh72JcFVFT__Ab6NqtKtPvkr6bOUf2uzdUskxZL4MQ1A6o8xS_U4qMjaKw5PvzEBTcczo-WaHZrHiY1eA5nzssRQqBVvJeU5hrRP-QT0H8hhUX6ZDVcQu0f4FfdrvjeWO2xV7eUlILiUgl9EvPa242O43kXz8TfJUjX46-4caZ3e9M3inO26HKey9tMGy8KZQ8D60pPJYtDMfM8DcLO6u-5Nw-U2V1GZ416542nlenILuz9id6yYgOkbUh08uNez-I7eq75i8dITsKa4K1wATqKkAkPbfy_9IVYrpY2gEnvtABS4_l7xN7zMdPWYZv6KP6lRAWfpowvJml0i-Rwm1Z_FX06KPqxUOnTItTgh7pt3jS2YjCSKQmuJ5XayWU4GDM52VNPgjvNhAMtIb-GzKLQpJHu8QftLLWQKelZolS5-gveNMneJxkhxKdcNclpLRNJ4GIpxyrPaHssDFBXAhwAi-OH7oiTfm9x3pU8LaXpYmnsKwUiCbhH4tyToyQKVuNgRAVtEr0q36GpA-G8mCejpn3t-QG-T-k4Q3M0Z39wvXcRp2z1yeTfkMNUHKzUTJllLyjgJewxijTYdeya_S-OXz8BNp0UoVwU6nYq5mwT7RPGTpPUWbb3ypofZhu7vGxmQ50F5Qu87APkoYNBHmbJeK1CU-X8Y5xMch-jiKj0tZOB4BFwxhtAd8P8b9yyPhyGNgg_YiO21dDJ4KkfUcu1_P0hL_uIaxl0BgbthGgFKWnnEgWSke07khgcQ9asPhQlYInukH0Y3H3t4mCMelhPTUoHZOWPKH8VtMyg2aRGUWzNW-mdRnSmevL9_fQV14-QkposA721EvaA9tIfSYMRsd4BifSx6up_VuBQzCN-KICS3Ifr1JuR_Lj9ZTaotQrxoUcww670Au_WtXG.hVIgdxxd1WhG88tupLTicQ
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -128,16 +190,16 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Marketplace_User'
-        '401':
+                $ref: "#/components/schemas/Marketplace_User"
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -167,10 +229,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -200,10 +262,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -243,10 +305,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -256,7 +318,7 @@ paths:
                   message:
                     type: string
                     example: Forgot password code sent successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -299,10 +361,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -312,7 +374,7 @@ paths:
                   message:
                     type: string
                     example: Forgot password code sent successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -349,10 +411,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -362,7 +424,7 @@ paths:
                   message:
                     type: string
                     example: Confirmation code sent successfully.
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -402,10 +464,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -415,7 +477,7 @@ paths:
                   message:
                     type: string
                     example: Forgot password code sent successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -437,10 +499,10 @@ paths:
       operationId: logout
       security:
         - jwt_context:
-            - 'write:pets'
-            - 'read:pets'
+            - "write:pets"
+            - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -450,7 +512,7 @@ paths:
                   message:
                     type: string
                     example: User logged out successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -463,7 +525,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -499,10 +561,10 @@ paths:
         required: true
       security:
         - jwt_context:
-            - 'write:pets'
-            - 'read:pets'
+            - "write:pets"
+            - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -512,7 +574,7 @@ paths:
                   message:
                     type: string
                     example: Password changed successfully
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -528,7 +590,7 @@ paths:
                       token:
                         value:
                           message: Missing token
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -560,7 +622,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -651,10 +713,10 @@ paths:
                         properties:
                           name:
                             type: string
-                            example: 'CAREPLACE, LDA.'
+                            example: "CAREPLACE, LDA."
                           tax_id:
                             type: string
-                            example: '123456789'
+                            example: "123456789"
                           business_structure:
                             type: string
                             example: LDA
@@ -730,7 +792,7 @@ paths:
                           push:
                             type: boolean
                             example: true
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -743,7 +805,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -768,7 +830,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -800,13 +862,13 @@ paths:
                               example: 123456789
                             website:
                               type: string
-                              example: 'https://careplace.com'
+                              example: "https://careplace.com"
                             logo:
                               type: string
-                              example: 'https://careplace.com/logo.png'
+                              example: "https://careplace.com/logo.png"
                             cover:
                               type: string
-                              example: 'https://careplace.com/cover.png'
+                              example: "https://careplace.com/cover.png"
                         services:
                           type: array
                           items:
@@ -826,7 +888,7 @@ paths:
                                 example: Service 1 short description
                               image:
                                 type: string
-                                example: 'https://careplace.com/service1.png'
+                                example: "https://careplace.com/service1.png"
                         service_area:
                           type: array
                           items:
@@ -858,7 +920,7 @@ paths:
                           example: male
                         profile_picture:
                           type: string
-                          example: 'https://careplace.com/caregiver1.png'
+                          example: "https://careplace.com/caregiver1.png"
                         company:
                           type: string
                           example: 5f9f1b0b0b9b0b0b0b0b0b0b
@@ -881,7 +943,7 @@ paths:
                                 example: Service 1 short description
                               image:
                                 type: string
-                                example: 'https://careplace.com/service1.png'
+                                example: "https://careplace.com/service1.png"
                     relative:
                       type: object
                       properties:
@@ -914,7 +976,7 @@ paths:
                             example: Diabetes
                         profile_picture:
                           type: string
-                          example: 'https://careplace.com/relative1.png'
+                          example: "https://careplace.com/relative1.png"
                         address:
                           type: object
                           properties:
@@ -958,7 +1020,7 @@ paths:
                             example: Service 1 short description
                           image:
                             type: string
-                            example: 'https://careplace.com/service1.png'
+                            example: "https://careplace.com/service1.png"
                     schedule_information:
                       type: object
                       properties:
@@ -1005,7 +1067,7 @@ paths:
                         country:
                           type: string
                           example: PT
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1018,7 +1080,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1031,7 +1093,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/users/orders/{orderId}':
+  "/users/orders/{orderId}":
     get:
       tags:
         - Users
@@ -1051,7 +1113,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1081,13 +1143,13 @@ paths:
                             example: 123456789
                           website:
                             type: string
-                            example: 'https://careplace.com'
+                            example: "https://careplace.com"
                           logo:
                             type: string
-                            example: 'https://careplace.com/logo.png'
+                            example: "https://careplace.com/logo.png"
                           cover:
                             type: string
-                            example: 'https://careplace.com/cover.png'
+                            example: "https://careplace.com/cover.png"
                       services:
                         type: array
                         items:
@@ -1107,7 +1169,7 @@ paths:
                               example: Service 1 short description
                             image:
                               type: string
-                              example: 'https://careplace.com/service1.png'
+                              example: "https://careplace.com/service1.png"
                       service_area:
                         type: array
                         items:
@@ -1139,7 +1201,7 @@ paths:
                         example: male
                       profile_picture:
                         type: string
-                        example: 'https://careplace.com/caregiver1.png'
+                        example: "https://careplace.com/caregiver1.png"
                       company:
                         type: string
                         example: 5f9f1b0b0b9b0b0b0b0b0b0b
@@ -1162,7 +1224,7 @@ paths:
                               example: Service 1 short description
                             image:
                               type: string
-                              example: 'https://careplace.com/service1.png'
+                              example: "https://careplace.com/service1.png"
                   relative:
                     type: object
                     properties:
@@ -1195,7 +1257,7 @@ paths:
                           example: Diabetes
                       profile_picture:
                         type: string
-                        example: 'https://careplace.com/relative1.png'
+                        example: "https://careplace.com/relative1.png"
                       address:
                         type: object
                         properties:
@@ -1239,7 +1301,7 @@ paths:
                           example: Service 1 short description
                         image:
                           type: string
-                          example: 'https://careplace.com/service1.png'
+                          example: "https://careplace.com/service1.png"
                   schedule_information:
                     type: object
                     properties:
@@ -1286,7 +1348,7 @@ paths:
                       country:
                         type: string
                         example: PT
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1299,7 +1361,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1312,7 +1374,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/users/orders/{orderId}/cancel':
+  "/users/orders/{orderId}/cancel":
     post:
       tags:
         - Users
@@ -1332,7 +1394,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1362,13 +1424,13 @@ paths:
                             example: 123456789
                           website:
                             type: string
-                            example: 'https://careplace.com'
+                            example: "https://careplace.com"
                           logo:
                             type: string
-                            example: 'https://careplace.com/logo.png'
+                            example: "https://careplace.com/logo.png"
                           cover:
                             type: string
-                            example: 'https://careplace.com/cover.png'
+                            example: "https://careplace.com/cover.png"
                       services:
                         type: array
                         items:
@@ -1388,7 +1450,7 @@ paths:
                               example: Service 1 short description
                             image:
                               type: string
-                              example: 'https://careplace.com/service1.png'
+                              example: "https://careplace.com/service1.png"
                       service_area:
                         type: array
                         items:
@@ -1420,7 +1482,7 @@ paths:
                         example: male
                       profile_picture:
                         type: string
-                        example: 'https://careplace.com/caregiver1.png'
+                        example: "https://careplace.com/caregiver1.png"
                       company:
                         type: string
                         example: 5f9f1b0b0b9b0b0b0b0b0b0b
@@ -1443,7 +1505,7 @@ paths:
                               example: Service 1 short description
                             image:
                               type: string
-                              example: 'https://careplace.com/service1.png'
+                              example: "https://careplace.com/service1.png"
                   relative:
                     type: object
                     properties:
@@ -1476,7 +1538,7 @@ paths:
                           example: Diabetes
                       profile_picture:
                         type: string
-                        example: 'https://careplace.com/relative1.png'
+                        example: "https://careplace.com/relative1.png"
                       address:
                         type: object
                         properties:
@@ -1520,7 +1582,7 @@ paths:
                           example: Service 1 short description
                         image:
                           type: string
-                          example: 'https://careplace.com/service1.png'
+                          example: "https://careplace.com/service1.png"
                   schedule_information:
                     type: object
                     properties:
@@ -1567,7 +1629,7 @@ paths:
                       country:
                         type: string
                         example: PT
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1580,7 +1642,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1605,7 +1667,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1663,7 +1725,7 @@ paths:
                             longitude:
                               type: number
                               example: 74.006
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1676,7 +1738,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1715,7 +1777,7 @@ paths:
                 birthdate:
                   type: string
                   format: date
-                  example: '2023-02-01T18:01:23.133Z'
+                  example: "2023-02-01T18:01:23.133Z"
                 gender:
                   type: string
                   example: male
@@ -1752,7 +1814,7 @@ paths:
                           type: number
                           example: 74.006
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1817,7 +1879,7 @@ paths:
                           longitude:
                             type: number
                             example: 74.006
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1830,7 +1892,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1843,7 +1905,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/users/relatives/{relativeId}':
+  "/users/relatives/{relativeId}":
     get:
       tags:
         - Users
@@ -1862,7 +1924,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -1927,7 +1989,7 @@ paths:
                           longitude:
                             type: number
                             example: 74.006
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -1940,7 +2002,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -1983,7 +2045,7 @@ paths:
                 type: string
                 example: Diabetes
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2048,7 +2110,7 @@ paths:
                           longitude:
                             type: number
                             example: 74.006
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2061,7 +2123,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -2093,7 +2155,7 @@ paths:
             type: string
           example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2164,7 +2226,7 @@ paths:
                               longitude:
                                 type: number
                                 example: 74.006
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2177,7 +2239,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -2241,7 +2303,7 @@ paths:
             type: integer
           example: 10
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2270,13 +2332,13 @@ paths:
                               example: +1 123 456 7890
                             website:
                               type: string
-                              example: 'https://www.example.com'
+                              example: "https://www.example.com"
                             logo:
                               type: string
-                              example: 'https://www.example.com/logo.png'
+                              example: "https://www.example.com/logo.png"
                             cover:
                               type: string
-                              example: 'https://www.example.com/cover.png'
+                              example: "https://www.example.com/cover.png"
                         services:
                           type: array
                           items:
@@ -2296,7 +2358,7 @@ paths:
                                 example: Service short description
                               image:
                                 type: string
-                                example: 'https://www.example.com/service.png'
+                                example: "https://www.example.com/service.png"
                         service_area:
                           type: array
                           items:
@@ -2335,7 +2397,7 @@ paths:
                   total:
                     type: integer
                     example: 1
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2348,7 +2410,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/{companyId}':
+  "/companies/{companyId}":
     get:
       tags:
         - Companies
@@ -2363,7 +2425,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2387,13 +2449,13 @@ paths:
                         example: +1 123 456 7890
                       website:
                         type: string
-                        example: 'https://www.example.com'
+                        example: "https://www.example.com"
                       logo:
                         type: string
-                        example: 'https://www.example.com/logo.png'
+                        example: "https://www.example.com/logo.png"
                       cover:
                         type: string
-                        example: 'https://www.example.com/cover.png'
+                        example: "https://www.example.com/cover.png"
                   services:
                     type: array
                     items:
@@ -2413,7 +2475,7 @@ paths:
                           example: Service short description
                         image:
                           type: string
-                          example: 'https://www.example.com/service.png'
+                          example: "https://www.example.com/service.png"
                   service_area:
                     type: array
                     items:
@@ -2443,7 +2505,7 @@ paths:
                       country:
                         type: string
                         example: US
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2468,7 +2530,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2517,7 +2579,7 @@ paths:
                               total:
                                 type: number
                                 example: 5000
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2530,7 +2592,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -2555,7 +2617,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2594,7 +2656,7 @@ paths:
                           example: male
                         profile_picture:
                           type: string
-                          example: 'https://www.google.com'
+                          example: "https://www.google.com"
                         company:
                           type: string
                           example: 5f7f9f9f9f9f9f9f9f9f9f9f
@@ -2617,7 +2679,7 @@ paths:
                                 example: Service short description
                               image:
                                 type: string
-                                example: 'https://www.google.com'
+                                example: "https://www.google.com"
                         address:
                           type: object
                           properties:
@@ -2743,7 +2805,7 @@ paths:
                             example: Service short description
                           image:
                             type: string
-                            example: 'https://www.google.com'
+                            example: "https://www.google.com"
                     schedule_information:
                       type: object
                       properties:
@@ -2797,7 +2859,7 @@ paths:
                             longitude:
                               type: number
                               example: 123.123
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -2810,7 +2872,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -2944,7 +3006,7 @@ paths:
                             type: date
                             example: 2020-10-10T00:00:00.000Z
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -2981,7 +3043,7 @@ paths:
                         example: male
                       profile_picture:
                         type: string
-                        example: 'https://www.google.com'
+                        example: "https://www.google.com"
                       company:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
@@ -3004,7 +3066,7 @@ paths:
                               example: Service short description
                             image:
                               type: string
-                              example: 'https://www.google.com'
+                              example: "https://www.google.com"
                       address:
                         type: object
                         properties:
@@ -3130,7 +3192,7 @@ paths:
                           example: Service short description
                         image:
                           type: string
-                          example: 'https://www.google.com'
+                          example: "https://www.google.com"
                   schedule_information:
                     type: object
                     properties:
@@ -3221,7 +3283,7 @@ paths:
                           end:
                             type: date
                             example: 2020-10-10T00:00:00.000Z
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -3234,7 +3296,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -3247,7 +3309,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/orders/{orderId}':
+  "/companies/orders/{orderId}":
     get:
       tags:
         - Companies
@@ -3267,7 +3329,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -3304,7 +3366,7 @@ paths:
                         example: male
                       profile_picture:
                         type: string
-                        example: 'https://www.google.com'
+                        example: "https://www.google.com"
                       company:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
@@ -3327,7 +3389,7 @@ paths:
                               example: Service short description
                             image:
                               type: string
-                              example: 'https://www.google.com'
+                              example: "https://www.google.com"
                       address:
                         type: object
                         properties:
@@ -3453,7 +3515,7 @@ paths:
                           example: Service short description
                         image:
                           type: string
-                          example: 'https://www.google.com'
+                          example: "https://www.google.com"
                   schedule_information:
                     type: object
                     properties:
@@ -3507,7 +3569,7 @@ paths:
                           longitude:
                             type: number
                             example: 123.123
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -3520,7 +3582,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -3563,7 +3625,7 @@ paths:
                   example: 2000
         required: true
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -3600,7 +3662,7 @@ paths:
                         example: male
                       profile_picture:
                         type: string
-                        example: 'https://www.google.com'
+                        example: "https://www.google.com"
                       company:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
@@ -3623,7 +3685,7 @@ paths:
                               example: Service short description
                             image:
                               type: string
-                              example: 'https://www.google.com'
+                              example: "https://www.google.com"
                       address:
                         type: object
                         properties:
@@ -3749,7 +3811,7 @@ paths:
                           example: Service short description
                         image:
                           type: string
-                          example: 'https://www.google.com'
+                          example: "https://www.google.com"
                   schedule_information:
                     type: object
                     properties:
@@ -3803,7 +3865,7 @@ paths:
                           longitude:
                             type: number
                             example: 123.123
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -3816,7 +3878,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -3852,7 +3914,7 @@ paths:
             type: string
           example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -3895,7 +3957,7 @@ paths:
                             example: male
                           profile_picture:
                             type: string
-                            example: 'https://www.google.com'
+                            example: "https://www.google.com"
                           company:
                             type: string
                             example: 5f7f9f9f9f9f9f9f9f9f9f9f
@@ -3918,7 +3980,7 @@ paths:
                                   example: Service short description
                                 image:
                                   type: string
-                                  example: 'https://www.google.com'
+                                  example: "https://www.google.com"
                           address:
                             type: object
                             properties:
@@ -4044,7 +4106,7 @@ paths:
                               example: Service short description
                             image:
                               type: string
-                              example: 'https://www.google.com'
+                              example: "https://www.google.com"
                       schedule_information:
                         type: object
                         properties:
@@ -4098,7 +4160,7 @@ paths:
                               longitude:
                                 type: number
                                 example: 123.123
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4111,7 +4173,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4124,7 +4186,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/orders/{orderId}/decline':
+  "/companies/orders/{orderId}/decline":
     post:
       tags:
         - Companies
@@ -4144,7 +4206,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4169,7 +4231,7 @@ paths:
                   services:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Service'
+                      $ref: "#/components/schemas/Service"
                   schedule_information:
                     type: object
                     properties:
@@ -4226,7 +4288,7 @@ paths:
                           longitude:
                             type: number
                             example: -9.142685
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4239,7 +4301,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4252,7 +4314,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/orders/{orderId}/accept':
+  "/companies/orders/{orderId}/accept":
     post:
       tags:
         - Companies
@@ -4272,7 +4334,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4339,7 +4401,7 @@ paths:
                       services:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Service'
+                          $ref: "#/components/schemas/Service"
                       schedule_information:
                         type: object
                         properties:
@@ -4396,7 +4458,7 @@ paths:
                             longitude:
                               type: number
                               example: -9.142685
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4409,7 +4471,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4422,7 +4484,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/orders/{orderId}/send-quote':
+  "/companies/orders/{orderId}/send-quote":
     post:
       tags:
         - Companies
@@ -4442,7 +4504,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4467,7 +4529,7 @@ paths:
                   services:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Service'
+                      $ref: "#/components/schemas/Service"
                   schedule_information:
                     type: object
                     properties:
@@ -4524,7 +4586,7 @@ paths:
                           longitude:
                             type: number
                             example: -9.142685
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4537,7 +4599,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4550,7 +4612,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/orders/{orderId}/schedule-visit':
+  "/companies/orders/{orderId}/schedule-visit":
     post:
       tags:
         - Companies
@@ -4589,7 +4651,7 @@ paths:
                   type: date
                   example: 2020-03-25T00:00:00.000Z
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4614,7 +4676,7 @@ paths:
                   services:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Service'
+                      $ref: "#/components/schemas/Service"
                   schedule_information:
                     type: object
                     properties:
@@ -4693,7 +4755,7 @@ paths:
                       allDay:
                         type: boolean
                         example: false
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4706,7 +4768,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4731,7 +4793,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4795,7 +4857,7 @@ paths:
                     role:
                       type: string
                       example: technical_direction
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4808,7 +4870,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4878,7 +4940,7 @@ paths:
                   type: string
                   example: technical_direction
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -4940,7 +5002,7 @@ paths:
                   role:
                     type: string
                     example: technical_direction
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -4953,7 +5015,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -4966,7 +5028,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/users/{userId}':
+  "/companies/users/{userId}":
     get:
       tags:
         - Companies
@@ -4985,7 +5047,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5047,7 +5109,7 @@ paths:
                   role:
                     type: string
                     example: technical_direction
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5060,7 +5122,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5137,7 +5199,7 @@ paths:
                   type: string
                   example: technical_direction
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5199,7 +5261,7 @@ paths:
                   role:
                     type: string
                     example: technical_direction
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5212,7 +5274,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5244,7 +5306,7 @@ paths:
             type: string
           example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5312,7 +5374,7 @@ paths:
                       role:
                         type: string
                         example: technical_direction
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5325,7 +5387,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5350,7 +5412,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5403,7 +5465,7 @@ paths:
                     status:
                       type: string
                       example: new
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5416,7 +5478,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5456,7 +5518,7 @@ paths:
                   type: string
                   example: tok_1F9f9f9f9f9f9f9f9f9f9f9f
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5507,7 +5569,7 @@ paths:
                   status:
                     type: string
                     example: new
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5520,7 +5582,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5533,7 +5595,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/companies/external-accounts/{externalAccountId}':
+  "/companies/external-accounts/{externalAccountId}":
     get:
       tags:
         - Companies
@@ -5552,59 +5614,59 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                      id:
-                        type: string
-                        example: ba_1F9b9b9b9b9b9b9b9b9b9b9b
-                      object:
-                        type: string
-                        example: external_account
-                      account_holder_name:
-                        type: string
-                        example: Holder Name
-                      account_holder_type:
-                        type: string
-                        example: individual
-                      account_type:
-                        type: string
-                        example: null
-                      available_payout_methods:
-                        type: array
-                        items:
-                          type: string
-                          example: standard
-                      bank_name:
-                        type: string
-                        example: Bank Name
-                      country:
-                        type: string
-                        example: PT
-                      currency:
-                        type: string
-                        example: eur
-                      default_for_currency:
-                        type: boolean
-                        example: true
-                      last4:
-                        type: string
-                        example: 1234
-                      metadata:
-                        type: object
-                        example: {}
-                      routing_number:
-                        type: string
-                        example: 123456789
-                      status:
-                        type: string
-                        example: new
-                 
-        '400':
+                  id:
+                    type: string
+                    example: ba_1F9b9b9b9b9b9b9b9b9b9b9b
+                  object:
+                    type: string
+                    example: external_account
+                  account_holder_name:
+                    type: string
+                    example: Holder Name
+                  account_holder_type:
+                    type: string
+                    example: individual
+                  account_type:
+                    type: string
+                    example: null
+                  available_payout_methods:
+                    type: array
+                    items:
+                      type: string
+                      example: standard
+                  bank_name:
+                    type: string
+                    example: Bank Name
+                  country:
+                    type: string
+                    example: PT
+                  currency:
+                    type: string
+                    example: eur
+                  default_for_currency:
+                    type: boolean
+                    example: true
+                  last4:
+                    type: string
+                    example: 1234
+                  metadata:
+                    type: object
+                    example: {}
+                  routing_number:
+                    type: string
+                    example: 123456789
+                  status:
+                    type: string
+                    example: new
+
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5617,7 +5679,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5649,7 +5711,7 @@ paths:
             type: string
           example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5668,7 +5730,7 @@ paths:
                   last4:
                     type: string
                     example: 1234
-  '/checkout/orders/{orderId}':
+  "/checkout/orders/{orderId}":
     get:
       tags:
         - Checkout
@@ -5692,7 +5754,7 @@ paths:
             type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5739,7 +5801,7 @@ paths:
                           example: Service short description
                         image:
                           type: string
-                          example: 'https://www.google.com'
+                          example: "https://www.google.com"
                   schedule_information:
                     type: object
                     properties:
@@ -5766,7 +5828,7 @@ paths:
                             end:
                               type: date
                               example: 2020-10-10T00:00:00.000Z
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5779,7 +5841,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -5792,7 +5854,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/checkout/orders/{orderId}/payment-intent':
+  "/checkout/orders/{orderId}/payment-intent":
     post:
       tags:
         - Checkout
@@ -5861,7 +5923,7 @@ paths:
                   example: PROMO
         required: true
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -5914,7 +5976,7 @@ paths:
                               example: Service short description
                             image:
                               type: string
-                              example: 'https://www.google.com'
+                              example: "https://www.google.com"
                       schedule_information:
                         type: object
                         properties:
@@ -5941,7 +6003,7 @@ paths:
                                 end:
                                   type: date
                                   example: 2020-10-10T00:00:00.000Z
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -5954,7 +6016,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6058,7 +6120,7 @@ paths:
                       example: PT
         required: true
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6084,7 +6146,7 @@ paths:
                     properties:
                       start_date:
                         type: string
-                        example: '2020-10-10T00:00:00.000Z'
+                        example: "2020-10-10T00:00:00.000Z"
                       end_date:
                         type: string
                         example: null
@@ -6101,10 +6163,10 @@ paths:
                               example: 1
                             start:
                               type: date
-                              example: '2020-10-10T00:00:00.000Z'
+                              example: "2020-10-10T00:00:00.000Z"
                             end:
                               type: date
-                              example: '2020-10-10T00:00:00.000Z'
+                              example: "2020-10-10T00:00:00.000Z"
                   status:
                     type: string
                     example: new
@@ -6135,7 +6197,7 @@ paths:
                           longitude:
                             type: number
                             example: -9.142685
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6160,7 +6222,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6247,7 +6309,7 @@ paths:
                     type:
                       type: string
                       example: card
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6260,7 +6322,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6299,7 +6361,7 @@ paths:
                   type: string
                   example: tok_1F9f9f9f9f9f9f9f9f9f9f9f
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6410,7 +6472,7 @@ paths:
                   type:
                     type: string
                     example: card
-  '/users/payment-methods/{paymentMethodTokenId}':
+  "/users/payment-methods/{paymentMethodTokenId}":
     get:
       tags:
         - Users
@@ -6430,7 +6492,7 @@ paths:
             type: string
             example: 5e7f7b9b0f8b9c0017b0b0b8
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6541,7 +6603,7 @@ paths:
                   type:
                     type: string
                     example: card
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6554,7 +6616,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6586,7 +6648,7 @@ paths:
             type: string
             example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6605,7 +6667,7 @@ paths:
                   last4:
                     type: string
                     example: 4242
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6618,7 +6680,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6643,7 +6705,7 @@ paths:
             - write
             - read
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6672,8 +6734,8 @@ paths:
                       example: false
                     textColor:
                       type: string
-                      example: '#1890FF'
-        '400':
+                      example: "#1890FF"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6686,7 +6748,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6730,14 +6792,14 @@ paths:
                   example: 2020-03-25T00:00:00.000Z
                 textColor:
                   type: string
-                  example: '#1890FF'
+                  example: "#1890FF"
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6764,8 +6826,8 @@ paths:
                     example: false
                   textColor:
                     type: string
-                    example: '#1890FF'
-        '400':
+                    example: "#1890FF"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6778,7 +6840,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6791,7 +6853,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/calendar/events/{eventId}':
+  "/calendar/events/{eventId}":
     get:
       tags:
         - Calendar
@@ -6811,7 +6873,7 @@ paths:
             type: string
             example: 5e1f9b9b9b9b9b9b9b9b9b9b
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6838,8 +6900,8 @@ paths:
                     example: false
                   textColor:
                     type: string
-                    example: '#1890FF'
-        '400':
+                    example: "#1890FF"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6852,7 +6914,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6912,14 +6974,14 @@ paths:
                   example: false
                 textColor:
                   type: string
-                  example: '#1890FF'
+                  example: "#1890FF"
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -6946,8 +7008,8 @@ paths:
                     example: false
                   textColor:
                     type: string
-                    example: '#1890FF'
-        '400':
+                    example: "#1890FF"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -6960,7 +7022,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -6992,7 +7054,7 @@ paths:
             type: string
             example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -7025,8 +7087,8 @@ paths:
                         example: false
                       textColor:
                         type: string
-                        example: '#1890FF'
-        '400':
+                        example: "#1890FF"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -7039,7 +7101,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -7060,7 +7122,7 @@ paths:
       description: Get all services
       operationId: getServices
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -7086,8 +7148,8 @@ paths:
                           example: Service 1 short description
                         image:
                           type: string
-                          example: 'https://via.placeholder.com/150'
-        '400':
+                          example: "https://via.placeholder.com/150"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -7124,10 +7186,10 @@ paths:
         required: true
         security:
           - jwt_context:
-              - 'write:pets'
-              - 'read:pets'
+              - "write:pets"
+              - "read:pets"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -7144,7 +7206,7 @@ paths:
                   version:
                     type: string
                     example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -7157,7 +7219,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -7170,7 +7232,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  '/files/{fileId}':
+  "/files/{fileId}":
     delete:
       tags:
         - Files
@@ -7190,7 +7252,7 @@ paths:
             type: string
             example: f9f9f9f9f9f9f9f9f9f9f9f9
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -7203,7 +7265,7 @@ paths:
                   VersionId:
                     type: string
                     example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
-        '400':
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -7216,7 +7278,7 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
@@ -7244,7 +7306,7 @@ paths:
         the company object (company > stripe_information > account_id &&
         customer_id).
       operationId: createCompany
-  '/admin/companies/{companyId}/payment-method':
+  "/admin/companies/{companyId}/payment-method":
     post:
       tags:
         - Admin
@@ -7295,9 +7357,9 @@ components:
             - other
         profile_picture:
           type: string
-          example: 'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
         company:
-          $ref: '#/components/schemas/Company'
+          $ref: "#/components/schemas/Company"
         address:
           type: object
           properties:
@@ -7388,7 +7450,7 @@ components:
           example: 39425f3b-a637-4e6a-9db4-97fd2132a416
         profile_picture:
           type: string
-          example: 'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
         name:
           type: string
           example: João Antão
@@ -7492,11 +7554,11 @@ components:
             - female
             - other
         company:
-          $ref: '#/components/schemas/Company'
+          $ref: "#/components/schemas/Company"
         services:
           type: array
           items:
-            $ref: '#/components/schemas/Service'
+            $ref: "#/components/schemas/Service"
         address:
           type: object
           properties:
@@ -7533,7 +7595,7 @@ components:
             - caregiver
         profile_picture:
           type: string
-          example: 'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
     Relative:
       type: object
       properties:
@@ -7541,10 +7603,10 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
-          $ref: '#/components/schemas/Marketplace_User'
+          $ref: "#/components/schemas/Marketplace_User"
         profile_picture:
           type: string
-          example: 'https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg'
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
         name:
           type: string
           example: John Wick
@@ -7661,7 +7723,7 @@ components:
         services:
           type: array
           items:
-            $ref: '#/components/schemas/Service'
+            $ref: "#/components/schemas/Service"
         service_area:
           type: array
           items:
@@ -7676,15 +7738,15 @@ components:
         team:
           type: array
           items:
-            $ref: '#/components/schemas/CRM_User'
+            $ref: "#/components/schemas/CRM_User"
         legal_information:
           type: object
           properties:
             name:
               type: string
-              example: 'CAREPLACE, LDA.'
+              example: "CAREPLACE, LDA."
             director:
-              $ref: '#/components/schemas/CRM_User'
+              $ref: "#/components/schemas/CRM_User"
             tax_id:
               type: string
               example: 123456789
@@ -7736,9 +7798,9 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
-          $ref: '#/components/schemas/CRM_User'
+          $ref: "#/components/schemas/CRM_User"
         series:
-          $ref: '#/components/schemas/Event_Series'
+          $ref: "#/components/schemas/Event_Series"
         title:
           type: string
           example: John's Wick Birthday
@@ -7759,7 +7821,7 @@ components:
           example: Zoo
         textColor:
           type: string
-          example: '#1890FF'
+          example: "#1890FF"
     Event_Series:
       type: object
       properties:
@@ -7767,7 +7829,7 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
-          $ref: '#/components/schemas/CRM_User'
+          $ref: "#/components/schemas/CRM_User"
         recurrence:
           type: integer
           example: 1
@@ -7822,7 +7884,7 @@ components:
           example: Zoo
         textColor:
           type: string
-          example: '#1890FF'
+          example: "#1890FF"
     Order:
       type: object
       properties:
@@ -7830,13 +7892,13 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         company:
-          $ref: '#/components/schemas/Company'
+          $ref: "#/components/schemas/Company"
         caregiver:
-          $ref: '#/components/schemas/CRM_User'
+          $ref: "#/components/schemas/CRM_User"
         user:
-          $ref: '#/components/schemas/Marketplace_User'
+          $ref: "#/components/schemas/Marketplace_User"
         relative:
-          $ref: '#/components/schemas/Relative'
+          $ref: "#/components/schemas/Relative"
         status:
           type: string
           example: new
@@ -7855,7 +7917,7 @@ components:
         services:
           type: array
           items:
-            $ref: '#/components/schemas/Service'
+            $ref: "#/components/schemas/Service"
         schedule_information:
           type: object
           properties:
@@ -7924,7 +7986,7 @@ components:
                   type: number
                   example: -9.142685
         screening_visit:
-          $ref: '#/components/schemas/Event'
+          $ref: "#/components/schemas/Event"
     Service:
       type: object
       properties:
@@ -7942,7 +8004,7 @@ components:
           example: Bathing
         image:
           type: string
-          example: 'https://www.google.com'
+          example: "https://www.google.com"
   securitySchemes:
     jwt_context:
       type: http

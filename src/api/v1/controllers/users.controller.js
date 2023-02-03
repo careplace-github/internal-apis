@@ -614,11 +614,10 @@ export default class UsersController {
       delete user.createdAt;
       delete user.updatedAt;
       delete user.__v;
+      delete user.cognito_id;
 
       response.statusCode = 200;
-      response.data = {
-        user: user,
-      };
+      response.data = user;
 
       next(response);
     } catch (error) {

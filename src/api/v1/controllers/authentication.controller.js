@@ -15,6 +15,7 @@ import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
 } from "../../../config/constants/index.js";
+import { countries } from "../../../assets/data/countries.js";
 
 export default class AuthenticationController {
   /**
@@ -47,11 +48,19 @@ export default class AuthenticationController {
         MarketplaceUsersDAO = new marketplaceUsersDAO();
       }
 
+      // From /src/aseets/data/countries.js get the country code from the country name of the user (newUser.address.country)
+      let countryPhone = countries.find(
+        (country) => country.code === newUser.address.country
+      ).phone;
+
+      // Add the country code to the user phone number
+      let newUserPhone = `+${countryPhone}${newUser.phone}`;
+
       try {
         cognitoResponse = await Cognito.addUser(
           newUser.email,
           newUser.password,
-          newUser.phone
+          newUserPhone
         );
       } catch (err) {
         switch (err.type) {
@@ -63,22 +72,7 @@ export default class AuthenticationController {
         }
       }
 
-      let roles;
-      try {
-        roles = await Cognito.addUserToGroup(newUser.email, "marketplace-user");
-      } catch (err) {
-        console.log(err);
-        switch (err.type) {
-          case "INVALID_PARAMETER":
-            throw new Error._400(err.message);
-
-          default:
-            throw new Error._500(err.message);
-        }
-      }
-
       newUser.cognito_id = cognitoResponse.UserSub;
-      newUser.roles = ["marketplace-user"];
 
       delete newUser.password;
       delete newUser.confirmPassword;
@@ -97,9 +91,7 @@ export default class AuthenticationController {
       }
 
       response.statusCode = 200;
-      response.data = {
-        user: mongodbResponse,
-      };
+      response.data = mongodbResponse;
 
       next(response);
     } catch (error) {
@@ -299,59 +291,6 @@ export default class AuthenticationController {
           cognitoResponse.AuthenticationResult.RefreshToken;
       }
 
-      let AuthUtils = new authUtils();
-
-      let decodedToken = await AuthUtils.decodeJwtToken(
-        cognitoResponse.AuthenticationResult.AccessToken
-      );
-
-      let roles = decodedToken["cognito:groups"];
-      let cognitoId = decodedToken.sub;
-      let user;
-
-      if (app === "crm") {
-        let CrmUsersDAO = new crmUsersDAO();
-
-        try {
-          user = await CrmUsersDAO.query_one({
-            cognito_id: { $eq: cognitoId },
-          });
-        } catch (error) {
-          switch (error.type) {
-            case "NOT_FOUND":
-              throw new Error._404("User does not exist.");
-
-            default:
-              throw new Error._500(error.message);
-          }
-        }
-      } else if (app === "marketplace") {
-        let MarketplaceUsersDAO = new marketplaceUsersDAO();
-        try {
-          user = await MarketplaceUsersDAO.query_one({
-            cognito_id: { $eq: cognitoId },
-          });
-        } catch (error) {
-          switch (error.type) {
-            case "NOT_FOUND":
-              throw new Error._404("User does not exist.");
-            default:
-              throw new Error._500(error.message);
-          }
-        }
-      }
-
-      // Convert the user object to a JSON object
-      user = JSON.parse(JSON.stringify(user));
-
-      // Remove the cognito_id from the user object
-      delete user.cognito_id;
-
-      // Add the user role to the user object
-      user.roles = roles ? roles : [];
-
-      responseAux.user = user;
-
       response.statusCode = 200;
       response.data = responseAux;
 
@@ -463,8 +402,8 @@ export default class AuthenticationController {
           case "UNAUTHORIZED":
             throw new Error._401("Token has expired.");
 
-            case "INVALID_PARAMETER":
-              throw new Error._400("Invalid access token.");
+          case "INVALID_PARAMETER":
+            throw new Error._400("Invalid access token.");
 
           default:
             throw new Error._500("Internal server error.");
@@ -592,10 +531,6 @@ export default class AuthenticationController {
       next(error);
     }
   }
-
-
-
-
 
   static async adminLogin(req, res, next) {}
 }
