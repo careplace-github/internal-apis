@@ -1,56 +1,145 @@
-import BucketService from "../services/bucket.service.js";
-
 // Import logger
 import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/request.utils.js";
-import filesDAO from "../db/filesDAO.js";
 
+import authHelper from "../helpers/auth/auth.helper.js";
+import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
+import relativesDAO from "../db/relatives.dao.js";
+import CRUD from "./crud.controller.js";
+
+import * as Error from "../utils/errors/http/index.js";
 
 export default class FilesController {
   static async create(req, res, next) {
-    let response;
-
     try {
+      let response = {};
+      let relative = req.body;
+      let RelativesDAO = new relativesDAO();
 
-      var request = requestUtils(req)
+      let AuthHelper = new authHelper();
 
-      const file = req.file;
+      let accessToken = req.headers["authorization"].split(" ")[1];
 
-      console.log("file: ", file);
+      let user = await AuthHelper.getUserFromDB(accessToken);
 
-      response = await BucketService.uploadFile(file);
+      relative.user = user._id;
 
-      console.log("sucsess response: ", response);
+      let relativeCreated = await RelativesDAO.create(relative);
 
-      // If there is no error, the file has been uploaded successfully
+      response.statusCode = 200;
+      response.data = relativeCreated;
 
-      return res.status(200).json({
-        message: "File uploaded successfully",
-        data: response,
-      });
+      next(response);
     } catch (error) {
-      // If there is an error, the file has not been uploaded successfully
-      console.log("error response: ", response);
-      return res.status(500).json({
-        message: "File upload failed",
-        data: response,
-      });
-
       next(error);
     }
   }
 
-  static async show(req, res, next) {
-    
+  static async retrieve(req, res, next) {
+    try {
+      let response = {};
+      let relativeId = req.params.id;
+      let RelativesDAO = new relativesDAO();
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let relative = await RelativesDAO.retrieve(relativeId);
+
+      if (relative.user.toString() !== user._id.toString()) {
+        throw new Error._403("You are not allowed to access this resource");
+      }
+
+      response.statusCode = 200;
+      response.data = relative;
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async destroy(req, res, next) {
-    
+  static async update(req, res, next) {
+    try {
+      let response = {};
+      let relativeId = req.params.id;
+
+      let RelativesDAO = new relativesDAO();
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let relative = await RelativesDAO.retrieve(relativeId);
+
+      relative = {
+        ...relative,
+        ...req.body,
+      };
+
+      if (relative.user.toString() !== user._id.toString()) {
+        throw new Error._403("You are not allowed to access this resource");
+      }
+
+      let relativeUpdated = await RelativesDAO.update(relativeId, relative);
+
+      response.statusCode = 200;
+      response.data = relativeUpdated;
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  static async index(req, res, next) {
-   
+  static async delete(req, res, next) {
+    try {
+      let response = {};
+      let relativeId = req.params.id;
+      let RelativesDAO = new relativesDAO();
+
+      let AuthHelper = new authHelper();
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let relative = await RelativesDAO.retrieve(relativeId);
+
+      if (relative.user.toString() !== user._id.toString()) {
+        throw new Error._403("You are not allowed to access this resource");
+      }
+
+      let relativeDeleted = await RelativesDAO.delete(relativeId);
+
+      response.statusCode = 200;
+      response.data = relativeDeleted;
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
-  
+  static async listRelatives(req, res, next) {
+    try {
+      let response = {};
+      let RelativesDAO = new relativesDAO();
+
+      let AuthHelper = new authHelper();
+
+      let accessToken = req.headers["authorization"].split(" ")[1];
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let relatives = await RelativesDAO.query_list({
+        user: user._id,
+      });
+
+      response.statusCode = 200;
+      response.data = relatives;
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

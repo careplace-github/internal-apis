@@ -24,7 +24,7 @@ const marketplaceUserSchema = new Schema(
 
     age: { type: Number, required: false },
 
-    gender: { type: String, required: true, enum: ["male", "female", "other"] },
+    gender: { type: String, required: false, enum: ["male", "female", "other"] },
 
     relatives: [{ type: Schema.ObjectId, ref: "Relative", required: true }],
 
@@ -39,7 +39,7 @@ const marketplaceUserSchema = new Schema(
 
       country: {
         type: String,
-        required: false,
+        required: true,
         enum: ["PT"],
       },
 
