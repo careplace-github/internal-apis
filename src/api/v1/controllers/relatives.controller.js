@@ -40,6 +40,8 @@ export default class FilesController {
       let relativeId = req.params.id;
       let RelativesDAO = new relativesDAO();
 
+      let accessToken = req.headers["authorization"].split(" ")[1];
+
       let AuthHelper = new authHelper();
 
       let user = await AuthHelper.getUserFromDB(accessToken);
@@ -68,9 +70,19 @@ export default class FilesController {
 
       let AuthHelper = new authHelper();
 
+      let accessToken = req.headers["authorization"].split(" ")[1];
+
       let user = await AuthHelper.getUserFromDB(accessToken);
 
       let relative = await RelativesDAO.retrieve(relativeId);
+
+      let reqRelative = req.body;
+
+      /**
+       * Do not allow to update the user or the _id
+       */
+      delete reqRelative.user;
+      delete reqRelative._id;
 
       relative = {
         ...relative,
@@ -81,7 +93,7 @@ export default class FilesController {
         throw new Error._403("You are not allowed to access this resource");
       }
 
-      let relativeUpdated = await RelativesDAO.update(relativeId, relative);
+      let relativeUpdated = await RelativesDAO.update(relative);
 
       response.statusCode = 200;
       response.data = relativeUpdated;
@@ -99,6 +111,8 @@ export default class FilesController {
       let RelativesDAO = new relativesDAO();
 
       let AuthHelper = new authHelper();
+
+      let accessToken = req.headers["authorization"].split(" ")[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
