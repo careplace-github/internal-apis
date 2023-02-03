@@ -8,16 +8,20 @@ import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
 const router = express.Router();
 
 router
-  .route("/payment-methods")
+  .route("/users/payment-methods")
   .post(
     AuthenticationGuard,
     AccessGuard("marketplace"),
     StripeController.createPaymentMethod
   )
-  .get(AuthenticationGuard, StripeController.listPaymentMethods);
+  .get(
+    AuthenticationGuard,
+    AccessGuard("marketplace"),
+    StripeController.listPaymentMethods
+  );
 
 router
-  .route("/payment-methods/:id")
+  .route("/users/payment-methods/:id")
   .get(
     AuthenticationGuard,
     AccessGuard("marketplace"),
