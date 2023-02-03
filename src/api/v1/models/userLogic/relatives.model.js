@@ -8,13 +8,13 @@ const relativeSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    user: { type: Schema.ObjectId, ref: "marketplace_users", required: true },
+    user: { type: Schema.ObjectId, ref: "Marketplace_User", required: true },
 
     kinship: {
       // What is the kinship degree of the relative to this user
       from: {
         type: String,
-        required: true,
+        required: false,
         enum: [
           "father",
           "mother",
@@ -36,7 +36,7 @@ const relativeSchema = new Schema(
       // What is the kinship degree of this user relative to its relative
       to: {
         type: String,
-        required: true,
+        required: false,
         enum: [
           "father",
           "mother",
@@ -63,17 +63,15 @@ const relativeSchema = new Schema(
 
     birthdate: { type: Date, required: true },
 
-    age: { type: Number, required: true },
-
-    gender: { type: String, required: true, enum: ["male","female","other"] },
+    gender: {
+      type: String,
+      required: false,
+      enum: ["male", "female", "other"],
+    },
 
     medical_conditions: {
-      blood_type: { type: String, required: false },
-      allergies: { type: String, required: false },
-      chronic_diseases: { type: String, required: false },
-      surgeries: { type: String, required: false },
-      medications: { type: String, required: false },
-      other: { type: String, required: false },
+      type: [String],
+      required: false,
     },
 
     address: {
@@ -91,7 +89,6 @@ const relativeSchema = new Schema(
         enum: ["PT", "ES", "US", "UK"],
       },
     },
-
   },
 
   {
@@ -109,5 +106,3 @@ relativeSchema.methods.getKinshipDegree = function (type) {
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 export default Relative = mongoose.model("Relative", relativeSchema);
-
-
