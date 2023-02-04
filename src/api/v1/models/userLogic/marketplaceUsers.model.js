@@ -82,6 +82,6 @@ const marketplaceUserSchema = new Schema(
  */
 
 export default marketplaceUser = mongoose.model(
-  "Marketplace_User",
+  "marketplace_users",
   marketplaceUserSchema
 );
