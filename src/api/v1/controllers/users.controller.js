@@ -5,7 +5,7 @@ import SES from "../services/ses.service.js";
 // Import DAOs
 import crmUsersDAO from "../db/crmUsers.dao.js";
 import caregiversDAO from "../db/caregivers.dao.js";
-import MarketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
+import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
 import companiesDAO from "../db/companies.dao.js";
 import CRUD from "./crud.controller.js";
 
@@ -553,9 +553,9 @@ export default class UsersController {
             }
           );
         } else if (app === "marketplace") {
-          let marketplaceUsersDAO = new marketplaceUsersDAO();
+          let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
-          user = await marketplaceUsersDAO.query_one({
+          user = await MarketplaceUsersDAO.query_one({
             cognito_id: { $eq: cognitoId },
           });
         }
@@ -568,47 +568,40 @@ export default class UsersController {
         }
       }
 
+      user = user.toJSON();
+
       /**
        * Get External Accounts from Stripe
        */
       let Stripe = new stripe();
-      let connectedAccountId = user.company.stripe_information.account_id;
+      let connectedAccountId;
       let externalAccounts;
+      if (app === "crm" && user.company.stripe_information.account_id) {
+        connectedAccountId = user.company.stripe_information.account_id;
 
-      try {
         externalAccounts = await Stripe.listExternalAccounts(
           connectedAccountId
         );
 
-        console.log(
-          `EXTERNAL ACCOUNTS: ${JSON.stringify(externalAccounts, null, 2)}`
-        );
-      } catch (error) {
-        switch (error.type) {
-          default:
-            throw new Error._500(error.message);
-        }
+         user.stripe_information.external_accounts = externalAccounts.data;
       }
-      let customerId = user.company.stripe_information.customer_id;
-      let paymentMethods;
 
-      try {
+      let customerId;
+      let paymentMethods;
+      if (app === "marketplace") {
+        customerId = user.stripe_information.customer_id;
         paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
-        console.log(
-          `PAYMENT METHODS: ${JSON.stringify(paymentMethods, null, 2)}`
-        );
-      } catch (error) {
-        switch (error.type) {
-          default:
-            throw new Error._500(error.message);
-        }
+
+        logger.info("Payment Methods: " +  JSON.stringify(paymentMethods, null, 2));
+
+        user.stripe_information.payment_methods = paymentMethods.data;
       }
 
       // Convert user to JSON
-      user = user.toJSON();
+    
 
-      user.company.stripe_information.external_accounts = externalAccounts.data;
-      user.company.stripe_information.payment_methods = paymentMethods.data;
+     
+     
       user.phone_verified = phoneVerified;
       user.email_verified = emailVerified;
       delete user.createdAt;
