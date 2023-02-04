@@ -594,7 +594,7 @@ export default class UsersController {
 
         logger.info("Payment Methods: " +  JSON.stringify(paymentMethods, null, 2));
 
-        user.stripe_information.payment_methods = paymentMethods.data;
+        user.stripe_information.payment_methods = paymentMethods;
       }
 
       // Convert user to JSON
