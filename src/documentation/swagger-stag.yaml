@@ -5861,7 +5861,7 @@ paths:
       summary: Create payment intent
       description: >-
         Create payment intent for order.  In the request body, you should
-        provide a ```payment_method_token```. This should either be a card token
+        provide a ```payment_method_id```. This should either be a card token
         or a bank account token. <br> You can get the user's payment methods
         tokens from ```user.stripe_information.payment_methods``` (using auth
         context). If the user does not have a payment method you should use
@@ -5880,7 +5880,7 @@ paths:
           required: true
           schema:
             type: string
-          example: 5e1f9b9b9b9b9b9b9b9b9b9b
+          example: 63d003720ea8a0ed5ce2c9ee
       requestBody:
         description: Create payment intent for order.
         content:
@@ -5888,7 +5888,7 @@ paths:
             schema:
               type: object
               properties:
-                payment_method_token:
+                payment_method_id:
                   type: string
                   example: tok_pt
                 taxId:
@@ -6342,7 +6342,7 @@ paths:
       description: >-
         Create a payment method. At the moment it only supports credit/debit
         cards. The user to each the payment method is attached to is the user
-        extracted from the access token. To create the payment_method_token the
+        extracted from the access token. To create the payment_method_id the
         Client Application needs to use the Stripe JS library. @see
         https://stripe.com/docs/stripe-js
       operationId: createPaymentMethod
@@ -6357,7 +6357,7 @@ paths:
             schema:
               type: object
               properties:
-                payment_method_token:
+                payment_method_id:
                   type: string
                   example: tok_1F9f9f9f9f9f9f9f9f9f9f9f
       responses:

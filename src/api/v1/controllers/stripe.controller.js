@@ -397,7 +397,7 @@ export default class StripeController {
 
       let orderId = req.params.id;
 
-      let token = req.body.token;
+      let paymentMethodId = req.body.payment_method_id;
 
       let promotionCode = req.body.promotion_code;
 
@@ -406,11 +406,11 @@ export default class StripeController {
       let Stripe = new StripeService();
       let StripeHelper = new stripeHelper(Stripe);
 
-      if (!token) {
+      if (!paymentMethodId) {
         throw new Error._400("Missing required payment method token");
       }
 
-      let billingAddress = req.body.billing_address;
+      let billingAddress = req.body.billing_details;
       if (
         !billingAddress || // Check if billingAddress is null or undefined
         !billingAddress.street ||
@@ -447,7 +447,6 @@ export default class StripeController {
       //order = order.toJSON();
 
       // Convert token to string
-      token = token.toString();
 
       let accountId = order.company.stripe_information.account_id;
       let customerId = order.user.stripe_information.customer_id;
@@ -468,18 +467,6 @@ export default class StripeController {
        * Create a payment method for the customer.
        * @todo Check PM type through the token
        */
-      let paymentMethod = await Stripe.createPaymentMethodWithToken(
-        "card",
-        token,
-        billingAddress
-      );
-
-      let paymentMethodId = paymentMethod.id;
-
-      /**
-       * Attach the paymentMethod to the customer.
-       */
-      await Stripe.attachPaymentMethodToCustomer(paymentMethodId, customerId);
 
       if (taxId !== undefined && taxId !== null && taxId !== "") {
         // Check if the customer already has the tax id
@@ -530,81 +517,83 @@ export default class StripeController {
           promotionCode
         );
 
-        coupon = stripePromotionCode.coupon;
+        if (stripePromotionCode !== null && stripePromotionCode !== undefined) {
+          coupon = stripePromotionCode.coupon;
 
-        try {
-          newApplicationFee =
-            await StripeHelper.calculateApplicationFeeWithPromotionCode(
-              order.order_total,
+          try {
+            newApplicationFee =
+              await StripeHelper.calculateApplicationFeeWithPromotionCode(
+                order.order_total,
+                stripePromotionCode.id
+              );
+          } catch (err) {
+            switch (err.type) {
+              case "INVALID_PARAMETER":
+                throw new Error._400(err.message);
+
+              default:
+                throw new Error._500(err.message);
+            }
+          }
+
+          try {
+            subscription = await Stripe.createSubscription(
+              customerId,
+              priceId,
+              accountId,
+              newApplicationFee,
+              paymentMethodId,
               stripePromotionCode.id
             );
-        } catch (err) {
-          switch (err.type) {
-            case "INVALID_PARAMETER":
-              throw new Error._400(err.message);
-
-            default:
-              throw new Error._500(err.message);
+          } catch (err) {
+            switch (err.type) {
+              default:
+                throw new Error._500(err.message);
+            }
+          }
+        } else {
+          try {
+            subscription = await Stripe.createSubscription(
+              customerId,
+              priceId,
+              accountId,
+              STRIPE_APPLICATION_FEE,
+              paymentMethodId
+            );
+          } catch (err) {
+            switch (err.type) {
+              default:
+                throw new Error._500(err.message);
+            }
           }
         }
 
-        try {
-          subscription = await Stripe.createSubscription(
-            customerId,
-            priceId,
-            accountId,
-            newApplicationFee,
-            paymentMethodId,
-            stripePromotionCode.id
-          );
-        } catch (err) {
-          switch (err.type) {
-            default:
-              throw new Error._500(err.message);
-          }
-        }
-      } else {
-        try {
-          subscription = await Stripe.createSubscription(
-            customerId,
-            priceId,
-            accountId,
-            STRIPE_APPLICATION_FEE,
-            paymentMethodId
-          );
-        } catch (err) {
-          switch (err.type) {
-            default:
-              throw new Error._500(err.message);
-          }
-        }
+        /**
+         * Update the order with the subscription id.
+         */
+        order.stripe_subscription_id = subscription.id;
+
+        response.statusCode = 200;
+        response.data = {
+          order: order,
+          subscription: subscription,
+        };
+
+        next(response);
+
+        /**
+         * After the coupon is applied, update the subscription with the normal application fee so that the next payment is charged with the normal application fee.
+         */
+        await Stripe.updateSubscription(subscription.id, {
+          application_fee_percent: STRIPE_APPLICATION_FEE,
+          proration_behavior: "none", // Do not prorate the subscription. Charge the customer the full amount for the new plan.
+        });
+
+        /**
+         * Attach the stripe subscription id to the order.
+         */
+        await OrdersDAO.update(order);
       }
-
-      /**
-       * Update the order with the subscription id.
-       */
-      order.stripe_subscription_id = subscription.id;
-
-      response.statusCode = 200;
-      response.data = {
-        order: order,
-        subscription: subscription,
-      };
-
-      next(response);
-
-      /**
-       * After the coupon is applied, update the subscription with the normal application fee so that the next payment is charged with the normal application fee.
-       */
-      await Stripe.updateSubscription(subscription.id, {
-        application_fee_percent: STRIPE_APPLICATION_FEE,
-        proration_behavior: "none", // Do not prorate the subscription. Charge the customer the full amount for the new plan.
-      });
-
-      /**
-       * Attach the stripe subscription id to the order.
-       */
-      await OrdersDAO.update(order);
     } catch (err) {
       console.log(err);
 
