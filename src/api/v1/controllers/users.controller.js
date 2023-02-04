@@ -583,7 +583,7 @@ export default class UsersController {
           connectedAccountId
         );
 
-         user.stripe_information.external_accounts = externalAccounts.data;
+        user.stripe_information.external_accounts = externalAccounts.data;
       }
 
       let customerId;
@@ -592,16 +592,15 @@ export default class UsersController {
         customerId = user.stripe_information.customer_id;
         paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
 
-        logger.info("Payment Methods: " +  JSON.stringify(paymentMethods, null, 2));
+        logger.info(
+          "Payment Methods: " + JSON.stringify(paymentMethods, null, 2)
+        );
 
         user.stripe_information.payment_methods = paymentMethods;
       }
 
       // Convert user to JSON
-    
 
-     
-     
       user.phone_verified = phoneVerified;
       user.email_verified = emailVerified;
       delete user.createdAt;
