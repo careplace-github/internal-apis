@@ -12,7 +12,7 @@
   },
   "scripts": {
     "prod": "node ./src/server.js",
-    "start": "nodemon ./src/server.js",
+    "start": "node ./src/server.js",
     "dev": "concurrently \"nodemon ./src/server.js\" \" node ./src/api/v1/documentation/index.mjs\" ",
     "api-doc": "nodemon ./src/api/v1/documentation/index.js",
     "test": ""

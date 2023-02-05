@@ -22,7 +22,7 @@ import dateUtils from "../utils/data/date.utils.js";
 /**
  * Import the JSON Object from /src/assets/data/services.json
  */
-import services from "../../../assets/data/services.json" assert { type: "json" };
+import { services } from "../../../assets/data/services.js";
 
 /**
  *  let OrdersDAO = new ordersDAO();
@@ -247,7 +247,6 @@ export default class OrdersController {
     await OrdersCRUD.delete(req, res, next);
   }
 
-
   static async listOrdersByUser(req, res, next) {
     let OrdersDAO = new ordersDAO();
     let OrdersCRUD = new CRUD(OrdersDAO);
@@ -289,7 +288,6 @@ export default class OrdersController {
         }
       );
 
-     
       let order = await OrdersDAO.retrieve(req.params.id);
 
       if (companyId != order.company) {
@@ -512,7 +510,6 @@ export default class OrdersController {
           model: "marketplace_users",
         },
       ]);
-
 
       if (companyId != order.company._id) {
         throw new Error._403(
