@@ -1,0 +1,14 @@
+version: 0.1.0
+os: linux
+files:
+ - source: .
+   destination: /opt/backend
+hooks:
+  AfterInstall:
+   - location: scripts/installDependencies.sh
+     timeout: 1000
+     runas: root
+  ApplicationStart:
+   - location: scripts/startServer.sh
+     timeout: 1000
+     runas: root
