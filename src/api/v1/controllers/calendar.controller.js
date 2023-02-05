@@ -7,33 +7,6 @@ import CRUD from "./crud.controller.js";
 import logger from "../../../logs/logger.js";
 
 /**
- * Create a new instance of the EventsSeriesDAO
- */
-const eventsSeriesDAO = new EventsSeriesDAO();
-
-/**
- * Create a new instance of the CRUD class.
- * This class has the basic CRUD operations/methods for the EventsSeriesDAO.
- */
-const eventsSeriesCRUD = new CRUD(eventsSeriesDAO);
-
-/**
- * Create a new instance of the EventsDAO
- */
-const eventsDAO = new EventsDAO();
-
-/**
- * Create a new instance of the CRUD class.
- * This class has the basic CRUD operations/methods for the EventsDAO.
- */
-const eventsCRUD = new CRUD(eventsDAO);
-
-/**
- * Create a new instance of the AuthHelper class.
- */
-const AuthHelper = new authHelper();
-
-/**
  * Calendar Controller Class to manage the ``/calendar`` endpoints of the API.
  */
 export default class CalendarController {
@@ -50,20 +23,15 @@ export default class CalendarController {
 
       let event = req.body;
       let eventsDAO = new EventsDAO();
-      let usersDAO = new UsersDAO();
+      let AuthHelper = new authHelper();
 
       let accessToken;
 
-     
-  
-      
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(" ")[1];
       } else {
         throw new Error._401("Missing required access token.");
       }
-
-    
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 

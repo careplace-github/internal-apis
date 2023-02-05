@@ -13,6 +13,7 @@ export default class EventsSeriesDAO extends DAO {
    * @returns {Promise<JSON>} - MongoDB response.
    */
   constructor() {
+    console.log(`Creating a new instance of the EventsSeriesDAO ${MONGODB_COLLECTION_EVENTS_SERIES_NS}`);
     super(EventSeries, MONGODB_COLLECTION_EVENTS_SERIES_NS);
   }
 }
