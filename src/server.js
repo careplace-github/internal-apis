@@ -30,7 +30,20 @@ import cors from "cors";
 import hpp from "hpp";
 import xss from "xss-clean";
 
+<<<<<<< HEAD
 import rateLimit from "express-rate-limit";
+=======
+import mongodb from "mongodb"
+import dotenv from "dotenv"
+import usersDAO from "./api/v1/db/usersDAO.js"
+// Loads environment constants"
+import {env, api_version, api_url, DB_users_uri, DB_users_ns, SERVER_Port} from "./config/constants/index.js"
+// Router exports  
+import configAPI from "./api/v1/routes/config.route.js"
+import authenticationAPI from "./api/v1/routes/authentication.route.js"
+import usersAPI from "./api/v1/routes/users.route.js"
+
+>>>>>>> origin/staging
 
 // Import mongoose
 import mongoose from "mongoose";
@@ -79,6 +92,7 @@ import mongoSanitize from "express-mongo-sanitize";
 // Documentation
 import swaggerDocs from "./documentation/swagger.js";
 
+<<<<<<< HEAD
 const main = async () => {
   try {
     logger.info(`
@@ -88,6 +102,12 @@ const main = async () => {
      //                                                                                              //                            
      // -------------------------------------------------------------------------------------------- //
      \n`);
+=======
+// Inject sub router and APIs
+app.use(api_url, configAPI)
+app.use(api_url, authenticationAPI)
+app.use(api_url, usersAPI)
+>>>>>>> origin/staging
 
     logger.info(`Server settings: `);
     logger.info(`Running in '${ENV}' environment`);
