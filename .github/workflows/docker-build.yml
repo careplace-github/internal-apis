@@ -16,6 +16,6 @@ jobs:
     - name: Git checkout
       uses: actions/checkout@v3
     - name: Branch name
-      run: echo running on branch ${GITHUB_REF##*/}
+      run: echo running on branch '${GITHUB_REF##*/}'
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag careplace-backend-build-${GITHUB_REF##*/}:$(date +%s)
