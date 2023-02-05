@@ -6,7 +6,7 @@ COPY package.json /usr/src/app
 
 COPY . /usr/src/app
 
-RUN npm cache clear --force
+RUN npm cache clear
 
 RUN npm install --legacy-peer-deps
 
