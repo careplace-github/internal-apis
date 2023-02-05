@@ -1,146 +1,536 @@
+// Import Cognito Service
+import cognito from "../services/cognito.service.js";
 
-import CognitoService from "../services/cognito.service.js"
-import usersDAO from "../db/usersDAO.js"
+// Import database access objects
+import crmUsersDAO from "../db/crmUsers.dao.js";
+import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
+import companiesDAO from "../db/companies.dao.js";
 
-
+import logger from "../../../logs/logger.js";
+import * as Error from "../utils/errors/http/index.js";
+import authHelper from "../helpers/auth/auth.helper.js";
+import CRUD from "./crud.controller.js";
+import authUtils from "../utils/auth/auth.utils.js";
+import {
+  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+} from "../../../config/constants/index.js";
+import { countries } from "../../../assets/data/countries.js";
 
 export default class AuthenticationController {
+  /**
+   * @todo Debuging
+   */
+  static async signup(req, res, next) {
+    try {
+      let response = {};
 
+      let clientId;
+      let Cognito;
+      let app;
 
-    static async signup(req, res, next) {
+      if (req.url === `/auth/marketplace/signup`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+        app = "marketplace";
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
 
-           
+      Cognito = new cognito(clientId);
 
-    console.log("Attempting to create new user: \n")    
+      let newUser = req.body;
+      let cognitoResponse;
+      let MarketplaceUsersDAO;
 
-    const newUser = {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        cognitoId: ""
-    }    
-        
-    const cognitoResponse = await CognitoService.signUp(newUser.email, newUser.password)
+      let mongodbResponse;
 
-    console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
+      if (app === "marketplace") {
+        MarketplaceUsersDAO = new marketplaceUsersDAO();
+      }
 
+      // From /src/aseets/data/countries.js get the country code from the country name of the user (newUser.address.country)
+      let countryPhone = countries.find(
+        (country) => country.code === newUser.address.country
+      ).phone;
 
-    if(cognitoResponse.error != null){
+      // Add the country code to the user phone number
+      let newUserPhone = `+${countryPhone}${newUser.phone}`;
 
-        return res.status(400).json({
-            statusCode: 400,
-            error: cognitoResponse.error,
-            request: {
-                type: "POST",
-                url: "host/signup",
-                body: {"name": newUser.name, "email": newUser.email}
-            }})
-    }
+      try {
+        cognitoResponse = await Cognito.addUser(
+          newUser.email,
+          newUser.password,
+          newUserPhone
+        );
+      } catch (err) {
+        switch (err.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(err.message);
 
-    
-
-    newUser.cognitoId = cognitoResponse.response.cognitoId
-    
-    const mongoDbResponse = await usersDAO.addUser(newUser.cognitoId, newUser.name, newUser.email)
-
-
-    console.log("MongoDB Response: " + JSON.stringify(mongoDbResponse, null, 2) + "\n")
-
-    if(mongoDbResponse.error != null){
-
-        return res.status(400).json({
-            statusCode: mongoDbResponse.statusCode,
-            error: mongoDbResponse.error,
-            request: {
-                type: "POST",
-                url: "host/signup",
-                body: {"name": mongoDbResponse.userCreated.name, "email": mongoDbResponse.userCreated.email}
-            }})
-    }
-
-
-
-    return res.status(200).json({
-        statusCode: 200,
-        message: "User registered successfully",
-        request: {
-            type: "POST",
-            url: "host/signup",
-            body: {"name": mongoDbResponse.userCreated.name, "email": mongoDbResponse.userCreated.email, "verified": false}
-        }})
-     }
-
-
-
-    static async login (req, res, next) { 
-
-        console.log(`Attempting to login user '${req.body.email}': \n`)    
-        
-        const cognitoResponse = await CognitoService.signIn(req.body.email, req.body.password)
-        
-
-        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
-
-
-        if(cognitoResponse.error != null){
-
-            return res.status(400).json({
-                
-            })
+          default:
+            throw new Error._500(err.message);
         }
-        console.log(cognitoResponse.response.token)  
+      }
 
-        const user = await usersDAO.getUserByCognitoId(cognitoResponse.response.cognitoId)
+      newUser.cognito_id = cognitoResponse.UserSub;
 
-      return res.status(200).json({
-        accessToken: cognitoResponse.response.token,
-        user: user
-    })
-    }
+      delete newUser.password;
+      delete newUser.confirmPassword;
 
-    static async logout(req, res, next) {
+      try {
+        // Attempting to add a new user to the database
+        mongodbResponse = await MarketplaceUsersDAO.create(newUser);
+      } catch (err) {
+        switch (err.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(err.message);
 
-        console.log(`Attempting to logout user '${req.body.email}': \n`)    
-
-       
-        
-        const cognitoResponse = await CognitoService.logout(req.body.email, req.body.token)
-        
-
-        //console.log("Cognito Response: " + JSON.stringify(cognitoResponse, null, 2) + "\n")
-
-
-        if(cognitoResponse.error != null){
-
-            return res.status(400).json({
-                statusCode: 400,
-                response: {
-                    error: {
-                        code: cognitoResponse.error.code,
-                        message: cognitoResponse.error.message,
-                    }
-                },
-                request: {
-                    type: "POST",
-                    url: "host/logout",
-                    body: {"email": req.body.email}
-                }})
+          default:
+            throw new Error._500(err.message);
         }
+      }
 
+      response.statusCode = 200;
+      response.data = mongodbResponse;
 
-      return res.status(200).json({
-        statusCode: 200,
-        response: {
-            message: "User logged out successfully",
-        },
-        request: {
-            type: "POST",
-            url: "host/logout",
-            body: {email: req.body.email}
-        }})
-
+      next(response);
+    } catch (error) {
+      next(error);
     }
+  }
 
-    static async isAuthenticated(req, res, next) { }
+  /**
+   *  @todo Debuging
+   */
+  static async sendConfirmationCode(req, res, next) {
+    try {
+      let response = {};
 
+      let clientId;
+      let Cognito;
+      let app;
+
+      if (req.url === `/auth/marketplace/send/confirmation-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+        app = "marketplace";
+      } else {
+        throw new Error._400("Invalid request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      let cognitoResponse;
+
+      try {
+        cognitoResponse = await Cognito.sendConfirmationCode(req.body.email);
+      } catch (error) {
+        switch (error.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(error.message);
+
+          case "NOT_FOUND":
+            throw new Error._404(error.message);
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message: "Confirmation code sent successfully.",
+      };
+
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   *  @todo Debuging
+   */
+  static async verifyConfirmationCode(req, res, next) {
+    try {
+      let response = {};
+
+      let clientId;
+      let Cognito;
+      let app;
+
+      if (req.url === `/auth/marketplace/verify/confirmation-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+        app = "marketplace";
+      } else {
+        throw new Error._400("Invalid request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      let cognitoResponse;
+
+      try {
+        cognitoResponse = await Cognito.confirmUser(
+          req.body.email,
+          req.body.code
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "INVALID_PARAMETER":
+            throw new Error._400(error.message);
+
+          case "NOT_FOUND":
+            throw new Error._404(error.message);
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message:
+          "Confirmation code verified successfully. User is now active and able to login.",
+      };
+
+      next(response);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  /**
+   * Login a user
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async login(req, res, next) {
+    try {
+      logger.info(
+        `Authentication Controller LOGIN Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
+      );
+
+      let response = {};
+      let responseAux = {};
+      let clientId;
+      let app;
+      let cognitoResponse = {};
+
+      /**
+       * Check if the login request if for the CRM or the Marketplace by checking the url
+       */
+
+      if (req.url === `/auth/crm/login`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+        app = "crm";
+      } else if (req.url === `/auth/marketplace/login`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+        app = "marketplace";
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      let Cognito = new cognito(clientId);
+
+      var payload = { email: req.body.email, password: req.body.password };
+
+      try {
+        cognitoResponse = await Cognito.authenticateUser(
+          "USER_PASSWORD_AUTH",
+          payload
+        );
+      } catch (error) {
+        logger.error(
+          `Authentication Controller LOGIN Error: \n ${JSON.stringify(
+            error,
+            null,
+            2
+          )}`
+        );
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401(error.message);
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      // User authenticated successfully
+
+      // Check for challenges
+      if (cognitoResponse.ChallengeName != null) {
+        switch (cognitoResponse.ChallengeName) {
+          case "NEW_PASSWORD_REQUIRED":
+            /**
+             * @todo
+             */
+            break;
+        }
+      }
+
+      // No challenges
+      else {
+        responseAux.accessToken =
+          cognitoResponse.AuthenticationResult.AccessToken;
+        responseAux.accessTokenExpiration =
+          cognitoResponse.AuthenticationResult.ExpiresIn;
+        responseAux.accessTokenType =
+          cognitoResponse.AuthenticationResult.TokenType;
+        responseAux.refreshToken =
+          cognitoResponse.AuthenticationResult.RefreshToken;
+      }
+
+      response.statusCode = 200;
+      response.data = responseAux;
+
+      next(response);
+    } catch (error) {
+      logger.error(`Authentication Controller LOGIN Error: \n ${error.stack}`);
+      next(error);
+    }
+  }
+
+  /**
+   * Changes a user password.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   * @throws {Error._401} - Token has expired.
+   * @throws {Error._400} - Attempt limit exceeded.
+   */
+  static async changePassword(req, res, next) {
+    try {
+      let response = {};
+      let accessToken;
+
+      let cognitoResponse;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("Missing required authorization token.");
+      }
+
+      let Cognito = new cognito(accessToken);
+
+      try {
+        cognitoResponse = await Cognito.changeUserPassword(
+          accessToken,
+          req.body.oldPassword,
+          req.body.newPassword
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401(error.message);
+
+          case "ATTEMPT_LIMIT":
+            throw new Error._400(error.message);
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message: "Password changed successfully",
+      };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller CHANGE_PASSWORD Internal Error: \n ${error.stack}`
+      );
+      next(error);
+    }
+  }
+
+  /**
+   * Logout a user.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   * @throws {Error._401} - Token has expired.
+   */
+  static async logout(req, res, next) {
+    try {
+      let token;
+      let response = {};
+
+      let Cognito = new cognito();
+
+      if (req.headers.authorization) {
+        token = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      try {
+        const cognitoResponse = await Cognito.logoutUser(token);
+      } catch (error) {
+        logger.error(
+          `Authentication Controller LOGOUT Error: \n ${JSON.stringify(
+            error,
+            null,
+            2
+          )}`
+        );
+
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User does not exist.");
+
+          case "UNAUTHORIZED":
+            throw new Error._401("Token has expired.");
+
+          case "INVALID_PARAMETER":
+            throw new Error._400("Invalid access token.");
+
+          default:
+            throw new Error._500("Internal server error.");
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = { message: "User logged out successfully" };
+
+      next(response);
+    } catch (error) {
+      console.log(error);
+
+      next(error);
+    }
+  }
+
+  /**
+   * Sends a code to the user to reset their password.
+   * For the Marketplace users the code is sent to the user's phone.
+   * For the CRM users the code is sent to the user's email.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   */
+  static async sendForgotPasswordCode(req, res, next) {
+    try {
+      let response = {};
+
+      let clientId;
+      let Cognito;
+
+      if (req.url === `/auth/crm/send/forgot-password-code`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      } else if (req.url === `/auth/marketplace/send/forgot-password-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      try {
+        const cognitoResponse = await Cognito.sendForgotPasswordCode(
+          req.body.email
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found");
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        message: "Password reset code sent successfully",
+      };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller SEND_FORGOT_PASSWORD_CODE Error: \n ${error.stack}`
+      );
+      next(error);
+    }
+  }
+
+  /**
+   * Verifies the code sent to the user to reset their password.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   * @throws {Error._400} - User not found.
+   */
+  static async verifyForgotPasswordCode(req, res, next) {
+    try {
+      let response = {};
+
+      let clientId;
+      let Cognito;
+
+      if (req.url === `/auth/crm/verify/forgot-password-code`) {
+        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      } else if (req.url === `/auth/marketplace/verify/forgot-password-code`) {
+        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
+      } else {
+        throw new Error._400("Invalid login request.");
+      }
+
+      Cognito = new cognito(clientId);
+
+      try {
+        const cognitoResponse = await Cognito.changeUserPasswordWithCode(
+          req.body.email,
+          req.body.code,
+          req.body.newPassword
+        );
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found");
+
+          case "INVALID_CODE":
+            throw new Error._400("Invalid code. Please request a new code.");
+
+          default:
+            throw new Error._500(error.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = { message: "Password reseted successfully." };
+
+      next(response);
+    } catch (error) {
+      logger.error(
+        `Authentication Controller SEND_FORGOT_PASSWORD_CODE Error: \n ${error.stack}`
+      );
+      next(error);
+    }
+  }
+
+  static async adminLogin(req, res, next) {}
 }
