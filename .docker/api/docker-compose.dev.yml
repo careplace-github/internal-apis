@@ -1,0 +1,17 @@
+version: "3"
+name: backend
+services:
+  rest_api:
+    stdin_open: true
+    tty: true
+    build: 
+      context: ../../
+      dockerfile: ./.docker/api/Dockerfile.dev
+    ports:
+      - "80:80"
+    volumes:
+      - ../../:/usr/src/app
+    environment:
+      - APP_NAME=rest_api-development
+      - CHOKIDAR_USEPOLLING=true
+    
