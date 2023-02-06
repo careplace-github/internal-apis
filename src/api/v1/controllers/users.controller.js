@@ -53,7 +53,6 @@ export default class UsersController {
         filters.companyId = req.query.companyId;
       }
 
-<<<<<<< HEAD
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
       if (req.query.sortBy) {
         // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
@@ -62,11 +61,6 @@ export default class UsersController {
           [req.query.sortBy]: req.query.sortOrder == "desc" ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
-=======
-    const users = await usersDAO.getUsers()
-       res.status(200).json(users)
-}
->>>>>>> origin/staging
 
       logger.info(
         "Attempting to get users from MongoDB: " +
