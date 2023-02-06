@@ -332,3 +332,616 @@
   "statusCode": 100
 } 
 
+2023-02-06T14:30:52.878Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-06T14:30:52.885Z | [INFO   ]: Server settings: 
+2023-02-06T14:30:52.886Z | [INFO   ]: Running in 'staging' environment
+2023-02-06T14:30:52.902Z | [INFO   ]: Host: http://localhost:80 
+2023-02-06T14:30:52.917Z | [INFO   ]: API Version: v1 
+2023-02-06T14:30:52.918Z | [INFO   ]: API Route: /api/v1 
+2023-02-06T14:30:52.931Z | [INFO   ]: API URL: http:localhost:80/api/v1 
+2023-02-06T14:30:52.934Z | [INFO   ]: Server Port: 80 
+ 
+
+2023-02-06T14:30:52.934Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-06T14:30:52.935Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-06T14:30:53.694Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-06T14:30:53.694Z | [INFO   ]: Initializing Express Application...
+2023-02-06T14:30:53.698Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-06T14:30:53.698Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-06T14:30:53.718Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-06T14:30:53.719Z | [INFO   ]: Applying Application Middlewares...
+2023-02-06T14:30:53.719Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-06T14:30:53.720Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-06T14:30:53.720Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T14:30:54.116Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T14:30:54.118Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-06T14:30:54.119Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-06T14:30:54.127Z | [INFO   ]: Successfully listening for HTTP requests on port: 80
+2023-02-06T14:30:54.132Z | [INFO   ]: Swagger docs available at http://localhost:80/api/v1/docs 
+
+2023-02-06T14:30:54.133Z | [INFO   ]: Server started successfully! 🚀
+2023-02-06T14:36:29.403Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-06T14:36:29.419Z | [INFO   ]: Server settings: 
+2023-02-06T14:36:29.420Z | [INFO   ]: Running in 'staging' environment
+2023-02-06T14:36:29.423Z | [INFO   ]: Host: http://localhost:80 
+2023-02-06T14:36:29.425Z | [INFO   ]: API Version: v1 
+2023-02-06T14:36:29.427Z | [INFO   ]: API Route: /api/v1 
+2023-02-06T14:36:29.429Z | [INFO   ]: API URL: http:localhost:80/api/v1 
+2023-02-06T14:36:29.429Z | [INFO   ]: Server Port: 80 
+ 
+
+2023-02-06T14:36:29.443Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-06T14:36:29.445Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-06T14:36:30.232Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-06T14:36:30.233Z | [INFO   ]: Initializing Express Application...
+2023-02-06T14:36:30.238Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-06T14:36:30.238Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-06T14:36:30.278Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-06T14:36:30.278Z | [INFO   ]: Applying Application Middlewares...
+2023-02-06T14:36:30.281Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-06T14:36:30.281Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-06T14:36:30.283Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T14:36:30.850Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T14:36:30.851Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-06T14:36:30.852Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-06T14:36:30.859Z | [INFO   ]: Successfully listening for HTTP requests on port: 80
+2023-02-06T14:36:30.864Z | [INFO   ]: Swagger docs available at http://localhost:80/api/v1/docs 
+
+2023-02-06T14:36:30.865Z | [INFO   ]: Server started successfully! 🚀
+2023-02-06T14:54:56.098Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-06T14:54:56.102Z | [INFO   ]: Server settings: 
+2023-02-06T14:54:56.103Z | [INFO   ]: Running in 'staging' environment
+2023-02-06T14:54:56.103Z | [INFO   ]: Host: http://localhost:80 
+2023-02-06T14:54:56.103Z | [INFO   ]: API Version: v1 
+2023-02-06T14:54:56.104Z | [INFO   ]: API Route: /api/v1 
+2023-02-06T14:54:56.105Z | [INFO   ]: API URL: http:localhost:80/api/v1 
+2023-02-06T14:54:56.105Z | [INFO   ]: Server Port: 80 
+ 
+
+2023-02-06T14:54:56.105Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-06T14:54:56.105Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-06T14:54:56.951Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-06T14:54:56.952Z | [INFO   ]: Initializing Express Application...
+2023-02-06T14:54:56.956Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-06T14:54:56.958Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-06T14:54:56.987Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-06T14:54:56.988Z | [INFO   ]: Applying Application Middlewares...
+2023-02-06T14:54:56.989Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-06T14:54:56.989Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-06T14:54:56.991Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T14:54:57.403Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T14:54:57.408Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-06T14:54:57.409Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-06T14:54:57.412Z | [INFO   ]: Successfully listening for HTTP requests on port: 80
+2023-02-06T14:54:57.421Z | [INFO   ]: Swagger docs available at http://localhost:80/api/v1/docs 
+
+2023-02-06T14:54:57.422Z | [INFO   ]: Server started successfully! 🚀
+2023-02-06T14:57:53.452Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/services",
+  "ipv6": "::ffff:172.19.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost",
+    "connection": "keep-alive",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-06T14:57:53.456Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T14:57:53.865Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T15:22:52.385Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-06T15:22:52.392Z | [INFO   ]: Server settings: 
+2023-02-06T15:22:52.393Z | [INFO   ]: Running in 'staging' environment
+2023-02-06T15:22:52.393Z | [INFO   ]: Host: http://localhost:80 
+2023-02-06T15:22:52.393Z | [INFO   ]: API Version: v1 
+2023-02-06T15:22:52.393Z | [INFO   ]: API Route: /api/v1 
+2023-02-06T15:22:52.393Z | [INFO   ]: API URL: http:localhost:80/api/v1 
+2023-02-06T15:22:52.394Z | [INFO   ]: Server Port: 80 
+ 
+
+2023-02-06T15:22:52.394Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-06T15:22:52.394Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-06T15:22:53.225Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-06T15:22:53.226Z | [INFO   ]: Initializing Express Application...
+2023-02-06T15:22:53.231Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-06T15:22:53.232Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-06T15:22:53.259Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-06T15:22:53.260Z | [INFO   ]: Applying Application Middlewares...
+2023-02-06T15:22:53.262Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-06T15:22:53.263Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-06T15:22:53.273Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T15:22:53.993Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T15:22:53.998Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-06T15:22:53.999Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-06T15:22:54.005Z | [INFO   ]: Successfully listening for HTTP requests on port: 80
+2023-02-06T15:22:54.013Z | [INFO   ]: Swagger docs available at http://localhost:80/api/v1/docs 
+
+2023-02-06T15:22:54.013Z | [INFO   ]: Server started successfully! 🚀
+2023-02-06T15:26:21.899Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/services",
+  "ipv6": "::ffff:172.22.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost",
+    "connection": "keep-alive",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br",
+    "if-none-match": "W/\"83c-98LBMpapZ3u3QsrhWqoe4QPkTKI\""
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-06T15:26:21.903Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T15:26:22.585Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
