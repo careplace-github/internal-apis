@@ -176,3 +176,159 @@
   "statusCode": 100
 } 
 
+2023-02-06T00:14:20.855Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-06T00:14:20.859Z | [INFO   ]: Server settings: 
+2023-02-06T00:14:20.860Z | [INFO   ]: Running in 'staging' environment
+2023-02-06T00:14:20.860Z | [INFO   ]: Host: http://localhost:80 
+2023-02-06T00:14:20.861Z | [INFO   ]: API Version: v1 
+2023-02-06T00:14:20.865Z | [INFO   ]: API Route: /api/v1 
+2023-02-06T00:14:20.869Z | [INFO   ]: API URL: http:localhost:80/api/v1 
+2023-02-06T00:14:20.870Z | [INFO   ]: Server Port: 80 
+ 
+
+2023-02-06T00:14:20.871Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-06T00:14:20.873Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-06T00:14:21.811Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-06T00:14:21.812Z | [INFO   ]: Initializing Express Application...
+2023-02-06T00:14:21.813Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-06T00:14:21.813Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-06T00:14:21.820Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-06T00:14:21.820Z | [INFO   ]: Applying Application Middlewares...
+2023-02-06T00:14:21.820Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-06T00:14:21.820Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-06T00:14:21.821Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-06T00:14:22.123Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-06T00:14:22.124Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-06T00:14:22.125Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-06T00:14:22.129Z | [INFO   ]: Successfully listening for HTTP requests on port: 80
+2023-02-06T00:14:22.138Z | [INFO   ]: Swagger docs available at http://localhost:80/api/v1/docs 
+
+2023-02-06T00:14:22.138Z | [INFO   ]: Server started successfully! 🚀
+2023-02-06T00:14:38.661Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost",
+    "connection": "keep-alive",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-06T00:14:39.846Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/favicon.ico",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost",
+    "connection": "keep-alive",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+    "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "no-cors",
+    "sec-fetch-dest": "image",
+    "referer": "http://localhost/api/v1/",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
