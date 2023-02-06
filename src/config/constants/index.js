@@ -4,7 +4,7 @@
 import dotenv from "dotenv";
 
 // Loads environment settings
-dotenv.config({ path: "./src/config/.env/.env" });
+//dotenv.config({ path: "./src/config/.env/.env" });
 
 export const ENV = process.env.NODE_ENV;
 

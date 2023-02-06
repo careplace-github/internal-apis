@@ -6,6 +6,8 @@ COPY package.json /usr/src/app
 
 COPY . /usr/src/app
 
+ENV NODE_ENV=development
+
 RUN npm cache verify
 
 RUN npm install --legacy-peer-deps
