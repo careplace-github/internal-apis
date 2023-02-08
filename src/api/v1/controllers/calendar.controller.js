@@ -56,7 +56,8 @@ export default class CalendarController {
    * @param {*} next - Next middleware function.
    */
   static async retrieveEvent(req, res, next) {
-    await eventsCRUD.retrieve(req, res, next);
+    let EventsCRUD = new CRUD(EventsDAO);
+    await EventsCRUD.retrieve(req, res, next);
   }
 
   /**
@@ -67,7 +68,8 @@ export default class CalendarController {
    * @param {*} next - Next middleware function.
    */
   static async update_event(req, res, next) {
-    await eventsCRUD.updateByUserId(req, res, next);
+    let EventsCRUD = new CRUD(EventsDAO);
+    await EventsCRUD.updateByUserId(req, res, next);
   }
 
   /**
@@ -78,7 +80,8 @@ export default class CalendarController {
    * @param {*} next - Next middleware function.
    */
   static async deleteEvent(req, res, next) {
-    await eventsCRUD.delete(req, res, next);
+    let EventsCRUD = new CRUD(EventsDAO);
+    await EventsCRUD.delete(req, res, next);
   }
 
   /**
@@ -89,7 +92,8 @@ export default class CalendarController {
    * @param {*} next - Next middleware function.
    */
   static async listEvents(req, res, next) {
-    await eventsCRUD.listByUserId(req, res, next);
+    let EventsCRUD = new CRUD(EventsDAO);
+    await EventsCRUD.listByUserId(req, res, next);
   }
 
   // -------------------------------------------------------------------------------------------- //

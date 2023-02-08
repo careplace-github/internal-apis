@@ -1,16 +1,15 @@
 version: "3"
 name: backend
 services:
-  rest_api:
+  api:
     stdin_open: true
     tty: true
     build: 
       context: ../../
       dockerfile: ./.docker/api/Dockerfile.stag
+    image: careplace/rest-api-stag:latest
     ports:
-      - "80:80"
-    volumes:
-      - ../../:/usr/src/app
+      - "8080:8080"
     environment:
       - APP_NAME=rest_api-staging
       - CHOKIDAR_USEPOLLING=true
