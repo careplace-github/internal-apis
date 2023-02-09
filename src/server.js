@@ -74,7 +74,7 @@ import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js"
 import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
 import bodyParser from "body-parser";
 import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean"
+import xss from "xss-clean";
 
 // Documentation
 import swaggerDocs from "./documentation/swagger.js";
@@ -128,24 +128,28 @@ const main = async () => {
     /**
      *  Handle connection errors
      */
-    db_connection.connection.on("error", (err) => {
-      throw new Error._500(`MongoDB Connection Error: ${err}`);
+    db_connection.connection.on("error", async (err) => {
+      logger.warn(`MongoDB Connection Error: ${err}`);
+      db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
     db_connection.connection.on("reconnected", (err) => {
-      logger.info(`MongoDB Connection Reconnected: ${err}`);
+      logger.warn(`MongoDB Connection Reconnected: ${err}`);
     });
 
-    db_connection.connection.on("disconnected", (err) => {
-      throw new Error._500(`MongoDB Connection Error: ${err}`);
+    db_connection.connection.on("disconnected", async (err) => {
+      logger.warn(`MongoDB Connection Error: ${err}`);
+      db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
-    db_connection.connection.on("timeout", (err) => {
-      throw new Error._500(`MongoDB Connection Error: ${err}`);
+    db_connection.connection.on("timeout", async (err) => {
+      logger.warn(`MongoDB Connection Error: ${err}`);
+      db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
-    db_connection.connection.on("close", (err) => {
-      throw new Error._500(`MongoDB Connection Error: ${err}`);
+    db_connection.connection.on("close", async (err) => {
+      logger.warn(`MongoDB Connection Error: ${err}`);
+      db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
     // Successfuly connected to MongoDB
