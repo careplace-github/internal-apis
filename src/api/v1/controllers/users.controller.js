@@ -583,7 +583,7 @@ export default class UsersController {
           connectedAccountId
         );
 
-        user.stripe_information.external_accounts = externalAccounts.data;
+        user.company.stripe_information.external_accounts = externalAccounts.data;
       }
 
       let customerId;
