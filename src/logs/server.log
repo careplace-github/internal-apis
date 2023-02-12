@@ -7785,3 +7785,1197 @@
   }
 }
 
+2023-02-11T01:43:29.333Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-11T01:43:29.336Z | [INFO   ]: Server settings: 
+2023-02-11T01:43:29.336Z | [INFO   ]: Running in 'staging' environment
+2023-02-11T01:43:29.336Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-11T01:43:29.336Z | [INFO   ]: API Version: v1 
+2023-02-11T01:43:29.337Z | [INFO   ]: API Route: /api/v1 
+2023-02-11T01:43:29.337Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-11T01:43:29.337Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-11T01:43:29.337Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-11T01:43:29.337Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-11T01:43:30.233Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-11T01:43:30.234Z | [INFO   ]: Initializing Express Application...
+2023-02-11T01:43:30.235Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-11T01:43:30.236Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-11T01:43:30.240Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-11T01:43:30.241Z | [INFO   ]: Applying Application Middlewares...
+2023-02-11T01:43:30.241Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-11T01:43:30.241Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-11T01:43:30.242Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-11T01:43:30.573Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-11T01:43:30.574Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-11T01:43:30.574Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-11T01:43:30.579Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-11T01:43:30.586Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-11T01:43:30.586Z | [INFO   ]: Server started successfully! 🚀
+2023-02-11T01:43:37.400Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "POST",
+  "url": "/api/v1/auth/crm/login",
+  "ipv6": "::1",
+  "ipv4": [],
+  "contentLength": "70",
+  "contentType": "application/json",
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "content-length": "70",
+    "accept": "application/json, text/plain, */*",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "content-type": "application/json",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {
+    "email": "owner@staging.careplace.pt",
+    "password": "CareplaceDemo-123!"
+  },
+  "statusCode": 100
+} 
+
+2023-02-11T01:43:37.405Z | [INFO   ]: Authentication Controller LOGIN Request: 
+ {
+  "email": "owner@staging.careplace.pt",
+  "password": "CareplaceDemo-123!"
+}
+2023-02-11T01:43:38.222Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "ChallengeParameters": {},
+  "AuthenticationResult": {
+    "AccessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+    "ExpiresIn": 86400,
+    "TokenType": "Bearer",
+    "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Q-qh_fK1RunkuOfqdiunKv7Zp0G1K6ssU7dhLdtG5pcFer_eJQfWEiv_ih80PAB-QiSXtrHYtvP7_mF3Mc9ifpAkHrdFUvQo-B9IDRf0WFY4E8HJzFDkiedHxHm5pdqFPybhYhREyQEOASfik04_K8Kl4kL2kLk0bW5Y6x5AjzYwHWkH4ASzDrdqTgNYc3tincT5A1mnuLi24c2jBXmLox_n-eTihbOErq_0MV0Ua2at5srYJ6HAQCMZ0OID1zZ3FjGJTMLl01hdoU47cUM2dN7MiNb7F8aChV3xQRayZCqG9eF4BAwCEIKkf_aBcS4I-LNrpaEonx7WV7539b9exg.Pmv9dLpgZtolYemc.Tl8dsJm8KcRJpDemZW8UzqxDYWKONj9xuw5RJIr7IHmwOAg4kk2HVdc9_fxGyxyWBqm5dpaR4BivbxTGmvLssxoO-OHHciD3-UEbmp3nL6ThCfyXCWn_LsvQ-1QkhVEDjS01HKLurMZwndBs01FwKG_tqaZGddtLgZdsFH3ApO4C9uqPx6Sb9s__oADxokSvKWJk88f4NIEufCpQGjkwx3Dok5kDMzFaKN_EgIlwy84b45lwXMs94DWwncq6rZRrgfLrmqYzAtNdtYkDbZLDDVrnxvydH1DIdz1ta09jVv0tQfBzl43-oZ6NsbbWdCs6lQRL4HAmuSpHlQuINQcpA97mtAFojIJBKg3Db4njz9N0WlwW1oxizFCFL8W8CW4LKIJhEWF3KFvC9CWbvERCYJwbxn51KNPAkWXTatwA5b9XYRSkgsTSTPpVq79Rgb-IR6hnt0G5qis8SPmyelUMQ1eI__nk7_xWpbqdKwpx8YXlwLFmglor3mRVOaMKWIoDSYfsLARl2bwZrK8tCSTR6hM-3B6Vnl7sDsEDhHtM318xtBySXoHsEifIVFvOGNQtukKs0rJUGCgo5fSDTvW-3ZrKBYcNUCJUrgriAAAGIud5mNxZreSI1w0rTwcTQ9C1BxaKvL9r84LvHxCbwynih2qVKVp9ZW5ZTgxx1iKIEQtkLIUp2_HW8qJfDYawYV6U2wEXO21eoURrJUzqSLDpzHY6LdcUZKsOK4YPY65kJAXUNRoOq2OPvppc4iu_mj4PdS9ZY5WS9anfiB45e6_qLDYMj-25Li0qvJ1-Hg34T4zQB4SZeMoNXm6y0c1vWzh6AyzbvVN0ZHdDiL8lo0ZFz6mDWC2fAZVfQDnUgKAic7qe_BQ1evyx4Bc-wU8csr1iO7HzCTYsJ3qxFzVNnASsOcupFIU7ZpEq6PLVMwuWZJ_aTqJwPobOrkAnSrl8Lk7Uev9Y0WzmFOvtU6WVmgAGRQddr4Uy3mep9S46wYQBSK82Es2Jx6a6exd-MqtcCqzQWmqGGKjh16jBnZpj75yYZYaYmDbaql2YJ8COXLeoe_DaeqUPL5Yw031hgxYYPKwWugXws2D1eaaXZIRtZ7FGE3RIkT_hG1kq0_fwWNGa-hrrjA1Vft1DC8VBJ7gibWVnwPveIbguImrwRZ5tz7TcrF_PA_VaoN-VtQFgowTwHFIQ9RsFv0rO_MfcO5nituetq-4-n4L32sKnvpyrlrD67vIAM78IGzQ_SxsckOyQGm8GJPTjrCurU3edacs17ixtaQJKVcfd7CxMj43OAnVpVTj0BMllaQciPtHvQRtDQnofm1nHziCdMIeznD6fM30JNjLGIwU7ognLc0qtLnlq_BwIufnb88fhBlzuenpVRbc4m-ZZuWpHo3g0hfhQEJPxZGpW5XZUumYrnn6uiieteuvLr_pMiOiHcZkoByrUb8De.MLV9tQktkQRgbVKReRtL_A",
+    "IdToken": "eyJraWQiOiI1R2xyQU5LNlZaXC9WcTlzaG1Tb2hYenhpbzJrb1EzSFBGaGJyUUttOUFodz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfd0JuRGh1dm9hIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjp0cnVlLCJjb2duaXRvOnVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImF1ZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5IiwiZXZlbnRfaWQiOiJiZGU1ODY0Ni0zOWE5LTQ1NDAtYTRlMC1lYjAwYWIyNjZiZTEiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwicGhvbmVfbnVtYmVyIjoiKzM1MTkzMDQxMzEzMSIsImV4cCI6MTY3NjE2NjIxOCwiaWF0IjoxNjc2MDc5ODE4LCJqdGkiOiJkMTVkNGNiZi05YmZjLTRhMTgtOTZhYS01Yzc3NGU1ZjgzMTEiLCJlbWFpbCI6Im93bmVyQHN0YWdpbmcuY2FyZXBsYWNlLnB0In0.TSrZj3hjW-2Ip4jNhPYVL36bbnYWxRRdrl46nkND1uThFERTUQ0vZZAZs0s6zCzrjsktB4ORlpFKTtxFv-vAOitbgl3GremEwNamnfriPVw_zVMe3FIyVAd-ar0JX63gl6BarNRnTEAXQk7V8YHWc3_NXIMPbnOCXiruj7zdQ4yh_U_LJrGx32xHc3NgDAJbrXHpcquYnvaeJ55zWrdUMKKdvNW2X-8hlxXr9pUFO2kZfm6tdjZuA9Rp_pcMNJKFVcmuQJLum3b9WUM0g6Y1wXKFb7FhudOXJQuNDA2NLd38M5f6GsRPYvj-ajdl5FDQAXs8AlNvMUKL-bmE-bRhGw",
+    "NewDeviceMetadata": {
+      "DeviceKey": "eu-west-3_e09bc80e-a229-48ed-b9f0-419159c3c372",
+      "DeviceGroupKey": "-28iLZlu4"
+    }
+  }
+}
+
+2023-02-11T01:43:38.223Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "statusCode": 200,
+  "data": {
+    "accessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+    "accessTokenExpiration": 86400,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Q-qh_fK1RunkuOfqdiunKv7Zp0G1K6ssU7dhLdtG5pcFer_eJQfWEiv_ih80PAB-QiSXtrHYtvP7_mF3Mc9ifpAkHrdFUvQo-B9IDRf0WFY4E8HJzFDkiedHxHm5pdqFPybhYhREyQEOASfik04_K8Kl4kL2kLk0bW5Y6x5AjzYwHWkH4ASzDrdqTgNYc3tincT5A1mnuLi24c2jBXmLox_n-eTihbOErq_0MV0Ua2at5srYJ6HAQCMZ0OID1zZ3FjGJTMLl01hdoU47cUM2dN7MiNb7F8aChV3xQRayZCqG9eF4BAwCEIKkf_aBcS4I-LNrpaEonx7WV7539b9exg.Pmv9dLpgZtolYemc.Tl8dsJm8KcRJpDemZW8UzqxDYWKONj9xuw5RJIr7IHmwOAg4kk2HVdc9_fxGyxyWBqm5dpaR4BivbxTGmvLssxoO-OHHciD3-UEbmp3nL6ThCfyXCWn_LsvQ-1QkhVEDjS01HKLurMZwndBs01FwKG_tqaZGddtLgZdsFH3ApO4C9uqPx6Sb9s__oADxokSvKWJk88f4NIEufCpQGjkwx3Dok5kDMzFaKN_EgIlwy84b45lwXMs94DWwncq6rZRrgfLrmqYzAtNdtYkDbZLDDVrnxvydH1DIdz1ta09jVv0tQfBzl43-oZ6NsbbWdCs6lQRL4HAmuSpHlQuINQcpA97mtAFojIJBKg3Db4njz9N0WlwW1oxizFCFL8W8CW4LKIJhEWF3KFvC9CWbvERCYJwbxn51KNPAkWXTatwA5b9XYRSkgsTSTPpVq79Rgb-IR6hnt0G5qis8SPmyelUMQ1eI__nk7_xWpbqdKwpx8YXlwLFmglor3mRVOaMKWIoDSYfsLARl2bwZrK8tCSTR6hM-3B6Vnl7sDsEDhHtM318xtBySXoHsEifIVFvOGNQtukKs0rJUGCgo5fSDTvW-3ZrKBYcNUCJUrgriAAAGIud5mNxZreSI1w0rTwcTQ9C1BxaKvL9r84LvHxCbwynih2qVKVp9ZW5ZTgxx1iKIEQtkLIUp2_HW8qJfDYawYV6U2wEXO21eoURrJUzqSLDpzHY6LdcUZKsOK4YPY65kJAXUNRoOq2OPvppc4iu_mj4PdS9ZY5WS9anfiB45e6_qLDYMj-25Li0qvJ1-Hg34T4zQB4SZeMoNXm6y0c1vWzh6AyzbvVN0ZHdDiL8lo0ZFz6mDWC2fAZVfQDnUgKAic7qe_BQ1evyx4Bc-wU8csr1iO7HzCTYsJ3qxFzVNnASsOcupFIU7ZpEq6PLVMwuWZJ_aTqJwPobOrkAnSrl8Lk7Uev9Y0WzmFOvtU6WVmgAGRQddr4Uy3mep9S46wYQBSK82Es2Jx6a6exd-MqtcCqzQWmqGGKjh16jBnZpj75yYZYaYmDbaql2YJ8COXLeoe_DaeqUPL5Yw031hgxYYPKwWugXws2D1eaaXZIRtZ7FGE3RIkT_hG1kq0_fwWNGa-hrrjA1Vft1DC8VBJ7gibWVnwPveIbguImrwRZ5tz7TcrF_PA_VaoN-VtQFgowTwHFIQ9RsFv0rO_MfcO5nituetq-4-n4L32sKnvpyrlrD67vIAM78IGzQ_SxsckOyQGm8GJPTjrCurU3edacs17ixtaQJKVcfd7CxMj43OAnVpVTj0BMllaQciPtHvQRtDQnofm1nHziCdMIeznD6fM30JNjLGIwU7ognLc0qtLnlq_BwIufnb88fhBlzuenpVRbc4m-ZZuWpHo3g0hfhQEJPxZGpW5XZUumYrnn6uiieteuvLr_pMiOiHcZkoByrUb8De.MLV9tQktkQRgbVKReRtL_A"
+  }
+} 
+
+2023-02-11T01:43:38.225Z | [INFO   ]: false
+2023-02-11T01:43:38.225Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-11T01:43:38.229Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/crm/login",
+    "ipv6": "::1",
+    "ipv4": [],
+    "contentLength": "70",
+    "contentType": "application/json",
+    "headers": {
+      "host": "localhost:8080",
+      "connection": "keep-alive",
+      "content-length": "70",
+      "accept": "application/json, text/plain, */*",
+      "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+      "content-type": "application/json",
+      "sec-gpc": "1",
+      "accept-language": "en-GB,en",
+      "origin": "http://localhost:3001",
+      "sec-fetch-site": "same-site",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-dest": "empty",
+      "referer": "http://localhost:3001/",
+      "accept-encoding": "gzip, deflate, br"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+      "email": "owner@staging.careplace.pt",
+      "password": "CareplaceDemo-123!"
+    }
+  },
+  "response": {
+    "accessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+    "accessTokenExpiration": 86400,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.Q-qh_fK1RunkuOfqdiunKv7Zp0G1K6ssU7dhLdtG5pcFer_eJQfWEiv_ih80PAB-QiSXtrHYtvP7_mF3Mc9ifpAkHrdFUvQo-B9IDRf0WFY4E8HJzFDkiedHxHm5pdqFPybhYhREyQEOASfik04_K8Kl4kL2kLk0bW5Y6x5AjzYwHWkH4ASzDrdqTgNYc3tincT5A1mnuLi24c2jBXmLox_n-eTihbOErq_0MV0Ua2at5srYJ6HAQCMZ0OID1zZ3FjGJTMLl01hdoU47cUM2dN7MiNb7F8aChV3xQRayZCqG9eF4BAwCEIKkf_aBcS4I-LNrpaEonx7WV7539b9exg.Pmv9dLpgZtolYemc.Tl8dsJm8KcRJpDemZW8UzqxDYWKONj9xuw5RJIr7IHmwOAg4kk2HVdc9_fxGyxyWBqm5dpaR4BivbxTGmvLssxoO-OHHciD3-UEbmp3nL6ThCfyXCWn_LsvQ-1QkhVEDjS01HKLurMZwndBs01FwKG_tqaZGddtLgZdsFH3ApO4C9uqPx6Sb9s__oADxokSvKWJk88f4NIEufCpQGjkwx3Dok5kDMzFaKN_EgIlwy84b45lwXMs94DWwncq6rZRrgfLrmqYzAtNdtYkDbZLDDVrnxvydH1DIdz1ta09jVv0tQfBzl43-oZ6NsbbWdCs6lQRL4HAmuSpHlQuINQcpA97mtAFojIJBKg3Db4njz9N0WlwW1oxizFCFL8W8CW4LKIJhEWF3KFvC9CWbvERCYJwbxn51KNPAkWXTatwA5b9XYRSkgsTSTPpVq79Rgb-IR6hnt0G5qis8SPmyelUMQ1eI__nk7_xWpbqdKwpx8YXlwLFmglor3mRVOaMKWIoDSYfsLARl2bwZrK8tCSTR6hM-3B6Vnl7sDsEDhHtM318xtBySXoHsEifIVFvOGNQtukKs0rJUGCgo5fSDTvW-3ZrKBYcNUCJUrgriAAAGIud5mNxZreSI1w0rTwcTQ9C1BxaKvL9r84LvHxCbwynih2qVKVp9ZW5ZTgxx1iKIEQtkLIUp2_HW8qJfDYawYV6U2wEXO21eoURrJUzqSLDpzHY6LdcUZKsOK4YPY65kJAXUNRoOq2OPvppc4iu_mj4PdS9ZY5WS9anfiB45e6_qLDYMj-25Li0qvJ1-Hg34T4zQB4SZeMoNXm6y0c1vWzh6AyzbvVN0ZHdDiL8lo0ZFz6mDWC2fAZVfQDnUgKAic7qe_BQ1evyx4Bc-wU8csr1iO7HzCTYsJ3qxFzVNnASsOcupFIU7ZpEq6PLVMwuWZJ_aTqJwPobOrkAnSrl8Lk7Uev9Y0WzmFOvtU6WVmgAGRQddr4Uy3mep9S46wYQBSK82Es2Jx6a6exd-MqtcCqzQWmqGGKjh16jBnZpj75yYZYaYmDbaql2YJ8COXLeoe_DaeqUPL5Yw031hgxYYPKwWugXws2D1eaaXZIRtZ7FGE3RIkT_hG1kq0_fwWNGa-hrrjA1Vft1DC8VBJ7gibWVnwPveIbguImrwRZ5tz7TcrF_PA_VaoN-VtQFgowTwHFIQ9RsFv0rO_MfcO5nituetq-4-n4L32sKnvpyrlrD67vIAM78IGzQ_SxsckOyQGm8GJPTjrCurU3edacs17ixtaQJKVcfd7CxMj43OAnVpVTj0BMllaQciPtHvQRtDQnofm1nHziCdMIeznD6fM30JNjLGIwU7ognLc0qtLnlq_BwIufnb88fhBlzuenpVRbc4m-ZZuWpHo3g0hfhQEJPxZGpW5XZUumYrnn6uiieteuvLr_pMiOiHcZkoByrUb8De.MLV9tQktkQRgbVKReRtL_A"
+  }
+}
+
+2023-02-11T01:43:38.373Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/services",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-11T01:43:38.378Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-11T01:43:38.433Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-11T01:44:19.126Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/dashboard",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-11T01:44:19.129Z | [INFO   ]: Authentication Utils IS_VALID_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA
+2023-02-11T01:44:19.132Z | [INFO   ]: Authentication Utils IS_VALID_JWT_TOKEN Response: 
+ true
+2023-02-11T01:44:19.132Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA
+2023-02-11T01:44:19.135Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Response: 
+ {
+  "sub": "39425f3b-a637-4e6a-9db4-97fd2132a416",
+  "device_key": "eu-west-3_e09bc80e-a229-48ed-b9f0-419159c3c372",
+  "iss": "https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_wBnDhuvoa",
+  "client_id": "45a9pj00hp34n8716jcop337q9",
+  "origin_jti": "8af23ef4-8846-4a03-96a2-1b8161728438",
+  "event_id": "bde58646-39a9-4540-a4e0-eb00ab266be1",
+  "token_use": "access",
+  "scope": "aws.cognito.signin.user.admin",
+  "auth_time": 1676079818,
+  "exp": 1676166218,
+  "iat": 1676079818,
+  "jti": "b0808a45-e685-4aa5-b77d-f339f6d9c515",
+  "username": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+}
+2023-02-11T01:44:19.135Z | [INFO   ]: [object Object]
+2023-02-11T01:44:19.138Z | [INFO   ]: Authentication Helper GET_USER_ATTRIBUTES Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA
+2023-02-11T01:44:19.138Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA
+2023-02-11T01:44:19.139Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Response: 
+ {
+  "sub": "39425f3b-a637-4e6a-9db4-97fd2132a416",
+  "device_key": "eu-west-3_e09bc80e-a229-48ed-b9f0-419159c3c372",
+  "iss": "https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_wBnDhuvoa",
+  "client_id": "45a9pj00hp34n8716jcop337q9",
+  "origin_jti": "8af23ef4-8846-4a03-96a2-1b8161728438",
+  "event_id": "bde58646-39a9-4540-a4e0-eb00ab266be1",
+  "token_use": "access",
+  "scope": "aws.cognito.signin.user.admin",
+  "auth_time": 1676079818,
+  "exp": 1676166218,
+  "iat": 1676079818,
+  "jti": "b0808a45-e685-4aa5-b77d-f339f6d9c515",
+  "username": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+}
+2023-02-11T01:44:19.140Z | [INFO   ]: Cognito Service ADMIN_GET_USER Request: 
+ "39425f3b-a637-4e6a-9db4-97fd2132a416"
+2023-02-11T01:44:19.442Z | [INFO   ]: Authentication Helper GET_USER_ATTRIBUTES RESULT: 
+ [
+  {
+    "Name": "sub",
+    "Value": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+  },
+  {
+    "Name": "email_verified",
+    "Value": "true"
+  },
+  {
+    "Name": "phone_number_verified",
+    "Value": "true"
+  },
+  {
+    "Name": "phone_number",
+    "Value": "+351930413131"
+  },
+  {
+    "Name": "email",
+    "Value": "owner@staging.careplace.pt"
+  },
+  {
+    "Name": "custom:company",
+    "Value": "63a204a3973d8aadd5a664b0"
+  }
+]
+2023-02-11T01:44:19.450Z | [INFO   ]: companiesDAO RETRIEVE Request: 
+ { 
+ _id: 63a204a3973d8aadd5a664b0 
+} 
+
+2023-02-11T01:44:19.539Z | [INFO   ]: companiesDAO RETRIEVE Response: 
+ {
+  "business_profile": {
+    "phone": "930413131",
+    "name": "Empresa Teste",
+    "email": "henrique.efonseca@gmail.com",
+    "website": "www.careplace.pt",
+    "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+  },
+  "legal_information": {
+    "address": {
+      "coordinates": []
+    },
+    "director": "63c9d493d2d12621fdce8a7f",
+    "business_structure": "Sociedade por Quotas",
+    "name": "CARELY, LDA",
+    "tax_number": "560 200 300"
+  },
+  "stripe_information": {
+    "account_id": "acct_1MTMFMECx6YQ47DE",
+    "customer_id": "cus_NCguOeB2mLrdnK"
+  },
+  "service_area": [],
+  "is_active": false,
+  "_id": "63a204a3973d8aadd5a664b0",
+  "address": {
+    "street": "Rua Adriano Correia de Oliveira 4A",
+    "postalCode": "1600-312",
+    "city": "Lisboa",
+    "country": "Portugal",
+    "countryId": "PT",
+    "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+    "coordinates": [
+      "38.747359",
+      "-9.152596"
+    ]
+  },
+  "services": [
+    "63a33cb60321ea2b81253140",
+    "63a4adf6387528ade98712ef",
+    "63a4ae05387528ade98712f0",
+    "63a4ae13387528ade98712f1"
+  ],
+  "team": [
+    "63c9d493d2d12621fdce8a7f",
+    "63c9d52d7499993fe43448ca",
+    "63c9d58ad0ee4db293041b34"
+  ]
+}
+
+2023-02-11T01:44:19.541Z | [INFO   ]: ordersDAO QUERY_LIST Request: 
+ {
+  "filters": {
+    "company": "63a204a3973d8aadd5a664b0",
+    "status": "pending"
+  }
+} 
+}
+2023-02-11T01:44:19.604Z | [INFO   ]: ordersDAO QUERY_LIST Response: 
+ [
+  {
+    "schedule_information": {
+      "start_date": "2023-01-05T00:00:00.000Z",
+      "end_date": "2023-12-05T00:00:00.000Z",
+      "recurrency_type": 1,
+      "schedule": [
+        {
+          "week_day": 1,
+          "start_time": "08:00",
+          "end_time": "09:00",
+          "_id": "63d002e83419b2b2ff8d8669"
+        },
+        {
+          "week_day": 3,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "_id": "63d002e83419b2b2ff8d866a"
+        },
+        {
+          "week_day": 5,
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "_id": "63d002e83419b2b2ff8d866b"
+        }
+      ]
+    },
+    "address": {
+      "street": "Billing Address test",
+      "postal_code": "1234-567",
+      "city": "Lisboa",
+      "country": "PT",
+      "coordinates": []
+    },
+    "observations": null,
+    "stripe_subscription_id": null,
+    "_id": "63d002e83419b2b2ff8d8668",
+    "company": "63a204a3973d8aadd5a664b0",
+    "user": "63c9d493d2d12621fdce8a7f",
+    "relative": "63caaef984b6bcc1a103d913",
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae2d387528ade98712f3",
+      "63a4ae13387528ade98712f1"
+    ],
+    "status": "pending"
+  },
+  {
+    "schedule_information": {
+      "start_date": "2020-10-10T00:00:00.000Z",
+      "end_date": null,
+      "recurrence": 1,
+      "schedule": [
+        {
+          "week_day": 1,
+          "start": "2020-10-10T00:00:00.000Z",
+          "end": "2020-10-10T00:00:00.000Z",
+          "_id": "63dba2aaccef4cde13493857"
+        }
+      ]
+    },
+    "address": {
+      "street": "Rua teste familiar",
+      "postal_code": "1234-567",
+      "city": "Lisboa",
+      "country": "PT",
+      "coordinates": []
+    },
+    "_id": "63dba2aaccef4cde13493856",
+    "company": "63a204a3973d8aadd5a664b0",
+    "user": "63caa799874b3fa212ced33c",
+    "relative": "63caaef984b6bcc1a103d913",
+    "services": [
+      "63a33cb60321ea2b81253140"
+    ],
+    "status": "pending",
+    "screening_visit": null,
+    "observations": null,
+    "stripe_subscription_id": null
+  }
+] 
+}
+2023-02-11T01:44:21.428Z | [INFO   ]: subscriptions
+2023-02-11T01:44:22.627Z | [INFO   ]: subscriptions
+2023-02-11T01:44:23.884Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "statusCode": 200,
+  "data": {
+    "pending_orders": 2,
+    "active_clients": {
+      "data": 10,
+      "active_clients_difference_percentage": 0
+    },
+    "MRR": {
+      "data": 1460000,
+      "mrr_difference_percentage": 0
+    },
+    "annual_revenue": [
+      {
+        "year": 2023,
+        "data": [
+          {
+            "month": 2,
+            "revenue": 60000
+          },
+          {
+            "month": 1,
+            "revenue": 570000
+          }
+        ]
+      }
+    ]
+  }
+} 
+
+2023-02-11T01:44:23.885Z | [INFO   ]: false
+2023-02-11T01:44:23.885Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-11T01:44:23.886Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/dashboard",
+    "ipv6": "::1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "connection": "keep-alive",
+      "accept": "application/json, text/plain, */*",
+      "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2UwOWJjODBlLWEyMjktNDhlZC1iOWYwLTQxOTE1OWMzYzM3MiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6IjhhZjIzZWY0LTg4NDYtNGEwMy05NmEyLTFiODE2MTcyODQzOCIsImV2ZW50X2lkIjoiYmRlNTg2NDYtMzlhOS00NTQwLWE0ZTAtZWIwMGFiMjY2YmUxIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTgxOCwiZXhwIjoxNjc2MTY2MjE4LCJpYXQiOjE2NzYwNzk4MTgsImp0aSI6ImIwODA4YTQ1LWU2ODUtNGFhNS1iNzdkLWYzMzlmNmQ5YzUxNSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.VjUcaxo1NjKEArC2F8m6DmzBR6Qi18j9YgW0ozIdDr-0t9o95EVR4rknIiMb2ccICoZsa-VVkZ7DqBQHpa0n_JUZF308tvTTcmM0tbYq43kQpQWfnU9V6rtsuIppHEPb3f1D5U38kuwyzece7HPIX3btYuFzKhEhPFyCdENoeXKNxNNVmIQy9IBDGOig5eBMdCb6L8bRskOU59_v598rT6KWj0KxjJdFdumf40e9rRD9hbGyCnsn-ugBhR2yCKA9TpKHtzFZZV-Meqi51N35fxNPJUGzepZ6l6aqnqKoA89sEGsaX1OkJOb4PV-wgi6J3XTUN7g2jTQkhHYhHKe6WA",
+      "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+      "sec-gpc": "1",
+      "accept-language": "en-GB,en",
+      "origin": "http://localhost:3001",
+      "sec-fetch-site": "same-site",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-dest": "empty",
+      "referer": "http://localhost:3001/",
+      "accept-encoding": "gzip, deflate, br"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": {
+    "pending_orders": 2,
+    "active_clients": {
+      "data": 10,
+      "active_clients_difference_percentage": 0
+    },
+    "MRR": {
+      "data": 1460000,
+      "mrr_difference_percentage": 0
+    },
+    "annual_revenue": [
+      {
+        "year": 2023,
+        "data": [
+          {
+            "month": 2,
+            "revenue": 60000
+          },
+          {
+            "month": 1,
+            "revenue": 570000
+          }
+        ]
+      }
+    ]
+  }
+}
+
+2023-02-11T01:45:50.214Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "POST",
+  "url": "/api/v1/auth/crm/login",
+  "ipv6": "::1",
+  "ipv4": [],
+  "contentLength": "70",
+  "contentType": "application/json",
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "content-length": "70",
+    "accept": "application/json, text/plain, */*",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "content-type": "application/json",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br"
+  },
+  "params": {},
+  "query": {},
+  "body": {
+    "email": "owner@staging.careplace.pt",
+    "password": "CareplaceDemo-123!"
+  },
+  "statusCode": 100
+} 
+
+2023-02-11T01:45:50.216Z | [INFO   ]: Authentication Controller LOGIN Request: 
+ {
+  "email": "owner@staging.careplace.pt",
+  "password": "CareplaceDemo-123!"
+}
+2023-02-11T01:45:51.021Z | [INFO   ]: COGNITO SERVICE AUTHENTICATE_USER SUCESS: {
+  "ChallengeParameters": {},
+  "AuthenticationResult": {
+    "AccessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+    "ExpiresIn": 86400,
+    "TokenType": "Bearer",
+    "RefreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.GG0JIaLTbBaJKSOuCkhgIGDKoVzDJdsrkckqCkYS08iRCoK653NUlijb4fTGuFFI4ymmqSdBXf_ELvvX4td1N-ILfdr1ZAd84MqBS4rdAtno660M_fftpQmJRlftQm0tBy_JZYaFkoel-KGxZ_dyC1dzM-ZttEAF7a3hbHegvwJj0jV99bfMG2uM3NrsYlPteUUpiEoMkuC_kXXV8i8mpiZnVsWVtTUo9txfahcf6CtZJ3b1UV2oP2Wi4SZyJdxPRcx8JlzbH1gjKyLUWtFrevdKvSoascNgRW87psKY2nGt5tkGMKsAyB1VgPqhk-K6U9NqNKdD45XKt0l9Zzk6tQ.ZY8SNxtP3MZcNwlg.id8WS01_XPIRgycqw5r2mWf3H7tuKy379-_Qd8fbUmzzeCGtDRasL_vF2z1vL4Oq8LI8v_43Zm2GMN2MPyPQPQjfmH6xCeWYr5ixBr44f3-B3L5LnOetCKjLbwWr_Cwd0p2oye_HWJPXj8YBDv1aAvZbZtY8DwxEEeF4CoiW0Hi-VYi_0LM4V0YkCBgMoOkaNfpS4W3AeKwVKqHjBw-iGiO3PMX33Hu6bAc90uWMf0_YktubLZARuwa7KaxvhVE3IzkNtTPauE38ACDpQHiTJaBkyxv3CWEAC7N-NncqMBLzOFpt54FWAkwJGVngkJfjMZg775S-EWi6GKnayKP0znV7abdtOukGGyEc0LkC41HkwbBitAauxRpe89Wjl86WVVGJfqiUD8eBcxeusxpbUnV8e_VZBeT7EuP6dJNlLjMIFb0Qoo7ArIanegUilCdHH13D5fsKLaI81hm-yyWAqHzb8p8D29iTyLgcFf3O_sNZD5F1HSEmECh_p9NPwjrmmhCJg9Ln6rp5b8XxTHux1CEoFkoXtwXRT2HoSPT6DuInQXrSFDQpZxONzwYmn_uHf-I3YziKwmr0hrhOym_JNZXxiPBjIRu----Ova7dshaFbnhxxHpsK5XOe1s0TB5stmGOXBGbJrkqYHg7G9PAy_Ct9oBROTOq_P-hZjUj1UMdpvqGlj5XSSXI4_LGK_YL_I4l4N0xgl3YqQKD1tiWTDkOseMOVch00t-XsI3EDdV_ZtKBTjfartCcM2A-FsRyGiEWWSwYC2oi8mZ_4e2LbXiYUzBTzqD_gybSYbNFkZ8J_jDgt_1HHnY6SzHqcmafuLGGHtow8nrknBWt3ttIjNHFsITFCLSBDIxxE6c7zAhLRXIB8AAy0nE6kH_E8I6Z382aLQl7g21IvW4r4hrdfNdVqgDE0gMgUyyfkQ3svN80rrKCTjU_aEUxY9PwnGyr4Ge4zcQf2NrcK_dUn40HOgkZJWJu17LlbEyVlEjgOAXFpfI7JI6pNGnVAumTdQEYh49a7a5bmrfzheoKG6ve4Xa7l7B-NbXhQRnQeHzCfPR8Niq3278GYH5TzRAl0w6iAjRFFsXjBvCkrAGT2sCA1DWoqgRkYdTXgUdNYoKvjJGGdDGpHZQLvomIZ9qNIQYhCKTEeB_tIYaatdoCa6ezXq89Hu1TQPxcS-laQIf_nygQvBEnHdcqOeDy4BTk8S1r2pFV6wcxP3RqIIdoOJiAqG95n5WV3Z3wIeVHR95XLJgKJjHLI2fc3vVpHMsEQZTnAtgGNpHlGYVHX95fv4D71FWcRU7UVerQFcDbIePWtL5M2WTiBtjD6KqoJ0AiOVZ5FIBlrtHmsvTz0tqs-GeUFhqIFqBqYouxCm2HhtG7sMWVgKCPe-XXve8gz6L7kb_qyTUmbF0NvEXOFBtuPeu4L7BZuV1wcQ4ljPImybwNJBkA.9zyjDZwchOpE37ZIXD7zJg",
+    "IdToken": "eyJraWQiOiI1R2xyQU5LNlZaXC9WcTlzaG1Tb2hYenhpbzJrb1EzSFBGaGJyUUttOUFodz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LXdlc3QtMy5hbWF6b25hd3MuY29tXC9ldS13ZXN0LTNfd0JuRGh1dm9hIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjp0cnVlLCJjb2duaXRvOnVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImF1ZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5IiwiZXZlbnRfaWQiOiJmNzU4MDJkYS1jMDVmLTQwMzEtOGQzNS02N2U0OTVhZTI3YWIiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwicGhvbmVfbnVtYmVyIjoiKzM1MTkzMDQxMzEzMSIsImV4cCI6MTY3NjE2NjM1MCwiaWF0IjoxNjc2MDc5OTUxLCJqdGkiOiI3NTUyMDNmZC1iNWE5LTQ5NmMtODQzOS0wMGIyNzdlZmY0ZGEiLCJlbWFpbCI6Im93bmVyQHN0YWdpbmcuY2FyZXBsYWNlLnB0In0.AilgtlH5Ke4rNGwxYoVv_PEf2jKy_mSFz2QT3uBy7l0w51Bjp2maFIKBQu1DRTluczymJdMSF_ya3dNdY3W0wxmxZvMQL9pX58cMeI0xirbzKqwfAyPqULD7R7BAX-HIlrWDf83pyPwTaFdGtuN7kywqaEsAJGwr50RU0vbVk3_50choy_J6vSSQ4XZZIQJPBgscAzaeyvfFwSHwiWgh_XffLVMKfRergVrfstKBroK5_ywrGYja_oWvQHINqfEKXnktYC8caJKH-vxlSNfDaM3e3_99_OposSAoTdm6j6ewpB1SH2FfiVMkj99tmA8zk22yfOVnSui8XN4K5PrFQw",
+    "NewDeviceMetadata": {
+      "DeviceKey": "eu-west-3_ecae7a39-3473-4cb9-a1ed-adf1180f29d8",
+      "DeviceGroupKey": "-28iLZlu4"
+    }
+  }
+}
+
+2023-02-11T01:45:51.024Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "statusCode": 200,
+  "data": {
+    "accessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+    "accessTokenExpiration": 86400,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.GG0JIaLTbBaJKSOuCkhgIGDKoVzDJdsrkckqCkYS08iRCoK653NUlijb4fTGuFFI4ymmqSdBXf_ELvvX4td1N-ILfdr1ZAd84MqBS4rdAtno660M_fftpQmJRlftQm0tBy_JZYaFkoel-KGxZ_dyC1dzM-ZttEAF7a3hbHegvwJj0jV99bfMG2uM3NrsYlPteUUpiEoMkuC_kXXV8i8mpiZnVsWVtTUo9txfahcf6CtZJ3b1UV2oP2Wi4SZyJdxPRcx8JlzbH1gjKyLUWtFrevdKvSoascNgRW87psKY2nGt5tkGMKsAyB1VgPqhk-K6U9NqNKdD45XKt0l9Zzk6tQ.ZY8SNxtP3MZcNwlg.id8WS01_XPIRgycqw5r2mWf3H7tuKy379-_Qd8fbUmzzeCGtDRasL_vF2z1vL4Oq8LI8v_43Zm2GMN2MPyPQPQjfmH6xCeWYr5ixBr44f3-B3L5LnOetCKjLbwWr_Cwd0p2oye_HWJPXj8YBDv1aAvZbZtY8DwxEEeF4CoiW0Hi-VYi_0LM4V0YkCBgMoOkaNfpS4W3AeKwVKqHjBw-iGiO3PMX33Hu6bAc90uWMf0_YktubLZARuwa7KaxvhVE3IzkNtTPauE38ACDpQHiTJaBkyxv3CWEAC7N-NncqMBLzOFpt54FWAkwJGVngkJfjMZg775S-EWi6GKnayKP0znV7abdtOukGGyEc0LkC41HkwbBitAauxRpe89Wjl86WVVGJfqiUD8eBcxeusxpbUnV8e_VZBeT7EuP6dJNlLjMIFb0Qoo7ArIanegUilCdHH13D5fsKLaI81hm-yyWAqHzb8p8D29iTyLgcFf3O_sNZD5F1HSEmECh_p9NPwjrmmhCJg9Ln6rp5b8XxTHux1CEoFkoXtwXRT2HoSPT6DuInQXrSFDQpZxONzwYmn_uHf-I3YziKwmr0hrhOym_JNZXxiPBjIRu----Ova7dshaFbnhxxHpsK5XOe1s0TB5stmGOXBGbJrkqYHg7G9PAy_Ct9oBROTOq_P-hZjUj1UMdpvqGlj5XSSXI4_LGK_YL_I4l4N0xgl3YqQKD1tiWTDkOseMOVch00t-XsI3EDdV_ZtKBTjfartCcM2A-FsRyGiEWWSwYC2oi8mZ_4e2LbXiYUzBTzqD_gybSYbNFkZ8J_jDgt_1HHnY6SzHqcmafuLGGHtow8nrknBWt3ttIjNHFsITFCLSBDIxxE6c7zAhLRXIB8AAy0nE6kH_E8I6Z382aLQl7g21IvW4r4hrdfNdVqgDE0gMgUyyfkQ3svN80rrKCTjU_aEUxY9PwnGyr4Ge4zcQf2NrcK_dUn40HOgkZJWJu17LlbEyVlEjgOAXFpfI7JI6pNGnVAumTdQEYh49a7a5bmrfzheoKG6ve4Xa7l7B-NbXhQRnQeHzCfPR8Niq3278GYH5TzRAl0w6iAjRFFsXjBvCkrAGT2sCA1DWoqgRkYdTXgUdNYoKvjJGGdDGpHZQLvomIZ9qNIQYhCKTEeB_tIYaatdoCa6ezXq89Hu1TQPxcS-laQIf_nygQvBEnHdcqOeDy4BTk8S1r2pFV6wcxP3RqIIdoOJiAqG95n5WV3Z3wIeVHR95XLJgKJjHLI2fc3vVpHMsEQZTnAtgGNpHlGYVHX95fv4D71FWcRU7UVerQFcDbIePWtL5M2WTiBtjD6KqoJ0AiOVZ5FIBlrtHmsvTz0tqs-GeUFhqIFqBqYouxCm2HhtG7sMWVgKCPe-XXve8gz6L7kb_qyTUmbF0NvEXOFBtuPeu4L7BZuV1wcQ4ljPImybwNJBkA.9zyjDZwchOpE37ZIXD7zJg"
+  }
+} 
+
+2023-02-11T01:45:51.025Z | [INFO   ]: false
+2023-02-11T01:45:51.025Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-11T01:45:51.027Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "POST",
+    "url": "/api/v1/auth/crm/login",
+    "ipv6": "::1",
+    "ipv4": [],
+    "contentLength": "70",
+    "contentType": "application/json",
+    "headers": {
+      "host": "localhost:8080",
+      "connection": "keep-alive",
+      "content-length": "70",
+      "accept": "application/json, text/plain, */*",
+      "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+      "content-type": "application/json",
+      "sec-gpc": "1",
+      "accept-language": "en-GB,en",
+      "origin": "http://localhost:3001",
+      "sec-fetch-site": "same-site",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-dest": "empty",
+      "referer": "http://localhost:3001/",
+      "accept-encoding": "gzip, deflate, br"
+    },
+    "params": {},
+    "query": {},
+    "body": {
+      "email": "owner@staging.careplace.pt",
+      "password": "CareplaceDemo-123!"
+    }
+  },
+  "response": {
+    "accessToken": "eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+    "accessTokenExpiration": 86400,
+    "accessTokenType": "Bearer",
+    "refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.GG0JIaLTbBaJKSOuCkhgIGDKoVzDJdsrkckqCkYS08iRCoK653NUlijb4fTGuFFI4ymmqSdBXf_ELvvX4td1N-ILfdr1ZAd84MqBS4rdAtno660M_fftpQmJRlftQm0tBy_JZYaFkoel-KGxZ_dyC1dzM-ZttEAF7a3hbHegvwJj0jV99bfMG2uM3NrsYlPteUUpiEoMkuC_kXXV8i8mpiZnVsWVtTUo9txfahcf6CtZJ3b1UV2oP2Wi4SZyJdxPRcx8JlzbH1gjKyLUWtFrevdKvSoascNgRW87psKY2nGt5tkGMKsAyB1VgPqhk-K6U9NqNKdD45XKt0l9Zzk6tQ.ZY8SNxtP3MZcNwlg.id8WS01_XPIRgycqw5r2mWf3H7tuKy379-_Qd8fbUmzzeCGtDRasL_vF2z1vL4Oq8LI8v_43Zm2GMN2MPyPQPQjfmH6xCeWYr5ixBr44f3-B3L5LnOetCKjLbwWr_Cwd0p2oye_HWJPXj8YBDv1aAvZbZtY8DwxEEeF4CoiW0Hi-VYi_0LM4V0YkCBgMoOkaNfpS4W3AeKwVKqHjBw-iGiO3PMX33Hu6bAc90uWMf0_YktubLZARuwa7KaxvhVE3IzkNtTPauE38ACDpQHiTJaBkyxv3CWEAC7N-NncqMBLzOFpt54FWAkwJGVngkJfjMZg775S-EWi6GKnayKP0znV7abdtOukGGyEc0LkC41HkwbBitAauxRpe89Wjl86WVVGJfqiUD8eBcxeusxpbUnV8e_VZBeT7EuP6dJNlLjMIFb0Qoo7ArIanegUilCdHH13D5fsKLaI81hm-yyWAqHzb8p8D29iTyLgcFf3O_sNZD5F1HSEmECh_p9NPwjrmmhCJg9Ln6rp5b8XxTHux1CEoFkoXtwXRT2HoSPT6DuInQXrSFDQpZxONzwYmn_uHf-I3YziKwmr0hrhOym_JNZXxiPBjIRu----Ova7dshaFbnhxxHpsK5XOe1s0TB5stmGOXBGbJrkqYHg7G9PAy_Ct9oBROTOq_P-hZjUj1UMdpvqGlj5XSSXI4_LGK_YL_I4l4N0xgl3YqQKD1tiWTDkOseMOVch00t-XsI3EDdV_ZtKBTjfartCcM2A-FsRyGiEWWSwYC2oi8mZ_4e2LbXiYUzBTzqD_gybSYbNFkZ8J_jDgt_1HHnY6SzHqcmafuLGGHtow8nrknBWt3ttIjNHFsITFCLSBDIxxE6c7zAhLRXIB8AAy0nE6kH_E8I6Z382aLQl7g21IvW4r4hrdfNdVqgDE0gMgUyyfkQ3svN80rrKCTjU_aEUxY9PwnGyr4Ge4zcQf2NrcK_dUn40HOgkZJWJu17LlbEyVlEjgOAXFpfI7JI6pNGnVAumTdQEYh49a7a5bmrfzheoKG6ve4Xa7l7B-NbXhQRnQeHzCfPR8Niq3278GYH5TzRAl0w6iAjRFFsXjBvCkrAGT2sCA1DWoqgRkYdTXgUdNYoKvjJGGdDGpHZQLvomIZ9qNIQYhCKTEeB_tIYaatdoCa6ezXq89Hu1TQPxcS-laQIf_nygQvBEnHdcqOeDy4BTk8S1r2pFV6wcxP3RqIIdoOJiAqG95n5WV3Z3wIeVHR95XLJgKJjHLI2fc3vVpHMsEQZTnAtgGNpHlGYVHX95fv4D71FWcRU7UVerQFcDbIePWtL5M2WTiBtjD6KqoJ0AiOVZ5FIBlrtHmsvTz0tqs-GeUFhqIFqBqYouxCm2HhtG7sMWVgKCPe-XXve8gz6L7kb_qyTUmbF0NvEXOFBtuPeu4L7BZuV1wcQ4ljPImybwNJBkA.9zyjDZwchOpE37ZIXD7zJg"
+  }
+}
+
+2023-02-11T01:45:51.234Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/services",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br",
+    "if-none-match": "W/\"83c-98LBMpapZ3u3QsrhWqoe4QPkTKI\""
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-11T01:45:51.236Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-11T01:45:51.979Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-11T01:45:52.940Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/dashboard",
+  "ipv6": "::1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "connection": "keep-alive",
+    "accept": "application/json, text/plain, */*",
+    "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+    "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+    "sec-gpc": "1",
+    "accept-language": "en-GB,en",
+    "origin": "http://localhost:3001",
+    "sec-fetch-site": "same-site",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "http://localhost:3001/",
+    "accept-encoding": "gzip, deflate, br",
+    "if-none-match": "W/\"f2-WRpgSjdwQC7ngxvyzTVDQnB9ZG0\""
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-11T01:45:52.943Z | [INFO   ]: Authentication Utils IS_VALID_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg
+2023-02-11T01:45:52.955Z | [INFO   ]: Authentication Utils IS_VALID_JWT_TOKEN Response: 
+ true
+2023-02-11T01:45:52.956Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg
+2023-02-11T01:45:52.959Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Response: 
+ {
+  "sub": "39425f3b-a637-4e6a-9db4-97fd2132a416",
+  "device_key": "eu-west-3_ecae7a39-3473-4cb9-a1ed-adf1180f29d8",
+  "iss": "https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_wBnDhuvoa",
+  "client_id": "45a9pj00hp34n8716jcop337q9",
+  "origin_jti": "e5fdfd3a-7790-4ed4-9513-8c96b40c76a9",
+  "event_id": "f75802da-c05f-4031-8d35-67e495ae27ab",
+  "token_use": "access",
+  "scope": "aws.cognito.signin.user.admin",
+  "auth_time": 1676079951,
+  "exp": 1676166350,
+  "iat": 1676079951,
+  "jti": "b15ccced-ab14-474a-9e7c-ccafc63df375",
+  "username": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+}
+2023-02-11T01:45:52.960Z | [INFO   ]: [object Object]
+2023-02-11T01:45:52.961Z | [INFO   ]: Authentication Helper GET_USER_ATTRIBUTES Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg
+2023-02-11T01:45:52.967Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Request: 
+ eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg
+2023-02-11T01:45:52.978Z | [INFO   ]: Authentication Utils DECODE_JWT_TOKEN Response: 
+ {
+  "sub": "39425f3b-a637-4e6a-9db4-97fd2132a416",
+  "device_key": "eu-west-3_ecae7a39-3473-4cb9-a1ed-adf1180f29d8",
+  "iss": "https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_wBnDhuvoa",
+  "client_id": "45a9pj00hp34n8716jcop337q9",
+  "origin_jti": "e5fdfd3a-7790-4ed4-9513-8c96b40c76a9",
+  "event_id": "f75802da-c05f-4031-8d35-67e495ae27ab",
+  "token_use": "access",
+  "scope": "aws.cognito.signin.user.admin",
+  "auth_time": 1676079951,
+  "exp": 1676166350,
+  "iat": 1676079951,
+  "jti": "b15ccced-ab14-474a-9e7c-ccafc63df375",
+  "username": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+}
+2023-02-11T01:45:52.979Z | [INFO   ]: Cognito Service ADMIN_GET_USER Request: 
+ "39425f3b-a637-4e6a-9db4-97fd2132a416"
+2023-02-11T01:45:53.428Z | [INFO   ]: Authentication Helper GET_USER_ATTRIBUTES RESULT: 
+ [
+  {
+    "Name": "sub",
+    "Value": "39425f3b-a637-4e6a-9db4-97fd2132a416"
+  },
+  {
+    "Name": "email_verified",
+    "Value": "true"
+  },
+  {
+    "Name": "phone_number_verified",
+    "Value": "true"
+  },
+  {
+    "Name": "phone_number",
+    "Value": "+351930413131"
+  },
+  {
+    "Name": "email",
+    "Value": "owner@staging.careplace.pt"
+  },
+  {
+    "Name": "custom:company",
+    "Value": "63a204a3973d8aadd5a664b0"
+  }
+]
+2023-02-11T01:45:53.429Z | [INFO   ]: companiesDAO RETRIEVE Request: 
+ { 
+ _id: 63a204a3973d8aadd5a664b0 
+} 
+
+2023-02-11T01:45:53.487Z | [INFO   ]: companiesDAO RETRIEVE Response: 
+ {
+  "business_profile": {
+    "phone": "930413131",
+    "name": "Empresa Teste",
+    "email": "henrique.efonseca@gmail.com",
+    "website": "www.careplace.pt",
+    "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+  },
+  "legal_information": {
+    "address": {
+      "coordinates": []
+    },
+    "director": "63c9d493d2d12621fdce8a7f",
+    "business_structure": "Sociedade por Quotas",
+    "name": "CARELY, LDA",
+    "tax_number": "560 200 300"
+  },
+  "stripe_information": {
+    "account_id": "acct_1MTMFMECx6YQ47DE",
+    "customer_id": "cus_NCguOeB2mLrdnK"
+  },
+  "service_area": [],
+  "is_active": false,
+  "_id": "63a204a3973d8aadd5a664b0",
+  "address": {
+    "street": "Rua Adriano Correia de Oliveira 4A",
+    "postalCode": "1600-312",
+    "city": "Lisboa",
+    "country": "Portugal",
+    "countryId": "PT",
+    "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+    "coordinates": [
+      "38.747359",
+      "-9.152596"
+    ]
+  },
+  "services": [
+    "63a33cb60321ea2b81253140",
+    "63a4adf6387528ade98712ef",
+    "63a4ae05387528ade98712f0",
+    "63a4ae13387528ade98712f1"
+  ],
+  "team": [
+    "63c9d493d2d12621fdce8a7f",
+    "63c9d52d7499993fe43448ca",
+    "63c9d58ad0ee4db293041b34"
+  ]
+}
+
+2023-02-11T01:45:53.489Z | [INFO   ]: ordersDAO QUERY_LIST Request: 
+ {
+  "filters": {
+    "company": "63a204a3973d8aadd5a664b0",
+    "status": "pending"
+  }
+} 
+}
+2023-02-11T01:45:53.577Z | [INFO   ]: ordersDAO QUERY_LIST Response: 
+ [
+  {
+    "schedule_information": {
+      "start_date": "2023-01-05T00:00:00.000Z",
+      "end_date": "2023-12-05T00:00:00.000Z",
+      "recurrency_type": 1,
+      "schedule": [
+        {
+          "week_day": 1,
+          "start_time": "08:00",
+          "end_time": "09:00",
+          "_id": "63d002e83419b2b2ff8d8669"
+        },
+        {
+          "week_day": 3,
+          "start_time": "10:00",
+          "end_time": "14:00",
+          "_id": "63d002e83419b2b2ff8d866a"
+        },
+        {
+          "week_day": 5,
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "_id": "63d002e83419b2b2ff8d866b"
+        }
+      ]
+    },
+    "address": {
+      "street": "Billing Address test",
+      "postal_code": "1234-567",
+      "city": "Lisboa",
+      "country": "PT",
+      "coordinates": []
+    },
+    "observations": null,
+    "stripe_subscription_id": null,
+    "_id": "63d002e83419b2b2ff8d8668",
+    "company": "63a204a3973d8aadd5a664b0",
+    "user": "63c9d493d2d12621fdce8a7f",
+    "relative": "63caaef984b6bcc1a103d913",
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae2d387528ade98712f3",
+      "63a4ae13387528ade98712f1"
+    ],
+    "status": "pending"
+  },
+  {
+    "schedule_information": {
+      "start_date": "2020-10-10T00:00:00.000Z",
+      "end_date": null,
+      "recurrence": 1,
+      "schedule": [
+        {
+          "week_day": 1,
+          "start": "2020-10-10T00:00:00.000Z",
+          "end": "2020-10-10T00:00:00.000Z",
+          "_id": "63dba2aaccef4cde13493857"
+        }
+      ]
+    },
+    "address": {
+      "street": "Rua teste familiar",
+      "postal_code": "1234-567",
+      "city": "Lisboa",
+      "country": "PT",
+      "coordinates": []
+    },
+    "_id": "63dba2aaccef4cde13493856",
+    "company": "63a204a3973d8aadd5a664b0",
+    "user": "63caa799874b3fa212ced33c",
+    "relative": "63caaef984b6bcc1a103d913",
+    "services": [
+      "63a33cb60321ea2b81253140"
+    ],
+    "status": "pending",
+    "screening_visit": null,
+    "observations": null,
+    "stripe_subscription_id": null
+  }
+] 
+}
+2023-02-11T01:45:55.090Z | [INFO   ]: subscriptions
+2023-02-11T01:45:56.243Z | [INFO   ]: subscriptions
+2023-02-11T01:45:57.575Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "statusCode": 200,
+  "data": {
+    "pending_orders": 2,
+    "active_clients": {
+      "data": 10,
+      "active_clients_difference_percentage": 0
+    },
+    "MRR": {
+      "data": 1460000,
+      "mrr_difference_percentage": 0
+    },
+    "annual_revenue": [
+      {
+        "year": 2023,
+        "data": [
+          {
+            "month": 2,
+            "revenue": 60000
+          },
+          {
+            "month": 1,
+            "revenue": 570000
+          }
+        ]
+      }
+    ]
+  }
+} 
+
+2023-02-11T01:45:57.575Z | [INFO   ]: false
+2023-02-11T01:45:57.576Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-11T01:45:57.576Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/dashboard",
+    "ipv6": "::1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "connection": "keep-alive",
+      "accept": "application/json, text/plain, */*",
+      "authorization": "Bearer eyJraWQiOiJsRjBmbkZGRURCSmJLSDNvdDNhZmsrUWFyRWdndk81QmtIYmh5VDJZZ1d3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzOTQyNWYzYi1hNjM3LTRlNmEtOWRiNC05N2ZkMjEzMmE0MTYiLCJkZXZpY2Vfa2V5IjoiZXUtd2VzdC0zX2VjYWU3YTM5LTM0NzMtNGNiOS1hMWVkLWFkZjExODBmMjlkOCIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS13ZXN0LTMuYW1hem9uYXdzLmNvbVwvZXUtd2VzdC0zX3dCbkRodXZvYSIsImNsaWVudF9pZCI6IjQ1YTlwajAwaHAzNG44NzE2amNvcDMzN3E5Iiwib3JpZ2luX2p0aSI6ImU1ZmRmZDNhLTc3OTAtNGVkNC05NTEzLThjOTZiNDBjNzZhOSIsImV2ZW50X2lkIjoiZjc1ODAyZGEtYzA1Zi00MDMxLThkMzUtNjdlNDk1YWUyN2FiIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTY3NjA3OTk1MSwiZXhwIjoxNjc2MTY2MzUwLCJpYXQiOjE2NzYwNzk5NTEsImp0aSI6ImIxNWNjY2VkLWFiMTQtNDc0YS05ZTdjLWNjYWZjNjNkZjM3NSIsInVzZXJuYW1lIjoiMzk0MjVmM2ItYTYzNy00ZTZhLTlkYjQtOTdmZDIxMzJhNDE2In0.JW5kRJBnocqMeNJgjwKfY1_nq0bvYXiJQzgpvSugIGKC8P1QnGFBP4OTc5Wdut_UZs00DR6wpxnmsy6qpIUomEfnTwQ-b3b9fBFJoVFCEmDTfqJW9I_5VtZT0npvKPxYxky8UmNaruhQljSflil5sdIFZYoNe13aNys1CbFWKv5Y7hC2apuGMWPAn4yy5iHZ-IRkEvsSHpLmg565bWGh6lNWcAr-wUtTDbTCpfPfbpmlwUXS6D694Q2xwsGdFo0J1yPbS9uMA1_F5lI-lROXG3jzmABi8-uAWVtPcadP4C9OYTUYgVqDXCx3iu21PtAq76se9vKUzatte7NROjTSFg",
+      "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36",
+      "sec-gpc": "1",
+      "accept-language": "en-GB,en",
+      "origin": "http://localhost:3001",
+      "sec-fetch-site": "same-site",
+      "sec-fetch-mode": "cors",
+      "sec-fetch-dest": "empty",
+      "referer": "http://localhost:3001/",
+      "accept-encoding": "gzip, deflate, br",
+      "if-none-match": "W/\"f2-WRpgSjdwQC7ngxvyzTVDQnB9ZG0\""
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": {
+    "pending_orders": 2,
+    "active_clients": {
+      "data": 10,
+      "active_clients_difference_percentage": 0
+    },
+    "MRR": {
+      "data": 1460000,
+      "mrr_difference_percentage": 0
+    },
+    "annual_revenue": [
+      {
+        "year": 2023,
+        "data": [
+          {
+            "month": 2,
+            "revenue": 60000
+          },
+          {
+            "month": 1,
+            "revenue": 570000
+          }
+        ]
+      }
+    ]
+  }
+}
+
+2023-02-11T02:40:18.424Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T02:40:28.337Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T02:44:38.913Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T02:44:48.985Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T03:05:06.523Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T03:05:16.706Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T03:29:11.057Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T03:29:21.405Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T10:32:18.076Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-11T16:32:46.402Z | [WARN   ]: MongoDB Connection Error: undefined
