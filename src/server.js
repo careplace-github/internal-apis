@@ -400,7 +400,7 @@ const main = async () => {
 
       // Routes middlewares
 
-      app.use(API_ROUTE, configRoute);
+      app.use(configRoute);
       app.use(API_ROUTE, filesRoute);
       app.use(API_ROUTE, authRoute);
       app.use(API_ROUTE, usersRoute);
