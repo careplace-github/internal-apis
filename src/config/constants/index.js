@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 // Loads environment settings
 //dotenv.config({ path: "./src/config/.env/.env" });
 
-export const ENV = process.env.NODE_ENV || "staging";
+export const ENV = process.env.NODE_ENV || "staging" ;
 
 // Loads environment variables
 dotenv.config({ path: `./src/config/.env/.env.${ENV}` });
