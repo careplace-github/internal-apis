@@ -1,18 +1,9 @@
-import Router from "express"
-import express from "express"
-import AuthenticationController from "../controllers/authentication.controller.js"
-import UsersController from "../controllers/users.controller.js"
+import express from "express";
 
+const router = express.Router();
 
+router.route("/api/v1").get(function (req, res) {
+  res.send("<html><h1> [DEVELOPMENT ENVIRONMENT] API V1.0.0 </h1></html>", 200);
+});
 
-const router = express.Router()
-
-router.route("/")
-    .get(function(req,res) {
-        res.send("<html><h1> [DEVELOPMENT ENVIRONMENT] API V1.0.0 </h1></html>");})
-        
-
-  
-
-
-export default router
+export default router;
