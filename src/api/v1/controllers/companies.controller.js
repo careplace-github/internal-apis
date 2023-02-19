@@ -13,6 +13,7 @@ import authHelper from "../helpers/auth/auth.helper.js";
 
 import * as Error from "../utils/errors/http/index.js";
 import * as LayerError from "../utils/errors/layer/index.js";
+import { model } from "mongoose";
 
 export default class CompaniesController {
   static async create(req, res, next) {
@@ -39,7 +40,7 @@ export default class CompaniesController {
   static async searchCompanies(req, res, next) {
     let filters = {};
     let options = {};
-    let page = req.query.page ? req.query.page : 1;
+    let page = req.query.page ? req.query.page : 0;
     let documentsPerPage = req.query.documentsPerPage
       ? req.query.documentsPerPage
       : 10;
@@ -70,6 +71,4 @@ export default class CompaniesController {
 
     next(response);
   }
-
-  
 }
