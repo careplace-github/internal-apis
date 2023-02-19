@@ -270,15 +270,13 @@ export default class DAO {
       /**
        * @see https://mongoosejs.com/docs/api.html#model_Model-find
        */
-      var documents = await this.Document.find(filters, null, options)
+      var documents = await this.Document.find(filters, options)
         .select(select)
         .skip(page * documentsPerPage)
         .limit(documentsPerPage)
-
         .populate(populate)
         .exec();
     } catch (error) {
-
       logger.error(
         `${this.Collection}DAO QUERY_LIST Error: \n ${JSON.stringify(
           error,
