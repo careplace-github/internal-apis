@@ -8979,3 +8979,3007 @@
 2023-02-11T03:29:21.405Z | [WARN   ]: MongoDB Connection Error: undefined
 2023-02-11T10:32:18.076Z | [WARN   ]: MongoDB Connection Error: undefined
 2023-02-11T16:32:46.402Z | [WARN   ]: MongoDB Connection Error: undefined
+2023-02-19T15:34:30.181Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:34:30.188Z | [INFO   ]: Server settings: 
+2023-02-19T15:34:30.188Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:34:30.191Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:34:30.192Z | [INFO   ]: API Version: v1 
+2023-02-19T15:34:30.201Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:34:30.210Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:34:30.227Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:34:30.229Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:34:30.232Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:34:31.134Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:34:31.134Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:34:31.135Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:34:31.136Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:34:31.141Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:34:31.141Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:34:31.141Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:34:31.141Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:34:31.142Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:34:31.448Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:34:31.450Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:34:31.451Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:34:31.453Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:34:31.458Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:34:31.458Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:34:35.152Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:34:35.154Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:34:35.206Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:34:35.207Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:34:35.207Z | [INFO   ]: false
+2023-02-19T15:34:35.207Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:34:35.211Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:35:29.242Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:35:29.248Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:35:29.809Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:35:29.810Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:35:29.811Z | [INFO   ]: false
+2023-02-19T15:35:29.811Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:35:29.813Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:36:46.931Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:36:46.932Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:36:47.291Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:36:47.292Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:36:47.292Z | [INFO   ]: false
+2023-02-19T15:36:47.292Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:36:47.295Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:37:44.745Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:37:44.748Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:37:45.126Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:37:45.128Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:37:45.129Z | [INFO   ]: false
+2023-02-19T15:37:45.130Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:37:45.133Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:38:12.712Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:38:12.713Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:38:12.762Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:38:12.763Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:38:12.763Z | [INFO   ]: false
+2023-02-19T15:38:12.763Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:38:12.769Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:38:34.068Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:38:34.069Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:38:34.138Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:38:34.140Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:38:34.143Z | [INFO   ]: false
+2023-02-19T15:38:34.147Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:38:34.152Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:39:02.342Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:39:02.345Z | [INFO   ]: Server settings: 
+2023-02-19T15:39:02.345Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:39:02.345Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:39:02.346Z | [INFO   ]: API Version: v1 
+2023-02-19T15:39:02.346Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:39:02.346Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:39:02.347Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:39:02.347Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:39:02.347Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:39:03.477Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:39:03.480Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:39:03.482Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:39:03.482Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:39:03.487Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:39:03.487Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:39:03.487Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:39:03.487Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:39:03.488Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:39:03.766Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:39:03.767Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:39:03.767Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:39:03.769Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:39:03.775Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:39:03.776Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:39:16.596Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:39:16.607Z | [INFO   ]: Server settings: 
+2023-02-19T15:39:16.612Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:39:16.639Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:39:16.672Z | [INFO   ]: API Version: v1 
+2023-02-19T15:39:16.674Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:39:16.677Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:39:16.681Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:39:16.683Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:39:16.685Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:39:17.483Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:39:17.484Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:39:17.487Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:39:17.488Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:39:17.504Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:39:17.506Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:39:17.517Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:39:17.521Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:39:17.523Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:39:18.110Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:39:18.111Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:39:18.111Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:39:18.114Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:39:18.122Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:39:18.124Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:39:53.014Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:39:53.016Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:39:53.069Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [
+  {
+    "business_profile": {
+      "phone": "930413131",
+      "name": "Empresa Teste",
+      "email": "henrique.efonseca@gmail.com",
+      "website": "www.careplace.pt",
+      "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+    },
+    "legal_information": {
+      "address": {
+        "coordinates": []
+      },
+      "director": "63c9d493d2d12621fdce8a7f",
+      "business_structure": "Sociedade por Quotas",
+      "name": "CARELY, LDA",
+      "tax_number": "560 200 300"
+    },
+    "stripe_information": {
+      "account_id": "acct_1MTMFMECx6YQ47DE",
+      "customer_id": "cus_NCguOeB2mLrdnK"
+    },
+    "service_area": [],
+    "is_active": false,
+    "_id": "63a204a3973d8aadd5a664b0",
+    "address": {
+      "street": "Rua Adriano Correia de Oliveira 4A",
+      "postalCode": "1600-312",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "countryId": "PT",
+      "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+      "coordinates": [
+        "38.747359",
+        "-9.152596"
+      ]
+    },
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae05387528ade98712f0",
+      "63a4ae13387528ade98712f1"
+    ],
+    "team": [
+      "63c9d493d2d12621fdce8a7f",
+      "63c9d52d7499993fe43448ca",
+      "63c9d58ad0ee4db293041b34"
+    ]
+  }
+] 
+}
+2023-02-19T15:39:53.072Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "legal_information": {
+        "address": {
+          "coordinates": []
+        },
+        "director": "63c9d493d2d12621fdce8a7f",
+        "business_structure": "Sociedade por Quotas",
+        "name": "CARELY, LDA",
+        "tax_number": "560 200 300"
+      },
+      "stripe_information": {
+        "account_id": "acct_1MTMFMECx6YQ47DE",
+        "customer_id": "cus_NCguOeB2mLrdnK"
+      },
+      "service_area": [],
+      "is_active": false,
+      "_id": "63a204a3973d8aadd5a664b0",
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ],
+      "team": [
+        "63c9d493d2d12621fdce8a7f",
+        "63c9d52d7499993fe43448ca",
+        "63c9d58ad0ee4db293041b34"
+      ]
+    }
+  ],
+  "statusCode": 200
+} 
+
+2023-02-19T15:39:53.072Z | [INFO   ]: false
+2023-02-19T15:39:53.072Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:39:53.079Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "legal_information": {
+        "address": {
+          "coordinates": []
+        },
+        "director": "63c9d493d2d12621fdce8a7f",
+        "business_structure": "Sociedade por Quotas",
+        "name": "CARELY, LDA",
+        "tax_number": "560 200 300"
+      },
+      "stripe_information": {
+        "account_id": "acct_1MTMFMECx6YQ47DE",
+        "customer_id": "cus_NCguOeB2mLrdnK"
+      },
+      "service_area": [],
+      "is_active": false,
+      "_id": "63a204a3973d8aadd5a664b0",
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ],
+      "team": [
+        "63c9d493d2d12621fdce8a7f",
+        "63c9d52d7499993fe43448ca",
+        "63c9d58ad0ee4db293041b34"
+      ]
+    }
+  ]
+}
+
+2023-02-19T15:40:17.525Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:40:17.534Z | [INFO   ]: Server settings: 
+2023-02-19T15:40:17.534Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:40:17.536Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:40:17.538Z | [INFO   ]: API Version: v1 
+2023-02-19T15:40:17.539Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:40:17.540Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:40:17.541Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:40:17.542Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:40:17.543Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:40:18.648Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:40:18.648Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:40:18.650Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:40:18.650Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:40:18.655Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:40:18.655Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:40:18.656Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:40:18.656Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:40:18.656Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:40:19.081Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:40:19.081Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:40:19.081Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:40:19.083Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:40:19.088Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:40:19.089Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:40:28.612Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:40:28.614Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:40:28.659Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:40:28.661Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:40:28.662Z | [INFO   ]: false
+2023-02-19T15:40:28.662Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:40:28.666Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:40:48.656Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:40:48.658Z | [INFO   ]: Server settings: 
+2023-02-19T15:40:48.659Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:40:48.659Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:40:48.659Z | [INFO   ]: API Version: v1 
+2023-02-19T15:40:48.659Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:40:48.659Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:40:48.660Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:40:48.663Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:40:48.665Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:40:49.459Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:40:49.460Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:40:49.461Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:40:49.462Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:40:49.467Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:40:49.467Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:40:49.467Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:40:49.467Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:40:49.467Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:40:50.024Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:40:50.025Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:40:50.025Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:40:50.028Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:40:50.033Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:40:50.033Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:40:53.104Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:40:53.105Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:40:53.148Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:40:53.150Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:40:53.150Z | [INFO   ]: false
+2023-02-19T15:40:53.150Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:40:53.156Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:41:13.763Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:41:13.768Z | [INFO   ]: Server settings: 
+2023-02-19T15:41:13.768Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:41:13.771Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:41:13.773Z | [INFO   ]: API Version: v1 
+2023-02-19T15:41:13.788Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:41:13.790Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:41:13.790Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:41:13.792Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:41:13.805Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:41:14.646Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:41:14.653Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:41:14.655Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:41:14.655Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:41:14.660Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:41:14.660Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:41:14.660Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:41:14.660Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:41:14.662Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:41:15.350Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:41:15.351Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:41:15.351Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:41:15.354Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:41:15.359Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:41:15.359Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:41:15.627Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:41:15.629Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:41:15.678Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:41:15.681Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:41:15.681Z | [INFO   ]: false
+2023-02-19T15:41:15.681Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:41:15.687Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:41:25.722Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:41:25.725Z | [INFO   ]: Server settings: 
+2023-02-19T15:41:25.725Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:41:25.725Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:41:25.727Z | [INFO   ]: API Version: v1 
+2023-02-19T15:41:25.731Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:41:25.734Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:41:25.735Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:41:25.736Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:41:25.738Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:41:26.710Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:41:26.710Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:41:26.713Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:41:26.713Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:41:26.721Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:41:26.722Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:41:26.723Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:41:26.724Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:41:26.725Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:41:27.028Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:41:27.029Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:41:27.029Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:41:27.031Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:41:27.036Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:41:27.037Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:41:29.572Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:41:29.573Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:41:29.650Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:41:29.651Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:41:29.652Z | [INFO   ]: false
+2023-02-19T15:41:29.652Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:41:29.655Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:41:54.708Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:41:54.711Z | [INFO   ]: Server settings: 
+2023-02-19T15:41:54.711Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:41:54.713Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:41:54.716Z | [INFO   ]: API Version: v1 
+2023-02-19T15:41:54.725Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:41:54.730Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:41:54.734Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:41:54.736Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:41:54.757Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:41:55.619Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:41:55.619Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:41:55.621Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:41:55.621Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:41:55.626Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:41:55.626Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:41:55.626Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:41:55.626Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:41:55.627Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:41:55.940Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:41:55.941Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:41:55.941Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:41:55.945Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:41:55.962Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:41:55.967Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:42:00.925Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:42:00.938Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:42:00.984Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:42:00.985Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:42:00.985Z | [INFO   ]: false
+2023-02-19T15:42:00.985Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:42:00.989Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:42:16.983Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:42:16.988Z | [INFO   ]: Server settings: 
+2023-02-19T15:42:16.988Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:42:16.989Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:42:16.990Z | [INFO   ]: API Version: v1 
+2023-02-19T15:42:16.990Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:42:16.990Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:42:16.991Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:42:16.991Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:42:16.991Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:42:17.770Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:42:17.770Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:42:17.774Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:42:17.774Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:42:17.778Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:42:17.779Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:42:17.779Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:42:17.779Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:42:17.780Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:42:18.206Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:42:18.224Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:42:18.226Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:42:18.237Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:42:18.287Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:42:18.289Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:43:01.013Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:43:01.017Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:43:01.092Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [] 
+}
+2023-02-19T15:43:01.093Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [],
+  "statusCode": 200
+} 
+
+2023-02-19T15:43:01.093Z | [INFO   ]: false
+2023-02-19T15:43:01.093Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:43:01.098Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": []
+}
+
+2023-02-19T15:43:12.239Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:43:12.241Z | [INFO   ]: Server settings: 
+2023-02-19T15:43:12.241Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:43:12.241Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:43:12.242Z | [INFO   ]: API Version: v1 
+2023-02-19T15:43:12.242Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:43:12.242Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:43:12.242Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:43:12.242Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:43:12.243Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:43:13.056Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:43:13.058Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:43:13.060Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:43:13.061Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:43:13.066Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:43:13.066Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:43:13.069Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:43:13.072Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:43:13.074Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:43:13.494Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:43:13.498Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:43:13.499Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:43:13.502Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:43:13.511Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:43:13.514Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:43:15.004Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:43:15.005Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:43:15.049Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [
+  {
+    "business_profile": {
+      "phone": "930413131",
+      "name": "Empresa Teste",
+      "email": "henrique.efonseca@gmail.com",
+      "website": "www.careplace.pt",
+      "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+    },
+    "service_area": [],
+    "is_active": false,
+    "address": {
+      "street": "Rua Adriano Correia de Oliveira 4A",
+      "postalCode": "1600-312",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "countryId": "PT",
+      "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+      "coordinates": [
+        "38.747359",
+        "-9.152596"
+      ]
+    },
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae05387528ade98712f0",
+      "63a4ae13387528ade98712f1"
+    ]
+  }
+] 
+}
+2023-02-19T15:43:15.052Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ],
+  "statusCode": 200
+} 
+
+2023-02-19T15:43:15.052Z | [INFO   ]: false
+2023-02-19T15:43:15.052Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:43:15.058Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ]
+}
+
+2023-02-19T15:43:28.575Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:43:28.603Z | [INFO   ]: Server settings: 
+2023-02-19T15:43:28.605Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:43:28.606Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:43:28.611Z | [INFO   ]: API Version: v1 
+2023-02-19T15:43:28.618Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:43:28.620Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:43:28.622Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:43:28.624Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:43:28.626Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:43:29.647Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:43:29.647Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:43:29.648Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:43:29.648Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:43:29.653Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:43:29.654Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:43:29.654Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:43:29.654Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:43:29.654Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:43:30.038Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:43:30.040Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:43:30.042Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:43:30.045Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:43:30.054Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:43:30.056Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:43:30.250Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:43:30.253Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 1,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:43:30.297Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [
+  {
+    "business_profile": {
+      "phone": "930413131",
+      "name": "Empresa Teste",
+      "email": "henrique.efonseca@gmail.com",
+      "website": "www.careplace.pt",
+      "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+    },
+    "service_area": [],
+    "is_active": false,
+    "address": {
+      "street": "Rua Adriano Correia de Oliveira 4A",
+      "postalCode": "1600-312",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "countryId": "PT",
+      "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+      "coordinates": [
+        "38.747359",
+        "-9.152596"
+      ]
+    },
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae05387528ade98712f0",
+      "63a4ae13387528ade98712f1"
+    ]
+  }
+] 
+}
+2023-02-19T15:43:30.301Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ],
+  "statusCode": 200
+} 
+
+2023-02-19T15:43:30.303Z | [INFO   ]: false
+2023-02-19T15:43:30.303Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:43:30.308Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ]
+}
+
+2023-02-19T15:45:19.887Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:45:19.909Z | [INFO   ]: Server settings: 
+2023-02-19T15:45:19.909Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:45:19.911Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:45:19.912Z | [INFO   ]: API Version: v1 
+2023-02-19T15:45:19.914Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:45:19.915Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:45:19.922Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:45:19.924Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:45:19.926Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:45:20.754Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:45:20.755Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:45:20.756Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:45:20.756Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:45:20.761Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:45:20.761Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:45:20.761Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:45:20.761Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:45:20.762Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:45:21.338Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:45:21.339Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:45:21.339Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:45:21.342Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:45:21.347Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:45:21.347Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:46:36.523Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:46:36.531Z | [INFO   ]: Server settings: 
+2023-02-19T15:46:36.532Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:46:36.534Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:46:36.534Z | [INFO   ]: API Version: v1 
+2023-02-19T15:46:36.541Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:46:36.543Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:46:36.544Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:46:36.544Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:46:36.545Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:46:37.711Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:46:37.713Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:46:37.715Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:46:37.717Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:46:37.724Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:46:37.726Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:46:37.727Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:46:37.728Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:46:37.729Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:46:38.353Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:46:38.359Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:46:38.360Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:46:38.365Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:46:38.372Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:46:38.373Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:46:40.616Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:46:40.618Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 0,
+  "documentsPerPage": 10,
+  "populate": null
+} 
+}
+2023-02-19T15:46:40.663Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [
+  {
+    "business_profile": {
+      "phone": "930413131",
+      "name": "Empresa Teste",
+      "email": "henrique.efonseca@gmail.com",
+      "website": "www.careplace.pt",
+      "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+    },
+    "service_area": [],
+    "is_active": false,
+    "address": {
+      "street": "Rua Adriano Correia de Oliveira 4A",
+      "postalCode": "1600-312",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "countryId": "PT",
+      "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+      "coordinates": [
+        "38.747359",
+        "-9.152596"
+      ]
+    },
+    "services": [
+      "63a33cb60321ea2b81253140",
+      "63a4adf6387528ade98712ef",
+      "63a4ae05387528ade98712f0",
+      "63a4ae13387528ade98712f1"
+    ]
+  }
+] 
+}
+2023-02-19T15:46:40.665Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ],
+  "statusCode": 200
+} 
+
+2023-02-19T15:46:40.665Z | [INFO   ]: false
+2023-02-19T15:46:40.665Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:46:40.670Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        "63a33cb60321ea2b81253140",
+        "63a4adf6387528ade98712ef",
+        "63a4ae05387528ade98712f0",
+        "63a4ae13387528ade98712f1"
+      ]
+    }
+  ]
+}
+
+2023-02-19T15:47:33.442Z | [INFO   ]: 
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              // 
+     //                                      CAREPLACE REST API                                      //         
+     //                                                                                              //                            
+     // -------------------------------------------------------------------------------------------- //
+     
+
+2023-02-19T15:47:33.444Z | [INFO   ]: Server settings: 
+2023-02-19T15:47:33.444Z | [INFO   ]: Running in 'staging' environment
+2023-02-19T15:47:33.444Z | [INFO   ]: Host: http://localhost:8080 
+2023-02-19T15:47:33.444Z | [INFO   ]: API Version: v1 
+2023-02-19T15:47:33.445Z | [INFO   ]: API Route: /api/v1 
+2023-02-19T15:47:33.445Z | [INFO   ]: API URL: http:localhost:8080/api/v1 
+2023-02-19T15:47:33.445Z | [INFO   ]: Server Port: 8080 
+ 
+
+2023-02-19T15:47:33.445Z | [INFO   ]: Initializing the server... 
+ 
+
+2023-02-19T15:47:33.446Z | [INFO   ]: Connecting to MongoDB Database 'activeDB'...
+2023-02-19T15:47:34.419Z | [INFO   ]: Connected to MongoDB Database 'activeDB' Successfully!
+2023-02-19T15:47:34.420Z | [INFO   ]: Initializing Express Application...
+2023-02-19T15:47:34.421Z | [INFO   ]: Express Application Initialized Successfully!
+2023-02-19T15:47:34.421Z | [INFO   ]: Applying Application Security Middlewares...
+2023-02-19T15:47:34.430Z | [INFO   ]: Application Security Middlewares Applied Successfully!
+2023-02-19T15:47:34.430Z | [INFO   ]: Applying Application Middlewares...
+2023-02-19T15:47:34.430Z | [INFO   ]: Application Middlewares Applied Successfully!
+2023-02-19T15:47:34.430Z | [INFO   ]: Fetching all the necessary assets...
+2023-02-19T15:47:34.431Z | [INFO   ]: servicesDAO QUERY_LIST Request: 
+ {} 
+}
+2023-02-19T15:47:34.758Z | [INFO   ]: servicesDAO QUERY_LIST Response: 
+ [
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros."
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro."
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens."
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação)."
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc."
+  }
+] 
+}
+2023-02-19T15:47:34.758Z | [INFO   ]: Fetched all the necessary assets successfully!
+2023-02-19T15:47:34.759Z | [INFO   ]: Starting to listen for HTTP requests...
+2023-02-19T15:47:34.762Z | [INFO   ]: Successfully listening for HTTP requests on port: 8080
+2023-02-19T15:47:34.767Z | [INFO   ]: Swagger docs available at http://localhost:8080/api/v1/docs 
+
+2023-02-19T15:47:34.767Z | [INFO   ]: Server started successfully! 🚀
+2023-02-19T15:47:36.986Z | [INFO   ]: HTTP Request: 
+ {
+  "type": "GET",
+  "url": "/api/v1/companies/search",
+  "ipv6": "::ffff:127.0.0.1",
+  "ipv4": [],
+  "headers": {
+    "host": "localhost:8080",
+    "user-agent": "insomnia/2022.7.5",
+    "accept": "*/*"
+  },
+  "params": {},
+  "query": {},
+  "body": {},
+  "statusCode": 100
+} 
+
+2023-02-19T15:47:36.989Z | [INFO   ]: companiesDAO QUERY_LIST Request: 
+ {
+  "filters": {},
+  "options": {},
+  "page": 0,
+  "documentsPerPage": 10,
+  "populate": {
+    "path": "services",
+    "model": "Service"
+  }
+} 
+}
+2023-02-19T15:47:37.087Z | [INFO   ]: companiesDAO QUERY_LIST Response: 
+ [
+  {
+    "business_profile": {
+      "phone": "930413131",
+      "name": "Empresa Teste",
+      "email": "henrique.efonseca@gmail.com",
+      "website": "www.careplace.pt",
+      "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+    },
+    "service_area": [],
+    "is_active": false,
+    "address": {
+      "street": "Rua Adriano Correia de Oliveira 4A",
+      "postalCode": "1600-312",
+      "city": "Lisboa",
+      "country": "Portugal",
+      "countryId": "PT",
+      "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+      "coordinates": [
+        "38.747359",
+        "-9.152596"
+      ]
+    },
+    "services": [
+      {
+        "_id": "63a33cb60321ea2b81253140",
+        "description": "",
+        "image": "",
+        "name": "Lar em casa",
+        "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+      },
+      {
+        "_id": "63a4adf6387528ade98712ef",
+        "description": "",
+        "image": "",
+        "name": "Cuidados especializados",
+        "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+      },
+      {
+        "_id": "63a4ae05387528ade98712f0",
+        "description": "",
+        "image": "",
+        "name": "Confeção de refeições",
+        "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+      },
+      {
+        "_id": "63a4ae13387528ade98712f1",
+        "description": "",
+        "image": "",
+        "name": "Higienização do domicílio",
+        "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+      }
+    ]
+  }
+] 
+}
+2023-02-19T15:47:37.088Z | [INFO   ]: Error Handler Middleware Request: 
+ {
+  "data": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        {
+          "_id": "63a33cb60321ea2b81253140",
+          "description": "",
+          "image": "",
+          "name": "Lar em casa",
+          "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+        },
+        {
+          "_id": "63a4adf6387528ade98712ef",
+          "description": "",
+          "image": "",
+          "name": "Cuidados especializados",
+          "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+        },
+        {
+          "_id": "63a4ae05387528ade98712f0",
+          "description": "",
+          "image": "",
+          "name": "Confeção de refeições",
+          "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+        },
+        {
+          "_id": "63a4ae13387528ade98712f1",
+          "description": "",
+          "image": "",
+          "name": "Higienização do domicílio",
+          "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+        }
+      ]
+    }
+  ],
+  "statusCode": 200
+} 
+
+2023-02-19T15:47:37.088Z | [INFO   ]: false
+2023-02-19T15:47:37.089Z | [INFO   ]: No error found. Passed to the ResponseHandler Middleware.
+2023-02-19T15:47:37.092Z | [INFO   ]: HTTP Response: 
+ {
+  "request": {
+    "type": "GET",
+    "url": "/api/v1/companies/search",
+    "ipv6": "::ffff:127.0.0.1",
+    "ipv4": [],
+    "headers": {
+      "host": "localhost:8080",
+      "user-agent": "insomnia/2022.7.5",
+      "accept": "*/*"
+    },
+    "params": {},
+    "query": {},
+    "body": {}
+  },
+  "response": [
+    {
+      "business_profile": {
+        "phone": "930413131",
+        "name": "Empresa Teste",
+        "email": "henrique.efonseca@gmail.com",
+        "website": "www.careplace.pt",
+        "logo": "https://careplace-public.s3.eu-west-3.amazonaws.com/careplace-logo.png"
+      },
+      "service_area": [],
+      "is_active": false,
+      "address": {
+        "street": "Rua Adriano Correia de Oliveira 4A",
+        "postalCode": "1600-312",
+        "city": "Lisboa",
+        "country": "Portugal",
+        "countryId": "PT",
+        "fullAddress": "Rua Adriano Correia de Oliveira 4A, 1600-312, Lisboa, Portugal",
+        "coordinates": [
+          "38.747359",
+          "-9.152596"
+        ]
+      },
+      "services": [
+        {
+          "_id": "63a33cb60321ea2b81253140",
+          "description": "",
+          "image": "",
+          "name": "Lar em casa",
+          "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano."
+        },
+        {
+          "_id": "63a4adf6387528ade98712ef",
+          "description": "",
+          "image": "",
+          "name": "Cuidados especializados",
+          "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados"
+        },
+        {
+          "_id": "63a4ae05387528ade98712f0",
+          "description": "",
+          "image": "",
+          "name": "Confeção de refeições",
+          "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente."
+        },
+        {
+          "_id": "63a4ae13387528ade98712f1",
+          "description": "",
+          "image": "",
+          "name": "Higienização do domicílio",
+          "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes."
+        }
+      ]
+    }
+  ]
+}
+
