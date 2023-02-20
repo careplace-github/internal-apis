@@ -1,10 +1,12 @@
-import EventsDAO from "../db/events.dao.js";
+import eventsDAO from "../db/events.dao.js";
 import UsersDAO from "../db/crmUsers.dao.js";
 import EventsSeriesDAO from "../db/eventsSeries.dao.js";
 import * as Error from "../utils/errors/http/index.js";
 import authHelper from "../helpers/auth/auth.helper.js";
 import CRUD from "./crud.controller.js";
 import logger from "../../../logs/logger.js";
+
+let EventsDAO = new eventsDAO();
 
 /**
  * Calendar Controller Class to manage the ``/calendar`` endpoints of the API.
@@ -22,7 +24,7 @@ export default class CalendarController {
       let response = {};
 
       let event = req.body;
-      let eventsDAO = new EventsDAO();
+      // let EventsDAO = new EventsDAO();
       let AuthHelper = new authHelper();
 
       let accessToken;
@@ -37,7 +39,7 @@ export default class CalendarController {
 
       event.user = user;
 
-      let eventAdded = await eventsDAO.create(event);
+      let eventAdded = await EventsDAO.create(event);
 
       response.statusCode = 201;
       response.data = eventAdded;
@@ -134,7 +136,7 @@ export default class CalendarController {
 
       for (let i = 0; i < events.length; i++) {
         let event = events[i];
-        await eventsDAO.create(event);
+        await EventsDAO.create(event);
 
         eventsAdded.push(event);
       }
