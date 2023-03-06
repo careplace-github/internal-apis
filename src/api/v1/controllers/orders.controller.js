@@ -18,6 +18,8 @@ import SES_Service from "../services/ses.service.js";
 // Import logger
 import logger from "../../../logs/logger.js";
 import dateUtils from "../utils/data/date.utils.js";
+import authUtils from "../utils/auth/auth.utils.js";
+import cognito from "../services/cognito.service.js";
 
 /**
  * Import the JSON Object from /src/assets/data/services.json
@@ -254,9 +256,89 @@ export default class OrdersController {
   }
 
   static async listOrdersByCompany(req, res, next) {
-    let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CRUD(OrdersDAO);
-    await OrdersCRUD.listByCompanyId(req, res, next);
+    try {
+      let response = {};
+      let accessToken;
+      let companyId;
+      let documents;
+
+      let AuthUtils = new authUtils();
+      let Cognito = new cognito();
+
+      let OrdersDAO = new ordersDAO();
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._401("No Authorization header found.");
+      }
+
+      let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
+
+      try {
+        companyId = await Cognito.getUserCustomAttribute(
+          decodedToken.sub,
+          "company"
+        );
+      } catch (err) {
+        console.log(`ERROR 4: ${err}`);
+        switch (err.type) {
+          default:
+            throw new Error._500(err.message);
+        }
+      }
+
+      try {
+        documents = await OrdersDAO.query_list(
+          {
+            company: { $eq: companyId },
+          },
+
+          null,
+          null,
+          null,
+          
+             [
+              
+              {
+                path: "user",
+                model: "marketplace_users",
+                select: "-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v",
+              },
+              {
+                path: "relative",
+                model: "Relative",
+                select: "-_id -createdAt -updatedAt -user -__v",
+              },
+              {
+                path: "caregiver",
+                model: "Caregiver",
+                select: "-_id -createdAt -updatedAt -cognito_id -stripe_information -settings -__v",
+              },
+              {
+                path: "services",
+                model: "Service",
+                select: "-_id -createdAt -updatedAt -__v",
+              },
+            ],
+          
+        );
+      } catch (err) {
+        console.log(`ERROR 5: ${err}`);
+        switch (err.type) {
+          default:
+            throw new Error._500(err.message);
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = documents;
+
+      next(response);
+    } catch (err) {
+      console.log(`EROOR: ${err}`);
+      next(err);
+    }
   }
 
   static async acceptOrder(req, res, next) {
