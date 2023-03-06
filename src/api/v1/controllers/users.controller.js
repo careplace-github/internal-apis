@@ -440,9 +440,7 @@ export default class UsersController {
         {
           company: companyId,
         },
-        {
-          name: 1,
-        }
+        
       );
 
       let caregivers = await CaregiversDAO.query_list(

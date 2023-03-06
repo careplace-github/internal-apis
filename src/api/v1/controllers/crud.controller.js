@@ -405,9 +405,7 @@ export default class CRUD_Methods {
           {
             company: { $eq: companyId },
           },
-          {
-            select: "-createdAt -updatedAt -__v ",
-          }
+          
         );
       } catch (err) {
         console.log(`ERROR 5: ${err}`);
