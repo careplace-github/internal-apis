@@ -3524,7 +3524,7 @@ components:
           example: 63cad0df068be823de4ad559
         user:
           $ref: "#/components/schemas/CRM_User"
-        recurrency_type:
+        recurrency:
           type: integer
           example: 1
           enum:
