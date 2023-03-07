@@ -1032,7 +1032,7 @@ paths:
                           type: string
                           format: date
                           example: null
-                        recurrence:
+                        recurrency:
                           type: integer
                           example: 1
                         schedule:
@@ -1313,7 +1313,7 @@ paths:
                         type: string
                         format: date
                         example: null
-                      recurrence:
+                      recurrency:
                         type: integer
                         example: 1
                       schedule:
@@ -1594,7 +1594,7 @@ paths:
                         type: string
                         format: date
                         example: null
-                      recurrence:
+                      recurrency:
                         type: integer
                         example: 1
                       schedule:
@@ -4351,7 +4351,7 @@ paths:
                       company:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
-                      recurrence:
+                      recurrency:
                         type: number
                         example: 1
                       schedule:
@@ -6083,7 +6083,7 @@ paths:
                     end_date:
                       type: date
                       example: null
-                    recurrence:
+                    recurrency:
                       type: number
                       example: 1
                     schedule:
@@ -7830,7 +7830,7 @@ components:
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
           $ref: "#/components/schemas/CRM_User"
-        recurrence:
+        recurrency:
           type: integer
           example: 1
           enum:
@@ -7927,7 +7927,7 @@ components:
             end_date:
               type: timestamp
               example: 2019-03-27T12:00:00.000Z
-            recurrence:
+            recurrency:
               type: integer
               example: 1
               enum:
