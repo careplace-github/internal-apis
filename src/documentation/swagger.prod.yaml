@@ -8,12 +8,10 @@ info:
   contact:
     email: admin@careplace.pt
   version: 1.0.0
-servers:
-  - url: "http://localhost:8080/api/v1"
-    description: Development Environment
-    default: true
-  - url: "http://www.staging.api.careplace.pt"
-    description: Staging Environment
+
+# Don't use servers in production as it will only be used for testing
+# servers:
+
 tags:
   - name: Authentication
     description: Authentication operations
