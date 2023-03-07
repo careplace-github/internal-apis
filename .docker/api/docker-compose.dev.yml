@@ -6,7 +6,7 @@ services:
     tty: true
     build: 
       context: ../../
-      dockerfile: ./.docker/api/Dockerfile.stag
+      dockerfile: ./.docker/api/Dockerfile.dev
     image: careplace/rest-api-dev:latest
     ports:
       - "8080:8080"

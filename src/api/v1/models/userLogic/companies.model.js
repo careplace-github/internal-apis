@@ -30,12 +30,16 @@ const companySchema = new Schema(
 
     team: [{ type: Schema.ObjectId, ref: "crm_users", required: false }],
 
-
     legal_information: {
       // The legal name of the company
       name: { type: String, required: true },
 
-      director: { type: Schema.ObjectId, ref: "crm_users", required: false },
+      director: {
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        phone: { type: String, required: true },
+        birthdate: { type: Date, required: true },
+      },
 
       // NIPC in Portugal, NIF in Spain, in USA it's the SSN, IN UK it's the VAT number, etc
       tax_number: { type: String, required: true },
@@ -45,19 +49,19 @@ const companySchema = new Schema(
 
       address: {
         street: { type: String, required: true },
-  
+
         postal_code: { type: String, required: true },
-  
+
         state: { type: String, required: false },
-  
+
         city: { type: String, required: true },
-  
+
         country: {
           type: String,
           required: true,
           enum: ["PT", "ES", "US", "UK"],
         },
-  
+
         coordinates: { type: Array, required: true },
       },
     },
@@ -77,8 +81,6 @@ const companySchema = new Schema(
     },
 
     is_active: { type: Boolean, required: true, default: false },
-
-    
   },
 
   {
@@ -98,7 +100,7 @@ companySchema.methods.providesServicesInArea = function (lat, lng) {
     return [point.lng, point.lat];
   });
 
- // const polygon = new Polygon(coordinates);
+  // const polygon = new Polygon(coordinates);
 
   //
 
@@ -111,4 +113,3 @@ companySchema.methods.providesServicesInArea = function (lat, lng) {
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
 export default Company = mongoose.model("Company", companySchema);
-
