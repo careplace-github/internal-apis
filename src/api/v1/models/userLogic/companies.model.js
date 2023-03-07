@@ -22,6 +22,12 @@ const companySchema = new Schema(
       logo: { type: String, required: false },
 
       banner: { type: String, required: false },
+
+      instagram: { type: String, required: false },
+
+      facebook: { type: String, required: false },
+
+      linkedin: { type: String, required: false },
     },
 
     services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
