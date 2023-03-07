@@ -51,29 +51,28 @@ export default class OrdersController {
       let UsersDAO = new usersDAO();
       let OrdersDAO = new ordersDAO();
       let DateUtils = new dateUtils();
+      let RelativesDAO = new relativesDAO();
 
-      let user = await AuthHelper.getAuthUser(accessToken);
+      let cognitoUser = await AuthHelper.getAuthUser(accessToken);
 
-      let cognitoId = user.Username;
 
-      user = await UsersDAO.query_one(
-        { cognito_id: cognitoId },
+      let cognitoId = cognitoUser.Username;
+
+      let user = await UsersDAO.query_one({ cognito_id: cognitoId });
+
+
+      let relative = await RelativesDAO.query_one(
+        { user: user._id },
         {
-          path: "relatives",
-          model: "Relative",
+          path: "user",
+          model: "marketplace_users",
         }
       );
 
-      if (user === null || user === undefined || user === "") {
-        throw new Error._400("User not found");
+      if (relative === null || relative === undefined || relative === "") {
+        throw new Error._400("Relative not found");
       }
 
-      // From the users.relatives array, get the relative that matches the relative id in the order
-      let relative = user.relatives.find((relative) => {
-        if (relative._id == order.relative) {
-          return relative;
-        }
-      });
 
       if (relative === null || relative === undefined || relative === "") {
         throw new Error._400("Relative not found");
@@ -81,13 +80,7 @@ export default class OrdersController {
 
       let company = await CompaniesDAO.query_one(
         { _id: order.company },
-        {
-          path: "legal_information",
-          populate: {
-            path: "director",
-            model: "crm_users",
-          },
-        }
+      
       );
 
       if (company === null || company === undefined || company === "") {
