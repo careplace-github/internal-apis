@@ -292,11 +292,32 @@ export default class UsersController {
 
       const userId = req.params.id;
 
-      // Get user by id
-      const user = await usersDAO.get_one(userId);
+      let CrmUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let user;
 
-      // User found
-      if (user) {
+      try {
+        // Get user by id
+        user = await CrmUsersDAO.retrieve(userId);
+      } catch (error) {
+        switch (error.type) {
+          default:
+            logger.warn("Error: " + error);
+        }
+      }
+
+      if (user == null) {
+        try {
+          user = await CaregiversDAO.retrieve(userId);
+        } catch (error) {
+          switch (error.type) {
+            default:
+              logger.warn("Error: " + error);
+          }
+        }
+      }
+
+      if (user != null) {
         request.statusCode = 200;
         request.response = user;
 
@@ -308,6 +329,7 @@ export default class UsersController {
 
         res.status(200).json(user);
       }
+
       // User does not exist
       else {
         request.statusCode = 404;
@@ -332,8 +354,6 @@ export default class UsersController {
       return res.status(500).json(error);
     }
   }
-
-  static async;
 
   /**
    * @debug
@@ -436,21 +456,13 @@ export default class UsersController {
 
       companyId = user.company._id;
 
-      let crmUsers = await CrmUsersDAO.query_list(
-        {
-          company: companyId,
-        },
-        
-      );
+      let crmUsers = await CrmUsersDAO.query_list({
+        company: companyId,
+      });
 
-      let caregivers = await CaregiversDAO.query_list(
-        {
-          company: companyId,
-        },
-        {
-          name: 1,
-        }
-      );
+      let caregivers = await CaregiversDAO.query_list({
+        company: companyId,
+      });
 
       for (let i = 0; i < crmUsers.length; i++) {
         companyUsers.push(crmUsers[i]);
@@ -581,7 +593,8 @@ export default class UsersController {
           connectedAccountId
         );
 
-        user.company.stripe_information.external_accounts = externalAccounts.data;
+        user.company.stripe_information.external_accounts =
+          externalAccounts.data;
       }
 
       let customerId;
