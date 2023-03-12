@@ -48,12 +48,10 @@ export default class DashboardController {
 
     let pendingOrders = await OrdersDAO.query_list({
       company: companyId,
-      status: "pending",
+      status: "new",
     }).then((orders) => {
       return orders.length;
     });
-
-    console.log(`Length of pending orders: ${pendingOrders}`);
 
     let StripeHelper = new stripeHelper();
 
