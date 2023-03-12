@@ -302,7 +302,7 @@ export default class StripeHelper {
 
       let year = date.getFullYear();
 
-      let month = date.getMonth() + 1;
+      let month = date.getMonth();
 
       let revenue = charge.amount;
 
