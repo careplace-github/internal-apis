@@ -361,37 +361,77 @@ export default class UsersController {
    */
   static async update(req, res, next) {
     try {
-      var request = requestUtils(req);
-
-      logger.info(
-        "Users Controller updateUser: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+      let response = {};
 
       const userId = req.params.id;
       const user = req.body;
+      let userExists;
+      let updatedUser;
+      let CrmUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
       // Check if user already exists by verifying the id
-      const userExists = await usersDAO.getUserById(userId);
+      try {
+        userExists = await CrmUsersDAO.retrieve(userId);
+
+        // If user exists, update user
+        if (userExists) {
+          // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+          updatedUser = {
+            ...userExists,
+            ...user,
+          };
+          await CrmUsersDAO.update(updatedUser);
+        }
+      } catch (error) {
+        try {
+          userExists = await CaregiversDAO.retrieve(userId);
+          if (userExists) {
+            // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+            updatedUser = {
+              ...userExists,
+              ...user,
+            };
+            await CaregiversDAO.update(updatedUser);
+          }
+        } catch (error) {
+          try {
+            userExists = await MarketplaceUsersDAO.retrieve(userId);
+            if (userExists) {
+              // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+              updatedUser = {
+                ...userExists,
+                ...user,
+              };
+              await MarketplaceUsersDAO.update(updatedUser);
+            }
+          } catch (error) {
+            switch (error.type) {
+              default:
+                logger.warn("Error: " + error);
+            }
+          }
+        }
+      }
+
       if (!userExists) {
-        request.statusCode = 400;
-        request.response = { message: "User does not exist." };
+        response.statusCode = 400;
+        response.response = { message: "User does not exist." };
 
         logger.warn(
           "Users Controller updateUser error: " +
-            JSON.stringify(request, null, 2) +
+            JSON.stringify(response, null, 2) +
             "\n"
         );
 
-        return res.status(400).send("User does not exist");
+        next(response);
       } else {
         // Update user
-        const updatedUser = await usersDAO.updateUser(userId, user);
 
         if (updatedUser) {
-          request.statusCode = 200;
-          request.response = updatedUser;
+          response.statusCode = 200;
+          response.response = updatedUser;
 
           logger.info(
             "USERS-DAO UPDATE_USER RESULT: " +
@@ -399,19 +439,8 @@ export default class UsersController {
               "\n"
           );
 
-          res.status(200).json(updatedUser);
+          next(response);
         }
-
-        request.statusCode = 200;
-        request.response = updatedUser;
-
-        logger.info(
-          "USERS-DAO UPDATE_USER RESULT: " +
-            JSON.stringify(updatedUser, null, 2) +
-            "\n"
-        );
-
-        res.status(200).json(updatedUser);
       }
     } catch (error) {
       next(error);
