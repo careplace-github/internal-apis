@@ -4,9 +4,10 @@ import multer from "multer";
 import FilesController from "../controllers/files.controller.js";
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
 import * as Error from "../utils/errors/http/index.js";
+import fs from "fs";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./src/uploads");
+    cb(null, "src/uploads");
   },
   filename: function (req, file, cb) {
     /**
@@ -30,7 +31,14 @@ const router = express.Router();
 
 router
   .route("/files")
-  .post(AuthenticationGuard, upload.single("file"), FilesController.create);
+  .post(AuthenticationGuard, 
+    // Function to check if the directory exists, if not, create it
+    (req, res, next) => {
+      if (!fs.existsSync("src/uploads")) {
+        fs.mkdirSync("src/uploads");
+      }
+      next();
+    }, upload.single("file"), FilesController.create);
 
 router
   .route("/files/:key")

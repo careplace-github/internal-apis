@@ -297,12 +297,16 @@ export default class StripeHelper {
 
     let data = [];
 
+   
+
     charges.forEach((charge) => {
       let date = new Date(charge.created * 1000);
 
       let year = date.getFullYear();
 
       let month = date.getMonth();
+
+      logger.info("year: " + year + " month: " + month)
 
       let revenue = charge.amount;
 
