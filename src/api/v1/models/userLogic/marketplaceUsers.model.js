@@ -22,12 +22,10 @@ const marketplaceUserSchema = new Schema(
 
     birthdate: { type: Date, required: false },
 
-    age: { type: Number, required: false },
-
     gender: {
       type: String,
       required: false,
-      enum: ["male", "female", "other"],
+      enum: ["male", "female", "other"]
     },
 
     address: {
@@ -45,7 +43,7 @@ const marketplaceUserSchema = new Schema(
         enum: ["PT"],
       },
 
-      coordinates: { type: Array, required: true },
+      coordinates: { type: Array, required: false },
     },
 
     stripe_information: {
@@ -71,7 +69,7 @@ const marketplaceUserSchema = new Schema(
   },
 
   {
-    timestamps: false,
+    timestamps: true,
     virtuals: true,
   }
 );

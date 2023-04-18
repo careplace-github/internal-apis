@@ -27,6 +27,7 @@ router
 
 router
   .route("/users/account")
-  .get(AuthenticationGuard, UsersController.account);
+  .get(AuthenticationGuard, UsersController.account)
+  .put(AuthenticationGuard, UsersController.updateAccount);
 
 export default router;
