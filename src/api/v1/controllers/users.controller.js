@@ -657,4 +657,172 @@ export default class UsersController {
       next(error);
     }
   }
+
+  static async updateAccount(req, res, next) {
+    try {
+      logger.info(
+        `Users Controller ACCOUNT Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
+      );
+
+      let response = {};
+      let responseAux = {};
+
+      let cognitoId;
+      let app;
+      let accessToken;
+
+      let cognitoResponse = {};
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let clientId = await AuthHelper.getClientId(accessToken);
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      cognitoId = userAttributes.find((attribute) => {
+        return attribute.Name === "sub";
+      }).Value;
+
+      let phoneVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "phone_number_verified";
+      }).Value;
+
+      let emailVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "email_verified";
+      }).Value;
+
+      /**
+       * Get App from Client ID (CRM or Marketplace)
+       */
+      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
+        app = "crm";
+      } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        app = "marketplace";
+      }
+
+      let user;
+      let updateUser;
+
+      try {
+        if (app === "crm") {
+          let CrmUsersDAO = new crmUsersDAO();
+
+          user = await CrmUsersDAO.query_one(
+            {
+              cognito_id: { $eq: cognitoId },
+            },
+            {
+              path: "company",
+              model: "Company",
+              populate: [
+                {
+                  path: "services",
+                  model: "Service",
+                  select: "-__v -created_at -updated_at -translations",
+                },
+                {
+                  path: "team",
+                  model: "crm_users",
+                  select:
+                    "-__v -createdAt -updatedAt -cognito_id -settings -company",
+                },
+              ],
+              select: "-__v -createdAt -updatedAt",
+            }
+          );
+        } else if (app === "marketplace") {
+          let MarketplaceUsersDAO = new marketplaceUsersDAO();
+
+          user = await MarketplaceUsersDAO.query_one({
+            cognito_id: { $eq: cognitoId },
+          });
+
+          /**
+           * Delete fields that are not allowed to be updated
+           */
+          delete req.body._id;
+          delete req.body.stripe_information;
+          delete req.body.email_verified;
+          delete req.body.phone_verified;
+          delete req.body.cognito_id;
+          delete req.body.createdAt;
+          delete req.body.updatedAt;
+          delete req.body.__v;
+
+          updateUser = {
+            _id: user._id,
+            ...req.body,
+          };
+
+          updateUser = await MarketplaceUsersDAO.update(updateUser);
+
+          user = updateUser;
+        }
+      } catch (error) {
+        switch (error.type) {
+          case "NOT_FOUND":
+            throw new Error._404("User not found.");
+          default:
+            throw new Error._500(error);
+        }
+      }
+
+      /**
+       * Get External Accounts from Stripe
+       */
+      let Stripe = new stripe();
+      let connectedAccountId;
+      let externalAccounts;
+      if (app === "crm" && user.company.stripe_information.account_id) {
+        connectedAccountId = user.company.stripe_information.account_id;
+
+        externalAccounts = await Stripe.listExternalAccounts(
+          connectedAccountId
+        );
+
+        user.company.stripe_information.external_accounts =
+          externalAccounts.data;
+      }
+
+      let customerId;
+      let paymentMethods;
+      if (app === "marketplace") {
+        customerId = user.stripe_information.customer_id;
+        paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
+
+        logger.info(
+          "Payment Methods: " + JSON.stringify(paymentMethods, null, 2)
+        );
+
+        user.stripe_information.payment_methods = paymentMethods;
+      }
+
+      // Convert user to JSON
+
+      user.phone_verified = phoneVerified;
+      user.email_verified = emailVerified;
+      delete user.createdAt;
+      delete user.updatedAt;
+      delete user.__v;
+      delete user.cognito_id;
+
+      response.statusCode = 200;
+      response.data = user;
+
+      next(response);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
 }
