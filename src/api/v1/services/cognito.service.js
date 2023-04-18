@@ -189,6 +189,7 @@ export default class Cognito {
 
     try {
       response = await this.congito.confirmSignUp(params).promise();
+
     } catch (error) {
       switch (error.code) {
         case "UserNotFoundException":
