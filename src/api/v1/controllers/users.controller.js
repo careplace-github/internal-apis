@@ -97,14 +97,6 @@ export default class UsersController {
         request.statusCode = 200;
         request.response = mongodbResponse;
 
-        /** 
-         * logger.info(
-          "Successfully fetched users from MongoDB: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
-        */
-
         return res.status(200).json(mongodbResponse);
       }
     } catch (error) {
@@ -141,8 +133,6 @@ export default class UsersController {
         length: 8,
       })
     );
-
-    logger.info("Temporary password: " + temporaryPassword + "\n");
 
     if (user.role == "admin") {
       return res.status(400).json({ error: "Cannot create admin user." });
@@ -192,8 +182,6 @@ export default class UsersController {
 
       return res.status(400).json({ error: cognitoUser.error.message });
     }
-
-    logger.info("COGNITO USER: " + JSON.stringify(cognitoUser, null, 2) + "\n");
 
     user.cognitoId = cognitoUser.UserSub;
 
@@ -260,8 +248,6 @@ export default class UsersController {
 
     // Insert variables into email template
     let email = await EmailHelper.getEmailWithData("crm_new_user", emailData);
-
-    // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
 
     // Send email to user
     SES.sendEmail(user.email, email.subject, email.body);
@@ -632,10 +618,6 @@ export default class UsersController {
         customerId = user.stripe_information.customer_id;
         paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
 
-        logger.info(
-          "Payment Methods: " + JSON.stringify(paymentMethods, null, 2)
-        );
-
         user.stripe_information.payment_methods = paymentMethods;
       }
 
@@ -713,8 +695,8 @@ export default class UsersController {
       let user;
       let updateUser;
 
-      try {
-        if (app === "crm") {
+      if (app === "crm") {
+        try {
           let CrmUsersDAO = new crmUsersDAO();
 
           user = await CrmUsersDAO.query_one(
@@ -740,7 +722,18 @@ export default class UsersController {
               select: "-__v -createdAt -updatedAt",
             }
           );
-        } else if (app === "marketplace") {
+        } catch (error) {
+          switch (error.type) {
+            case "NOT_FOUND":
+              throw new Error._404("User not found.");
+            default:
+              throw new Error._500(error);
+          }
+        }
+      }
+
+      if (app === "marketplace") {
+        try {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
           user = await MarketplaceUsersDAO.query_one({
@@ -760,20 +753,20 @@ export default class UsersController {
           delete req.body.__v;
 
           updateUser = {
-            _id: user._id,
-            ...req.body,
+            ...user.toJSON(),
+            ...req.body.user,
           };
 
           updateUser = await MarketplaceUsersDAO.update(updateUser);
 
           user = updateUser;
-        }
-      } catch (error) {
-        switch (error.type) {
-          case "NOT_FOUND":
-            throw new Error._404("User not found.");
-          default:
-            throw new Error._500(error);
+        } catch (error) {
+          switch (error.type) {
+            case "NOT_FOUND":
+              throw new Error._404("User not found.");
+            default:
+              throw new Error._500(error);
+          }
         }
       }
 
@@ -799,10 +792,6 @@ export default class UsersController {
       if (app === "marketplace") {
         customerId = user.stripe_information.customer_id;
         paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
-
-        logger.info(
-          "Payment Methods: " + JSON.stringify(paymentMethods, null, 2)
-        );
 
         user.stripe_information.payment_methods = paymentMethods;
       }
