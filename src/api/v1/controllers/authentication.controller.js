@@ -39,7 +39,7 @@ export default class AuthenticationController {
 
       Cognito = new cognito(clientId);
 
-      let newUser = req.body;
+      let newUser = req.body.user;
       let cognitoResponse;
       let MarketplaceUsersDAO;
       let refreshToken;
