@@ -3,6 +3,3 @@ node_modules
 src/uploads
 src/downloads
 src/logs/server.log
-
-src/logs/server.log
-src/logs/server.log
