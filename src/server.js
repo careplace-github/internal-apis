@@ -63,6 +63,7 @@ import webHooksRoute from "./api/v1/routes/hooks/webhooks.route.js";
 import checkoutRoute from "./api/v1/routes/checkout.route.js";
 import paymentMethodsRoute from "./api/v1/routes/paymentMethods.route.js";
 import relativesRoute from "./api/v1/routes/relatives.route.js";
+import paymentsRoute from "./api/v1/routes/payments.route.js";
 
 // Helpers
 import getServices from "./api/v1/helpers/assets/services.helper.js";
@@ -235,7 +236,7 @@ const main = async () => {
       app.use(
         rateLimit({
           windowMs: 10 * 60 * 1000, // 10 minutes
-          max: 100, // limit each IP to 100 requests per windowMs
+          max: 100, // limit each IP to 100 requests per windowMs --> 100 requests per 10 minutes
         })
       );
 
@@ -412,6 +413,7 @@ const main = async () => {
       app.use(API_ROUTE, calendarRoute);
       app.use(API_ROUTE, paymentMethodsRoute);
       app.use(API_ROUTE, checkoutRoute);
+      app.use(API_ROUTE, paymentsRoute);
       app.use(API_ROUTE, webHooksRoute);
 
       // Middleware to handle and log all the errors
