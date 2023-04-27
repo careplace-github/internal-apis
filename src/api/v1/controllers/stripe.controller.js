@@ -615,4 +615,21 @@ export default class StripeController {
       next(err);
     }
   }
+
+  static async createCardToken(req, res, next) {
+    let response = {};
+    try {
+      let Stripe = new StripeService();
+
+      console.log(req.body)
+
+      let cardToken = await Stripe.createCardToken(req.body.card);
+
+      response.statusCode = 200;
+      response.data = cardToken;
+      next(response);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
