@@ -614,11 +614,16 @@ export default class UsersController {
 
       let customerId;
       let paymentMethods;
+
+      /**
+       * Get Payment Methods from Stripe
+       */
       if (app === "marketplace") {
         customerId = user.stripe_information.customer_id;
-        paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
+        
+        const default_payment_method = (await Stripe.getCustomer(customerId)).default_source;
 
-        user.stripe_information.payment_methods = paymentMethods;
+        user.stripe_information.default_payment_method = default_payment_method;
       }
 
       // Convert user to JSON

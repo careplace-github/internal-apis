@@ -14,7 +14,7 @@ const relativeSchema = new Schema(
       // What is the kinship degree of the relative to this user
       from: {
         type: String,
-        required: false,
+        required: true,
         enum: [
           "father",
           "mother",
@@ -36,7 +36,7 @@ const relativeSchema = new Schema(
       // What is the kinship degree of this user relative to its relative
       to: {
         type: String,
-        required: false,
+        required: true,
         enum: [
           "father",
           "mother",
