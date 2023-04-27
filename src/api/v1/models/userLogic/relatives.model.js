@@ -63,6 +63,10 @@ const relativeSchema = new Schema(
 
     birthdate: { type: Date, required: true },
 
+    phone_number: {
+      type: String, required: false
+    },
+
     gender: {
       type: String,
       required: false,
@@ -70,7 +74,7 @@ const relativeSchema = new Schema(
     },
 
     medical_conditions: {
-      type: [String],
+      type: String,
       required: false,
     },
 
