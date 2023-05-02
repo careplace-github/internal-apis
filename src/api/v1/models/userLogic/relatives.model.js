@@ -18,18 +18,20 @@ const relativeSchema = new Schema(
         enum: [
           "father",
           "mother",
-          "brother",
-          "sister",
-          "son",
-          "daughter",
+          
           "grandfather",
           "grandmother",
+          "greatGrandfather",
+          "greatGrandmother",
+        
           "uncle",
           "aunt",
-          "nephew",
-          "niece",
-          "cousin",
-          "friend",
+          "son",
+          "daughter",
+
+          "brother",
+          "sister",
+  
           "other",
         ],
       },
