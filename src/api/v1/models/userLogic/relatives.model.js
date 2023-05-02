@@ -12,51 +12,28 @@ const relativeSchema = new Schema(
 
     kinship: {
       // What is the kinship degree of the relative to this user
-      from: {
-        type: String,
-        required: true,
-        enum: [
-          "father",
-          "mother",
-          
-          "grandfather",
-          "grandmother",
-          "greatGrandfather",
-          "greatGrandmother",
-        
-          "uncle",
-          "aunt",
-          "son",
-          "daughter",
 
-          "brother",
-          "sister",
-  
-          "other",
-        ],
-      },
-      // What is the kinship degree of this user relative to its relative
-      to: {
-        type: String,
-        required: true,
-        enum: [
-          "father",
-          "mother",
-          "brother",
-          "sister",
-          "son",
-          "daughter",
-          "grandfather",
-          "grandmother",
-          "uncle",
-          "aunt",
-          "nephew",
-          "niece",
-          "cousin",
-          "friend",
-          "other",
-        ],
-      },
+      type: String,
+      required: true,
+      enum: [
+        "father",
+        "mother",
+
+        "grandfather",
+        "grandmother",
+        "greatGrandfather",
+        "greatGrandmother",
+
+        "uncle",
+        "aunt",
+        "son",
+        "daughter",
+
+        "brother",
+        "sister",
+
+        "other",
+      ],
     },
 
     profile_picture: { type: String, required: false },
@@ -66,7 +43,8 @@ const relativeSchema = new Schema(
     birthdate: { type: Date, required: true },
 
     phone_number: {
-      type: String, required: false
+      type: String,
+      required: false,
     },
 
     gender: {
