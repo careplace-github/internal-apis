@@ -8,7 +8,7 @@ import CRUD from "./crud.controller.js";
 
 import * as Error from "../utils/errors/http/index.js";
 
-export default class FilesController {
+export default class RelativesController {
   static async create(req, res, next) {
     try {
       let response = {};
