@@ -40,7 +40,7 @@ export default class CompaniesController {
   static async searchCompanies(req, res, next) {
     let filters = {};
     let options = {};
-    let page = req.query.page ? req.query.page : 0;
+    let page = req.query.page ? req.query.page : 1;
     let documentsPerPage = req.query.documentsPerPage
       ? req.query.documentsPerPage
       : 10;
