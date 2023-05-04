@@ -61,7 +61,7 @@ export default class CompaniesController {
       page,
       documentsPerPage,
       null,
-      "-_id -plan -legal_information -team -stripe_information -billing_address"
+      "-plan -legal_information -team -stripe_information -billing_address"
     );
 
     let response = {
