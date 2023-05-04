@@ -11,6 +11,9 @@ const companySchema = new Schema(
     _id: Schema.Types.ObjectId,
 
     business_profile: {
+
+      average_hourly_rate: { type: Number, required: true },
+      
       name: { type: String, required: true, unique: true },
 
       email: { type: String, required: true, unique: true },
@@ -30,6 +33,12 @@ const companySchema = new Schema(
         linkedin: { type: String, required: false },
         youtube: { type: String, required: false },
     },
+  },
+
+  rating: {
+    average: { type: Number, required: true, default: 0 },
+
+    count: { type: Number, required: false, default: 0 },
   },
 
     services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
