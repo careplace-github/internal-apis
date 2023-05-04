@@ -260,6 +260,8 @@ export default class DAO {
       )} \n}`
     );
 
+
+
     if (options) {
       if (options.sort) {
         options.sort = { [options.sort]: 1 };
@@ -272,10 +274,21 @@ export default class DAO {
        */
       var documents = await this.Document.find(filters, options)
         .select(select)
-        .skip(page * documentsPerPage)
+        .skip(page > 0 ? (page - 1) * documentsPerPage : 0 )
         .limit(documentsPerPage)
         .populate(populate)
         .exec();
+
+        const totalDocuments = await this.Document.countDocuments(filters);
+        const totalPages = Math.ceil(totalDocuments / documentsPerPage);
+
+        documents = {
+          data: documents,
+          page: page,
+          totalPages: totalPages,
+          totalDocuments: totalDocuments,
+        };
+
     } catch (error) {
       logger.error(
         `${this.Collection}DAO QUERY_LIST Error: \n ${JSON.stringify(
