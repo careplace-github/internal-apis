@@ -282,9 +282,9 @@ export default class DAO {
 
       documents = {
         data: documents,
-        page: page > 0 ? page : 1,
+        page: page > 0 ? parseInt(page) : 1,
         documentsPerPage:
-          documentsPerPage > 0 ? documentsPerPage : totalDocuments,
+          documentsPerPage > 0 ? parseInt(documentsPerPage) : totalDocuments,
         totalPages: totalPages > 0 ? totalPages : 1,
         totalDocuments: totalDocuments >= 0 ? totalDocuments : 1,
       };
