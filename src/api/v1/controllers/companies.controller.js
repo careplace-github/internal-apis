@@ -42,48 +42,6 @@ export default class CompaniesController {
         }
       }
       if (req.body.serviceArea && req.body.serviceArea.length !== 0) {
-        /**
-         * Request:
-         * 
-         * {
-  "serviceArea": {
-    "type": "MultiPolygon",
-    "coordinates": [
-      [
-        [
-          [38.686817291203056, -9.233442249832116],
-          [38.7122820136559, -9.099161903125305],
-          [38.795224252927554, -9.07625894679447],
-          [38.81967257876864, -9.197048511005036],
-          [38.771745967593134, -9.242854423666707],
-          [38.686817291203056, -9.233442249832116]
-        ]
-      ],
-      [
-        [
-          [38.680106057895486, -9.466822399376667],
-          [38.670308855539524, -9.314139990218873],
-          [38.691534432433755, -9.245955791060736],
-          [38.82885837074285, -9.263943033783434],
-          [38.838959662147474, -9.46012947185194],
-          [38.680106057895486, -9.466822399376667]
-        ]
-      ],
-      [
-        [
-          [41.13576631277991, -8.673796061743502],
-          [41.13511987330021, -8.545565019812754],
-          [41.19211133559549, -8.560499558832802],
-          [41.1807428480594, -8.701605203367038],
-          [41.13576631277991, -8.673796061743502]
-        ]
-      ]
-    ]
-  }
-}
-
-         */
-
         company.serviceArea = req.body.serviceArea;
       }
 
@@ -133,6 +91,14 @@ export default class CompaniesController {
             coordinates: [parseFloat(req.query.lat), parseFloat(req.query.lng)],
           },
         },
+      };
+    }
+
+    // If the services query parameter is provided, we'll add it to the filter object.
+    if (req.query.services) {
+      // Search for all companies that have all the services provided in the services query parameter. The company may have more services than the ones provided in the services query parameter.
+      filters["services"] = {
+        $all: req.query.services.split(","),
       };
     }
 
