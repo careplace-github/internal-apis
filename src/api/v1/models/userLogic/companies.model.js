@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import GeometryUtils from "../../utils/data/geometry.utils.js";
 import { ObjectId } from "mongodb";
+import GeoJSON from 'mongoose-geojson-schema';
+
 
 const Schema = mongoose.Schema;
 
@@ -43,7 +45,10 @@ const companySchema = new Schema(
 
     services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
-    service_area: { type: Array, required: false },
+  serviceArea: {
+    type: Schema.Types.MultiPolygon, // Use the GeoJSON constructor for MultiPolygon
+    required: true
+  },
 
     team: [{ type: Schema.ObjectId, ref: "crm_users", required: false }],
 

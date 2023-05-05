@@ -64,6 +64,7 @@ import checkoutRoute from "./api/v1/routes/checkout.route.js";
 import paymentMethodsRoute from "./api/v1/routes/paymentMethods.route.js";
 import relativesRoute from "./api/v1/routes/relatives.route.js";
 import paymentsRoute from "./api/v1/routes/payments.route.js";
+import adminRoute from "./api/v1/routes/admin.route.js";
 
 // Helpers
 import getServices from "./api/v1/helpers/assets/services.helper.js";
@@ -415,6 +416,7 @@ const main = async () => {
       app.use(API_ROUTE, checkoutRoute);
       app.use(API_ROUTE, paymentsRoute);
       app.use(API_ROUTE, webHooksRoute);
+      app.use(API_ROUTE, adminRoute);
 
       // Middleware to handle and log all the errors
       app.use(errorLogger);
