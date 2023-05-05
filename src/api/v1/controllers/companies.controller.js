@@ -67,18 +67,36 @@ export default class CompaniesController {
   static async searchCompanies(req, res, next) {
     let filters = {};
     let options = {};
-    let page = req.query.page ? req.query.page : 1;
-    let documentsPerPage = req.query.documentsPerPage
-      ? req.query.documentsPerPage
-      : 10;
+    let page = req.query.page ? parseInt(req.query.page) : 1;
+    let documentsPerPage = parseInt(req.query.documentsPerPage);
 
     // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
     if (req.query.sortBy) {
-      // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-      // Otherwise, we will by default sort the results by ascending order.
-      options.sort = {
-        [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
-      };
+      if (req.query.sortBy === "rating") {
+        // sort by company.rating.average
+        options.sort = {
+          "rating.average": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+      if (req.query.sortBy === "price") {
+        // sort by company.business_profile.average_hourly_rate
+        options.sort = {
+          "business_profile.average_hourly_rate":
+            req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+
+      if (req.query.sortBy === "name") {
+        options.sort = {
+          "business_profile.name": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      } else {
+        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
+        // Otherwise, we will by default sort the results by ascending order.
+        options.sort = {
+          [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
     }
 
     // If the lat and lng query parameters are provided, we'll add them to the filter object.
@@ -102,6 +120,39 @@ export default class CompaniesController {
       };
     }
 
+    // If the minRating query parameter is provided, we'll add it to the filter object.
+    if (req.query.minRating) {
+      filters["rating.average"] = {
+        ...filters["rating.average"],
+        $gte: parseFloat(req.query.minRating),
+      };
+    }
+
+    // If the maxRating query parameter is provided, we'll add it to the filter object.
+    if (req.query.maxRating) {
+      filters["rating.average"] = {
+        ...filters["rating.average"],
+        $lte: parseFloat(req.query.maxRating),
+      };
+    }
+
+    // If the maxPrice query parameter is provided, we'll add it to the filter object.
+    if (req.query.maxPrice) {
+      filters["business_profile.average_hourly_rate"] = {
+        ...filters["business_profile.average_hourly_rate"],
+        $lte: parseFloat(req.query.maxPrice),
+      };
+    }
+
+    // If the minPrice query parameter is provided, we'll add it to the filter object.
+    if (req.query.minPrice) {
+      // Add the minPrice query parameter to the filter object without overriding the maxPrice query parameter.
+      filters["business_profile.average_hourly_rate"] = {
+        ...filters["business_profile.average_hourly_rate"],
+        $gte: parseFloat(req.query.minPrice),
+      };
+    }
+
     let CompaniesDAO = new companiesDAO();
     let companies = await CompaniesDAO.query_list(
       filters,
@@ -109,7 +160,7 @@ export default class CompaniesController {
       page,
       documentsPerPage,
       null,
-      "-plan -legal_information -team -stripe_information -billing_address"
+      "-plan -legal_information -team -stripe_information -billing_address -createdAt -updatedAt -__v"
     );
 
     let response = {
