@@ -260,21 +260,19 @@ export default class DAO {
       )} \n}`
     );
 
-    if (options) {
-      if (options.sort) {
-        options.sort = { [options.sort]: 1 };
-      }
-    }
+    const sort = options && options.sort ? options.sort : "-createdAt";
 
     try {
       /**
        * @see https://mongoosejs.com/docs/api.html#model_Model-find
        */
-      var documents = await this.Document.find(filters, options)
+      var documents = await this.Document.find(filters)
         .select(select)
         .skip(page > 0 ? (page - 1) * documentsPerPage : 0)
         .limit(documentsPerPage)
+        .sort(sort)
         .populate(populate)
+        .lean()
         .exec();
 
       const totalDocuments = await this.Document.countDocuments(filters);
@@ -308,17 +306,6 @@ export default class DAO {
 
     if (documents === null) {
       throw new LayerError.NOT_FOUND(`Unable to find any ${this.Type}`);
-    }
-
-    // Convert each document of the array 'documents' to a JSON object.
-    for (let i = 0; i < documents.length; i++) {
-      documents[i] = await documents[i].toObject();
-
-      // Remove the fields that are not needed in the response.
-      delete documents[i].__v;
-      delete documents[i].createdAt;
-      delete documents[i].updatedAt;
-      delete documents[i].cognito_id;
     }
 
     logger.info(
