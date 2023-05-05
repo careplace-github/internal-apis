@@ -55,11 +55,9 @@ export default class OrdersController {
 
       let cognitoUser = await AuthHelper.getAuthUser(accessToken);
 
-
       let cognitoId = cognitoUser.Username;
 
       let user = await UsersDAO.query_one({ cognito_id: cognitoId });
-
 
       let relative = await RelativesDAO.query_one(
         { user: user._id },
@@ -73,15 +71,11 @@ export default class OrdersController {
         throw new Error._400("Relative not found");
       }
 
-
       if (relative === null || relative === undefined || relative === "") {
         throw new Error._400("Relative not found");
       }
 
-      let company = await CompaniesDAO.query_one(
-        { _id: order.company },
-      
-      );
+      let company = await CompaniesDAO.query_one({ _id: order.company });
 
       if (company === null || company === undefined || company === "") {
         throw new Error._400("Company not found");
@@ -243,9 +237,66 @@ export default class OrdersController {
   }
 
   static async listOrdersByUser(req, res, next) {
-    let OrdersDAO = new ordersDAO();
-    let OrdersCRUD = new CRUD(OrdersDAO);
-    await OrdersCRUD.listByUserId(req, res, next);
+    try {
+      let response = {};
+      let accessToken;
+      let documents;
+
+      let AuthHelper = new authHelper();
+
+      let user;
+
+      let OrdersDAO = new ordersDAO();
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+
+        user = await AuthHelper.getUserFromDB(accessToken);
+      } else {
+        throw new Error._401("No Authorization header found.");
+      }
+
+      try {
+        documents = await OrdersDAO.query_list(
+          {
+            user: user._id,
+          },
+          null,
+          null,
+          null,
+          // Populate the fields relative and caregiver
+          [
+            {
+              path: "relative",
+            },
+            {
+              path: "caregiver",
+            },
+            {
+              path: "services",
+            },
+            {
+              path: "company",
+            }
+          ]
+        );
+      } catch (err) {
+        switch (err.type) {
+          default:
+            throw new Error._500(err.message);
+        }
+      }
+
+      response = {
+        statusCode: 200,
+        data: documents,
+      };
+
+      next(response);
+    } catch (error) {
+      logger.error(error);
+      next(error);
+    }
   }
 
   static async listOrdersByCompany(req, res, next) {
@@ -290,31 +341,31 @@ export default class OrdersController {
           null,
           null,
           null,
-          
-             [
-              
-              {
-                path: "user",
-                model: "marketplace_users",
-                select: "-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v",
-              },
-              {
-                path: "relative",
-                model: "Relative",
-                select: "-_id -createdAt -updatedAt -user -__v",
-              },
-              {
-                path: "caregiver",
-                model: "Caregiver",
-                select: "-_id -createdAt -updatedAt -cognito_id -stripe_information -settings -__v",
-              },
-              {
-                path: "services",
-                model: "Service",
-                select: "-_id -createdAt -updatedAt -__v",
-              },
-            ],
-          
+
+          [
+            {
+              path: "user",
+              model: "marketplace_users",
+              select:
+                "-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v",
+            },
+            {
+              path: "relative",
+              model: "Relative",
+              select: "-_id -createdAt -updatedAt -user -__v",
+            },
+            {
+              path: "caregiver",
+              model: "Caregiver",
+              select:
+                "-_id -createdAt -updatedAt -cognito_id -stripe_information -settings -__v",
+            },
+            {
+              path: "services",
+              model: "Service",
+              select: "-_id -createdAt -updatedAt -__v",
+            },
+          ]
         );
       } catch (err) {
         console.log(`ERROR 5: ${err}`);
