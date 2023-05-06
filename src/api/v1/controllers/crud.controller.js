@@ -401,12 +401,9 @@ export default class CRUD_Methods {
       }
 
       try {
-        documents = await this.DAO.query_list(
-          {
-            company: { $eq: companyId },
-          },
-          
-        );
+        documents = await this.DAO.query_list({
+          company: { $eq: companyId },
+        });
       } catch (err) {
         console.log(`ERROR 5: ${err}`);
         switch (err.type) {

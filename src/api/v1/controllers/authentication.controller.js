@@ -16,6 +16,7 @@ import {
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
 } from "../../../config/constants/index.js";
 import { countries } from "../../../assets/data/countries.js";
+import stripe from "../services/stripe.service.js";
 
 export default class AuthenticationController {
   /**
@@ -38,9 +39,10 @@ export default class AuthenticationController {
 
       Cognito = new cognito(clientId);
 
-      let newUser = req.body;
+      let newUser = req.body.user;
       let cognitoResponse;
       let MarketplaceUsersDAO;
+      let refreshToken;
 
       let mongodbResponse;
 
@@ -48,19 +50,11 @@ export default class AuthenticationController {
         MarketplaceUsersDAO = new marketplaceUsersDAO();
       }
 
-      // From /src/aseets/data/countries.js get the country code from the country name of the user (newUser.address.country)
-      let countryPhone = countries.find(
-        (country) => country.code === newUser.address.country
-      ).phone;
-
-      // Add the country code to the user phone number
-      let newUserPhone = `+${countryPhone}${newUser.phone}`;
-
       try {
         cognitoResponse = await Cognito.addUser(
           newUser.email,
           newUser.password,
-          newUserPhone
+          newUser.phone
         );
       } catch (err) {
         switch (err.type) {
@@ -74,12 +68,11 @@ export default class AuthenticationController {
 
       newUser.cognito_id = cognitoResponse.UserSub;
 
-      delete newUser.password;
-      delete newUser.confirmPassword;
-
       try {
         // Attempting to add a new user to the database
         mongodbResponse = await MarketplaceUsersDAO.create(newUser);
+        delete mongodbResponse._id;
+        delete mongodbResponse.cognito_id;
       } catch (err) {
         switch (err.type) {
           case "INVALID_PARAMETER":
@@ -90,13 +83,25 @@ export default class AuthenticationController {
         }
       }
 
+      delete newUser.password;
+      delete newUser.confirmPassword;
+
       response.statusCode = 200;
       response.data = mongodbResponse;
 
       next(response);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      switch (err.type) {
+        case "INVALID_PARAMETER":
+          throw new Error._400(err.message);
+
+        default:
+          throw new Error._500(err.message);
+      }
     }
+  }
+  catch(error) {
+    next(error);
   }
 
   /**
@@ -156,7 +161,9 @@ export default class AuthenticationController {
 
       let clientId;
       let Cognito;
+      let StripeService = new stripe();
       let app;
+      let user;
 
       if (req.url === `/auth/marketplace/verify/confirmation-code`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
@@ -186,6 +193,50 @@ export default class AuthenticationController {
             throw new Error._500(error.message);
         }
       }
+
+      /**
+       * Get the user from the database
+       */
+      let MarketplaceUsersDAO = new marketplaceUsersDAO();
+
+      try{
+       user = await MarketplaceUsersDAO.query_one({
+        email: req.body.email,
+      });
+    }
+    catch(error){
+      throw new Error._500(error.message);
+    }
+
+      /**
+       * After the user is successfully confirmed we need to create a customer_id in Stripe
+       */
+      const customer_id = (await StripeService.createCustomer(
+        {
+          email: user.email,
+          name: user.name,
+          phone: user.phone,
+
+        })).id;
+
+        console.log("STRIPE: " + JSON.stringify(customer_id, null, 2));
+
+      /**
+       * Update the user in the database with the customer_id
+       */
+      try{
+
+        user.stripe_information = {
+          customer_id: customer_id,
+        };
+
+        await MarketplaceUsersDAO.update(user);
+      }
+      catch(error){
+        throw new Error._500(error.message);
+      }
+
+
 
       response.statusCode = 200;
       response.data = {

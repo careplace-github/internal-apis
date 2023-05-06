@@ -39,6 +39,21 @@ router
     UsersController.listUsersByCompany
   );
 
+  router.route("/companies/users/:id")
+    .get(
+      AuthenticationGuard,
+      AccessGuard("crm"),
+      UsersController.retrieve)
+    .put(
+      AuthenticationGuard,
+      AccessGuard("crm"),
+      UsersController.update)
+    .delete(
+      AuthenticationGuard,
+      AccessGuard("crm"),
+      UsersController.delete);
+
+
 router
   .route("/companies/external-accounts")
   .post(
