@@ -26,17 +26,9 @@ export default class DashboardController {
       throw new Error._401("Missing required access token.");
     }
 
-    let companyId = await AuthHelper.getUserAttributes(accessToken).then(
-      (attributes) => {
-        console.log(attributes);
-        // Get the company id from the user's attributes
-        let companyId = attributes.find((attribute) => {
-          return attribute.Name === "custom:company";
-        }).Value;
+    let user = await AuthHelper.getUserFromDB(accessToken);
 
-        return companyId;
-      }
-    );
+    let companyId = user.company._id;
 
     if (companyId === null || companyId === undefined) {
       throw new Error._401("Missing required access token.");
