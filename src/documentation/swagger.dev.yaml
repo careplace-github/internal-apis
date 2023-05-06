@@ -1,0 +1,3722 @@
+openapi: 3.0.3
+info:
+  title: Careplace - Backend REST API
+  description: |-
+    Careplace REST API Documentation - OpenAPI Specification 3.0.3.
+    This REST API is used to manage all Careplace applications.
+  termsOfService: "https://www.careplace.pt/termos-e-condicoes"
+  contact:
+    email: admin@careplace.pt
+  version: 1.0.0
+servers:
+  - url: "http://localhost:8080/api/v1"
+    description: Development Environment
+    default: true
+ 
+tags:
+  - name: Authentication
+    description: Authentication operations
+  - name: Users
+    description: Users operations
+  - name: Companies
+    description: Companies operations
+  - name: Orders
+    description: Orders operations
+  - name: Checkout
+    description: Checkout operations
+  - name: Payment Methods
+    description: Payment Methods operations
+  - name: Calendar
+    description: Calendar operations
+  - name: Services
+    description: Services operations
+  - name: Files
+    description: Files operations
+  - name: Admin
+    description: Admin operations
+paths:
+  /auth/crm/login:
+    post:
+      tags:
+        - Authentication
+      summary: CRM Login
+      description: Logs in a user to the CRM
+      operationId: crmLogin
+      requestBody:
+        description: Login user to the CRM
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: owner@staging.careplace.pt
+                password:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CRM_User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token
+  /auth/marketplace/login:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Login
+      description: Logs in a user to the Marketplace
+      operationId: marketplaceLogin
+      requestBody:
+        description: Login user to the Marketplace
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+                password:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Marketplace_User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token
+  /auth/crm/send/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: CRM Forgot Password
+      description: Sends a forgot password code to the CRM user email.
+      operationId: crmForgotPassword
+      requestBody:
+        description: Send forgot password code to the CRM user email
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+  /auth/marketplace/send/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Forgot Password
+      description: Sends a forgot password code to the Marketplace user email.
+      operationId: marketplaceForgotPassword
+      requestBody:
+        description: Send forgot password code to the Marketplace user email
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: owner@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+  /auth/crm/verify/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: CRM Verify Forgot Password
+      description: >-
+        Verifies the forgot password code sent to the CRM user email and changes
+        the password.
+      operationId: crmForgotPassword
+      requestBody:
+        description: >-
+          Verify forgot password code sent to the CRM user email and change the
+          password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: owner@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/marketplace/verify/forgot-password-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Verify Forgot Password
+      description: >-
+        Verifies the forgot password code sent to the Marketplace user email and
+        changes the password.
+      operationId: crmForgotPassword
+      requestBody:
+        description: >-
+          Verify forgot password code sent to the Marketplace user email and
+          change the password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/marketplace/send/confirmation-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Send Confirmation Code
+      description: >-
+        Sends a confirmation code to the Marketplace user phone number. This
+        code is used to confirm the phone number address so that the user can
+        login. This endpoint should also be used to resend the confirmation
+        code.
+      operationId: marketplaceSendConfirmationCode
+      requestBody:
+        description: Send confirmation code to the Marketplace phone number.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Confirmation code sent successfully.
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User does not exist.
+                  type:
+                    type: string
+                    example: BAD_REQUEST
+  /auth/marketplace/verify/confirmation-code:
+    post:
+      tags:
+        - Authentication
+      summary: Marketplace Verify Confirmation Code
+      description: >-
+        Verifies the confirmation code sent to the Marketplace user phone number
+        and confirms the phone number  so that the user can login.
+      operationId: marketplaceVerifyConfirmationCode
+      requestBody:
+        description: >-
+          Verify confirmation code sent to the Marketplace user phone number and
+          confirm the phone number  so that the user can login.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@staging.careplace.pt
+                code:
+                  type: string
+                  example: 123456
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Forgot password code sent successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid code. Please request a new code.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout
+      description: Logs out current logged in user session
+      operationId: logout
+      security:
+        - jwt_context:
+            - "write:pets"
+            - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User logged out successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /auth/change-password:
+    post:
+      tags:
+        - Authentication
+      summary: Change password
+      description: Changes the password of the current logged in user
+      operationId: changePassword
+      requestBody:
+        description: Change password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+                newPassword:
+                  type: string
+                  example: CareplaceDemo-123!
+        required: true
+      security:
+        - jwt_context:
+            - "write:pets"
+            - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password changed successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                      bad_request:
+                        value:
+                          message: Bad Request
+                      token:
+                        value:
+                          message: Missing token
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /users/account:
+    get:
+      tags:
+        - Users
+      summary: Get user account
+      description: Get user account.
+      operationId: getUserAccount
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /users/orders:
+    get:
+      tags:
+        - Users
+      summary: Get user orders
+      description: Get user orders.
+      operationId: getUserOrders
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/users/orders/{orderId}":
+    get:
+      tags:
+        - Users
+      summary: Get user order
+      description: Get user order.
+      operationId: getUserOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/users/orders/{orderId}/cancel":
+    post:
+      tags:
+        - Users
+      summary: Cancel user order
+      description: Cancel user order.
+      operationId: cancelUserOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Order cancelled successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /users/relatives:
+    get:
+      tags:
+        - Users
+      summary: Get user relatives
+      description: Get user relatives.
+      operationId: getUserRelatives
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relatives:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Relative"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Users
+      summary: Create user relative
+      description: Create user relative.
+      operationId: createUserRelative
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Create user relative.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: null
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relative:
+                    $ref: "#/components/schemas/Relative"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/users/relatives/{relativeId}":
+    get:
+      tags:
+        - Users
+      summary: Get user relative
+      description: Get user relative.
+      operationId: getUserRelative
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: relativeId
+          in: path
+          description: Relative ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relative:
+                    $ref: "#/components/schemas/Relative"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Users
+      summary: Update user relative
+      description: Update user relative.
+      operationId: updateUserRelative
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: relativeId
+          in: path
+          description: Relative ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update user relative.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: John Doe
+                email:
+                  type: string
+                  example: null
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relative:
+                    $ref: "#/components/schemas/Relative"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Users
+      summary: Delete user relative
+      description: Delete user relative.
+      operationId: deleteUserRelative
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: relativeId
+          in: path
+          description: Relative ID
+          required: true
+          schema:
+            type: string
+          example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Relative deleted successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/search:
+    get:
+      tags:
+        - Companies
+      summary: Search companies
+      description: Search companies by name.
+      operationId: searchCompanies
+      parameters:
+        - name: services
+          in: query
+          description: Services
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          example:
+            - 63a33cb60321ea2b81253140
+            - 63a4addf387528ade98712ee
+        - name: sortBy
+          in: query
+          description: Sort by attribute
+          required: false
+          schema:
+            type: string
+          example: name
+        - name: sortOrder
+          in: query
+          description: Sort order
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          example: asc
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+          example: 1
+        - name: limit
+          in: query
+          description: Limit per page
+          required: false
+          schema:
+            type: integer
+          example: 10
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  companies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/{companyId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company
+      description: Get company by id.
+      operationId: getCompany
+      parameters:
+        - name: companyId
+          in: path
+          description: Company id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company:
+                    $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/dashboard:
+    get:
+      tags:
+        - Companies
+      summary: Get company dashboard
+      description: Get company dashboard.
+      operationId: getCompanyDashboard
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company:
+                    $ref: "#/components/schemas/Company"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/orders:
+    get:
+      tags:
+        - Companies
+      summary: Get company orders
+      description: Get company orders.
+      operationId: getCompanyOrders
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company order
+      description: Create company order.
+      operationId: createCompanyOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Create company order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: null
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company order
+      description: Get company order by id.
+      operationId: getCompanyOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Companies
+      summary: Update company order
+      description: Update company order by id.
+      operationId: updateCompanyOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      requestBody:
+        description: Order object that needs to be updated
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company order
+      description: >-
+        Delete company order by id. This only works for orders that were created
+        by the company. Orders that were created by the user (from the
+        Marketplace) can only be declined by using the
+        '/companies/orders/{orderId}/decline' endpoint.
+      operationId: deleteCompanyOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/decline":
+    post:
+      tags:
+        - Companies
+      summary: Reject order
+      description: Reject order by id.
+      operationId: rejectOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/accept":
+    post:
+      tags:
+        - Companies
+      summary: Accept order
+      description: Accept order by id.
+      operationId: acceptOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/send-quote":
+    post:
+      tags:
+        - Companies
+      summary: Send quote
+      description: Send quote by id.
+      operationId: sendQuote
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quote:
+                  type: string
+                  example: 100
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/orders/{orderId}/schedule-visit":
+    post:
+      tags:
+        - Companies
+      summary: Schedule visit
+      description: Schedule visit by id.
+      operationId: scheduleVisit
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                time:
+                  type: string
+                  example: 600
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/users:
+    get:
+      tags:
+        - Companies
+      summary: Get company users
+      description: Get company users.
+      operationId: getCompanyUsers
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company user
+      description: Create company user.
+      operationId: createCompanyUser
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: null
+  "/companies/users/{userId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company user
+      description: Get company user by id.
+      operationId: getCompanyUser
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Companies
+      summary: Update company user
+      description: Update company user by id.
+      operationId: updateCompanyUser
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: null
+                role:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company user
+      description: Delete company user by id.
+      operationId: deleteCompanyUser
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+          example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/CRM_User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /companies/external-accounts:
+    get:
+      tags:
+        - Companies
+      summary: Get company external accounts
+      description: Get company external accounts.
+      operationId: getCompanyExternalAccounts
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccounts:
+                    type: array
+                    items: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Companies
+      summary: Create company external account
+      description: Create company external account.
+      operationId: createCompanyExternalAccount
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                externalAccountId:
+                  type: string
+                  example: 123
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/companies/external-accounts/{externalAccountId}":
+    get:
+      tags:
+        - Companies
+      summary: Get company external account
+      description: Get company external account by id.
+      operationId: getCompanyExternalAccount
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: externalAccountId
+          in: path
+          description: External account id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Companies
+      summary: Delete company external account
+      description: Delete company external account by id.
+      operationId: deleteCompanyExternalAccount
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: externalAccountId
+          in: path
+          description: External account id
+          required: true
+          schema:
+            type: string
+          example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  externalAccount:
+                    $ref: |+
+                      #/components
+
+
+  '/checkout/orders/{orderId}"':
+    get:
+      tags:
+        - Checkout
+      summary: Get order
+      description: Get order by id.
+      operationId: getOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/checkout/orders/{orderId}/payment-intent":
+    post:
+      tags:
+        - Checkout
+      summary: Create payment intent
+      description: >-
+        Create payment intent for order. If the user does not have a payment
+        method, the payment intent will be created with the payment method token
+        from the request body. To create a payment method token, use the
+        Stripe.js library. If the user has a payment method, the payment intent
+        will be created with the payment method id from the request body. @see
+        https://stripe.com/docs/stripe-js
+      operationId: createPaymentIntent
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id
+          required: true
+          schema:
+            type: string
+          example: 63cad0df068be823de4ad559
+      requestBody:
+        description: Create payment intent for order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: tok_pt
+                taxId:
+                  type: string
+                  example: 123456789
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentIntent: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Create order
+      description: Create order.
+      operationId: createOrder
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Create order.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  $ref: "#/components/schemas/Order"
+        required: true
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: "#/components/schemas/Order"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /payment-methods:
+    get:
+      tags:
+        - Payment Methods
+      summary: Get all payment methods
+      description: Get all payment methods for the logged in user.
+      operationId: getPaymentMethods
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentMethods:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: pm_1Hq0Z2JZ2Z2Z2Z2Z2Z2Z2Z2Z
+                        card:
+                          type: object
+                          properties:
+                            brand:
+                              type: string
+                              example: Visa
+                            exp_month:
+                              type: integer
+                              example: 12
+                            exp_year:
+                              type: integer
+                              example: 2022
+                            last4:
+                              type: string
+                              example: 4242
+                  total:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Payment Methods
+      summary: Create a payment method
+      description: >-
+        Create a payment method. At the moment it only supports credit/debit
+        cards. To create the payment_method_token the Client Application needs
+        to use the Stripe JS library. @see https://stripe.com/docs/stripe-js
+      operationId: createPaymentMethod
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Create a payment method
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_method_token:
+                  type: string
+                  example: tok_pt
+        responses:
+          "200":
+            description: Ok
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: pm_1Hq0Z2JZ2Z2Z2Z2Z2Z2Z2Z2Z
+                    object:
+                      type: string
+                      example: payment_method
+                    billing_details:
+                      type: object
+                      properties:
+                        address:
+                          type: object
+                          properties:
+                            city:
+                              type: string
+                              example: null
+                            country:
+                              type: string
+                              example: null
+                            line1:
+                              type: string
+                              example: null
+                            line2:
+                              type: string
+                              example: null
+                            postal_code:
+                              type: string
+                              example: null
+                            state:
+                              type: string
+                              example: null
+                        email:
+                          type: string
+                          example: null
+                        name:
+                          type: string
+                          example: null
+                        phone:
+                          type: string
+                          example: null
+                    card:
+                      type: object
+                      properties:
+                        brand:
+                          type: string
+                          example: Visa
+                        checks:
+                          type: object
+                          properties:
+                            address_line1_check:
+                              type: string
+                              example: null
+                            address_postal_code_check:
+                              type: string
+                              example: null
+                            cvc_check:
+                              type: string
+                              example: null
+                        country:
+                          type: string
+                          example: US
+                        exp_month:
+                          type: integer
+                          example: 12
+                        exp_year:
+                          type: integer
+                          example: 2022
+                        fingerprint:
+                          type: string
+                          example: 1Hq0Z2JZ2Z2Z2Z2Z2Z2Z2Z2Z
+                        funding:
+                          type: string
+                          example: credit
+                        generated_from:
+                          type: object
+                          properties:
+                            charge:
+                              type: string
+                              example: null
+                            payment_method_details:
+                              type: object
+                              properties:
+                                card:
+                                  type: string
+                                  example: null
+                                type:
+                                  type: string
+                                  example: null
+                        last4:
+                          type: string
+                          example: 4242
+                        networks:
+                          type: object
+                          properties:
+                            available:
+                              type: array
+                              items:
+                                type: string
+                                example: null
+                            preferred:
+                              type: string
+                              example: null
+                        three_d_secure_usage:
+                          type: object
+                          properties:
+                            supported:
+                              type: boolean
+                              example: null
+                        wallet:
+                          type: object
+                          properties:
+                            amex_express_checkout:
+                              type: object
+                              properties:
+                                dynamic_last4:
+                                  type: string
+                                  example: null
+                            apple_pay:
+                              type: object
+                              properties:
+                                dynamic_last4:
+                                  type: string
+                                  example: null
+                            dynamic_last4:
+                              type: string
+                              example: null
+                            google_pay:
+                              type: object
+                              properties:
+                                dynamic_last4:
+                                  type: string
+                                  example: null
+                            masterpass:
+                              type: object
+                              properties:
+                                billing_address:
+                                  type: object
+                                  properties:
+                                    city:
+                                      type: string
+                                      example: null
+                                    country:
+                                      type: string
+                                      example: null
+                                    line1:
+                                      type: string
+  "/payment-methods/{paymentMethodId}":
+    get:
+      tags:
+        - Payment Methods
+      summary: Get a payment method
+      description: Get a payment method
+      operationId: getPaymentMethod
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: Payment method id
+          required: true
+          schema:
+            type: string
+            example: 5e7f7b9b0f8b9c0017b0b0b8
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentMethod: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Payment Methods
+      summary: Delete a payment method
+      description: Delete a payment method
+      operationId: deletePaymentMethod
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: paymentMethodId
+          in: path
+          description: Payment method id
+          required: true
+          schema:
+            type: string
+            example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Payment method deleted successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /calendar/events:
+    get:
+      tags:
+        - Calendar
+      summary: Get all events
+      description: Get all events for the logged in user.
+      operationId: getEvents
+      security:
+        - jwt_context:
+            - write
+            - read
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  total:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    post:
+      tags:
+        - Calendar
+      summary: Create an event
+      description: Create an event
+      operationId: createEvent
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Create an event
+        content:
+          application/json:
+            schema:
+              ref: "#/components/schemas/Event"
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/calendar/events/{eventId}":
+    get:
+      tags:
+        - Calendar
+      summary: Get an event
+      description: Get an event
+      operationId: getEvent
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: 5e1f9b9b9b9b9b9b9b9b9b9b
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  event:
+                    $ref: "#/components/schemas/Event"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    put:
+      tags:
+        - Calendar
+      summary: Update an event
+      description: Update an event
+      operationId: updateEvent
+      security:
+        - jwt_context:
+            - write
+            - read
+      params:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: 5e1f9b9b9b9b9b9b9b9b9b9b
+      requestBody:
+        description: Update an event
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: string
+                  example: 5e1f9b9b9b9b9b9b9b9b9b9b
+                title:
+                  type: string
+                  example: Event title
+                description:
+                  type: string
+                  example: Event description
+                start:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                end:
+                  type: string
+                  example: 2020-01-01T00:00:00.000Z
+                allDay:
+                  type: boolean
+                  example: false
+                textColor:
+                  type: string
+                  example: "#FFFFFF"
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    ref: "#/components/schemas/Event"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+    delete:
+      tags:
+        - Calendar
+      summary: Delete an event
+      description: Delete an event
+      operationId: deleteEvent
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Event deleted
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /services:
+    get:
+      tags:
+        - Services
+      summary: Get all services
+      description: Get all services
+      operationId: getServices
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Service"
+                  total:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid request
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  /files:
+    post:
+      tags:
+        - Files
+      summary: Upload a file
+      description: Upload a file
+      operationId: uploadFile
+      security:
+        - jwt_context:
+            - write
+            - read
+      requestBody:
+        description: Upload a file
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+        required: true
+        security:
+          - jwt_context:
+              - "write:pets"
+              - "read:pets"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    example: 17066.pdf
+                  url:
+                    type: string
+                    example: >-
+                      https://careplace-staging.s3.eu-west-3.amazonaws.com/17066.pdf
+                  version:
+                    type: string
+                    example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+  "/files/{fileId}":
+    delete:
+      tags:
+        - Files
+      summary: Delete a file
+      description: Deletes a file
+      operationId: deleteFile
+      security:
+        - jwt_context:
+            - write
+            - read
+      parameters:
+        - name: fileId
+          in: path
+          description: File ID
+          required: true
+          schema:
+            type: string
+            example: f9f9f9f9f9f9f9f9f9f9f9f9
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  DeleteMarker:
+                    type: boolean
+                    example: true
+                  VersionId:
+                    type: string
+                    example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Missing or invalid token.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Access token is expired.
+                  type:
+                    type: string
+                    example: INVALID_REQUEST
+components:
+  schemas:
+    CRM_User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        cognito_id:
+          type: string
+          example: 39425f3b-a637-4e6a-9db4-97fd2132a416
+        profile_picture:
+          type: string
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+        company:
+          $ref: "#/components/schemas/Company"
+        name:
+          type: string
+          example: Henrique Fonseca
+        email:
+          type: string
+          example: owner@staging.careplace.pt
+        phone:
+          type: string
+          example: 912345678
+        birthdate:
+          type: date
+          exampe: 2001-01-22T00:00:00.000Z
+        gender:
+          type: string
+          example: male
+          enum:
+            - male
+            - female
+            - other
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: Rua Adriano Correia de Oliveira 4A
+            postal_code:
+              type: string
+              example: 1234-567
+            city:
+              type: string
+              example: Lisboa
+            state:
+              type: string
+              example: CA
+            country:
+              type: string
+              example: PT
+              enum:
+                - PT
+            coordinates:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 38.7222524
+                long:
+                  type: number
+                  example: -9.1393366
+        settings:
+          type: object
+          properties:
+            theme:
+              type: string
+              example: dark
+              enum:
+                - dark
+                - light
+            notifications:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                  example: true
+                sms:
+                  type: boolean
+                  example: true
+                push:
+                  type: boolean
+                  example: true
+          createdAt:
+            type: timestamp
+            example: 2019-03-27T12:00:00.000Z
+          updatedAt:
+            type: timestamp
+            example: 2019-03-27T12:00:00.000Z
+      xml:
+        name: CRM_User
+    Marketplace_User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        cognito_id:
+          type: string
+          example: 39425f3b-a637-4e6a-9db4-97fd2132a416
+        profile_picture:
+          type: string
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+        name:
+          type: string
+          example: João Antão
+        email:
+          type: string
+          example: user@staging.careplace.pt
+        phone:
+          type: string
+          example: 912345678
+        birthdate:
+          type: date
+          exampe: 2002-10-03T00:00:00.000Z
+        gender:
+          type: string
+          example: male
+          enum:
+            - male
+            - female
+            - other
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: Rua Adriano Correia de Oliveira 4A
+            postal_code:
+              type: string
+              example: 1234-567
+            city:
+              type: string
+              example: Lisboa
+            state:
+              type: string
+              example: CA
+            country:
+              type: string
+              example: PT
+              enum:
+                - PT
+            coordinates:
+              type: object
+              properties:
+                lat:
+                  type: string
+                  example: 38.71667
+                long:
+                  type: string
+                  example: -9.13333
+        stripe_information:
+          type: object
+          properties:
+            customer_id:
+              type: string
+              example: cus_63cad0df068be823de4ad559
+        settings:
+          type: object
+          properties:
+            theme:
+              type: string
+              example: dark
+              enum:
+                - dark
+                - light
+            notifications:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                  example: true
+                sms:
+                  type: boolean
+                  example: true
+                push:
+                  type: boolean
+                  example: true
+          createdAt:
+            type: timestamp
+            example: 2019-03-27T12:00:00.000Z
+          updatedAt:
+            type: timestamp
+            example: 2019-03-27T12:00:00.000Z
+      xml:
+        name: Marketplace_User
+    Caregiver:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/CRM_User"
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/Service"
+        schedule:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+    Relative:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/Marketplace_User"
+        profile_picture:
+          type: string
+          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+        name:
+          type: string
+          example: John Wick
+        kinship_degree:
+          type: object
+          properties:
+            from_user:
+              type: string
+              example: son
+              enum:
+                - father
+                - mother
+                - brother
+                - sister
+                - son
+                - daughter
+                - uncle
+                - aunt
+                - nephew
+                - niece
+                - grandparent
+                - grandchild
+                - other
+            to_user:
+              type: string
+              example: father
+              enum:
+                - father
+                - mother
+                - brother
+                - sister
+                - son
+                - daughter
+                - uncle
+                - aunt
+                - nephew
+                - niece
+                - grandparent
+                - grandchild
+                - other
+        birthdate:
+          type: date
+          example: 1347-03-27T00:00:00.000Z
+        gender:
+          type: string
+          example: male
+          enum:
+            - male
+            - female
+            - other
+        medical_conditions:
+          type: string
+          example: todo
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Company:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        business_profile:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Careplace
+            email:
+              type: string
+              example: geral@company.pt
+            phone:
+              type: string
+              example: 9CareplaceDemo-123!78
+            website:
+              type: string
+              example: www.company.pt
+            logo:
+              type: string
+              example: >-
+                https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
+            banner:
+              type: string
+              example: >-
+                https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/Service"
+        service_area:
+          type: array
+          items:
+            type: object
+            properties:
+              lat:
+                type: string
+                example: 38.71667
+              long:
+                type: string
+                example: -9.13333
+        team:
+          type: array
+          items:
+            $ref: "#/components/schemas/CRM_User"
+        legal_information:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "CAREPLACE, LDA."
+            director:
+              $ref: "#/components/schemas/CRM_User"
+            tax_id:
+              type: string
+              example: 123456789
+            business_structure:
+              type: string
+              example: Sociedade por Quotas
+            address:
+              type: object
+              properties:
+                street:
+                  type: string
+                  example: Rua Adriano Correia de Oliveira 4A
+                postal_code:
+                  type: string
+                  example: 1234-567
+                city:
+                  type: string
+                  example: Lisboa
+                state:
+                  type: string
+                  example: CA
+                country:
+                  type: string
+                  example: PT
+                  enum:
+                    - PT
+                coordinates:
+                  type: object
+                  properties:
+                    lat:
+                      type: string
+                      example: 38.71667
+                    long:
+                      type: string
+                      example: -9.13333
+        stripe_information:
+          type: object
+          properties:
+            account_id:
+              type: string
+              example: acct_63cad0df068be823de4ad559
+            customer_id:
+              type: string
+              example: cus_63cad0df068be823de4ad559
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Event:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        user:
+          $ref: "#/components/schemas/CRM_User"
+        series:
+          $ref: "#/components/schemas/Event_Series"
+        title:
+          type: string
+          example: John's Wick Birthday
+        description:
+          type: string
+          example: John's Wick Birthday Party at the Zoo
+        start:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        end:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        allDay:
+          type: boolean
+          example: false
+        location:
+          type: string
+          example: Zoo
+        textColor:
+          type: string
+          example: "#000000"
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Event_Series:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        user:
+          $ref: "#/components/schemas/CRM_User"
+        recurrency:
+          type: integer
+          example: 1
+          enum:
+            - 1
+            - 2
+            - 4
+        schedule:
+          type: array
+          items:
+            type: object
+            properties:
+              start:
+                type: timestamp
+                example: 2019-03-27T12:00:00.000Z
+              end:
+                type: timestamp
+                example: 2019-03-27T12:00:00.000Z
+        end_series:
+          type: object
+          properties:
+            ending_type:
+              type: integer
+              example: 1
+              enum:
+                - 0
+                - 1
+                - 2
+            end_date:
+              type: timestamp
+              example: 2019-03-27T12:00:00.000Z
+            end_occurrences:
+              type: integer
+              example: 10
+        title:
+          type: string
+          example: John's Wick Birthday
+        description:
+          type: string
+          example: John's Wick Birthday Party at the Zoo
+        start:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        end:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        allDay:
+          type: boolean
+          example: false
+        location:
+          type: string
+          example: Zoo
+        textColor:
+          type: string
+          example: "#000000"
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        company:
+          $ref: "#/components/schemas/Company"
+        caregiver:
+          $ref: "#/components/schemas/CRM_User"
+        user:
+          $ref: "#/components/schemas/Marketplace_User"
+        relative:
+          $ref: "#/components/schemas/Relative"
+        status:
+          type: string
+          example: pending
+          enum:
+            - pending
+            - accepted
+            - rejected
+            - cancelled
+            - completed
+        order_total:
+          description: Total price of the order
+          type: number
+          example: 100
+          required: true
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/Service"
+        schedule_information:
+          type: object
+          properties:
+            start_date:
+              type: timestamp
+              example: 2019-03-27T12:00:00.000Z
+            end_date:
+              type: timestamp
+              example: 2019-03-27T12:00:00.000Z
+            recurrency_type:
+              type: integer
+              example: 1
+              enum:
+                - 1
+                - 2
+                - 4
+            schedule:
+              type: array
+              items:
+                type: object
+                properties:
+                  week_day:
+                    type: integer
+                    example: 1
+                    enum:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                      - 5
+                      - 6
+                      - 7
+                  start:
+                    type: timestamp
+                    example: 2019-03-27T12:00:00.000Z
+                  end:
+                    type: timestamp
+                    example: 2019-03-27T12:00:00.000Z
+        address:
+          type: object
+          properties:
+            street:
+              type: string
+              example: Rua Adriano Correia de Oliveira 4A
+            postal_code:
+              type: string
+              example: 1234-567
+            city:
+              type: string
+              example: Lisboa
+            state:
+              type: string
+              example: CA
+            country:
+              type: string
+              example: PT
+              enum:
+                - PT
+            coordinates:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 38.7222524
+                long:
+                  type: number
+                  example: -9.1393366
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+    Service:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 63cad0df068be823de4ad559
+        name:
+          type: string
+          example: Bathing
+        description:
+          type: string
+          example: Bathing
+        short_description:
+          type: string
+          example: Bathing
+        image:
+          type: string
+          example: "https://www.google.com"
+        createdAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+        updatedAt:
+          type: timestamp
+          example: 2019-03-27T12:00:00.000Z
+  securitySchemes:
+    jwt_context:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token

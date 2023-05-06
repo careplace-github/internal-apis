@@ -37,7 +37,7 @@ const orderSchema = new Schema(
       // 1 -> Every 1 week -> Weekly
       // 2 -> Every 2 weeks -> Biweekly
       // 4 -> Every 4 weeks -> Monthly
-      recurrence: {
+      recurrency: {
         type: Number,
         required: true,
         enum: [0, 1, 2, 4],

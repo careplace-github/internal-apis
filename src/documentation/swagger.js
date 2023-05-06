@@ -7,7 +7,17 @@ import logger from "../logs/logger.js";
 
 import YAML from "yamljs";
 
-const swaggerSpec = YAML.load("./src/documentation/swagger-stag.yaml");
+let swaggerSpec;
+
+if (process.env.NODE_ENV === "production") {
+  swaggerSpec = YAML.load("./src/documentation/swagger.prod.yaml");
+} else if (process.env.NODE_ENV === "staging") {
+  swaggerSpec = YAML.load("./src/documentation/swagger.stag.yaml");
+} else if (process.env.NODE_ENV === "development") {
+  swaggerSpec = YAML.load("./src/documentation/swagger.dev.yaml");
+} else {
+  swaggerSpec = YAML.load("./src/documentation/swagger.dev.yaml");
+}
 
 function swaggerDocs(app, port) {
   // Swagger page
