@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import GeometryUtils from "../../utils/data/geometry.utils.js";
 import { ObjectId } from "mongodb";
-import GeoJSON from 'mongoose-geojson-schema';
-
+import GeoJSON from "mongoose-geojson-schema";
 
 const Schema = mongoose.Schema;
 
@@ -13,18 +12,17 @@ const companySchema = new Schema(
     _id: Schema.Types.ObjectId,
 
     business_profile: {
-
-      average_hourly_rate: { type: Number, required: true },
-      
       name: { type: String, required: true, unique: true },
+
+      about: { type: String, required: true },
 
       email: { type: String, required: true, unique: true },
 
       phone: { type: String, required: true, unique: true },
 
-      website: { type: String, required: false, unique: true },
+      website: { type: String, required: true, unique: true, default: "https://www.careplace.pt" },
 
-      logo: { type: String, required: false },
+      logo: { type: String, required: true },
 
       banner: { type: String, required: false },
 
@@ -34,21 +32,23 @@ const companySchema = new Schema(
         twitter: { type: String, required: false },
         linkedin: { type: String, required: false },
         youtube: { type: String, required: false },
+      },
     },
-  },
 
-  rating: {
-    average: { type: Number, required: true, default: 0 },
+    rating: {
+      average: { type: Number, required: true, default: 0 },
 
-    count: { type: Number, required: false, default: 0 },
-  },
+      count: { type: Number, required: false, default: 0 },
+    },
 
     services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
 
-  serviceArea: {
-    type: Schema.Types.MultiPolygon, // Use the GeoJSON constructor for MultiPolygon
-    required: true
-  },
+    serviceArea: {
+      type: Schema.Types.MultiPolygon,
+      required: true,
+    },
+
+    average_hourly_rate: { type: Number, required: true },
 
     team: [{ type: Schema.ObjectId, ref: "crm_users", required: false }],
 
@@ -109,26 +109,6 @@ const companySchema = new Schema(
     timestamps: true,
   }
 );
-
-/**
- * @TODO Methods that checks if the company provides services in a specific area given a lat and lng of an address. The method uses the serviceArea array of the company to create a polygon and then checks if the given point is inside the polygon.
- * @param {*} lat
- * @param {*} lng
- * @returns
- */
-companySchema.methods.providesServicesInArea = function (lat, lng) {
-  // Create an array of coordinates from the serviceArea array
-  const coordinates = this.serviceArea.map((point) => {
-    return [point.lng, point.lat];
-  });
-
-  // const polygon = new Polygon(coordinates);
-
-  //
-
-  // Check if the given point is inside the polygon
-  return polygon.containsPoint([lng, lat]);
-};
 
 /**
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
