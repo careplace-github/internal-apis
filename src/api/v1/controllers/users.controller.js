@@ -97,14 +97,6 @@ export default class UsersController {
         request.statusCode = 200;
         request.response = mongodbResponse;
 
-        /** 
-         * logger.info(
-          "Successfully fetched users from MongoDB: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
-        */
-
         return res.status(200).json(mongodbResponse);
       }
     } catch (error) {
@@ -141,8 +133,6 @@ export default class UsersController {
         length: 8,
       })
     );
-
-    logger.info("Temporary password: " + temporaryPassword + "\n");
 
     if (user.role == "admin") {
       return res.status(400).json({ error: "Cannot create admin user." });
@@ -192,8 +182,6 @@ export default class UsersController {
 
       return res.status(400).json({ error: cognitoUser.error.message });
     }
-
-    logger.info("COGNITO USER: " + JSON.stringify(cognitoUser, null, 2) + "\n");
 
     user.cognitoId = cognitoUser.UserSub;
 
@@ -261,8 +249,6 @@ export default class UsersController {
     // Insert variables into email template
     let email = await EmailHelper.getEmailWithData("crm_new_user", emailData);
 
-    // logger.info("EMAIL: " + JSON.stringify(email, null, 2) + "\n");
-
     // Send email to user
     SES.sendEmail(user.email, email.subject, email.body);
 
@@ -292,11 +278,32 @@ export default class UsersController {
 
       const userId = req.params.id;
 
-      // Get user by id
-      const user = await usersDAO.get_one(userId);
+      let CrmUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let user;
 
-      // User found
-      if (user) {
+      try {
+        // Get user by id
+        user = await CrmUsersDAO.retrieve(userId);
+      } catch (error) {
+        switch (error.type) {
+          default:
+            logger.warn("Error: " + error);
+        }
+      }
+
+      if (user == null) {
+        try {
+          user = await CaregiversDAO.retrieve(userId);
+        } catch (error) {
+          switch (error.type) {
+            default:
+              logger.warn("Error: " + error);
+          }
+        }
+      }
+
+      if (user != null) {
         request.statusCode = 200;
         request.response = user;
 
@@ -308,6 +315,7 @@ export default class UsersController {
 
         res.status(200).json(user);
       }
+
       // User does not exist
       else {
         request.statusCode = 404;
@@ -333,45 +341,83 @@ export default class UsersController {
     }
   }
 
-  static async;
-
   /**
    * @debug
    * @description
    */
   static async update(req, res, next) {
     try {
-      var request = requestUtils(req);
-
-      logger.info(
-        "Users Controller updateUser: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+      let response = {};
 
       const userId = req.params.id;
       const user = req.body;
+      let userExists;
+      let updatedUser;
+      let CrmUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
       // Check if user already exists by verifying the id
-      const userExists = await usersDAO.getUserById(userId);
+      try {
+        userExists = await CrmUsersDAO.retrieve(userId);
+
+        // If user exists, update user
+        if (userExists) {
+          // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+          updatedUser = {
+            ...userExists,
+            ...user,
+          };
+          await CrmUsersDAO.update(updatedUser);
+        }
+      } catch (error) {
+        try {
+          userExists = await CaregiversDAO.retrieve(userId);
+          if (userExists) {
+            // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+            updatedUser = {
+              ...userExists,
+              ...user,
+            };
+            await CaregiversDAO.update(updatedUser);
+          }
+        } catch (error) {
+          try {
+            userExists = await MarketplaceUsersDAO.retrieve(userId);
+            if (userExists) {
+              // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+              updatedUser = {
+                ...userExists,
+                ...user,
+              };
+              await MarketplaceUsersDAO.update(updatedUser);
+            }
+          } catch (error) {
+            switch (error.type) {
+              default:
+                logger.warn("Error: " + error);
+            }
+          }
+        }
+      }
+
       if (!userExists) {
-        request.statusCode = 400;
-        request.response = { message: "User does not exist." };
+        response.statusCode = 400;
+        response.response = { message: "User does not exist." };
 
         logger.warn(
           "Users Controller updateUser error: " +
-            JSON.stringify(request, null, 2) +
+            JSON.stringify(response, null, 2) +
             "\n"
         );
 
-        return res.status(400).send("User does not exist");
+        next(response);
       } else {
         // Update user
-        const updatedUser = await usersDAO.updateUser(userId, user);
 
         if (updatedUser) {
-          request.statusCode = 200;
-          request.response = updatedUser;
+          response.statusCode = 200;
+          response.response = updatedUser;
 
           logger.info(
             "USERS-DAO UPDATE_USER RESULT: " +
@@ -379,19 +425,8 @@ export default class UsersController {
               "\n"
           );
 
-          res.status(200).json(updatedUser);
+          next(response);
         }
-
-        request.statusCode = 200;
-        request.response = updatedUser;
-
-        logger.info(
-          "USERS-DAO UPDATE_USER RESULT: " +
-            JSON.stringify(updatedUser, null, 2) +
-            "\n"
-        );
-
-        res.status(200).json(updatedUser);
       }
     } catch (error) {
       next(error);
@@ -436,21 +471,13 @@ export default class UsersController {
 
       companyId = user.company._id;
 
-      let crmUsers = await CrmUsersDAO.query_list(
-        {
-          company: companyId,
-        },
-        
-      );
+      let crmUsers = await CrmUsersDAO.query_list({
+        company: companyId,
+      });
 
-      let caregivers = await CaregiversDAO.query_list(
-        {
-          company: companyId,
-        },
-        {
-          name: 1,
-        }
-      );
+      let caregivers = await CaregiversDAO.query_list({
+        company: companyId,
+      });
 
       for (let i = 0; i < crmUsers.length; i++) {
         companyUsers.push(crmUsers[i]);
@@ -581,7 +608,188 @@ export default class UsersController {
           connectedAccountId
         );
 
-        user.company.stripe_information.external_accounts = externalAccounts.data;
+        user.company.stripe_information.external_accounts =
+          externalAccounts.data;
+      }
+
+      let customerId;
+      let paymentMethods;
+
+      /**
+       * Get Payment Methods from Stripe
+       */
+      if (app === "marketplace") {
+        customerId = user.stripe_information.customer_id;
+        
+        const default_payment_method = (await Stripe.getCustomer(customerId)).default_source;
+
+        user.stripe_information.default_payment_method = default_payment_method;
+      }
+
+      // Convert user to JSON
+
+      user.phone_verified = phoneVerified;
+      user.email_verified = emailVerified;
+      delete user.createdAt;
+      delete user.updatedAt;
+      delete user.__v;
+      delete user.cognito_id;
+
+      response.statusCode = 200;
+      response.data = user;
+
+      next(response);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async updateAccount(req, res, next) {
+    try {
+      logger.info(
+        `Users Controller ACCOUNT Request: \n ${JSON.stringify(
+          req.body,
+          null,
+          2
+        )}`
+      );
+
+      let response = {};
+      let responseAux = {};
+
+      let cognitoId;
+      let app;
+      let accessToken;
+
+      let cognitoResponse = {};
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(" ")[1];
+      } else {
+        throw new Error._400("No authorization token provided.");
+      }
+
+      let AuthHelper = new authHelper();
+
+      let clientId = await AuthHelper.getClientId(accessToken);
+
+      let userAttributes = await AuthHelper.getUserAttributes(accessToken);
+
+      cognitoId = userAttributes.find((attribute) => {
+        return attribute.Name === "sub";
+      }).Value;
+
+      let phoneVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "phone_number_verified";
+      }).Value;
+
+      let emailVerified = userAttributes.find((attribute) => {
+        return attribute.Name === "email_verified";
+      }).Value;
+
+      /**
+       * Get App from Client ID (CRM or Marketplace)
+       */
+      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
+        app = "crm";
+      } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        app = "marketplace";
+      }
+
+      let user;
+      let updateUser;
+
+      if (app === "crm") {
+        try {
+          let CrmUsersDAO = new crmUsersDAO();
+
+          user = await CrmUsersDAO.query_one(
+            {
+              cognito_id: { $eq: cognitoId },
+            },
+            {
+              path: "company",
+              model: "Company",
+              populate: [
+                {
+                  path: "services",
+                  model: "Service",
+                  select: "-__v -created_at -updated_at -translations",
+                },
+                {
+                  path: "team",
+                  model: "crm_users",
+                  select:
+                    "-__v -createdAt -updatedAt -cognito_id -settings -company",
+                },
+              ],
+              select: "-__v -createdAt -updatedAt",
+            }
+          );
+        } catch (error) {
+          switch (error.type) {
+            case "NOT_FOUND":
+              throw new Error._404("User not found.");
+            default:
+              throw new Error._500(error);
+          }
+        }
+      }
+
+      if (app === "marketplace") {
+        try {
+          let MarketplaceUsersDAO = new marketplaceUsersDAO();
+
+          user = await MarketplaceUsersDAO.query_one({
+            cognito_id: { $eq: cognitoId },
+          });
+
+          /**
+           * Delete fields that are not allowed to be updated
+           */
+          delete req.body._id;
+          delete req.body.stripe_information;
+          delete req.body.email_verified;
+          delete req.body.phone_verified;
+          delete req.body.cognito_id;
+          delete req.body.createdAt;
+          delete req.body.updatedAt;
+          delete req.body.__v;
+
+          updateUser = {
+            ...user.toJSON(),
+            ...req.body.user,
+          };
+
+          updateUser = await MarketplaceUsersDAO.update(updateUser);
+
+          user = updateUser;
+        } catch (error) {
+          switch (error.type) {
+            case "NOT_FOUND":
+              throw new Error._404("User not found.");
+            default:
+              throw new Error._500(error);
+          }
+        }
+      }
+
+      /**
+       * Get External Accounts from Stripe
+       */
+      let Stripe = new stripe();
+      let connectedAccountId;
+      let externalAccounts;
+      if (app === "crm" && user.company.stripe_information.account_id) {
+        connectedAccountId = user.company.stripe_information.account_id;
+
+        externalAccounts = await Stripe.listExternalAccounts(
+          connectedAccountId
+        );
+
+        user.company.stripe_information.external_accounts =
+          externalAccounts.data;
       }
 
       let customerId;
@@ -589,10 +797,6 @@ export default class UsersController {
       if (app === "marketplace") {
         customerId = user.stripe_information.customer_id;
         paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
-
-        logger.info(
-          "Payment Methods: " + JSON.stringify(paymentMethods, null, 2)
-        );
 
         user.stripe_information.payment_methods = paymentMethods;
       }

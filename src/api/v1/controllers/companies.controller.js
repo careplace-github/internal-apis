@@ -13,15 +13,9 @@ import authHelper from "../helpers/auth/auth.helper.js";
 
 import * as Error from "../utils/errors/http/index.js";
 import * as LayerError from "../utils/errors/layer/index.js";
-import { model } from "mongoose";
 
 export default class CompaniesController {
-  static async create(req, res, next) {
-    let CompaniesDAO = new companiesDAO();
-    let CompaniesCRUD = new CRUD(CompaniesDAO);
-
-    await CompaniesCRUD.create(req, res, next);
-  }
+  static async create(req, res, next) {}
 
   static async retrieve(req, res, next) {
     let CompaniesDAO = new companiesDAO();
@@ -31,26 +25,131 @@ export default class CompaniesController {
   }
 
   static async update(req, res, next) {
-    let CompaniesDAO = new companiesDAO();
-    let CompaniesCRUD = new CRUD(CompaniesDAO);
+    try {
+      let response = {};
 
-    await CompaniesCRUD.update(req, res, next);
+      let companyId = await req.params.id;
+      let company = req.body;
+      let companyExists;
+      let CompaniesDAO = new companiesDAO();
+
+      try {
+        companyExists = await CompaniesDAO.retrieve(companyId);
+      } catch (err) {
+        console.log(err);
+        if (err.type === "NOT_FOUND") {
+          throw new Error._400(`${this.DAO.Type} does not exist.`);
+        }
+      }
+      if (req.body.serviceArea && req.body.serviceArea.length !== 0) {
+        company.serviceArea = req.body.serviceArea;
+      }
+
+      // Get the Event from the database and substitute the values that are in the request body.
+
+      let updateCompany = {
+        ...companyExists,
+        ...company,
+      };
+
+      let updatedCompany = await CompaniesDAO.update(updateCompany);
+
+      response.statusCode = 200;
+      response.data = updatedCompany;
+
+      next(response);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
   }
 
   static async searchCompanies(req, res, next) {
     let filters = {};
     let options = {};
-    let page = req.query.page ? req.query.page : 0;
-    let documentsPerPage = req.query.documentsPerPage
-      ? req.query.documentsPerPage
-      : 10;
+    let page = req.query.page ? parseInt(req.query.page) : 1;
+    let documentsPerPage = parseInt(req.query.documentsPerPage);
 
     // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
     if (req.query.sortBy) {
-      // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-      // Otherwise, we will by default sort the results by ascending order.
-      options.sort = {
-        [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+      if (req.query.sortBy === "rating") {
+        // sort by company.rating.average
+        options.sort = {
+          "rating.average": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+      if (req.query.sortBy === "price") {
+        // sort by company.business_profile.average_hourly_rate
+        options.sort = {
+          "business_profile.average_hourly_rate":
+            req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+
+      if (req.query.sortBy === "name") {
+        options.sort = {
+          "business_profile.name": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      } else {
+        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
+        // Otherwise, we will by default sort the results by ascending order.
+        options.sort = {
+          [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+    }
+
+    // If the lat and lng query parameters are provided, we'll add them to the filter object.
+    if (req.query.lat && req.query.lng) {
+      filters["serviceArea"] = {
+        $geoIntersects: {
+          $geometry: {
+            type: "Point",
+            //coordinates: [38.74733186331398, -9.28920997678132]
+            coordinates: [parseFloat(req.query.lat), parseFloat(req.query.lng)],
+          },
+        },
+      };
+    }
+
+    // If the services query parameter is provided, we'll add it to the filter object.
+    if (req.query.services) {
+      // Search for all companies that have all the services provided in the services query parameter. The company may have more services than the ones provided in the services query parameter.
+      filters["services"] = {
+        $all: req.query.services.split(","),
+      };
+    }
+
+    // If the minRating query parameter is provided, we'll add it to the filter object.
+    if (req.query.minRating) {
+      filters["rating.average"] = {
+        ...filters["rating.average"],
+        $gte: parseFloat(req.query.minRating),
+      };
+    }
+
+    // If the maxRating query parameter is provided, we'll add it to the filter object.
+    if (req.query.maxRating) {
+      filters["rating.average"] = {
+        ...filters["rating.average"],
+        $lte: parseFloat(req.query.maxRating),
+      };
+    }
+
+    // If the maxPrice query parameter is provided, we'll add it to the filter object.
+    if (req.query.maxPrice) {
+      filters["business_profile.average_hourly_rate"] = {
+        ...filters["business_profile.average_hourly_rate"],
+        $lte: parseFloat(req.query.maxPrice),
+      };
+    }
+
+    // If the minPrice query parameter is provided, we'll add it to the filter object.
+    if (req.query.minPrice) {
+      // Add the minPrice query parameter to the filter object without overriding the maxPrice query parameter.
+      filters["business_profile.average_hourly_rate"] = {
+        ...filters["business_profile.average_hourly_rate"],
+        $gte: parseFloat(req.query.minPrice),
       };
     }
 
@@ -61,7 +160,7 @@ export default class CompaniesController {
       page,
       documentsPerPage,
       null,
-      "-_id -plan -legal_information -team -stripe_information -billing_address"
+      "-plan -legal_information -team -stripe_information -billing_address -createdAt -updatedAt -__v"
     );
 
     let response = {
