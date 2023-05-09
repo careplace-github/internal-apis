@@ -8,5 +8,5 @@ ENV NODE_ENV=development
 
 RUN npm install --legacy-peer-deps
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "start" ]
 
