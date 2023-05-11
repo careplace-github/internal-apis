@@ -37,6 +37,24 @@ const companySchema = new Schema<ICompany>(
         linkedin: { type: String, required: false },
         youtube: { type: String, required: false },
       },
+
+      address: {
+        street: { type: String, required: true },
+
+        postal_code: { type: String, required: true },
+
+        state: { type: String, required: false },
+
+        city: { type: String, required: true },
+
+        country: {
+          type: String,
+          required: true,
+          enum: ['PT', 'ES', 'US', 'UK'],
+        },
+
+        coordinates: { type: Array, required: false },
+      },
     },
 
     rating: {
