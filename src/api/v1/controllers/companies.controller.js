@@ -1,18 +1,18 @@
-import crmUsersDAO from "../db/crmUsers.dao.js";
-import ordersDAO from "../db/orders.dao.js";
-import companiesDAO from "../db/companies.dao.js";
-import CRUD from "./crud.controller.js";
+import crmUsersDAO from '../db/crmUsers.dao.js';
+import ordersDAO from '../db/orders.dao.js';
+import companiesDAO from '../db/companies.dao.js';
+import CRUD from './crud.controller.js';
 
 // Import logger
-import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/server/request.utils.js";
-import StripeService from "../services/stripe.service.js";
-import stripeHelper from "../helpers/services/stripe.helper.js";
+import logger from '../../../logs/logger.js';
+import requestUtils from '../utils/server/request.utils.js';
+import StripeService from '../services/stripe.service.js';
+import stripeHelper from '../helpers/services/stripe.helper.js';
 
-import authHelper from "../helpers/auth/auth.helper.js";
+import authHelper from '../helpers/auth/auth.helper.js';
 
-import * as Error from "../utils/errors/http/index.js";
-import * as LayerError from "../utils/errors/layer/index.js";
+import * as Error from '../utils/errors/http/index.js';
+import * as LayerError from '../utils/errors/layer/index.js';
 
 export default class CompaniesController {
   static async create(req, res, next) {}
@@ -37,7 +37,7 @@ export default class CompaniesController {
         companyExists = await CompaniesDAO.retrieve(companyId);
       } catch (err) {
         console.log(err);
-        if (err.type === "NOT_FOUND") {
+        if (err.type === 'NOT_FOUND') {
           throw new Error._400(`${this.DAO.Type} does not exist.`);
         }
       }
@@ -72,39 +72,43 @@ export default class CompaniesController {
 
     // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
     if (req.query.sortBy) {
-      if (req.query.sortBy === "rating") {
+      if (req.query.sortBy === 'rating') {
         // sort by company.rating.average
         options.sort = {
-          "rating.average": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+          'rating.average': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
-      if (req.query.sortBy === "price") {
+      if (req.query.sortBy === 'price') {
         // sort by company.business_profile.average_hourly_rate
         options.sort = {
-          "business_profile.average_hourly_rate":
-            req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+          'business_profile.average_hourly_rate': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
 
-      if (req.query.sortBy === "name") {
+      if (req.query.sortBy === 'name') {
         options.sort = {
-          "business_profile.name": req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+          'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       } else {
         // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
         // Otherwise, we will by default sort the results by ascending order.
         options.sort = {
-          [req.query.sortBy]: req.query.sortOrder === "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+          [req.query.sortBy]: req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
+    } else {
+      // If the sortBy query parameter is not provided, then we will sort the results by rhw name in an ascending order.
+      options.sort = {
+        'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
+      };
     }
 
     // If the lat and lng query parameters are provided, we'll add them to the filter object.
     if (req.query.lat && req.query.lng) {
-      filters["serviceArea"] = {
+      filters['serviceArea'] = {
         $geoIntersects: {
           $geometry: {
-            type: "Point",
+            type: 'Point',
             //coordinates: [38.74733186331398, -9.28920997678132]
             coordinates: [parseFloat(req.query.lat), parseFloat(req.query.lng)],
           },
@@ -115,31 +119,31 @@ export default class CompaniesController {
     // If the services query parameter is provided, we'll add it to the filter object.
     if (req.query.services) {
       // Search for all companies that have all the services provided in the services query parameter. The company may have more services than the ones provided in the services query parameter.
-      filters["services"] = {
-        $all: req.query.services.split(","),
+      filters['services'] = {
+        $all: req.query.services.split(','),
       };
     }
 
     // If the minRating query parameter is provided, we'll add it to the filter object.
     if (req.query.minRating) {
-      filters["rating.average"] = {
-        ...filters["rating.average"],
+      filters['rating.average'] = {
+        ...filters['rating.average'],
         $gte: parseFloat(req.query.minRating),
       };
     }
 
     // If the maxRating query parameter is provided, we'll add it to the filter object.
     if (req.query.maxRating) {
-      filters["rating.average"] = {
-        ...filters["rating.average"],
+      filters['rating.average'] = {
+        ...filters['rating.average'],
         $lte: parseFloat(req.query.maxRating),
       };
     }
 
     // If the maxPrice query parameter is provided, we'll add it to the filter object.
     if (req.query.maxPrice) {
-      filters["business_profile.average_hourly_rate"] = {
-        ...filters["business_profile.average_hourly_rate"],
+      filters['business_profile.average_hourly_rate'] = {
+        ...filters['business_profile.average_hourly_rate'],
         $lte: parseFloat(req.query.maxPrice),
       };
     }
@@ -147,8 +151,8 @@ export default class CompaniesController {
     // If the minPrice query parameter is provided, we'll add it to the filter object.
     if (req.query.minPrice) {
       // Add the minPrice query parameter to the filter object without overriding the maxPrice query parameter.
-      filters["business_profile.average_hourly_rate"] = {
-        ...filters["business_profile.average_hourly_rate"],
+      filters['business_profile.average_hourly_rate'] = {
+        ...filters['business_profile.average_hourly_rate'],
         $gte: parseFloat(req.query.minPrice),
       };
     }
@@ -160,7 +164,7 @@ export default class CompaniesController {
       page,
       documentsPerPage,
       null,
-      "-plan -legal_information -team -stripe_information -billing_address -createdAt -updatedAt -__v"
+      '-plan -legal_information -team -stripe_information -billing_address -createdAt -updatedAt -__v'
     );
 
     let response = {
