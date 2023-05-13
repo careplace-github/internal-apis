@@ -48,9 +48,8 @@ const companySchema = new Schema<ICompany>(
     },
 
     rating: {
-      average: { type: Number, required: true, default: 0 },
-
-      count: { type: Number, required: false, default: 0 },
+      average: { type: Number, required: true, default: 0.0 },
+      count: { type: Schema.Types.Number, required: false, default: 0.0 },
     },
 
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
