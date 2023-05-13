@@ -18,7 +18,6 @@ const companySchema = new Schema<ICompany>(
         type: String,
         required: true,
         unique: true,
-        default: 'https://www.careplace.pt',
       },
 
       logo: { type: String, required: true },
@@ -68,7 +67,10 @@ const companySchema = new Schema<ICompany>(
       },
     },
 
-    average_hourly_rate: { type: Number, required: true },
+    pricing: {
+      average_hourly_rate: { type: Number, required: false, default: 0 },
+      minimum_hourly_rate: { type: Number, required: true, default: 0 },
+    },
 
     team: [{ type: Schema.Types.ObjectId, ref: 'crm_users', required: false }],
 
