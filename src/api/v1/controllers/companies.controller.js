@@ -81,7 +81,7 @@ export default class CompaniesController {
       if (req.query.sortBy === 'price') {
         // sort by company.business_profile.average_hourly_rate
         options.sort = {
-          'business_profile.average_hourly_rate': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
+          'pricing.minimum_hourly_rate': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
 
@@ -105,7 +105,7 @@ export default class CompaniesController {
 
     // If the lat and lng query parameters are provided, we'll add them to the filter object.
     if (req.query.lat && req.query.lng) {
-      filters['serviceArea'] = {
+      filters['service_area'] = {
         $geoIntersects: {
           $geometry: {
             type: 'Point',
