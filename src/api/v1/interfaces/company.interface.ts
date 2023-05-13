@@ -38,7 +38,10 @@ export default interface ICompany {
     type: string;
     coordinates: number[][][];
   };
-  average_hourly_rate: number;
+  pricing: {
+    average_hourly_rate: number;
+    minimum_hourly_rate: number;
+  };
   team: Types.ObjectId[];
   legal_information: {
     name: string;
