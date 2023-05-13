@@ -1,10 +1,5 @@
-import mongoose, { Types, Schema } from 'mongoose';
-import GeoJSON from 'mongoose-geojson-schema';
-
+import mongoose, { Schema } from 'mongoose';
 import ICompany from '../../interfaces/company.interface';
-import { string } from 'joi';
-
-// const Schema = mongoose.Schema;
 
 const companySchema = new Schema<ICompany>(
   {
@@ -37,24 +32,20 @@ const companySchema = new Schema<ICompany>(
         linkedin: { type: String, required: false },
         youtube: { type: String, required: false },
       },
+    },
 
-      address: {
-        street: { type: String, required: true },
-
-        postal_code: { type: String, required: true },
-
-        state: { type: String, required: false },
-
-        city: { type: String, required: true },
-
-        country: {
-          type: String,
-          required: true,
-          enum: ['PT', 'ES', 'US', 'UK'],
+    addresses: {
+      type: [
+        {
+          street: { type: String, required: true },
+          postal_code: { type: String, required: true },
+          state: { type: String, required: false },
+          city: { type: String, required: true },
+          country: { type: String, required: true },
+          coordinates: { type: Array, required: true, default: [0, 0] },
         },
-
-        coordinates: { type: Array, required: false },
-      },
+      ],
+      required: true,
     },
 
     rating: {
@@ -65,7 +56,7 @@ const companySchema = new Schema<ICompany>(
 
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
 
-    serviceArea: {
+    service_area: {
       type: {
         type: String,
         enum: ['MultiPolygon'],
@@ -80,6 +71,20 @@ const companySchema = new Schema<ICompany>(
     average_hourly_rate: { type: Number, required: true },
 
     team: [{ type: Schema.Types.ObjectId, ref: 'crm_users', required: false }],
+
+    stripe_information: {
+      /**
+       *  The stripe connected account id
+       * This is the id of the connected account that will be used for transfers to the company.
+       */
+      account_id: { type: String, required: true, unique: true },
+
+      /**
+       * The stripe customer id
+       * This is the id of the customer that will be used for payments to the company (eg. Plan Payment).
+       */
+      customer_id: { type: String, required: true, unique: true },
+    },
 
     legal_information: {
       // The legal name of the company
@@ -115,20 +120,6 @@ const companySchema = new Schema<ICompany>(
 
         coordinates: { type: Array, required: true },
       },
-    },
-
-    stripe_information: {
-      /**
-       *  The stripe connected account id
-       * This is the id of the connected account that will be used for transfers to the company.
-       */
-      account_id: { type: String, required: true, unique: true },
-
-      /**
-       * The stripe customer id
-       * This is the id of the customer that will be used for payments to the company (eg. Plan Payment).
-       */
-      customer_id: { type: String, required: true, unique: true },
     },
 
     is_active: { type: Boolean, required: true, default: false },
