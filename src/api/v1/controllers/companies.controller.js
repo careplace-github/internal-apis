@@ -86,6 +86,14 @@ export default class CompaniesController {
       }
 
       if (req.query.sortBy === 'name') {
+        // sort by company.business_profile.name
+        options.sort = {
+          'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
+        };
+      }
+
+      if (req.query.sortBy === 'relevance') {
+        // sort by company.business_profile.name
         options.sort = {
           'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
@@ -142,8 +150,8 @@ export default class CompaniesController {
 
     // If the maxPrice query parameter is provided, we'll add it to the filter object.
     if (req.query.maxPrice) {
-      filters['business_profile.average_hourly_rate'] = {
-        ...filters['business_profile.average_hourly_rate'],
+      filters['pricing.minimum_hourly_rate'] = {
+        ...filters['pricing.minimum_hourly_rate'],
         $lte: parseFloat(req.query.maxPrice),
       };
     }
@@ -151,8 +159,8 @@ export default class CompaniesController {
     // If the minPrice query parameter is provided, we'll add it to the filter object.
     if (req.query.minPrice) {
       // Add the minPrice query parameter to the filter object without overriding the maxPrice query parameter.
-      filters['business_profile.average_hourly_rate'] = {
-        ...filters['business_profile.average_hourly_rate'],
+      filters['pricing.minimum_hourly_rate'] = {
+        ...filters['pricing.minimum_hourly_rate'],
         $gte: parseFloat(req.query.minPrice),
       };
     }
