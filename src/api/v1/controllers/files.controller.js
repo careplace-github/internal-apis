@@ -1,7 +1,7 @@
-import BucketService from "../services/bucket.service.js";
-import fs from "fs";
-
-import * as Error from "../utils/errors/http/index.js";
+import BucketService from '../services/bucket.service.js';
+import fs from 'fs';
+import logger from '../../../logs/logger.js';
+import * as Error from '../utils/errors/http/index.js';
 
 /**
  * Files Controller Class to manage the ``/files`` endpoints of the API.
@@ -22,10 +22,8 @@ export default class FilesController {
       const file = req.file;
 
       if (file == null || file == undefined) {
-        throw new Error._400("Missing required file.");
+        throw new Error._400('Missing required file.');
       }
-
-     
 
       let fileUpload = await Bucket.uploadFile(file);
 
@@ -43,7 +41,7 @@ export default class FilesController {
       fs.unlink(file.path, (err) => {
         if (err) {
           logger.warn(
-            "Internal Server Error.",
+            'Internal Server Error.',
             `Error removing file from uploads folder. \n ${err.stack} \n`
           );
         }
