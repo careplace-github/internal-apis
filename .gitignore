@@ -4,3 +4,5 @@ src/uploads
 src/downloads
 src/logs/server.log
 src/assets/data/services.json
+build
+yarn.lock

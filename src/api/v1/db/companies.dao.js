@@ -1,5 +1,5 @@
 import DAO from "./DAO.js";
-import Company from "../models/userLogic/companies.model.js";
+import Company from "../models/userLogic/companies.model";
 
 import { MONGODB_COLLECTION_COMPANIES_NS } from "../../../config/constants/index.js";
 
