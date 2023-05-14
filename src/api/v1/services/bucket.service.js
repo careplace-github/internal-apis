@@ -1,13 +1,13 @@
-import AWS from "aws-sdk";
-import fs from "fs";
-import * as Error from "../utils/errors/http/index.js";
+import AWS from 'aws-sdk';
+import fs from 'fs';
+import * as Error from '../utils/errors/http/index.js';
 
 import {
   AWS_S3_BUCKET_NAME,
   AWS_S3_REGION,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
-} from "../../../config/constants/index.js";
+} from '../../../config/constants/index.js';
 
 /**
  * Creates a new S3 instance
@@ -45,24 +45,21 @@ export default class S3 {
     // New promise that catches the error
 
     if (!file) {
-      throw new Error._400("No file found.");
+      throw new Error._400('No file found.');
     }
 
     // Read content from the file
     const fileStream = fs.createReadStream(file.path);
 
-    console.log("BUCKET_NAME: ", AWS_S3_BUCKET_NAME);
-    console.log("region: ", AWS_S3_REGION);
-
     const params = {
       Bucket: AWS_S3_BUCKET_NAME,
       Body: fileStream,
-      Key: file.originalname,
+      Key: file.filename,
 
       /**
        * ACL stands for Access Control List and is a list of permissions
        */
-      ACL: ACL ? ACL : "private",
+      ACL: ACL ? ACL : 'private',
     };
 
     const response = await this.s3.upload(params).promise();

@@ -4,7 +4,6 @@ import cognito from "../services/cognito.service.js";
 // Import database access objects
 import crmUsersDAO from "../db/crmUsers.dao.js";
 import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
-import companiesDAO from "../db/companies.dao.js";
 
 import logger from "../../../logs/logger.js";
 import * as Error from "../utils/errors/http/index.js";
