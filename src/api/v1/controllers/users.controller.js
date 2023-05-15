@@ -475,9 +475,13 @@ export default class UsersController {
         company: companyId,
       });
 
+      crmUsers = crmUsers.data;
+
       let caregivers = await CaregiversDAO.query_list({
         company: companyId,
       });
+
+      caregivers = caregivers.data;
 
       for (let i = 0; i < crmUsers.length; i++) {
         companyUsers.push(crmUsers[i]);
