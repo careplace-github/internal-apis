@@ -491,6 +491,12 @@ const main = async () => {
 
         logger.info(`Server started successfully! 🚀`);
       });
+
+      app.listen(443, () => {
+
+      }
+      );
+
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);
       throw new Error._500(`Unable to start the HTTP Server: ${error}`);
