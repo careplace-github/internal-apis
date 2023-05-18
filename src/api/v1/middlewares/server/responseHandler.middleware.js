@@ -1,4 +1,4 @@
-import logger from "../../../../logs/logger.js";
+import logger from '../../../../logs/logger.js';
 
 export default function responseHandler(response, req, res, next) {
   async function handleRequest() {
@@ -7,11 +7,11 @@ export default function responseHandler(response, req, res, next) {
       url: req.originalUrl,
       ipv6: req.ip,
       ipv4: req.ips,
-      contentLength: req.headers["content-length"],
-      contentType: req.headers["content-type"],
-      responseTime: req.headers["response-time"],
+      contentLength: req.headers['content-length'],
+      contentType: req.headers['content-type'],
+      responseTime: req.headers['response-time'],
 
-      proxy: req.headers["x-forwarded-for"],
+      proxy: req.headers['x-forwarded-for'],
       headers: req.headers,
       params: req.params,
       query: req.query,
@@ -23,28 +23,35 @@ export default function responseHandler(response, req, res, next) {
       response: response.data,
     };
 
-
     if (
       response.data === undefined ||
       response.data === null ||
-      response.data === "" ||
+      response.data === '' ||
       response.statusCode === undefined ||
       response.statusCode === null ||
-      response.statusCode === ""
+      response.statusCode === ''
     ) {
       response.data = {
-        message: "No data returned from the server.",
+        message: 'No data returned from the server.',
       };
     }
 
     let statusCode = response.statusCode ? response.statusCode : 500;
+    // add Access token to the response header
+    if (response.data.accessToken) {
+      res.setHeader('x-access-token', response.data.accessToken);
+    }
+
+    if (response.data.refreshToken) {
+      res.setHeader('x-refresh-token', response.data.refreshToken);
+    }
 
     res.status(statusCode).json(response.data);
 
     logger.info(`HTTP Response: \n ${JSON.stringify(logResponse, null, 2)}\n`);
 
-   // return;
-   next()
+    // return;
+    next();
   }
 
   handleRequest();
