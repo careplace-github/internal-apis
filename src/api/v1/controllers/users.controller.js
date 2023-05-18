@@ -139,7 +139,7 @@ export default class UsersController {
     }
 
     // Get the company from MongoDB.
-    const company = await companiesDAO.get_one(user.company);
+    const company = await companiesDAO.retrieve(user.company);
 
     // Tried to add a user to a company that doesn't exist.
     if (company == null) {
