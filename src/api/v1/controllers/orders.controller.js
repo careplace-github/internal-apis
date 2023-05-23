@@ -234,6 +234,10 @@ export default class OrdersController {
             {
               path: 'company',
             },
+            {
+              path: 'user',
+              select: 'name email phone address -_id',
+            }
           ]
         );
       } catch (err) {
