@@ -309,12 +309,14 @@ export default class AuthenticationController {
         responseAux.accessTokenExpiration = cognitoResponse.AuthenticationResult.ExpiresIn;
         responseAux.accessTokenType = cognitoResponse.AuthenticationResult.TokenType;
         responseAux.refreshToken = cognitoResponse.AuthenticationResult.RefreshToken;
+        responseAux.expiresIn = cognitoResponse.AuthenticationResult.ExpiresIn;
       }
 
       response.statusCode = 200;
       response.data = responseAux;
       response.accessToken = responseAux.accessToken;
       response.refreshToken = responseAux.refreshToken;
+      response.expiresIn = responseAux.expiresIn;
 
       next(response);
     } catch (error) {
