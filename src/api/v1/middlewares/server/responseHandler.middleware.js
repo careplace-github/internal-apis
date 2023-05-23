@@ -40,6 +40,8 @@ export default function responseHandler(response, req, res, next) {
     // add Access token to the response header
     if (response.data.accessToken) {
       res.setHeader('x-access-token', response.data.accessToken);
+      res.setHeader('Authorization', `Bearer ${response.data.accessToken}`);
+
     }
 
     if (response.data.refreshToken) {
