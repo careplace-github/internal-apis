@@ -675,10 +675,12 @@ export default class UsersController {
 
           updateUser = {
             ...user.toJSON(),
-            ...req.body,
+            ...req.body?.user || req.body,
           };
 
           updateUser = await CrmUsersDAO.update(updateUser);
+
+          console.log("UPDATE USER: ", updateUser);
 
           user = updateUser;
         } catch (error) {
