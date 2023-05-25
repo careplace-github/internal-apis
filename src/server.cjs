@@ -22,19 +22,19 @@
  */
 
 // Import the express module
-import express from "express";
+import express from 'express';
 
 // Import application security modules
-import helmet from "helmet";
-import cors from "cors";
-import hpp from "hpp";
+import helmet from 'helmet';
+import cors from 'cors';
+import hpp from 'hpp';
 
-import rateLimit from "express-rate-limit";
+import rateLimit from 'express-rate-limit';
 
 // Import mongoose
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-import * as Error from "./api/v1/utils/errors/http/index.js";
+import * as Error from './api/v1/utils/errors/http/index.js';
 
 // Loads Environment Constants
 import {
@@ -48,38 +48,40 @@ import {
   MONGODB_DB_DELETES_URI,
   MONGODB_DB_ACTIVE_NS,
   MONGODB_DB_DELETES_NS,
-} from "./config/constants/index.js";
+} from './config/constants/index.js';
 
 // Import Router Exports
-import configRoute from "./api/v1/routes/config.route.js";
-import filesRoute from "./api/v1/routes/files.route.js";
-import authRoute from "./api/v1/routes/authentication.route.js";
-import usersRoute from "./api/v1/routes/users.route.js";
-import companiesRoute from "./api/v1/routes/companies.route.js";
-import servicesRoute from "./api/v1/routes/services.route.js";
-import ordersRoute from "./api/v1/routes/orders.route.js";
-import calendarRoute from "./api/v1/routes/calendar.route.js";
-import webHooksRoute from "./api/v1/routes/hooks/webhooks.route.js";
-import checkoutRoute from "./api/v1/routes/checkout.route.js";
-import paymentMethodsRoute from "./api/v1/routes/paymentMethods.route.js";
-import relativesRoute from "./api/v1/routes/relatives.route.js";
-import paymentsRoute from "./api/v1/routes/payments.route.js";
-import adminRoute from "./api/v1/routes/admin.route.js";
+import {
+  configRoute,
+  filesRoute,
+  authRoute,
+  usersRoute,
+  companiesRoute,
+  servicesRoute,
+  ordersRoute,
+  calendarRoute,
+  webHooksRoute,
+  checkoutRoute,
+  paymentMethodsRoute,
+  relativesRoute,
+  paymentsRoute,
+  adminRoute,
+} from './api/v1/routes';
 
 // Helpers
-import getServices from "./api/v1/helpers/assets/services.helper.js";
+import getServices from './api/v1/helpers/assets/services.helper.js';
 
 // Import Middlewares
-import logger from "./logs/logger.js";
-import requestLogger from "./api/v1/middlewares/server/requestHandler.middleware.js";
-import errorLogger from "./api/v1/middlewares/errors/errorHandler.middleware.js";
-import responseLogger from "./api/v1/middlewares/server/responseHandler.middleware.js";
-import bodyParser from "body-parser";
-import mongoSanitize from "express-mongo-sanitize";
-import xss from "xss-clean";
+import logger from './logs/logger.js';
+import requestLogger from './api/v1/middlewares/server/requestHandler.middleware.js';
+import errorLogger from './api/v1/middlewares/errors/errorHandler.middleware.js';
+import responseLogger from './api/v1/middlewares/server/responseHandler.middleware.js';
+import bodyParser from 'body-parser';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
 
 // Documentation
-import swaggerDocs from "./documentation/swagger.js";
+import swaggerDocs from './documentation/swagger.js';
 
 const main = async () => {
   try {
@@ -130,34 +132,32 @@ const main = async () => {
     /**
      *  Handle connection errors
      */
-    db_connection.connection.on("error", async (err) => {
+    db_connection.connection.on('error', async (err) => {
       logger.warn(`MongoDB Connection Error: ${err}`);
       db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
-    db_connection.connection.on("reconnected", (err) => {
+    db_connection.connection.on('reconnected', (err) => {
       logger.warn(`MongoDB Connection Reconnected: ${err}`);
     });
 
-    db_connection.connection.on("disconnected", async (err) => {
+    db_connection.connection.on('disconnected', async (err) => {
       logger.warn(`MongoDB Connection Error: ${err}`);
       db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
-    db_connection.connection.on("timeout", async (err) => {
+    db_connection.connection.on('timeout', async (err) => {
       logger.warn(`MongoDB Connection Error: ${err}`);
       db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
-    db_connection.connection.on("close", async (err) => {
+    db_connection.connection.on('close', async (err) => {
       logger.warn(`MongoDB Connection Error: ${err}`);
       db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
     });
 
     // Successfuly connected to MongoDB
-    logger.info(
-      `Connected to MongoDB Database '${MONGODB_DB_ACTIVE_NS}' Successfully!`
-    );
+    logger.info(`Connected to MongoDB Database '${MONGODB_DB_ACTIVE_NS}' Successfully!`);
     //Store the connection in a global variable
     global.db = db_connection.connection;
 
@@ -224,7 +224,7 @@ const main = async () => {
         express.urlencoded({
           // Limits the size of the JSON payload to 5MB
 
-          limit: "5mb",
+          limit: '5mb',
 
           // Parses the URL-encoded data with the querystring library (when false) or the qs library (when true)
           extended: true,
@@ -273,7 +273,7 @@ const main = async () => {
             // Defines valid sources of JavaScript
             scriptSrc: [
               "'self'",
-              "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js",
+              'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js',
             ],
           },
         })
@@ -316,7 +316,7 @@ const main = async () => {
         helmet.expectCt({
           maxAge: 30, // 30 days in seconds
           enforce: true,
-          reportUri: "https://example.com",
+          reportUri: 'https://example.com',
         })
       );
 
@@ -327,7 +327,7 @@ const main = async () => {
        */
       app.use(
         helmet.referrerPolicy({
-          policy: "same-origin",
+          policy: 'same-origin',
         })
       );
 
@@ -356,7 +356,7 @@ const main = async () => {
 
       app.use(
         helmet.permittedCrossDomainPolicies({
-          permittedPolicies: "none",
+          permittedPolicies: 'none',
         })
       );
 
@@ -367,7 +367,7 @@ const main = async () => {
        */
       app.use(
         helmet.frameguard({
-          action: "deny",
+          action: 'deny',
         })
       );
 
@@ -390,7 +390,7 @@ const main = async () => {
       // Use JSON parser for all non-webhook routes
 
       app.use((req, res, next) => {
-        if (req.originalUrl === "/api/v1/webhooks/stripe/connect") {
+        if (req.originalUrl === '/api/v1/webhooks/stripe/connect') {
           next();
         } else {
           express.json()(req, res, next);
@@ -424,7 +424,7 @@ const main = async () => {
       app.use(responseLogger);
 
       // Middleware to throw internal server errors
-      app.on("error", (error) => {
+      app.on('error', (error) => {
         console.log(`Internal Server Error: ${error}`);
         throw new Error._500(`Internal Server Error: ${error.message}`);
       });
@@ -439,11 +439,11 @@ const main = async () => {
       // -------------------------------------------------------------------------------------------- //
 
       // Handle SIGINT signal
-      app.on("SIGINT", () => {
+      app.on('SIGINT', () => {
         // Handle SIGINT signal
       });
 
-      app.on("SIGUSR1", () => {
+      app.on('SIGUSR1', () => {
         // Handle SIGUSR1 signal
       });
     } catch (error) {
@@ -459,14 +459,14 @@ const main = async () => {
       //  @see                                                                                        //
       // -------------------------------------------------------------------------------------------- //
 
-      logger.info("Fetching all the necessary assets...");
+      logger.info('Fetching all the necessary assets...');
 
       /**
        * Gets all the services from the database and stores them in the cache
        */
       await getServices();
 
-      logger.info("Fetched all the necessary assets successfully!");
+      logger.info('Fetched all the necessary assets successfully!');
     } catch (error) {
       throw new Error._503(`Service Unavailable: ${error}`);
     }
@@ -483,20 +483,14 @@ const main = async () => {
 
       // Starts listening for HTTP requests
       app.listen(SERVER_PORT, () => {
-        logger.info(
-          `Successfully listening for HTTP requests on port: ${SERVER_PORT}`
-        );
+        logger.info(`Successfully listening for HTTP requests on port: ${SERVER_PORT}`);
 
         swaggerDocs(app, SERVER_PORT);
 
         logger.info(`Server started successfully! 🚀`);
       });
 
-      app.listen(443, () => {
-
-      }
-      );
-
+      app.listen(443, () => {});
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);
       throw new Error._500(`Unable to start the HTTP Server: ${error}`);

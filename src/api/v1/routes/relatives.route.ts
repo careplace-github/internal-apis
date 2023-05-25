@@ -1,8 +1,8 @@
 import express from "express";
 
-import RelativesController from "../controllers/relatives.controller.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
-import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
+import RelativesController from "../controllers/relatives.controller";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
 const router = express.Router();
 

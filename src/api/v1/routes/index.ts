@@ -1,0 +1,14 @@
+export { default as configRoute } from './config.route';
+export { default as filesRoute } from './files.route';
+export { default as authRoute } from './authentication.route';
+export { default as usersRoute } from './users.route';
+export { default as companiesRoute } from './companies.route';
+export { default as servicesRoute } from './services.route';
+export { default as ordersRoute } from './orders.route';
+export { default as calendarRoute } from './calendar.route';
+export { default as webHooksRoute } from './hooks/webhooks.route';
+export { default as checkoutRoute } from './checkout.route';
+export { default as paymentMethodsRoute } from './paymentMethods.route';
+export { default as relativesRoute } from './relatives.route';
+export { default as paymentsRoute } from './payments.route';
+export { default as adminRoute } from './admin.route';
