@@ -4,11 +4,11 @@ import express from "express";
 // Import Middlewares
 import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
 
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 
 // Import Controller
-import CompaniesController from "../controllers/companies.controller.js";
-import ServicesController from "../controllers/services.controller.js";
+import CompaniesController from "../controllers/companies.controller";
+import ServicesController from "../controllers/services.controller";
 
 const router = express.Router();
 

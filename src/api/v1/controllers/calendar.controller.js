@@ -1,12 +1,15 @@
-import eventsDAO from "../db/events.dao.js";
-import UsersDAO from "../db/crmUsers.dao.js";
-import EventsSeriesDAO from "../db/eventsSeries.dao.js";
-import * as Error from "../utils/errors/http/index.js";
-import authHelper from "../helpers/auth/auth.helper.js";
-import CRUD from "./crud.controller.js";
-import logger from "../../../logs/logger.js";
+import eventsDAO from '../db/events.dao.js';
+import UsersDAO from '../db/crmUsers.dao.js';
+import eventsSeriesDAO from '../db/eventsSeries.dao.js';
+import * as Error from '../utils/errors/http/index.js';
+import authHelper from '../helpers/auth/auth.helper.js';
+import CRUD from './crud.controller.js';
+import logger from '../../../logs/logger.js';
+// helper functions
+import { generateEventsFromSeries } from '../helpers';
 
 let EventsDAO = new eventsDAO();
+let EventsSeriesDAO = new eventsSeriesDAO();
 
 /**
  * Calendar Controller Class to manage the ``/calendar`` endpoints of the API.
@@ -30,14 +33,14 @@ export default class CalendarController {
       let accessToken;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401("Missing required access token.");
+        throw new Error._401('Missing required access token.');
       }
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      event.user = user;
+      event.user = user._id;
 
       let eventAdded = await EventsDAO.create(event);
 
@@ -94,8 +97,63 @@ export default class CalendarController {
    * @param {*} next - Next middleware function.
    */
   static async listEvents(req, res, next) {
-    let EventsCRUD = new CRUD(EventsDAO);
-    await EventsCRUD.listByUserId(req, res, next);
+    /**
+     * Get the events from the database.
+     *
+     * If user.permissions.includes("calendar_edit") then also return every eventSeries with company = user.company
+     */
+    try {
+      let response = {};
+
+      let EventsDAO = new eventsDAO();
+      let AuthHelper = new authHelper();
+
+      let accessToken;
+
+      if (req.headers.authorization) {
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        throw new Error._401('Missing required access token.');
+      }
+
+      let user = await AuthHelper.getUserFromDB(accessToken);
+
+      let events = await EventsDAO.query_list({ user: user._id }).then((events) => {
+        return events.data;
+      });
+      let eventsSeries = [];
+
+      if (user.permissions.includes('calendar_view')) {
+        
+        eventsSeries = await EventsSeriesDAO
+          .query_list({ company: user.company._id })
+          .then((eventsSeries) => {
+            return eventsSeries.data;
+          });
+
+        /**
+         * for each eventSeries, generate the events and add them to the events array
+         */
+        for (let i = 0; i < eventsSeries.length; i++) {
+          let eventSeries = eventsSeries[i];
+
+          let eventsGenerated = await generateEventsFromSeries(eventSeries);
+
+          events = [...events, ...eventsGenerated];
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        events: events,
+        eventsSeries: eventsSeries,
+      };
+
+      next(response);
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -117,18 +175,14 @@ export default class CalendarController {
       try {
         let userExists = await usersDAO.retrieve(eventSeries.user);
       } catch (err) {
-        if (err.type === "NOT_FOUND" || err.name === "CastError") {
-          throw new Error._400(
-            "User does not exist. Need a valid User to create an event series."
-          );
+        if (err.type === 'NOT_FOUND' || err.name === 'CastError') {
+          throw new Error._400('User does not exist. Need a valid User to create an event series.');
         }
       }
 
       let eventSeriesAdded = await eventsSeriesDAO.create(eventSeries);
 
-      let eventSeriesAux = await eventsSeriesDAO.retrieveModel(
-        eventSeriesAdded._id
-      );
+      let eventSeriesAux = await eventsSeriesDAO.retrieveModel(eventSeriesAdded._id);
 
       let events = await eventSeriesAux.createEvents;
 
@@ -156,17 +210,21 @@ export default class CalendarController {
   }
 
   static async retrieveEventSeries(req, res, next) {
+    let eventsSeriesCRUD = new CRUD(EventsSeriesDAO);
     await eventsSeriesCRUD.retrieve(req, res, next);
   }
   static async updateEventSeries(req, res, next) {
+    let eventsSeriesCRUD = new CRUD(EventsSeriesDAO);
     await eventsSeriesCRUD.updateByUserId(req, res, next);
   }
 
   static async deleteEventSeries(req, res, next) {
+    let eventsSeriesCRUD = new CRUD(EventsSeriesDAO);
     await eventsSeriesCRUD.delete(req, res, next);
   }
 
   static async listEventsSeries(req, res, next) {
+    let eventsSeriesCRUD = new CRUD(EventsSeriesDAO);
     await eventsSeriesCRUD.listByUserId(req, res, next);
   }
 }

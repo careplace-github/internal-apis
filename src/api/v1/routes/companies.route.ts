@@ -3,13 +3,13 @@ import Router from 'express';
 import express from 'express';
 
 // Import controllers
-import CompaniesController from '../controllers/companies.controller.js';
-import OrdersController from '../controllers/orders.controller.js';
-import UsersController from '../controllers/users.controller.js';
+import CompaniesController from '../controllers/companies.controller';
+import OrdersController from '../controllers/orders.controller';
+import UsersController from '../controllers/users.controller';
 import StripeController from '../controllers/stripe.controller.js';
 import DashboardController from '../controllers/dashboard.controller.js';
-import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware.js';
-import AccessGuard from '../middlewares/guards/accessGuard.middleware.js';
+import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
+import AccessGuard from '../middlewares/guards/accessGuard.middleware';
 
 const router = express.Router();
 

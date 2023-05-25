@@ -269,7 +269,7 @@ export default class DAO {
       var documents = await this.Document.find(filters)
         .select(select)
         .skip(page > 0 ? (page - 1) * documentsPerPage : 0)
-        .limit(documentsPerPage)
+        .limit( documentsPerPage > 0 ? documentsPerPage : 0)
         .sort(sort)
         .populate(populate)
         .lean()
