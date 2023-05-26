@@ -1,34 +1,34 @@
 // Import services
-import CognitoService from "../services/cognito.service.js";
-import SES from "../services/ses.service.js";
+import CognitoService from '../services/cognito.service.js';
+import SES from '../services/ses.service.js';
 
 // Import DAOs
-import crmUsersDAO from "../db/crmUsers.dao.js";
-import caregiversDAO from "../db/caregivers.dao.js";
-import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
-import companiesDAO from "../db/companies.dao.js";
-import CRUD from "./crud.controller.js";
+import crmUsersDAO from '../db/crmUsers.dao.js';
+import caregiversDAO from '../db/caregivers.dao.js';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
+import companiesDAO from '../db/companies.dao.js';
+import CRUD from './crud.controller.js';
 
-import authUtils from "../utils/auth/auth.utils.js";
+import authUtils from '../utils/auth/auth.utils.js';
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from "../../../config/constants/index.js";
+} from '../../../config/constants/index.js';
 
 // Import Utils
-import password from "secure-random-password";
-import EmailHelper from "../helpers/emails/email.helper.js";
-import stripe from "../services/stripe.service.js";
-import authHelper from "../helpers/auth/auth.helper.js";
+import password from 'secure-random-password';
+import EmailHelper from '../helpers/emails/email.helper.js';
+import stripe from '../services/stripe.service.js';
+import authHelper from '../helpers/auth/auth.helper.js';
 
 // Import logger
-import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/server/request.utils.js";
+import logger from '../../../logs/logger.js';
+import requestUtils from '../utils/server/request.utils.js';
 
-import * as Error from "../utils/errors/http/index.js";
-import { response } from "express";
+import * as Error from '../utils/errors/http/index.js';
+import { response } from 'express';
 
-const app = "crm";
+const app = 'crm';
 
 export default class UsersController {
   /**
@@ -44,9 +44,7 @@ export default class UsersController {
       let page = req.query.page != null ? req.query.page : null;
       let mongodbResponse;
 
-      logger.info(
-        "Users Controller INDEX: " + JSON.stringify(request, null, 2) + "\n"
-      );
+      logger.info('Users Controller INDEX: ' + JSON.stringify(request, null, 2) + '\n');
 
       // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
       if (req.query.companyId) {
@@ -58,12 +56,12 @@ export default class UsersController {
         // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
         // Otherwise, we will by default sort the results by ascending order.
         options.sort = {
-          [req.query.sortBy]: req.query.sortOrder == "desc" ? -1 : 1, // 1 = ascending, -1 = descending
+          [req.query.sortBy]: req.query.sortOrder == 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
         };
       }
 
       logger.info(
-        "Attempting to get users from MongoDB: " +
+        'Attempting to get users from MongoDB: ' +
           JSON.stringify(
             {
               filters: filters,
@@ -73,7 +71,7 @@ export default class UsersController {
             null,
             2
           ) +
-          "\n"
+          '\n'
       );
 
       // Get the users from MongoDB.
@@ -85,9 +83,7 @@ export default class UsersController {
         request.response = { error: mongodbResponse.error.message };
 
         logger.error(
-          "Error fetching users from MongoDB: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
+          'Error fetching users from MongoDB: ' + JSON.stringify(request, null, 2) + '\n'
         );
 
         return res.status(400).json({ error: mongodbResponse.error.message });
@@ -104,9 +100,7 @@ export default class UsersController {
       request.statusCode = 500;
       request.response = { error: error };
 
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
-      );
+      logger.error('Internal error: ' + JSON.stringify(request, null, 2) + '\n');
 
       return res.status(500).json({ error: error });
     }
@@ -122,9 +116,7 @@ export default class UsersController {
 
     const user = req.body;
 
-    logger.info(
-      "Users Controller CREATE: " + JSON.stringify(request, null, 2) + "\n"
-    );
+    logger.info('Users Controller CREATE: ' + JSON.stringify(request, null, 2) + '\n');
 
     // Generate a random password of 8 characters.
     const temporaryPassword = String(
@@ -134,30 +126,28 @@ export default class UsersController {
       })
     );
 
-    if (user.role == "admin") {
-      return res.status(400).json({ error: "Cannot create admin user." });
+    if (user.role == 'admin') {
+      return res.status(400).json({ error: 'Cannot create admin user.' });
     }
 
     // Get the company from MongoDB.
-    const company = await companiesDAO.get_one(user.company);
+    const company = await companiesDAO.retrieve(user.company);
 
     // Tried to add a user to a company that doesn't exist.
     if (company == null) {
       request.statusCode = 400;
       request.response = {
-        error:
-          "Company not found. User must be associated with an existing company.",
+        error: 'Company not found. User must be associated with an existing company.',
       };
 
       logger.error(
-        "Company not found. User must be associated with an existing company." +
+        'Company not found. User must be associated with an existing company.' +
           JSON.stringify(request, null, 2) +
-          "\n"
+          '\n'
       );
 
       return res.status(400).json({
-        error:
-          "Company not found. User must be associated with an existing company.",
+        error: 'Company not found. User must be associated with an existing company.',
       });
     }
 
@@ -174,11 +164,7 @@ export default class UsersController {
       request.statusCode = 400;
       request.response = { error: cognitoUser.error.message };
 
-      logger.error(
-        "Error creating user in Cognito: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+      logger.error('Error creating user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
 
       return res.status(400).json({ error: cognitoUser.error.message });
     }
@@ -193,11 +179,7 @@ export default class UsersController {
       request.statusCode = 400;
       request.response = { error: confirmUser.error.message };
 
-      logger.error(
-        "Error confirming user in Cognito: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+      logger.error('Error confirming user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
 
       return res.status(400).json({ error: confirmUser.error.message });
     }
@@ -221,21 +203,14 @@ export default class UsersController {
       request.statusCode = 400;
       request.response = { error: newUser.error };
 
-      logger.error(
-        "Error adding user to database: " +
-          JSON.stringify(request, null, 2) +
-          "\n"
-      );
+      logger.error('Error adding user to database: ' + JSON.stringify(request, null, 2) + '\n');
 
       return res.status(400).json({ error: newUser.error });
     }
 
     // Add the new user to the company.
 
-    const addCompanyUser = await companiesDAO.add_user(
-      user.company._id,
-      newUser._id
-    );
+    const addCompanyUser = await companiesDAO.add_user(user.company._id, newUser._id);
 
     // Variables to be inserted into email template
     const emailData = {
@@ -247,7 +222,7 @@ export default class UsersController {
     };
 
     // Insert variables into email template
-    let email = await EmailHelper.getEmailWithData("crm_new_user", emailData);
+    let email = await EmailHelper.getEmailWithData('crm_new_user', emailData);
 
     // Send email to user
     SES.sendEmail(user.email, email.subject, email.body);
@@ -288,7 +263,7 @@ export default class UsersController {
       } catch (error) {
         switch (error.type) {
           default:
-            logger.warn("Error: " + error);
+            logger.warn('Error: ' + error);
         }
       }
 
@@ -298,7 +273,7 @@ export default class UsersController {
         } catch (error) {
           switch (error.type) {
             default:
-              logger.warn("Error: " + error);
+              logger.warn('Error: ' + error);
           }
         }
       }
@@ -307,11 +282,7 @@ export default class UsersController {
         request.statusCode = 200;
         request.response = user;
 
-        logger.info(
-          "Users Controller getUser result: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
+        logger.info('Users Controller getUser result: ' + JSON.stringify(request, null, 2) + '\n');
 
         res.status(200).json(user);
       }
@@ -319,23 +290,17 @@ export default class UsersController {
       // User does not exist
       else {
         request.statusCode = 404;
-        request.response = { message: "User does not exist." };
+        request.response = { message: 'User does not exist.' };
 
-        logger.warn(
-          "Users Controller getUser error: " +
-            JSON.stringify(request, null, 2) +
-            "\n"
-        );
+        logger.warn('Users Controller getUser error: ' + JSON.stringify(request, null, 2) + '\n');
 
-        res.status(404).json({ message: "User does not exist." });
+        res.status(404).json({ message: 'User does not exist.' });
       }
     } catch (error) {
       request.statusCode = 500;
       request.response = { error: error };
 
-      logger.error(
-        "Internal error: " + JSON.stringify(request, null, 2) + "\n"
-      );
+      logger.error('Internal error: ' + JSON.stringify(request, null, 2) + '\n');
 
       return res.status(500).json(error);
     }
@@ -395,7 +360,7 @@ export default class UsersController {
           } catch (error) {
             switch (error.type) {
               default:
-                logger.warn("Error: " + error);
+                logger.warn('Error: ' + error);
             }
           }
         }
@@ -403,12 +368,10 @@ export default class UsersController {
 
       if (!userExists) {
         response.statusCode = 400;
-        response.response = { message: "User does not exist." };
+        response.response = { message: 'User does not exist.' };
 
         logger.warn(
-          "Users Controller updateUser error: " +
-            JSON.stringify(response, null, 2) +
-            "\n"
+          'Users Controller updateUser error: ' + JSON.stringify(response, null, 2) + '\n'
         );
 
         next(response);
@@ -420,9 +383,7 @@ export default class UsersController {
           response.response = updatedUser;
 
           logger.info(
-            "USERS-DAO UPDATE_USER RESULT: " +
-              JSON.stringify(updatedUser, null, 2) +
-              "\n"
+            'USERS-DAO UPDATE_USER RESULT: ' + JSON.stringify(updatedUser, null, 2) + '\n'
           );
 
           next(response);
@@ -446,7 +407,7 @@ export default class UsersController {
       // Check if user already exists by verifying the id
       const userExists = await usersDAO.getUserById(userId);
       if (!userExists) {
-        return res.status(400).send("User does not exist");
+        return res.status(400).send('User does not exist');
       }
 
       const deletedUser = await usersDAO.deleteUser(userId);
@@ -465,7 +426,7 @@ export default class UsersController {
       let CaregiversDAO = new caregiversDAO();
       let companyId;
 
-      let accessToken = req.headers.authorization.split(" ")[1];
+      let accessToken = req.headers.authorization.split(' ')[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
@@ -475,9 +436,13 @@ export default class UsersController {
         company: companyId,
       });
 
+      crmUsers = crmUsers.data;
+
       let caregivers = await CaregiversDAO.query_list({
         company: companyId,
       });
+
+      caregivers = caregivers.data;
 
       for (let i = 0; i < crmUsers.length; i++) {
         companyUsers.push(crmUsers[i]);
@@ -501,13 +466,7 @@ export default class UsersController {
    */
   static async account(req, res, next) {
     try {
-      logger.info(
-        `Users Controller ACCOUNT Request: \n ${JSON.stringify(
-          req.body,
-          null,
-          2
-        )}`
-      );
+      logger.info(`Users Controller ACCOUNT Request: \n ${JSON.stringify(req.body, null, 2)}`);
 
       let response = {};
       let responseAux = {};
@@ -519,9 +478,9 @@ export default class UsersController {
       let cognitoResponse = {};
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -531,27 +490,27 @@ export default class UsersController {
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
       cognitoId = userAttributes.find((attribute) => {
-        return attribute.Name === "sub";
+        return attribute.Name === 'sub';
       }).Value;
 
       let phoneVerified = userAttributes.find((attribute) => {
-        return attribute.Name === "phone_number_verified";
+        return attribute.Name === 'phone_number_verified';
       }).Value;
 
       let emailVerified = userAttributes.find((attribute) => {
-        return attribute.Name === "email_verified";
+        return attribute.Name === 'email_verified';
       }).Value;
 
       if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
-        app = "crm";
+        app = 'crm';
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
-        app = "marketplace";
+        app = 'marketplace';
       }
 
       let user;
 
       try {
-        if (app === "crm") {
+        if (app === 'crm') {
           let CrmUsersDAO = new crmUsersDAO();
 
           user = await CrmUsersDAO.query_one(
@@ -559,25 +518,24 @@ export default class UsersController {
               cognito_id: { $eq: cognitoId },
             },
             {
-              path: "company",
-              model: "Company",
+              path: 'company',
+              model: 'Company',
               populate: [
                 {
-                  path: "services",
-                  model: "Service",
-                  select: "-__v -created_at -updated_at -translations",
+                  path: 'services',
+                  model: 'Service',
+                  select: '-__v -created_at -updated_at -translations',
                 },
                 {
-                  path: "team",
-                  model: "crm_users",
-                  select:
-                    "-__v -createdAt -updatedAt -cognito_id -settings -company",
+                  path: 'team',
+                  model: 'crm_users',
+                  select: '-__v -createdAt -updatedAt -cognito_id -settings -company',
                 },
               ],
-              select: "-__v -createdAt -updatedAt",
+              select: '-__v -createdAt -updatedAt',
             }
           );
-        } else if (app === "marketplace") {
+        } else if (app === 'marketplace') {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
           user = await MarketplaceUsersDAO.query_one({
@@ -586,8 +544,8 @@ export default class UsersController {
         }
       } catch (error) {
         switch (error.type) {
-          case "NOT_FOUND":
-            throw new Error._404("User not found.");
+          case 'NOT_FOUND':
+            throw new Error._404('User not found.');
           default:
             throw new Error._500(error);
         }
@@ -601,15 +559,12 @@ export default class UsersController {
       let Stripe = new stripe();
       let connectedAccountId;
       let externalAccounts;
-      if (app === "crm" && user.company.stripe_information.account_id) {
+      if (app === 'crm' && user.company.stripe_information.account_id) {
         connectedAccountId = user.company.stripe_information.account_id;
 
-        externalAccounts = await Stripe.listExternalAccounts(
-          connectedAccountId
-        );
+        externalAccounts = await Stripe.listExternalAccounts(connectedAccountId);
 
-        user.company.stripe_information.external_accounts =
-          externalAccounts.data;
+        user.company.stripe_information.external_accounts = externalAccounts.data;
       }
 
       let customerId;
@@ -618,9 +573,9 @@ export default class UsersController {
       /**
        * Get Payment Methods from Stripe
        */
-      if (app === "marketplace") {
+      if (app === 'marketplace') {
         customerId = user.stripe_information.customer_id;
-        
+
         const default_payment_method = (await Stripe.getCustomer(customerId)).default_source;
 
         user.stripe_information.default_payment_method = default_payment_method;
@@ -647,13 +602,7 @@ export default class UsersController {
 
   static async updateAccount(req, res, next) {
     try {
-      logger.info(
-        `Users Controller ACCOUNT Request: \n ${JSON.stringify(
-          req.body,
-          null,
-          2
-        )}`
-      );
+      logger.info(`Users Controller ACCOUNT Request: \n ${JSON.stringify(req.body, null, 2)}`);
 
       let response = {};
       let responseAux = {};
@@ -664,10 +613,23 @@ export default class UsersController {
 
       let cognitoResponse = {};
 
+      /**
+       * Delete fields that are not allowed to be updated
+       */
+      delete req.body._id;
+      delete req.body.stripe_information;
+      delete req.body.email_verified;
+      delete req.body.phone_verified;
+      delete req.body.cognito_id;
+      delete req.body.createdAt;
+      delete req.body.updatedAt;
+      delete req.body.__v;
+      delete req.body.company;
+
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -677,85 +639,69 @@ export default class UsersController {
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
       cognitoId = userAttributes.find((attribute) => {
-        return attribute.Name === "sub";
+        return attribute.Name === 'sub';
       }).Value;
 
       let phoneVerified = userAttributes.find((attribute) => {
-        return attribute.Name === "phone_number_verified";
+        return attribute.Name === 'phone_number_verified';
       }).Value;
 
       let emailVerified = userAttributes.find((attribute) => {
-        return attribute.Name === "email_verified";
+        return attribute.Name === 'email_verified';
       }).Value;
 
       /**
        * Get App from Client ID (CRM or Marketplace)
        */
       if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
-        app = "crm";
+        app = 'crm';
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
-        app = "marketplace";
+        app = 'marketplace';
       }
 
       let user;
       let updateUser;
 
-      if (app === "crm") {
+      if (app === 'crm') {
         try {
           let CrmUsersDAO = new crmUsersDAO();
 
-          user = await CrmUsersDAO.query_one(
-            {
-              cognito_id: { $eq: cognitoId },
-            },
-            {
-              path: "company",
-              model: "Company",
-              populate: [
-                {
-                  path: "services",
-                  model: "Service",
-                  select: "-__v -created_at -updated_at -translations",
-                },
-                {
-                  path: "team",
-                  model: "crm_users",
-                  select:
-                    "-__v -createdAt -updatedAt -cognito_id -settings -company",
-                },
-              ],
-              select: "-__v -createdAt -updatedAt",
-            }
-          );
+          user = await CrmUsersDAO.query_one({
+            cognito_id: { $eq: cognitoId },
+          });
+
+          console.log('USER: ', user.toJSON());
+          console.log('REQ BODY: ', req.body);
+
+          updateUser = {
+            ...user.toJSON(),
+            ...req.body?.user || req.body,
+          };
+          console.log("UPDATE USER BEFORE: ", updateUser);
+
+          updateUser = await CrmUsersDAO.update(updateUser);
+
+          console.log("UPDATE USER: ", updateUser);
+
+          user = updateUser;
         } catch (error) {
+          console.log(error);
           switch (error.type) {
-            case "NOT_FOUND":
-              throw new Error._404("User not found.");
+            case 'NOT_FOUND':
+              throw new Error._404('User not found.');
             default:
               throw new Error._500(error);
           }
         }
       }
 
-      if (app === "marketplace") {
+      if (app === 'marketplace') {
         try {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
           user = await MarketplaceUsersDAO.query_one({
             cognito_id: { $eq: cognitoId },
           });
-
-          /**
-           * Delete fields that are not allowed to be updated
-           */
-          delete req.body._id;
-          delete req.body.stripe_information;
-          delete req.body.email_verified;
-          delete req.body.phone_verified;
-          delete req.body.cognito_id;
-          delete req.body.createdAt;
-          delete req.body.updatedAt;
-          delete req.body.__v;
 
           updateUser = {
             ...user.toJSON(),
@@ -767,38 +713,12 @@ export default class UsersController {
           user = updateUser;
         } catch (error) {
           switch (error.type) {
-            case "NOT_FOUND":
-              throw new Error._404("User not found.");
+            case 'NOT_FOUND':
+              throw new Error._404('User not found.');
             default:
               throw new Error._500(error);
           }
         }
-      }
-
-      /**
-       * Get External Accounts from Stripe
-       */
-      let Stripe = new stripe();
-      let connectedAccountId;
-      let externalAccounts;
-      if (app === "crm" && user.company.stripe_information.account_id) {
-        connectedAccountId = user.company.stripe_information.account_id;
-
-        externalAccounts = await Stripe.listExternalAccounts(
-          connectedAccountId
-        );
-
-        user.company.stripe_information.external_accounts =
-          externalAccounts.data;
-      }
-
-      let customerId;
-      let paymentMethods;
-      if (app === "marketplace") {
-        customerId = user.stripe_information.customer_id;
-        paymentMethods = await Stripe.listPaymentMethods(customerId, "card");
-
-        user.stripe_information.payment_methods = paymentMethods;
       }
 
       // Convert user to JSON

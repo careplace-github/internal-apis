@@ -7,11 +7,11 @@ import {
   AddOrderValidator,
   UpdateOrderValidator,
 } from "../validators/orders.validator.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
-import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
 // Import Controller
-import OrdersController from "../controllers/orders.controller.js";
+import OrdersController from "../controllers/orders.controller";
 
 const router = express.Router();
 

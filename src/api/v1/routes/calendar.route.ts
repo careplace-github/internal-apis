@@ -3,7 +3,7 @@ import express from "express";
 
 // Import Middlewares
 import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 import {
   AddEventValidator,
   UpdateEventValidator,
@@ -12,8 +12,8 @@ import {
 import CreateEventSeriesValidator from "../validators/eventsSeries.validator.js";
 
 // Import Controller
-import CalendarController from "../controllers/calendar.controller.js";
-import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
+import CalendarController from "../controllers/calendar.controller";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
 const router = express.Router();
 

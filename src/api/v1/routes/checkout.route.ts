@@ -1,7 +1,7 @@
 // Import the express module
 import Router from "express";
 import express from "express";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 
 
 

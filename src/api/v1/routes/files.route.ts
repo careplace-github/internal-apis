@@ -1,22 +1,19 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import multer from 'multer';
-import FilesController from '../controllers/files.controller.js';
-import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware.js';
+import FilesController from '../controllers/files.controller';
+import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
 import * as Error from '../utils/errors/http/index.js';
 import fs from 'fs';
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function (req: Request, file, cb) {
     cb(null, 'src/uploads');
   },
-  filename: function (req, file, cb) {
+  filename: function (req: Request, file, cb) {
     /**
      * Change the file name to the current date and time to avoid duplicate file names
      */
-    cb(
-      null,
-      `careplace_${Date.now()}_${file.originalname}`
-    );
+    cb(null, `careplace_${Date.now()}_${file.originalname}`);
   },
 });
 
