@@ -53,8 +53,8 @@ const orderSchema = new Schema(
             required: true,
             enum: [1, 2, 3, 4, 5, 6, 7],
           },
-          start: { type: String, required: true },
-          end: { type: String, required: true },
+          start: { type: Date, required: true },
+          end: { type: Date, required: true },
         },
       ],
     },
@@ -109,32 +109,6 @@ const orderSchema = new Schema(
     virtuals: true,
   }
 );
-
-/**
- * Methods
- */
-
-// Create an EventSeries for the order
-orderSchema.methods.createEventSeries = async function () {
-  const eventSeries = new eventSeriesSchema({
-    _id: new mongoose.Types.ObjectId(),
-
-    user: this.caregiver,
-    startDate: this.scheduleInformation.startDate,
-    endDate: this.scheduleInformation.endDate,
-    recurrencyType: this.scheduleInformation.recurrencyType,
-    schedule: this.scheduleInformation.schedule,
-  });
-  return eventSeries;
-};
-
-orderSchema.methods.updateStripePaymentIntent = async function (
-  paymentIntentId
-) {
-  this.paymentInformation.stripeInformation.stripe_payment_intent_id =
-    paymentIntentId;
-  return this.save();
-};
 
 /**
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
