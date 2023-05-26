@@ -44,9 +44,11 @@ router
   .get(AuthenticationGuard, AccessGuard('crm'), StripeController.retrieveExternalAccount)
   .delete(AuthenticationGuard, AccessGuard('crm'), StripeController.deleteExternalAccount);
 
+router.route('/companies/:id').get(CompaniesController.retrieve);
+
 router
-  .route('/companies/:id')
-  .get(CompaniesController.retrieve)
+  .route('/companies/:id/orders')
+  .post(AuthenticationGuard, AccessGuard('marketplace'), OrdersController.create);
 
 router
   .route('/companies/orders/:id/accept')
