@@ -47,7 +47,6 @@ router
 router
   .route('/companies/:id')
   .get(CompaniesController.retrieve)
-  .post(AuthenticationGuard, AccessGuard('marketplace'), OrdersController.create);
 
 router
   .route('/companies/orders/:id/accept')
