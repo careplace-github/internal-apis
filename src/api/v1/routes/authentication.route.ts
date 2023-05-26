@@ -1,6 +1,6 @@
 import express from "express";
-import AuthenticationController from "../controllers/authentication.controller.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
+import AuthenticationController from "../controllers/authentication.controller";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 
 const router = express.Router();
 
