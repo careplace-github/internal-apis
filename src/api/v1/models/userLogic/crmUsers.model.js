@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -18,9 +18,9 @@ const crmUserSchema = new Schema(
 
     birth_date: { type: Date, required: true },
 
-    gender: { type: String, required: true, enum: ["male", "female", "other"] },
+    gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
 
-    company: { type: Schema.ObjectId, ref: "Company", required: true },
+    company: { type: Schema.ObjectId, ref: 'Company', required: true },
 
     address: {
       street: { type: String, required: false },
@@ -34,7 +34,7 @@ const crmUserSchema = new Schema(
       country: {
         type: String,
         required: false,
-        enum: ["PT"],
+        enum: ['PT'],
       },
 
       coordinates: {
@@ -52,34 +52,35 @@ const crmUserSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["technical_direction", "social_worker"],
+      enum: ['technical_direction', 'social_worker'],
     },
 
-    accesses: [
-      {
-        access: {
-          type: String,
-          required: true,
-          enum: [
-            "dashboard",
-            "schedule",
-            "orders",
-            "collaborators",
-            "invoicing",
-            "chat",
-          ],
-        },
-        view: { type: Boolean, required: true, default: true },
-        edit: { type: Boolean, required: true, default: null },
-      },
-    ],
+    permissions: {
+      type: [String],
+      required: true,
+      default: ['app_user'],
+      enum: [
+        'app_user',
+        'admin_edit_users_permissions',
+        'admin_edit_company',
+        'dashboard_view',
+        'calendar_view',
+        'calendar_edit',
+        'orders_view',
+        'orders_edit',
+        'orders_email',
+        'users_view',
+        'users_edit',
+        
+      ],
+    },
 
     settings: {
       theme: {
         type: String,
         required: true,
-        default: "light",
-        enum: ["light", "dark"],
+        default: 'light',
+        enum: ['light', 'dark'],
       },
 
       notifications: {
@@ -106,4 +107,4 @@ const crmUserSchema = new Schema(
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
-export default crmUser = mongoose.model("crm_users", crmUserSchema);
+export default crmUser = mongoose.model('crm_users', crmUserSchema);

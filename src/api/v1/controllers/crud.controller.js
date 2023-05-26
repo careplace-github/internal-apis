@@ -1,9 +1,9 @@
-import logger from "../../../logs/logger.js";
-import * as Error from "../utils/errors/http/index.js";
-import usersDAO from "../db/crmUsers.dao.js";
-import authUtils from "../utils/auth/auth.utils.js";
-import cognito from "../services/cognito.service.js";
-import mongoose from "mongoose";
+import logger from '../../../logs/logger.js';
+import * as Error from '../utils/errors/http/index.js';
+import usersDAO from '../db/crmUsers.dao.js';
+import authUtils from '../utils/auth/auth.utils.js';
+import cognito from '../services/cognito.service.js';
+import mongoose from 'mongoose';
 
 let ObjectId = mongoose.Types.ObjectId;
 
@@ -13,6 +13,9 @@ export default class CRUD_Methods {
    */
 
   constructor(dao) {
+    if (!dao) {
+      throw new Error._400('DAO is undefined.');
+    }
     this.DAO = dao;
   }
 
@@ -37,7 +40,7 @@ export default class CRUD_Methods {
 
       next(response);
     } catch (err) {
-      console.log("ERO: " + err);
+      console.log('ERO: ' + err);
       next(err);
     }
   }
@@ -63,8 +66,8 @@ export default class CRUD_Methods {
       try {
         documentRetrieved = await this.DAO.retrieve(documentId);
       } catch (err) {
-        console.log("AQUI 5" + err);
-        if (err.type === "NOT_FOUND") {
+        console.log('AQUI 5' + err);
+        if (err.type === 'NOT_FOUND') {
           throw new Error._400(`${this.DAO.Type} does not exist.`);
         }
       }
@@ -74,7 +77,7 @@ export default class CRUD_Methods {
 
       next(response);
     } catch (err) {
-      console.log("ERO: " + err);
+      console.log('ERO: ' + err);
 
       next(err);
     }
@@ -102,7 +105,7 @@ export default class CRUD_Methods {
         documentExists = await this.DAO.retrieve(documentId);
       } catch (err) {
         console.log(err);
-        if (err.type === "NOT_FOUND") {
+        if (err.type === 'NOT_FOUND') {
           throw new Error._400(`${this.DAO.Type} does not exist.`);
         }
       }
@@ -144,7 +147,7 @@ export default class CRUD_Methods {
         deletedDocument = await this.DAO.delete(documentId);
       } catch (err) {
         switch (err.type) {
-          case "NOT_FOUND":
+          case 'NOT_FOUND':
             throw new Error._400(`${this.DAO.Type} does not exist.`);
           default:
             throw new Error._500(err.message);
@@ -187,10 +190,8 @@ export default class CRUD_Methods {
       try {
         let userExists = await usersDAO.retrieve(document.user);
       } catch (err) {
-        if (err.type === "NOT_FOUND") {
-          throw new Error._400(
-            "User does not exist. Need a valid User to create an event."
-          );
+        if (err.type === 'NOT_FOUND') {
+          throw new Error._400('User does not exist. Need a valid User to create an event.');
         }
       }
 
@@ -229,7 +230,7 @@ export default class CRUD_Methods {
       try {
         documentExists = await this.DAO.retrieve(documentId);
       } catch (err) {
-        if (err.type === "NOT_FOUND") {
+        if (err.type === 'NOT_FOUND') {
           throw new Error._400(`${this.DAO.Type} does not exist.`);
         }
       }
@@ -244,10 +245,8 @@ export default class CRUD_Methods {
           let userExists = await UsersDAO.retrieve(document.user);
         } catch (err) {
           // If the user does not exist, throw an error.
-          if (err.type === "NOT_FOUND") {
-            throw new Error._400(
-              "User does not exist. Need a valid User to update an Event."
-            );
+          if (err.type === 'NOT_FOUND') {
+            throw new Error._400('User does not exist. Need a valid User to update an Event.');
           }
         }
       }
@@ -296,9 +295,9 @@ export default class CRUD_Methods {
       let documents;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401("Missing required access token.");
+        throw new Error._401('Missing required access token.');
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
@@ -312,10 +311,10 @@ export default class CRUD_Methods {
       } catch (err) {
         console.log(`ERROR 4: ${err.message}`);
         switch (err.type) {
-          case "NOT_FOUND":
-            throw new Error._400("User does not exist.");
+          case 'NOT_FOUND':
+            throw new Error._400('User does not exist.');
 
-          case "INVALID_PARAMETER":
+          case 'INVALID_PARAMETER':
             throw new Error._400(err.message);
 
           default:
@@ -329,10 +328,10 @@ export default class CRUD_Methods {
         });
       } catch (err) {
         switch (err.type) {
-          case "INVALID_PARAMETER":
+          case 'INVALID_PARAMETER':
             throw new Error._400(err.message);
 
-          case "NOT_FOUND":
+          case 'NOT_FOUND':
             documents = [];
             break;
 
@@ -366,7 +365,7 @@ export default class CRUD_Methods {
    */
   async listByCompanyId(req, res, next) {
     try {
-      console.log("TEste");
+      console.log('TEste');
 
       let response = {};
       let accessToken;
@@ -376,9 +375,9 @@ export default class CRUD_Methods {
       let AuthUtils = new authUtils();
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401("No Authorization header found.");
+        throw new Error._401('No Authorization header found.');
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
@@ -388,10 +387,7 @@ export default class CRUD_Methods {
       console.log(`Decoded Token: ${JSON.stringify(decodedToken)}`);
 
       try {
-        companyId = await Cognito.getUserCustomAttribute(
-          decodedToken.sub,
-          "company"
-        );
+        companyId = await Cognito.getUserCustomAttribute(decodedToken.sub, 'company');
       } catch (err) {
         console.log(`ERROR 4: ${err}`);
         switch (err.type) {

@@ -42,7 +42,7 @@ export default class DashboardController {
       company: companyId,
       status: "new",
     }).then((orders) => {
-      return orders.length;
+      return orders.data.length;
     });
 
     let StripeHelper = new stripeHelper();

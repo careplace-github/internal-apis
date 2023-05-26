@@ -2,21 +2,13 @@ import express from "express";
 
 // Import Controller
 import StripeController from "../controllers/stripe.controller.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware.js";
-import AccessGuard from "../middlewares/guards/accessGuard.middleware.js";
+import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
+import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
 const router = express.Router();
 
 router
-  .route("/payments/tokens/card")
-  .post(
-    AuthenticationGuard,
-    AccessGuard("marketplace"),
-    StripeController.createCardToken
-  );
-
-router
-  .route("/payments/payment-methods")
+  .route("/users/payment-methods")
   .post(
     AuthenticationGuard,
     AccessGuard("marketplace"),
@@ -29,7 +21,7 @@ router
   );
 
 router
-  .route("/payments/payment-methods/:id")
+  .route("/users/payment-methods/:id")
   .get(
     AuthenticationGuard,
     AccessGuard("marketplace"),
