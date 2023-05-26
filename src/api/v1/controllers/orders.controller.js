@@ -6,6 +6,7 @@ import ordersDAO from '../db/orders.dao.js';
 import companiesDAO from '../db/companies.dao.js';
 import usersDAO from '../db/marketplaceUsers.dao.js';
 import relativesDAO from '../db/relatives.dao.js';
+import crmUsersDAO from '../db/crmUsers.dao.js';
 
 import CRUD from './crud.controller.js';
 
@@ -52,6 +53,7 @@ export default class OrdersController {
       let OrdersDAO = new ordersDAO();
       let DateUtils = new dateUtils();
       let RelativesDAO = new relativesDAO();
+      let CRMUsersDAO = new crmUsersDAO();
 
       let cognitoUser = await AuthHelper.getAuthUser(accessToken);
 
@@ -105,6 +107,22 @@ export default class OrdersController {
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
+
+      const crmEmails = await CRMUsersDAO.query_list({
+        company: { $eq: order.company },
+      })
+        .then((users) => {
+          // get users that have the permission 'orders_email'
+          return users.filter((user) => {
+            return user.permissions.includes('orders_email');
+          });
+        })
+        .then((users) => {
+          // get emails from users
+          return users.map((user) => {
+            return user.email;
+          });
+        });
 
       /**
        * From 'services' array, get the services that are in the order
@@ -183,11 +201,7 @@ export default class OrdersController {
         companyEmailPayload
       );
 
-      await SES.sendEmail(
-        [company.business_profile.email],
-        crmNewOrderEmail.subject,
-        crmNewOrderEmail.htmlBody
-      );
+      await SES.sendEmail(crmEmails, crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
     } catch (error) {
       logger.error(error);
       next(error);
@@ -237,7 +251,7 @@ export default class OrdersController {
             {
               path: 'user',
               select: 'name email phone address -_id',
-            }
+            },
           ]
         );
       } catch (err) {
@@ -436,6 +450,7 @@ export default class OrdersController {
       let OrdersDAO = new ordersDAO();
       let CompaniesDAO = new companiesDAO();
       let UsersDAO = new usersDAO();
+      let CRMUsersDAO = new crmUsersDAO();
       let DateUtils = new dateUtils();
 
       let accessToken;
@@ -446,15 +461,8 @@ export default class OrdersController {
         throw new Error._401('Missing required access token.');
       }
 
-      let companyId = await AuthHelper.getUserAttributes(accessToken).then((data) => {
-        let companyId = data.find((item) => {
-          console.log(item);
-          if (item.Name === 'custom:company') {
-            return item.Value;
-          }
-        });
-
-        return companyId.Value;
+      let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        return user.company;
       });
 
       let order = await OrdersDAO.retrieve(req.params.id);
@@ -463,7 +471,7 @@ export default class OrdersController {
         throw new Error._403('You are not authorized to accept this order.');
       }
 
-      if (order.status != 'pending') {
+      if (order.status !== 'new') {
         throw new Error._400('You cannot accept this order.');
       }
 
@@ -531,6 +539,22 @@ export default class OrdersController {
           },
         }
       );
+
+      const crmEmails = await CrmUsersDAO.query_list({
+        company: { $eq: order.company },
+      })
+        .then((users) => {
+          // get users that have the permission 'orders_email'
+          return users.filter((user) => {
+            return user.permissions.includes('orders_email');
+          });
+        })
+        .then((users) => {
+          // get emails from users
+          return users.map((user) => {
+            return user.email;
+          });
+        });
 
       let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
 
@@ -606,11 +630,7 @@ export default class OrdersController {
         companyEmailPayload
       );
 
-      await SES.sendEmail(
-        [company.business_profile.email],
-        crmNewOrderEmail.subject,
-        crmNewOrderEmail.htmlBody
-      );
+      await SES.sendEmail(crmEmails, crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
     } catch (error) {
       logger.error(error.stack);
       next(error);

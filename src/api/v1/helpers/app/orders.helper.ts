@@ -64,6 +64,7 @@ export async function generateEventsFromSeries(eventSeries: IEventSeries) {
       const event: IEvent = {
         _id: uuidv4(),
         series: eventSeries._id,
+        order: eventSeries.order,
         type: 'company',
         title: eventSeries.title,
         description: eventSeries.description,

@@ -69,7 +69,7 @@ const orderSchema = new Schema(
     // accepted -> Company Accepted
     // payment_pending -> Company Accepted, waiting for payment
     // active -> Payment received, order is active
-    status: { type: String, required: true, default: "new", enum: ["new", "declined", "cancelled", "accepted", "payment_pending", "active"] },
+    status: { type: String, required: true, default: "new", enum: ["new", "declined", "cancelled", "accepted", "pending_payment", "active", "completed"] },
 
     decline_reason: { type: String, required: false },
 

@@ -677,6 +677,7 @@ export default class UsersController {
             ...user.toJSON(),
             ...req.body?.user || req.body,
           };
+          console.log("UPDATE USER BEFORE: ", updateUser);
 
           updateUser = await CrmUsersDAO.update(updateUser);
 
