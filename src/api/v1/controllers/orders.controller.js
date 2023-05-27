@@ -27,6 +27,7 @@ import cognito from '../services/cognito.service.js';
  * Import the JSON Object from /src/assets/data/services.json
  */
 import { services } from '../../../assets/data/services.js';
+import RelativesDAO from '../db/relatives.dao.js';
 
 /**
  *  let OrdersDAO = new ordersDAO();
@@ -452,12 +453,11 @@ export default class OrdersController {
       let CompaniesDAO = new companiesDAO();
       let UsersDAO = new usersDAO();
       let CRMUsersDAO = new crmUsersDAO();
+      let RelativesDAO = new relativesDAO();
       let CaregiversDAO = new caregiversDAO();
       let DateUtils = new dateUtils();
 
       let caregiver = req.body.caregiver;
-
-      
 
       let accessToken;
 
@@ -478,12 +478,12 @@ export default class OrdersController {
       }
 
       let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
-        return user.company;
+        return user.company._id;
       });
 
       let order = await OrdersDAO.retrieve(req.params.id);
 
-      if (companyId != order.company) {
+      if (companyId.toString() !== order.company.toString()) {
         throw new Error._403('You are not authorized to accept this order.');
       }
 
@@ -492,6 +492,7 @@ export default class OrdersController {
       }
 
       order.status = 'accepted';
+      order.caregiver = caregiver;
 
       await OrdersDAO.update(order);
 
@@ -520,13 +521,9 @@ export default class OrdersController {
         orderServices.push(service);
       }
 
-      let user = await UsersDAO.query_one(
-        { _id: order.user },
-        {
-          path: 'relatives',
-          model: 'Relative',
-        }
-      );
+      let user = await UsersDAO.query_one({ _id: order.user });
+
+      logger.info('USER EMAIL: ' + user.email);
 
       // Create a string with the services names
       // Example: "Cleaning, Laundry, Shopping"
@@ -537,40 +534,22 @@ export default class OrdersController {
         .join(', ');
 
       // From the users.relatives array, get the relative that matches the relative id in the order
-      let relative = user.relatives.find((relative) => {
-        if (relative._id.toString() == order.relative.toString()) {
-          return relative;
-        }
+      let relative = await RelativesDAO.query_one({ _id: order.relative });
+
+      let company = await CompaniesDAO.query_one({ _id: order.company });
+
+      const crmEmails = (await CRMUsersDAO.query_list({
+        company: { $eq: order.company },
+      })).data.map((user) => {
+        return user.email;
       });
 
-      logger.info(`User: ${relative}`);
 
-      let company = await CompaniesDAO.query_one(
-        { _id: order.company },
-        {
-          path: 'legal_information',
-          populate: {
-            path: 'director',
-            model: 'crm_users',
-          },
-        }
-      );
 
-      const crmEmails = await CrmUsersDAO.query_list({
-        company: { $eq: order.company },
-      })
-        .then((users) => {
-          // get users that have the permission 'orders_email'
-          return users.filter((user) => {
-            return user.permissions.includes('orders_email');
-          });
-        })
-        .then((users) => {
-          // get emails from users
-          return users.map((user) => {
-            return user.email;
-          });
-        });
+
+
+       
+      logger.info('CRM EMAILS: ' + JSON.stringify(crmEmails, null, 2));
 
       let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
 
@@ -605,6 +584,10 @@ export default class OrdersController {
         'marketplace_order_accepted',
         userEmailPayload
       );
+
+      logger.info('user email html body: ')
+      logger.info(JSON.stringify(marketplaceNewOrderEmail.htmlBody, null, 2));
+      
 
       await SES.sendEmail(
         [user.email],
