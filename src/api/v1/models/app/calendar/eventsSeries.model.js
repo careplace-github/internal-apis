@@ -51,7 +51,7 @@ const eventSeriesSchema = new Schema(
     },
 
     title: { type: String, required: true },
-    description: { type: String, required: true, default: '' },
+    description: { type: String, required: false, default: '' },
     location: { type: String, required: false },
     allDay: { type: Boolean, required: true, default: false },
     textColor: { type: String, required: true, default: '#1890FF' },
