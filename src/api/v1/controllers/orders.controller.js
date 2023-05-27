@@ -7,6 +7,7 @@ import companiesDAO from '../db/companies.dao.js';
 import usersDAO from '../db/marketplaceUsers.dao.js';
 import relativesDAO from '../db/relatives.dao.js';
 import crmUsersDAO from '../db/crmUsers.dao.js';
+import caregiversDAO from '../db/caregivers.dao.js';
 
 import CRUD from './crud.controller.js';
 
@@ -451,7 +452,12 @@ export default class OrdersController {
       let CompaniesDAO = new companiesDAO();
       let UsersDAO = new usersDAO();
       let CRMUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
       let DateUtils = new dateUtils();
+
+      let caregiver = req.body.caregiver;
+
+      
 
       let accessToken;
 
@@ -459,6 +465,16 @@ export default class OrdersController {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
         throw new Error._401('Missing required access token.');
+      }
+
+      if (!caregiver) {
+        throw new Error._400('Missing caregiver.');
+      }
+
+      let caregiverExists = await CaregiversDAO.retrieve(caregiver);
+
+      if (!caregiverExists) {
+        throw new Error._400('Caregiver does not exist.');
       }
 
       let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
