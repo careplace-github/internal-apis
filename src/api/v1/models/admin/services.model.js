@@ -10,11 +10,13 @@ const serviceSchema = new Schema(
 
     name: { type: String, required: true, unique: true },
 
-    description: { type: String, required: true },
+    description: { type: String, required: true , default: ""},
 
-    short_description: { type: String, required: true },
+    short_description: { type: String, required: true, default: "" },
 
-    image: { type: String, required: true },
+    image: { type: String, required: true, default: ""},
+
+    type: {type: String, required: true, enum: ["special", "normal"], default: "normal"},
   },
   {
     timestamps: true,
