@@ -16,6 +16,8 @@ const serviceSchema = new Schema(
 
     image: { type: String, required: true, default: ""},
 
+    icon: { type: String, required: false},
+
     type: {type: String, required: true, enum: ["special", "normal"], default: "normal"},
   },
   {
