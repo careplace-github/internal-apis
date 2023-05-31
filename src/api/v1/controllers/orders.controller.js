@@ -7,6 +7,8 @@ import companiesDAO from '../db/companies.dao.js';
 import usersDAO from '../db/marketplaceUsers.dao.js';
 import relativesDAO from '../db/relatives.dao.js';
 import crmUsersDAO from '../db/crmUsers.dao.js';
+import caregiversDAO from '../db/caregivers.dao.js';
+import eventsSeriesDAO from '../db/eventsSeries.dao.js';
 
 import CRUD from './crud.controller.js';
 
@@ -26,6 +28,7 @@ import cognito from '../services/cognito.service.js';
  * Import the JSON Object from /src/assets/data/services.json
  */
 import { services } from '../../../assets/data/services.js';
+import RelativesDAO from '../db/relatives.dao.js';
 
 /**
  *  let OrdersDAO = new ordersDAO();
@@ -451,7 +454,12 @@ export default class OrdersController {
       let CompaniesDAO = new companiesDAO();
       let UsersDAO = new usersDAO();
       let CRMUsersDAO = new crmUsersDAO();
+      let RelativesDAO = new relativesDAO();
+      let CaregiversDAO = new caregiversDAO();
+      let EventsSeriesDAO = new eventsSeriesDAO();
       let DateUtils = new dateUtils();
+
+      let caregiver = req.body.caregiver;
 
       let accessToken;
 
@@ -461,13 +469,23 @@ export default class OrdersController {
         throw new Error._401('Missing required access token.');
       }
 
+      if (!caregiver) {
+        throw new Error._400('Missing caregiver.');
+      }
+
+      let caregiverExists = await CaregiversDAO.retrieve(caregiver);
+
+      if (!caregiverExists) {
+        throw new Error._400('Caregiver does not exist.');
+      }
+
       let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
-        return user.company;
+        return user.company._id;
       });
 
       let order = await OrdersDAO.retrieve(req.params.id);
 
-      if (companyId != order.company) {
+      if (companyId.toString() !== order.company.toString()) {
         throw new Error._403('You are not authorized to accept this order.');
       }
 
@@ -476,6 +494,7 @@ export default class OrdersController {
       }
 
       order.status = 'accepted';
+      order.caregiver = caregiver;
 
       await OrdersDAO.update(order);
 
@@ -485,6 +504,31 @@ export default class OrdersController {
       };
 
       next(response);
+
+      // From the users.relatives array, get the relative that matches the relative id in the order
+      let relative = await RelativesDAO.query_one({ _id: order.relative });
+      let company = await CompaniesDAO.query_one({ _id: order.company });
+      let user = await UsersDAO.query_one({ _id: order.user });
+
+      let eventSeries = {
+        user: order.user,
+        company: order.company,
+        order: order._id,
+
+        start_date: order.schedule_information.start_date,
+
+        recurrency_type: order.schedule_information.recurrency,
+
+        schedule: order.schedule_information.schedule,
+
+        title: relative.name,
+      };
+
+      logger.info('EVENT SERIES: ' + JSON.stringify(eventSeries));
+
+      let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
+
+      logger.info('EVENT SERIES ADDED: ' + JSON.stringify(eventSeriesAdded));
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
@@ -504,14 +548,6 @@ export default class OrdersController {
         orderServices.push(service);
       }
 
-      let user = await UsersDAO.query_one(
-        { _id: order.user },
-        {
-          path: 'relatives',
-          model: 'Relative',
-        }
-      );
-
       // Create a string with the services names
       // Example: "Cleaning, Laundry, Shopping"
       orderServices = orderServices
@@ -520,41 +556,17 @@ export default class OrdersController {
         })
         .join(', ');
 
-      // From the users.relatives array, get the relative that matches the relative id in the order
-      let relative = user.relatives.find((relative) => {
-        if (relative._id.toString() == order.relative.toString()) {
-          return relative;
-        }
+      const crmUsers = (
+        await CRMUsersDAO.query_list({
+          company: { $eq: order.company },
+        })
+      ).data;
+
+      const crmEmails = crmUsers.map((user) => {
+        return user.email;
       });
 
-      logger.info(`User: ${relative}`);
-
-      let company = await CompaniesDAO.query_one(
-        { _id: order.company },
-        {
-          path: 'legal_information',
-          populate: {
-            path: 'director',
-            model: 'crm_users',
-          },
-        }
-      );
-
-      const crmEmails = await CrmUsersDAO.query_list({
-        company: { $eq: order.company },
-      })
-        .then((users) => {
-          // get users that have the permission 'orders_email'
-          return users.filter((user) => {
-            return user.permissions.includes('orders_email');
-          });
-        })
-        .then((users) => {
-          // get emails from users
-          return users.map((user) => {
-            return user.email;
-          });
-        });
+      logger.info('CRM EMAILS: ' + JSON.stringify(crmEmails, null, 2));
 
       let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
 
@@ -590,6 +602,9 @@ export default class OrdersController {
         userEmailPayload
       );
 
+      logger.info('user email html body: ');
+      logger.info(JSON.stringify(marketplaceNewOrderEmail.htmlBody, null, 2));
+
       await SES.sendEmail(
         [user.email],
         marketplaceNewOrderEmail.subject,
@@ -599,38 +614,45 @@ export default class OrdersController {
        * @todo Send the email in BCC for each employee of the company that has one of the roles ['admin', 'manager', 'employee'] and that has the 'email_notifications' field set to true
        */
 
-      let companyEmailPayload = {
-        name: company.legal_information.director.name,
-        company: company.business_profile.name,
+      logger.info('EMAILS LENGTH: ' + crmEmails.length);
 
-        userName: user.name,
-        userPhone: user.phone,
+      logger.info('CRM USERS: ' + JSON.stringify(crmUsers, null, 2));
 
-        orderStart: orderStart,
-        orderSchedule: schedule,
-        orderServices: orderServices,
+      for (let i = 0; i < crmEmails.length; i++) {
+        let companyEmailPayload = {
+          name: crmUsers[i].name,
+          company: company.business_profile.name,
 
-        relativeName: relative.name,
-        relativeBirthdate: birthdate,
-        relativeMedicalInformation:
-          relative.medical_information !== undefined && relative.medical_information !== null
-            ? relative.medical_information
-            : 'n/a',
+          userName: user.name,
+          userPhone: user.phone,
 
-        relativeStreet: relative.address.street,
-        relativeCity: relative.address.city,
-        relativePostalCode: relative.address.postal_code,
-        relativeCountry: relative.address.country,
+          orderStart: orderStart,
+          orderSchedule: schedule,
+          orderServices: orderServices,
 
-        link: `https://www.sales.careplace.pt/orders/${order._id}`,
-      };
+          relativeName: relative.name,
+          relativeBirthdate: birthdate,
+          relativeMedicalInformation:
+            relative.medical_information !== undefined && relative.medical_information !== null
+              ? relative.medical_information
+              : 'n/a',
 
-      let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'crm_order_accepted',
-        companyEmailPayload
-      );
+          relativeStreet: relative.address.street,
+          relativeCity: relative.address.city,
+          relativePostalCode: relative.address.postal_code,
+          relativeCountry: relative.address.country,
 
-      await SES.sendEmail(crmEmails, crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
+          //link: `https://www.business.careplace.pt/app/orders/${order._id}`,
+          link: `http://localhost:4000/app/orders/${order._id}/view`,
+        };
+
+        let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+          'crm_order_accepted',
+          companyEmailPayload
+        );
+
+        await SES.sendEmail([crmEmails[i]], crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
+      }
     } catch (error) {
       logger.error(error.stack);
       next(error);
