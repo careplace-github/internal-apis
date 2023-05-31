@@ -80,7 +80,8 @@
     "uuid": "^9.0.0",
     "winston": "^3.8.2",
     "xss-clean": "^0.1.1",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",
@@ -106,7 +107,6 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4",
     "webpack-cli": "^4.10.0"
   }
 }
