@@ -1,12 +1,16 @@
-FROM node:14.15.4-alpine3.12
+FROM node:16.17.0-bullseye-slim
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-ENV NODE_ENV=staging
+ENV NODE_ENV="staging"
 
-RUN npm install --legacy-peer-deps
+RUN yarn cache clean --force
 
-CMD [ "npm", "start" ]
+RUN yarn install --production --frozen-lockfile --network-timeout 100000
+
+RUN yarn build
+
+CMD [ "yarn", "start" ]
 
