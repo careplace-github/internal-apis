@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Development Build
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: ["develop"]
 
 jobs:
-  deploy:
-    name: Deploy
+  build:
+    name: Build
     runs-on: ubuntu-latest
     environment: development
 
@@ -18,4 +18,4 @@ jobs:
       - name: Branch name
         run: echo running on branch '${GITHUB_REF##*/}'
       - name: Build the Docker image
-        run: docker build . --file .docker/api/Dockerfile.dev --tag careplace-backend-build-${GITHUB_REF##*/}:$(date +%s)
+        run: docker build . --file .docker/api/Dockerfile.dev --tag careplace-rest-api-build-${GITHUB_REF##*/}:$(date +%s)
