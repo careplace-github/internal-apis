@@ -18,7 +18,7 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Staging](https://github.com/careplace-github/marketplace-web/actions/workflows/aws-deploy-stag.yml/badge.svg)](https://github.com/careplace-github/marketplace-web/actions/workflows/aws-deploy-stag.yml)
+[![Staging Deployment](https://github.com/careplace-github/rest-api/actions/workflows/aws-deploy-stag.yml/badge.svg?branch=staging)](https://github.com/careplace-github/rest-api/actions/workflows/aws-deploy-stag.yml)
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
