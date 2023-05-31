@@ -1,12 +1,13 @@
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from '../../../logs/logger.js';
 
-import authHelper from "../helpers/auth/auth.helper.js";
-import marketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
-import relativesDAO from "../db/relatives.dao.js";
-import CRUD from "./crud.controller.js";
+import authHelper from '../helpers/auth/auth.helper.js';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
+import relativesDAO from '../db/relatives.dao.js';
+import ordersDAO from '../db/orders.dao.js';
+import CRUD from './crud.controller.js';
 
-import * as Error from "../utils/errors/http/index.js";
+import * as Error from '../utils/errors/http/index.js';
 
 export default class RelativesController {
   static async create(req, res, next) {
@@ -17,7 +18,7 @@ export default class RelativesController {
 
       let AuthHelper = new authHelper();
 
-      let accessToken = req.headers["authorization"].split(" ")[1];
+      let accessToken = req.headers['authorization'].split(' ')[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
@@ -40,7 +41,7 @@ export default class RelativesController {
       let relativeId = req.params.id;
       let RelativesDAO = new relativesDAO();
 
-      let accessToken = req.headers["authorization"].split(" ")[1];
+      let accessToken = req.headers['authorization'].split(' ')[1];
 
       let AuthHelper = new authHelper();
 
@@ -49,7 +50,7 @@ export default class RelativesController {
       let relative = await RelativesDAO.retrieve(relativeId);
 
       if (relative.user.toString() !== user._id.toString()) {
-        throw new Error._403("You are not allowed to access this resource");
+        throw new Error._403('You are not allowed to access this resource');
       }
 
       response.statusCode = 200;
@@ -70,7 +71,7 @@ export default class RelativesController {
 
       let AuthHelper = new authHelper();
 
-      let accessToken = req.headers["authorization"].split(" ")[1];
+      let accessToken = req.headers['authorization'].split(' ')[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
@@ -90,7 +91,7 @@ export default class RelativesController {
       };
 
       if (relative.user.toString() !== user._id.toString()) {
-        throw new Error._403("You are not allowed to access this resource");
+        throw new Error._403('You are not allowed to access this resource');
       }
 
       let relativeUpdated = await RelativesDAO.update(relative);
@@ -109,17 +110,26 @@ export default class RelativesController {
       let response = {};
       let relativeId = req.params.id;
       let RelativesDAO = new relativesDAO();
+      let OrdersDAO = new ordersDAO();
 
       let AuthHelper = new authHelper();
 
-      let accessToken = req.headers["authorization"].split(" ")[1];
+      let accessToken = req.headers['authorization'].split(' ')[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
       let relative = await RelativesDAO.retrieve(relativeId);
 
       if (relative.user.toString() !== user._id.toString()) {
-        throw new Error._403("You are not allowed to access this resource");
+        throw new Error._403('You are not allowed to access this resource');
+      }
+
+      let relativeOrders = (await OrdersDAO.query_list({
+        relative: relativeId,
+      })).data;
+
+      if (relativeOrders.length > 0) {
+        throw new Error._403('You can not delete a relative with orders associated');
       }
 
       let relativeDeleted = await RelativesDAO.delete(relativeId);
@@ -140,7 +150,7 @@ export default class RelativesController {
 
       let AuthHelper = new authHelper();
 
-      let accessToken = req.headers["authorization"].split(" ")[1];
+      let accessToken = req.headers['authorization'].split(' ')[1];
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
