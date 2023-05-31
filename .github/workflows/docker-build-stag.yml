@@ -1,10 +1,10 @@
-name: Development Build
+name: Staging Build
 
 on:
   push:
-    branches: ["develop"]
+    branches: ['develop']
   pull_request:
-    branches: ["develop"]
+    branches: ['develop']
 
 jobs:
   build:
