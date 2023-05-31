@@ -20,6 +20,8 @@ const eventSchema = new Schema(
 
     type: { type: String, required: true, default: 'personal', enum: ['personal'] },
 
+    caregiver: { type: Schema.ObjectId, ref: 'caregiver', required: false },
+
     // Validate if the title is a string and if it is not empty.
     title: { type: String, required: true },
     description: { type: String, required: false },
