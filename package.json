@@ -1,7 +1,7 @@
 {
-  "name": "careplace-backend",
+  "name": "careplace-rest-api",
   "version": "1.0.0",
-  "description": "Careplace REST API Backend for Web and Mobile Applications.",
+  "description": "Careplace REST API for Web and Mobile Applications.",
   "main": "./src/server.ts",
   "private": true,
   "nodemonConfig": {

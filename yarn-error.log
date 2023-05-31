@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: ENOSPC: no space left on device, open '/var/folders/xm/6_65gwyj7sb7g08__b6zcq9c0000gn/T/yarn--1685045931585-0.8961909373349592/node'
+  Error: ENOSPC: no space left on device, mkdir '/var/folders/xm/6_65gwyj7sb7g08__b6zcq9c0000gn/T/yarn--1685381350608-0.15172103970691952'
 
 npm manifest: 
   {
