@@ -68,7 +68,7 @@ const crmUserSchema = new Schema(
         'calendar_edit',
         'orders_view',
         'orders_edit',
-        'orders_email',
+        'orders_emails',
         'users_view',
         'users_edit',
         
