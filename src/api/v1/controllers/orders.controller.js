@@ -504,10 +504,13 @@ export default class OrdersController {
       let company = await CompaniesDAO.query_one({ _id: order.company });
       let user = await UsersDAO.query_one({ _id: order.user });
 
+      if(order.schedule_information.recurrency !== 0) {
+
       let eventSeries = {
         user: order.user,
         company: order.company,
         order: order._id,
+        caregiver: order.caregiver,
 
         start_date: order.schedule_information.start_date,
 
@@ -519,6 +522,7 @@ export default class OrdersController {
       };
 
       let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
+    }
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();

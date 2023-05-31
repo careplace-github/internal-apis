@@ -15,6 +15,8 @@ const eventSeriesSchema = new Schema(
 
     order: { type: Schema.ObjectId, ref: 'orders', required: true, default: null },
 
+    caregiver: { type: Schema.ObjectId, ref: 'caregivers', required: false, default: null },
+
     start_date: { type: Date, required: true },
     /**
      * Recurrency type
