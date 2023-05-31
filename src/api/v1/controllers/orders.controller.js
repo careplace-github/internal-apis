@@ -58,11 +58,7 @@ export default class OrdersController {
       let RelativesDAO = new relativesDAO();
       let CRMUsersDAO = new crmUsersDAO();
 
-      let cognitoUser = await AuthHelper.getAuthUser(accessToken);
-
-      let cognitoId = cognitoUser.Username;
-
-      let user = await UsersDAO.query_one({ cognito_id: cognitoId });
+      let user = await AuthHelper.getUserFromDB(accessToken);
 
       let relative = await RelativesDAO.query_one(
         { user: user._id },
@@ -110,22 +106,6 @@ export default class OrdersController {
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
-
-      const crmEmails = await CRMUsersDAO.query_list({
-        company: { $eq: order.company },
-      })
-        .then((users) => {
-          // get users that have the permission 'orders_email'
-          return users.filter((user) => {
-            return user.permissions.includes('orders_email');
-          });
-        })
-        .then((users) => {
-          // get emails from users
-          return users.map((user) => {
-            return user.email;
-          });
-        });
 
       /**
        * From 'services' array, get the services that are in the order
@@ -188,23 +168,37 @@ export default class OrdersController {
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
       );
-      /**
-       * @todo Send the email in BCC for each employee of the company that has one of the roles ['admin', 'manager', 'employee'] and that has the 'email_notifications' field set to true
-       */
 
-      let companyEmailPayload = {
-        name: company.legal_information.director.name,
-        company: company.business_profile.name,
+      const crmUsers = (
+        await CRMUsersDAO.query_list({
+          company: { $eq: orderCreated.company },
+        })
+      ).data;
 
-        link: `https://www.sales.careplace.pt/orders/${orderCreated._id}`,
-      };
+      // Only send email to crm users that have the 'orders_emails' permission
+      crmUsers = crmUsers.filter((user) => {
+        return user?.permissions?.includes('orders_emails');
+      });
 
-      let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'crm_new_order',
-        companyEmailPayload
-      );
+      const crmEmails = crmUsers.map((user) => {
+        return user.email;
+      });
 
-      await SES.sendEmail(crmEmails, crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
+      for (let i = 0; i < crmEmails.length; i++) {
+        let companyEmailPayload = {
+          name: crmUsers[i].name,
+          company: company.business_profile.name,
+
+          link: `https://www.sales.careplace.pt/orders/${orderCreated._id}`,
+        };
+
+        let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+          'crm_new_order',
+          companyEmailPayload
+        );
+
+        await SES.sendEmail(crmEmails, crmNewOrderEmail.subject, crmNewOrderEmail.htmlBody);
+      }
     } catch (error) {
       logger.error(error);
       next(error);
@@ -524,11 +518,7 @@ export default class OrdersController {
         title: relative.name,
       };
 
-      logger.info('EVENT SERIES: ' + JSON.stringify(eventSeries));
-
       let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
-
-      logger.info('EVENT SERIES ADDED: ' + JSON.stringify(eventSeriesAdded));
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
@@ -562,11 +552,16 @@ export default class OrdersController {
         })
       ).data;
 
-      const crmEmails = crmUsers.map((user) => {
-        return user.email;
+      // Only send email to crm users that have the 'orders_emails' permission
+      crmUsers = crmUsers.filter((user) => {
+        return user?.permissions?.includes('orders_emails');
       });
 
-      logger.info('CRM EMAILS: ' + JSON.stringify(crmEmails, null, 2));
+      const crmEmails = crmUsers.map((user) => {
+        if (user?.permissions?.includes('orders_emails')) {
+          return user.email;
+        }
+      });
 
       let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
 
@@ -602,9 +597,6 @@ export default class OrdersController {
         userEmailPayload
       );
 
-      logger.info('user email html body: ');
-      logger.info(JSON.stringify(marketplaceNewOrderEmail.htmlBody, null, 2));
-
       await SES.sendEmail(
         [user.email],
         marketplaceNewOrderEmail.subject,
@@ -613,10 +605,6 @@ export default class OrdersController {
       /**
        * @todo Send the email in BCC for each employee of the company that has one of the roles ['admin', 'manager', 'employee'] and that has the 'email_notifications' field set to true
        */
-
-      logger.info('EMAILS LENGTH: ' + crmEmails.length);
-
-      logger.info('CRM USERS: ' + JSON.stringify(crmUsers, null, 2));
 
       for (let i = 0; i < crmEmails.length; i++) {
         let companyEmailPayload = {
