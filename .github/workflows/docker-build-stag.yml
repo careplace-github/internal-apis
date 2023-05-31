@@ -1,19 +1,21 @@
-name: Docker Image CI
+name: Development Build
 
 on:
+  push:
+    branches: ["develop"]
   pull_request:
-    branches: [ "staging" ]
+    branches: ["develop"]
 
 jobs:
-
   build:
-
+    name: Build
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
-    - name: Git checkout
-      uses: actions/checkout@v3
-    - name: Branch name
-      run: echo running on branch '${GITHUB_REF##*/}'
-    - name: Build the Docker image
-      run: docker build . --file .docker/api/Dockerfile.stag --tag careplace-backend-build-${GITHUB_REF##*/}:$(date +%s)
+      - name: Git checkout
+        uses: actions/checkout@v3
+      - name: Branch name
+        run: echo running on branch '${GITHUB_REF##*/}'
+      - name: Build the Docker image
+        run: docker build . --file .docker/api/Dockerfile.stag --tag careplace-rest-api-build-${GITHUB_REF##*/}:$(date +%s)
