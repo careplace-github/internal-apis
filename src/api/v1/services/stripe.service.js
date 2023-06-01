@@ -1,12 +1,9 @@
-import { Timestamp } from "bson";
-import stripe from "stripe";
+import { Timestamp } from 'bson';
+import stripe from 'stripe';
 
-import {
-  STRIPE_SECRET_KEY,
-  STRIPE_PUBLISHABLE_KEY,
-} from "../../../config/constants/index.js";
+import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from '../../../config/constants/index.js';
 
-import logger from "../../../logs/logger.js";
+import logger from '../../../logs/logger.js';
 
 /**
  * Class to manage the Stripe API
@@ -44,9 +41,7 @@ export default class Stripe {
         { type: type }
       );
     } else {
-      paymentMethods = await this.stripeClient.customers.listPaymentMethods(
-        customerId
-      );
+      paymentMethods = await this.stripeClient.customers.listPaymentMethods(customerId);
     }
 
     return paymentMethods.data;
@@ -81,17 +76,13 @@ export default class Stripe {
     payload.type = type;
     payload[paymentMethod] = paymentMethod;
 
-    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(
-      payload
-    );
+    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(payload);
 
     return createdPaymentMethod;
   }
 
   async getPaymentMethod(paymentMethodId) {
-    let paymentMethod = await this.stripeClient.paymentMethods.retrieve(
-      paymentMethodId
-    );
+    let paymentMethod = await this.stripeClient.paymentMethods.retrieve(paymentMethodId);
 
     return paymentMethod;
   }
@@ -116,9 +107,7 @@ export default class Stripe {
       },
     };
 
-    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(
-      payload
-    );
+    let createdPaymentMethod = await this.stripeClient.paymentMethods.create(payload);
 
     return createdPaymentMethod;
   }
@@ -147,12 +136,18 @@ export default class Stripe {
     return invoices.data;
   }
 
-  async listCharges(filters = {}) {
-    let charges;
-
-    charges = await this.stripeClient.charges.list(filters);
-
-    return charges.data;
+  async listCharges(filters = {}, options = {}) {
+    try {
+      const charges = await this.stripeClient.charges.list(filters, options);
+  
+      logger.info("STRIPE_SERVICE: " + JSON.stringify(charges, null, 2));
+  
+      return charges;
+    } catch (error) {
+      logger.error('ERROR: ', error);
+  
+      throw error;
+    }
   }
 
   /**
@@ -173,26 +168,19 @@ export default class Stripe {
       )} ${customerId}`
     );
 
-    let attachedPaymentMethod = await this.stripeClient.paymentMethods.attach(
-      paymentMethodId,
-      { customer: customerId }
-    );
+    let attachedPaymentMethod = await this.stripeClient.paymentMethods.attach(paymentMethodId, {
+      customer: customerId,
+    });
 
     return attachedPaymentMethod;
   }
 
   async deletePaymentMethod(paymentMethodId) {
     logger.info(
-      `Stripe Service DELETE_PAYMENT_METHOD Request: ${JSON.stringify(
-        paymentMethodId,
-        null,
-        2
-      )}`
+      `Stripe Service DELETE_PAYMENT_METHOD Request: ${JSON.stringify(paymentMethodId, null, 2)}`
     );
 
-    let deletedPaymentMethod = await this.stripeClient.paymentMethods.detach(
-      paymentMethodId
-    );
+    let deletedPaymentMethod = await this.stripeClient.paymentMethods.detach(paymentMethodId);
 
     return deletedPaymentMethod;
   }
@@ -215,7 +203,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/prices/create?lang=node
    */
   async createPrice(productId, price, currency, recurrency) {
-    console.log("createPrice ", productId, price, currency, recurrency);
+    console.log('createPrice ', productId, price, currency, recurrency);
 
     let createdPrice = await this.stripeClient.prices.create({
       product: productId,
@@ -225,7 +213,7 @@ export default class Stripe {
         interval: recurrency,
       },
 
-      tax_behavior: "inclusive",
+      tax_behavior: 'inclusive',
     });
 
     return createdPrice;
@@ -330,37 +318,28 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
    */
   async listExternalAccounts(accountId) {
-    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
-      accountId,
-      {
-        object: "bank_account",
-      }
-    );
+    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(accountId, {
+      object: 'bank_account',
+    });
 
     return bankAccounts;
   }
 
   async createExternalAccount(accountId, token) {
-    logger.info(
-      `Stripe Service CREATE_EXTERNAL_ACCOUNT Request: ${accountId} ${token}`
-    );
+    logger.info(`Stripe Service CREATE_EXTERNAL_ACCOUNT Request: ${accountId} ${token}`);
 
-    const bankAccount = await this.stripeClient.accounts.createExternalAccount(
-      accountId,
-      {
-        external_account: token,
-      }
-    );
+    const bankAccount = await this.stripeClient.accounts.createExternalAccount(accountId, {
+      external_account: token,
+    });
 
     return bankAccount;
   }
 
   async getExternalAccount(accountId, bankAccountId) {
-    const bankAccount =
-      await this.stripeClient.accounts.retrieveExternalAccount(
-        accountId,
-        bankAccountId
-      );
+    const bankAccount = await this.stripeClient.accounts.retrieveExternalAccount(
+      accountId,
+      bankAccountId
+    );
 
     return bankAccount;
   }
@@ -383,12 +362,9 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/external_account_bank_accounts/list?lang=node
    */
   async listConnectedAccountExternalAccountsOfCards(accountId, bankAccountId) {
-    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(
-      accountId,
-      {
-        object: "card",
-      }
-    );
+    const bankAccounts = await this.stripeClient.accounts.listExternalAccounts(accountId, {
+      object: 'card',
+    });
 
     return bankAccounts;
   }
@@ -404,10 +380,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/external_account_bank_accounts/retrieve?lang=node
    */
   getConnectedAccountExternalAccountDetails(accountId, externalAccountId) {
-    return this.stripeClient.accounts.retrieveExternalAccount(
-      accountId,
-      externalAccountId
-    );
+    return this.stripeClient.accounts.retrieveExternalAccount(accountId, externalAccountId);
   }
 
   // -------------------------------------------------------------------------------------------- //
@@ -459,15 +432,12 @@ export default class Stripe {
 
   async createCustomerTaxId(customerId, taxId) {
     // Add "PT" to the tax id
-    taxId = "PT" + taxId;
+    taxId = 'PT' + taxId;
 
-    let customerTaxId = await this.stripeClient.customers.createTaxId(
-      customerId,
-      {
-        type: "eu_vat",
-        value: taxId,
-      }
-    );
+    let customerTaxId = await this.stripeClient.customers.createTaxId(customerId, {
+      type: 'eu_vat',
+      value: taxId,
+    });
 
     return customerTaxId;
   }
@@ -591,14 +561,7 @@ export default class Stripe {
    *
    * @see https://stripe.com/docs/api/events/list?lang=node
    */
-  async listEvents(
-    created,
-    deliverySuccess,
-    endingBefore,
-    limit,
-    startingAfter,
-    type
-  ) {
+  async listEvents(created, deliverySuccess, endingBefore, limit, startingAfter, type) {
     let events = await this.stripeClient.events.list({
       created: created,
       delivery_success: deliverySuccess,
@@ -662,12 +625,10 @@ export default class Stripe {
     paymentMethod,
     promotionCode
   ) {
-    logger.info("AQUI DENTRO PROMO: " + promotionCode);
-
     let subscription = await this.stripeClient.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
-      expand: ["latest_invoice.payment_intent"],
+      expand: ['latest_invoice.payment_intent'],
       transfer_data: {
         destination: transferAccount,
       },
@@ -681,17 +642,14 @@ export default class Stripe {
       //coupon: coupon,
       promotion_code: promotionCode,
 
-      collection_method: "charge_automatically",
+      collection_method: 'charge_automatically',
     });
 
     return subscription;
   }
 
   async updateSubscription(subscriptionId, options) {
-    let subscription = await this.stripeClient.subscriptions.update(
-      subscriptionId,
-      options
-    );
+    let subscription = await this.stripeClient.subscriptions.update(subscriptionId, options);
 
     return subscription;
   }
@@ -729,9 +687,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/subscriptions/retrieve?lang=node
    */
   async getSubscription(subscriptionId) {
-    let subscription = await this.stripeClient.subscriptions.retrieve(
-      subscriptionId
-    );
+    let subscription = await this.stripeClient.subscriptions.retrieve(subscriptionId);
 
     return subscription;
   }
@@ -748,11 +704,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/search#search-query-language
    */
   async getSubscriptionsByQuery(query, limit, page) {
-    let subscriptions = await this.stripeClient.subscriptions.search(
-      query,
-      limit,
-      page
-    );
+    let subscriptions = await this.stripeClient.subscriptions.search(query, limit, page);
 
     return subscriptions;
   }
@@ -860,9 +812,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/webhook_endpoints/retrieve?lang=node
    */
   async getWebhookEndpoint(webhookId) {
-    let webhookEndpoint = await this.stripeClient.webhookEndpoints.retrieve(
-      webhookId
-    );
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.retrieve(webhookId);
     return webhookEndpoint;
   }
 
@@ -896,9 +846,7 @@ export default class Stripe {
    * @see https://stripe.com/docs/api/webhook_endpoints/delete?lang=node
    */
   async deleteWebhookEndpoint(webhookId) {
-    let webhookEndpoint = await this.stripeClient.webhookEndpoints.delete(
-      webhookId
-    );
+    let webhookEndpoint = await this.stripeClient.webhookEndpoints.delete(webhookId);
     return webhookEndpoint;
   }
 
