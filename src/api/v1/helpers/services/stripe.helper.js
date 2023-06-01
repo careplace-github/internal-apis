@@ -1,13 +1,15 @@
-import StripeService from "../../services/stripe.service.js";
+import StripeService from '../../services/stripe.service.js';
 
-import * as LayerError from "../../utils/errors/layer/index.js";
+import * as LayerError from '../../utils/errors/layer/index.js';
 
-import axios from "axios";
-import logger from "../../../../logs/logger.js";
+import axios from 'axios';
+import logger from '../../../../logs/logger.js';
 
-import fs from "fs";
+import fs from 'fs';
 
-import { STRIPE_APPLICATION_FEE } from "../../../../config/constants/index.js";
+import * as regression from 'regression';
+
+import { STRIPE_APPLICATION_FEE } from '../../../../config/constants/index.js';
 
 export default class StripeHelper {
   constructor() {
@@ -16,22 +18,8 @@ export default class StripeHelper {
     this.Stripe = Stripe;
   }
 
-  async getInvoicesByConnectedAccountId(accountId, filters) {
-    let invoices = await this.Stripe.listInvoices(filters);
-
-    invoices = invoices;
-
-    invoices = invoices.filter((invoice) => {
-      return invoice.transfer_data.destination === accountId;
-    });
-
-    return invoices;
-  }
-
   async getSubscriptionsByConnectedAcountId(accountId, filters) {
     let subscriptions = await this.Stripe.listSubscriptions(filters);
-
-    logger.info("subscriptions", subscriptions);
 
     subscriptions = subscriptions;
 
@@ -42,19 +30,6 @@ export default class StripeHelper {
     return subscriptions;
   }
 
-  async getChargesByConnectedAccountId(accountId, filters) {
-    let charges = await this.Stripe.listCharges(filters);
-
-    charges = charges;
-
-    // use for each to filter the charges
-    charges = charges.filter((charge) => {
-      return charge.transfer_data.destination === accountId;
-    });
-
-    return charges;
-  }
-
   async getReceiptLink(subscriptionId) {
     let subscription = await this.Stripe.getSubscription(subscriptionId);
 
@@ -62,7 +37,7 @@ export default class StripeHelper {
 
     let charge = await this.Stripe.getCharge(invoice.charge);
 
-    let receiptUrl = charge.receipt_url.replace("?s=ap", "") + "/pdf?s=em";
+    let receiptUrl = charge.receipt_url.replace('?s=ap', '') + '/pdf?s=em';
 
     return receiptUrl;
   }
@@ -72,7 +47,7 @@ export default class StripeHelper {
 
     let invoice = await this.Stripe.getInvoice(subscription.latest_invoice);
 
-    let orderNumber = invoice.receipt_number.replace("-", "");
+    let orderNumber = invoice.receipt_number.replace('-', '');
 
     return orderNumber;
   }
@@ -84,7 +59,7 @@ export default class StripeHelper {
      * Download the receipt and save it as a file into `./src/downloads/
      */
     let receiptFile = await axios.get(receiptUrl, {
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
     });
 
     /**
@@ -97,7 +72,7 @@ export default class StripeHelper {
     let receiptFilePath = `./src/downloads/${receiptFileName}`;
 
     fs.writeFileSync(receiptFilePath, receiptFile.data, {
-      encoding: "binary",
+      encoding: 'binary',
     });
 
     let receipt = {
@@ -111,7 +86,7 @@ export default class StripeHelper {
 
   async getConnectedAccountActiveClients(accountId) {
     let clients = await this.getSubscriptionsByConnectedAcountId(accountId, {
-      status: "active",
+      status: 'active',
     });
     /**
      * Get the subscriptions from the previous month to compare it with the current subscriptions and return the difference (in %).
@@ -132,24 +107,17 @@ export default class StripeHelper {
     /**
      * To search dates in Stripe we need to convert them to unix timestamps.
      */
-    let firstDayOfPreviousMonthTimestamp = Math.floor(
-      firstDayOfPreviousMonth.getTime() / 1000
-    );
+    let firstDayOfPreviousMonthTimestamp = Math.floor(firstDayOfPreviousMonth.getTime() / 1000);
 
-    let lastDayOfPreviousMonthTimestamp = Math.floor(
-      lastDayOfPreviousMonth.getTime() / 1000
-    );
+    let lastDayOfPreviousMonthTimestamp = Math.floor(lastDayOfPreviousMonth.getTime() / 1000);
 
-    let previousMonthInvoices = await this.getInvoicesByConnectedAccountId(
-      accountId,
-      {
-        status: "paid",
-        created: {
-          gt: firstDayOfPreviousMonthTimestamp,
-          lt: lastDayOfPreviousMonthTimestamp,
-        },
-      }
-    );
+    let previousMonthInvoices = await this.getInvoicesByConnectedAccountId(accountId, {
+      status: 'paid',
+      created: {
+        gt: firstDayOfPreviousMonthTimestamp,
+        lt: lastDayOfPreviousMonthTimestamp,
+      },
+    });
 
     let previousMonthSubscriptions = [];
 
@@ -163,8 +131,7 @@ export default class StripeHelper {
 
     if (previousMonthSubscriptions.length !== 0) {
       activeClientsDifferencePercentage = (
-        ((clients.length - previousMonthSubscriptions.length) /
-          previousMonthSubscriptions.length) *
+        ((clients.length - previousMonthSubscriptions.length) / previousMonthSubscriptions.length) *
         100
       ).toFixed(1);
     }
@@ -178,12 +145,9 @@ export default class StripeHelper {
   }
 
   async getConnectedAccountCurrentMRR(accountId) {
-    let subscriptions = await this.getSubscriptionsByConnectedAcountId(
-      accountId,
-      {
-        status: "active",
-      }
-    );
+    let subscriptions = await this.getSubscriptionsByConnectedAcountId(accountId, {
+      status: 'active',
+    });
 
     let currentMRR = 0;
 
@@ -209,29 +173,22 @@ export default class StripeHelper {
     /**
      * To search dates in Stripe we need to convert them to unix timestamps.
      */
-    let firstDayOfPreviousMonthTimestamp = Math.floor(
-      firstDayOfPreviousMonth.getTime() / 1000
-    );
+    let firstDayOfPreviousMonthTimestamp = Math.floor(firstDayOfPreviousMonth.getTime() / 1000);
 
-    let lastDayOfPreviousMonthTimestamp = Math.floor(
-      lastDayOfPreviousMonth.getTime() / 1000
-    );
+    let lastDayOfPreviousMonthTimestamp = Math.floor(lastDayOfPreviousMonth.getTime() / 1000);
 
-    let previousMonthInvoices = await this.getInvoicesByConnectedAccountId(
-      accountId,
-      {
-        status: "paid",
-        created: {
-          gt: firstDayOfPreviousMonthTimestamp,
-          lt: lastDayOfPreviousMonthTimestamp,
-        },
-      }
-    );
+    let previousMonthInvoices = await this.getInvoicesByConnectedAccountId(accountId, {
+      status: 'paid',
+      created: {
+        gt: firstDayOfPreviousMonthTimestamp,
+        lt: lastDayOfPreviousMonthTimestamp,
+      },
+    });
 
     let previousMonthMRR = 0;
 
     previousMonthInvoices.forEach((invoice) => {
-      if (invoice.charge.status === "succeeded") {
+      if (invoice.charge.status === 'succeeded') {
         previousMonthMRR += invoice.charge.amount;
       }
     });
@@ -254,99 +211,210 @@ export default class StripeHelper {
     return response;
   }
 
-  /**
-   * Function that for each year gets the total revenue for each month of the year. If there is more than one year, it will return an array of objects, each object containing the year and the data for that year.
-   * The revenue for each month is calculated by summing up the amount of each charge for each invoice (and using the 'created' field from the charge). The 'created' field is in the following format: 1673399302 (1673399302 -> 2023-03-21). From the 'created' field the year should also be taken into account to group the data by year (to then return it as the example).
-   * When returning the data each month is represented by a number from 1 to 12.
-   * The data should be used to create a chart.
-   * The output should follow the following format:
-   * 
-   *   [
-  {
-    year: 2023,
-    data: [
-      {
-        month: 1,
-        revenue: 1000,
-      },
-    ],
-  },
-  {
-    year: 2022,
-    data: [
-      {
-        month: 10,
-        revenue: 1000,
-      },
-      {
-        month: 11,
-        revenue: 900,
-      },
+  async getInvoicesByConnectedAccountId(accountId, filters) {
+    let invoices = await this.Stripe.listInvoices(filters);
 
-      {
-        month: 12,
-        revenue: 1200,
-      },
-    ],
-  },
-]
-   * 
-   */
-  async getConnectAccountTotalRevenueByMonth(accountId) {
-    let charges = await this.getChargesByConnectedAccountId(accountId);
-
-    let data = [];
-
-   
-
-    charges.forEach((charge) => {
-      let date = new Date(charge.created * 1000);
-
-      let year = date.getFullYear();
-
-      let month = date.getMonth();
-
-      logger.info("year: " + year + " month: " + month)
-
-      let revenue = charge.amount;
-
-      let yearIndex = data.findIndex((item) => item.year === year);
-
-      if (yearIndex === -1) {
-        data.push({
-          year: year,
-          data: [
-            {
-              month: month,
-              revenue: revenue,
-            },
-          ],
-        });
-      } else {
-        let monthIndex = data[yearIndex].data.findIndex(
-          (item) => item.month === month
-        );
-
-        if (monthIndex === -1) {
-          data[yearIndex].data.push({
-            month: month,
-            revenue: revenue,
-          });
-        } else {
-          data[yearIndex].data[monthIndex].revenue += revenue;
-        }
-      }
+    invoices.filter((invoice) => {
+      return invoice.transfer_data.destination === accountId;
     });
 
-    return data;
+    return invoices;
+  }
+  async getChargesByConnectedAccountId(accountId, filters, lastChargeId = null) {
+    const options = {
+      ...filters,
+      limit: 100,
+    };
+
+    if (lastChargeId) {
+      options.starting_after = lastChargeId;
+    }
+
+    try {
+      let charges = await this.Stripe.listCharges(options, { stripeAccount: accountId });
+
+      // If there are more charges, fetch the next page
+      if (charges.has_more) {
+        const lastCharge = charges.data[charges.data.length - 1];
+        const moreCharges = await this.getChargesByConnectedAccountId(
+          accountId,
+          filters,
+          lastCharge.id
+        );
+        charges.data = [...charges.data, ...moreCharges.data];
+      }
+
+      return charges;
+    } catch (error) {
+      logger.error('ERROR_getChargesByConnectedAccountId: ' + error);
+
+      throw error;
+    }
+  }
+
+  async listCharges(filters = {}, options = {}) {
+    try {
+      const charges = await this.stripeClient.charges.list(filters, options);
+
+      logger.info('STRIPE_SERVICE: ' + JSON.stringify(charges, null, 2));
+
+      return charges;
+    } catch (error) {
+      logger.error('ERROR: ', error);
+
+      throw error;
+    }
+  }
+
+  async getConnectAccountTotalRevenueByMonth(accountId) {
+    try {
+      let charges = await this.getChargesByConnectedAccountId(accountId, {
+        status: 'succeeded',
+      });
+
+      const revenuePerYearAndMonth = {};
+
+      // Calculate the range of years to consider
+      let startYear = new Date().getFullYear();
+      let endYear = startYear;
+
+      // Find earliest and latest year from the charges data
+      for (let charge of charges.data) {
+        const date = new Date(charge.created * 1000);
+        const year = date.getFullYear();
+        startYear = Math.min(startYear, year);
+        endYear = Math.max(endYear, year);
+      }
+
+      // Initialize all months of all years in the range with 0 revenue
+      for (let year = startYear; year <= endYear; year++) {
+        if (!revenuePerYearAndMonth[year]) {
+          revenuePerYearAndMonth[year] = {};
+        }
+
+        for (let month = 1; month <= 12; month++) {
+          if (!revenuePerYearAndMonth[year][month]) {
+            // Check if the current year is the end year, if so set to null, otherwise set to 0
+            revenuePerYearAndMonth[year][month] = year === endYear ? null : 0;
+          }
+        }
+      }
+
+      // Calculate the revenue for each month
+      for (let charge of charges.data) {
+        const date = new Date(charge.created * 1000);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+
+        revenuePerYearAndMonth[year][month] += charge.amount / 100;
+      }
+
+      const revenuePerMonthArray = Object.keys(revenuePerYearAndMonth).map((year) => {
+        const data = Object.keys(revenuePerYearAndMonth[year]).map((month) => {
+          return {
+            month: parseInt(month),
+            revenue: parseFloat(revenuePerYearAndMonth[year][month]?.toFixed(2)),
+          };
+        });
+
+        return {
+          year: parseInt(year),
+          data,
+        };
+      });
+
+      // get the months into an array like [120, 150, 300, 225]
+      const rawData = revenuePerMonthArray.reduce((acc, year) => {
+        return acc.concat(year.data.map((month) => month.revenue).filter(Boolean));
+      }, []);
+
+      logger.info('MONTH_ARRAY: ' + JSON.stringify(revenuePerMonthArray, null, 2));
+
+      // ----------------- FORECAST -----------------
+
+      let forecast = {
+        year: revenuePerMonthArray[revenuePerMonthArray.length - 1].year,
+        type: 'forecast',
+        data: [],
+      };
+
+      const forecastEntries = revenuePerMonthArray[revenuePerMonthArray.length - 1].data.filter(
+        (month) => month.revenue === null || isNaN(month.revenue)
+      ).length;
+      /**
+       * Linear regression
+       */
+      if (rawData.length >= 3) {
+        // transform the rawData into an array like [ [1, 1], [2, 2], [3, 4], [4, 3] ]
+        const regressionData = rawData.map((value, index) => [index + 1, value]);
+
+        const equation = regression.linear(regressionData);
+
+        const slope = equation.equation[0];
+        const intercept = equation.equation[1];
+
+        // for the months that the last year has data in the forecast use null
+        for (let i = 0; i < 12 - forecastEntries; i++) {
+          forecast.data.push({
+            month: revenuePerMonthArray[revenuePerMonthArray.length - 1].data[i].month,
+            revenue: null,
+          });
+        }
+
+        // use the equation to calculate the forecast
+        for (let i = 0; i <= forecastEntries; i++) {
+          // add to the forecast.data array in the format { month: 1, revenue: 100 }
+          forecast.data.push({
+            month:
+              revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length -
+              forecastEntries +
+              i,
+            revenue: parseFloat(
+              (
+                (slope / 2.7) *
+                  (revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length + i) +
+                intercept
+              ).toFixed(2)
+            ),
+          });
+        }
+
+        // carry the last revenue month as the first month of the forecast
+        forecast.data.find((entry) => entry.month === 12 - forecastEntries).revenue =
+          revenuePerMonthArray[revenuePerMonthArray.length - 1].data.find(
+            (entry) => entry.month === 12 - forecastEntries
+          )?.revenue;
+      }
+
+      // Carry the last revenue month as all the months of the forecast
+      else {
+        forecast.data = revenuePerMonthArray[revenuePerMonthArray.length - 1].data.map((entry) => {
+          return {
+            month: entry.month,
+            revenue: entry.revenue,
+          };
+        });
+      }
+
+      // add the forecast to the revenuePerMonthArray
+      revenuePerMonthArray.push(forecast);
+
+      // ----------------- FORECAST -----------------
+
+      logger.info('RAW_DATA: ' + JSON.stringify(rawData, null, 2));
+
+      return revenuePerMonthArray;
+    } catch (error) {
+      logger.error('ERROR_getConnectAccountTotalRevenueByMonth: ' + error);
+
+      throw error;
+    }
   }
 
   async getPromotionCodeByName(name) {
     let promotionCodes = await this.Stripe.listPromotionCodes();
 
-    let promotionCode = promotionCodes.find(
-      (promotionCode) => promotionCode.code === name
-    );
+    let promotionCode = promotionCodes.find((promotionCode) => promotionCode.code === name);
 
     return promotionCode;
   }
@@ -356,13 +424,12 @@ export default class StripeHelper {
    */
   async calculateApplicationFeeWithPromotionCode(amount, promotionCodeId) {
     let promotionCode = await this.Stripe.getPromotionCode(promotionCodeId, {
-      expand: ["restrictions", "coupon"],
+      expand: ['restrictions', 'coupon'],
     });
 
     let coupon = promotionCode.coupon;
 
-    let applicationAmmount =
-      amount * (STRIPE_APPLICATION_FEE / 100) - coupon.amount_off / 100;
+    let applicationAmmount = amount * (STRIPE_APPLICATION_FEE / 100) - coupon.amount_off / 100;
 
     /**
      * A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice subtotal that will be transferred to the application owner’s Stripe account.
@@ -373,8 +440,6 @@ export default class StripeHelper {
       (applicationAmmount * 100) /
       (amount - coupon.amount_off / 100)
     ).toFixed(2);
-
-    logger.info(`Cupao: ${JSON.stringify(coupon, null, 2)}`);
 
     if (newApplicationFee > 100 || newApplicationFee < 0) {
       throw new LayerError.INVALID_PARAMETER(
@@ -390,9 +455,7 @@ export default class StripeHelper {
   async getPaymentMethodByChargeId(chargeId) {
     let charge = await this.Stripe.getCharge(chargeId);
 
-    let paymentMethod = await this.Stripe.getPaymentMethod(
-      charge.payment_method
-    );
+    let paymentMethod = await this.Stripe.getPaymentMethod(charge.payment_method);
 
     return paymentMethod;
   }
