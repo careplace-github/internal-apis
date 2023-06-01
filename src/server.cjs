@@ -237,7 +237,7 @@ const main = async () => {
       app.use(
         rateLimit({
           windowMs: 10 * 60 * 1000, // 10 minutes
-          max: 100, // limit each IP to 100 requests per windowMs --> 100 requests per 10 minutes
+          max: 500, // limit each IP to 500 requests per windowMs --> 500 requests per 10 minutes
         })
       );
 

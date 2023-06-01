@@ -6,6 +6,11 @@ interface Event {
   user?: string;
   company?: string;
   order?: string;
+  caregiver?: {
+    _id: string;
+    name: string;
+    profile_picture: string;
+  },
   type: 'company' | 'personal';
   start: Date;
   end: Date;

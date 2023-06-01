@@ -1,6 +1,7 @@
 import { Document } from 'mongoose';
 
 interface EventSeries extends Document {
+  caregiver?: string;
   user?: string;
   company?: string;
   order?: string;

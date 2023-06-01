@@ -1,15 +1,15 @@
-import crmUsersDAO from "../db/crmUsers.dao.js";
-import ordersDAO from "../db/orders.dao.js";
-import companiesDAO from "../db/companies.dao.js";
-import CRUD from "./crud.controller.js";
+import crmUsersDAO from '../db/crmUsers.dao.js';
+import ordersDAO from '../db/orders.dao.js';
+import companiesDAO from '../db/companies.dao.js';
+import CRUD from './crud.controller.js';
 
 // Import logger
-import logger from "../../../logs/logger.js";
-import stripeHelper from "../helpers/services/stripe.helper.js";
+import logger from '../../../logs/logger.js';
+import stripeHelper from '../helpers/services/stripe.helper.js';
 
-import authHelper from "../helpers/auth/auth.helper.js";
+import authHelper from '../helpers/auth/auth.helper.js';
 
-import * as Error from "../utils/errors/http/index.js";
+import * as Error from '../utils/errors/http/index.js';
 
 export default class DashboardController {
   static async getDashboard(req, res, next) {
@@ -21,9 +21,9 @@ export default class DashboardController {
     let OrdersDAO = new ordersDAO();
 
     if (req.headers.authorization) {
-      accessToken = req.headers.authorization.split(" ")[1];
+      accessToken = req.headers.authorization.split(' ')[1];
     } else {
-      throw new Error._401("Missing required access token.");
+      throw new Error._401('Missing required access token.');
     }
 
     let user = await AuthHelper.getUserFromDB(accessToken);
@@ -31,7 +31,7 @@ export default class DashboardController {
     let companyId = user.company._id;
 
     if (companyId === null || companyId === undefined) {
-      throw new Error._401("Missing required access token.");
+      throw new Error._401('Missing required access token.');
     }
 
     let company = await CompaniesDAO.retrieve(companyId);
@@ -40,7 +40,7 @@ export default class DashboardController {
 
     let pendingOrders = await OrdersDAO.query_list({
       company: companyId,
-      status: "new",
+      status: 'new',
     }).then((orders) => {
       return orders.data.length;
     });
@@ -51,9 +51,7 @@ export default class DashboardController {
     let MRR;
     let annualRevenue;
 
-    numberOfActiveClients = await StripeHelper.getConnectedAccountActiveClients(
-      accountId
-    );
+    numberOfActiveClients = await StripeHelper.getConnectedAccountActiveClients(accountId);
 
     try {
       MRR = await StripeHelper.getConnectedAccountCurrentMRR(accountId);
@@ -62,9 +60,7 @@ export default class DashboardController {
     }
 
     try {
-      annualRevenue = await StripeHelper.getConnectAccountTotalRevenueByMonth(
-        accountId
-      );
+      annualRevenue = await StripeHelper.getConnectAccountTotalRevenueByMonth(accountId);
     } catch (e) {
       console.log(`3 ${e}`);
     }
@@ -73,19 +69,13 @@ export default class DashboardController {
 
     response.statusCode = 200;
     response.data = {
-      pending_orders:
-        pendingOrders !== null && pendingOrders !== undefined
-          ? pendingOrders
-          : 0,
+      pending_orders: pendingOrders !== null && pendingOrders !== undefined ? pendingOrders : 0,
       active_clients:
         numberOfActiveClients !== null && numberOfActiveClients !== undefined
           ? numberOfActiveClients
           : 0,
       MRR: MRR !== null && MRR !== undefined ? MRR : 0,
-      annual_revenue:
-        annualRevenue !== null && annualRevenue !== undefined
-          ? annualRevenue
-          : [],
+      annual_revenue: annualRevenue !== null && annualRevenue !== undefined ? annualRevenue : [],
     };
 
     next(response);
