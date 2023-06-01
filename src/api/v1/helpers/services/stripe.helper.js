@@ -246,8 +246,6 @@ export default class StripeHelper {
 
       return charges;
     } catch (error) {
-      logger.error('ERROR_getChargesByConnectedAccountId: ' + error);
-
       throw error;
     }
   }
@@ -255,8 +253,6 @@ export default class StripeHelper {
   async listCharges(filters = {}, options = {}) {
     try {
       const charges = await this.stripeClient.charges.list(filters, options);
-
-      logger.info('STRIPE_SERVICE: ' + JSON.stringify(charges, null, 2));
 
       return charges;
     } catch (error) {
@@ -328,7 +324,8 @@ export default class StripeHelper {
         return acc.concat(year.data.map((month) => month.revenue).filter(Boolean));
       }, []);
 
-      logger.info('MONTH_ARRAY: ' + JSON.stringify(revenuePerMonthArray, null, 2));
+      // remove the first month ever because it's not a full month
+      rawData.shift();
 
       // ----------------- FORECAST -----------------
 
@@ -369,13 +366,23 @@ export default class StripeHelper {
               revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length -
               forecastEntries +
               i,
-            revenue: parseFloat(
-              (
-                (slope / 2.7) *
-                  (revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length + i) +
-                intercept
-              ).toFixed(2)
-            ),
+            revenue:
+              // if the current forecast revenue is negative, set it to 0
+              parseFloat(
+                (
+                  (slope / 2.7) *
+                    (revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length + i) +
+                  intercept
+                ).toFixed(2)
+              ) < 0
+                ? 0
+                : parseFloat(
+                    (
+                      (slope / 2.7) *
+                        (revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length + i) +
+                      intercept
+                    ).toFixed(2)
+                  ),
           });
         }
 
@@ -401,12 +408,8 @@ export default class StripeHelper {
 
       // ----------------- FORECAST -----------------
 
-      logger.info('RAW_DATA: ' + JSON.stringify(rawData, null, 2));
-
       return revenuePerMonthArray;
     } catch (error) {
-      logger.error('ERROR_getConnectAccountTotalRevenueByMonth: ' + error);
-
       throw error;
     }
   }
