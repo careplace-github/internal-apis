@@ -1,18 +1,18 @@
-import { readFileSync, promises as fsPromises } from "fs";
-import fs from "fs";
-import nodemailer from "nodemailer";
+import { readFileSync, promises as fsPromises } from 'fs';
+import fs from 'fs';
+import nodemailer from 'nodemailer';
 // Import logger
-import logger from "../../../../logs/logger.js";
+import logger from '../../../../logs/logger.js';
 
 import {
   AWS_SES_SENDER_EMAIL,
   AWS_SES_REPLY_TO_EMAIL,
-} from "../../../../config/constants/index.js";
+} from '../../../../config/constants/index.js';
 // let aws = require("@aws-sdk/client-ses");
-import htmlToText from "html-to-text";
-import aws from "aws-sdk/clients/ses.js";
+import htmlToText from 'html-to-text';
+import aws from 'aws-sdk/clients/ses.js';
 
-import SES_Service from "../../services/ses.service.js";
+import SES_Service from '../../services/ses.service.js';
 
 // Gender id's
 const male = 0;
@@ -36,17 +36,17 @@ export default class EmailHelper {
     let filename = `./src/assets/emails/${emailTemplate}`;
 
     // Check if file has the correct extension
-    if (!filename.endsWith(".html")) {
+    if (!filename.endsWith('.html')) {
       // If not, add the extension
-      filename += ".html";
+      filename += '.html';
     }
 
     // Check if file exists
     if (!fs.existsSync(filename)) {
-      throw new Error("File does not exist");
+      throw new Error('File does not exist');
     }
 
-    let template = readFileSync(filename, "utf-8");
+    let template = readFileSync(filename, 'utf-8');
 
     return template;
   }
@@ -59,12 +59,12 @@ export default class EmailHelper {
   async getEmailTemplateWithData(emailTemplate, data) {
     // Check if the email template is provided
     if (emailTemplate == null) {
-      return { error: "Need to provide an email template." };
+      return { error: 'Need to provide an email template.' };
     }
 
     // Check if the data is provided
     if (data == null) {
-      return { error: "Need to provide data in order to send an email." };
+      return { error: 'Need to provide data in order to send an email.' };
     }
 
     // Get the email template
@@ -88,13 +88,13 @@ export default class EmailHelper {
     });
 
     // Get the subject
-    let subject = htmlBody.match(/<title>(.*?)<\/title>/g);
+    let subject = htmlBody.match(/<title>(.*?)<\/title>/g) || [];
 
-    // Remove the <title> tags
-    subject = subject[0].replace("<title>", "").replace("</title>", "");
-
-    if (subject === "" || subject === null || subject === undefined) {
-      subject = "Careplace";
+    if (subject === '' || subject === null || subject === undefined) {
+      subject = 'Careplace';
+    } else {
+      // Remove the <title> tags
+      subject = subject[0]?.replace('<title>', '').replace('</title>', '');
     }
 
     return { htmlBody: htmlBody, subject: subject };
@@ -118,7 +118,7 @@ export default class EmailHelper {
 
     // Remove the {{ and }} from the variables
     const variablesWithoutBrackets = uniqueVariables.map((variable) => {
-      return variable.replace("{{", "").replace("}}", "");
+      return variable.replace('{{', '').replace('}}', '');
     });
 
     return variablesWithoutBrackets;
@@ -149,11 +149,11 @@ export default class EmailHelper {
    */
   async getEmailTemplatesNames() {
     // Get the email templates folder
-    const emailTemplatesFolder = "./src/emails";
+    const emailTemplatesFolder = './src/emails';
 
     // Check if the email templates folder exists
     if (!fs.existsSync(emailTemplatesFolder)) {
-      throw new Error("The email templates folder does not exist.");
+      throw new Error('The email templates folder does not exist.');
     }
 
     // Get the names of the email templates
@@ -161,30 +161,28 @@ export default class EmailHelper {
 
     // Check if the email templates folder is empty
     if (emailTemplatesNames.length === 0) {
-      throw new Error("The email templates folder is empty.");
+      throw new Error('The email templates folder is empty.');
     }
 
     // Check if the email templates folder contains files that are not html
     emailTemplatesNames.forEach((emailTemplateName) => {
-      if (!emailTemplateName.endsWith(".html")) {
-        throw new Error(
-          "The email templates folder contains files that are not html."
-        );
+      if (!emailTemplateName.endsWith('.html')) {
+        throw new Error('The email templates folder contains files that are not html.');
       }
     });
 
     // Check if the email templates folder contains files that do not have the .html extension
     emailTemplatesNames.forEach((emailTemplateName) => {
-      if (!emailTemplateName.endsWith(".html")) {
+      if (!emailTemplateName.endsWith('.html')) {
         throw new Error(
-          "The email templates folder contains files that do not have the .html extension."
+          'The email templates folder contains files that do not have the .html extension.'
         );
       }
     });
 
     // Remove the .html extension from the email templates names
     emailTemplatesNames.forEach((emailTemplateName, index) => {
-      emailTemplatesNames[index] = emailTemplateName.replace(".html", "");
+      emailTemplatesNames[index] = emailTemplateName.replace('.html', '');
     });
 
     return emailTemplatesNames;
