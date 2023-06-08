@@ -17,9 +17,10 @@ import {
 
 // Import Utils
 import password from 'secure-random-password';
-import EmailHelper from '../helpers/emails/email.helper.js';
+import emailHelper from '../helpers/emails/email.helper.js';
 import stripe from '../services/stripe.service.js';
 import authHelper from '../helpers/auth/auth.helper.js';
+import SES_Service from '../services/ses.service.js';
 
 // Import logger
 import logger from '../../../logs/logger.js';
@@ -35,108 +36,40 @@ export default class UsersController {
    * @debug
    * @description
    */
-  static async index(req, res, next) {
-    try {
-      var request = requestUtils(req);
-
-      let filters = {};
-      let options = {};
-      let page = req.query.page != null ? req.query.page : null;
-      let mongodbResponse;
-
-      logger.info('Users Controller INDEX: ' + JSON.stringify(request, null, 2) + '\n');
-
-      // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
-      if (req.query.companyId) {
-        filters.companyId = req.query.companyId;
-      }
-
-      // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
-      if (req.query.sortBy) {
-        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-        // Otherwise, we will by default sort the results by ascending order.
-        options.sort = {
-          [req.query.sortBy]: req.query.sortOrder == 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
-        };
-      }
-
-      logger.info(
-        'Attempting to get users from MongoDB: ' +
-          JSON.stringify(
-            {
-              filters: filters,
-              options: options,
-              page: page,
-            },
-            null,
-            2
-          ) +
-          '\n'
-      );
-
-      // Get the users from MongoDB.
-      mongodbResponse = await usersDAO.get_list(filters, options, page);
-
-      // If there is an error, then we will return the error.
-      if (mongodbResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: mongodbResponse.error.message };
-
-        logger.error(
-          'Error fetching users from MongoDB: ' + JSON.stringify(request, null, 2) + '\n'
-        );
-
-        return res.status(400).json({ error: mongodbResponse.error.message });
-      }
-      // Otherwise, we will return the users.
-      else {
-        request.statusCode = 200;
-        request.response = mongodbResponse;
-
-        return res.status(200).json(mongodbResponse);
-      }
-    } catch (error) {
-      // If there is an internal error, then we will return the error.
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error('Internal error: ' + JSON.stringify(request, null, 2) + '\n');
-
-      return res.status(500).json({ error: error });
-    }
-  }
-
-  /**
-   * @debug
-   * @description
-   */
   static async create(req, res, next) {
     // try {
     var request = requestUtils(req);
 
+    let response = {};
+
     const user = req.body;
+
+    const CompaniesDAO = new companiesDAO();
+    const UsersDAO = new crmUsersDAO();
+    const CaregiversDAO = new caregiversDAO();
+    const EmailHelper = new emailHelper();
+    let SES = new SES_Service();
+
+    let newCaregiver;
+    let newUser;
 
     logger.info('Users Controller CREATE: ' + JSON.stringify(request, null, 2) + '\n');
 
-    // Generate a random password of 8 characters.
-    const temporaryPassword = String(
-      password.randomPassword({
-        characters: [password.lower, password.upper, password.digits],
-        length: 8,
-      })
-    );
+    logger.info('USER: ' + JSON.stringify(user, null, 2) + '\n');
 
     if (user.role == 'admin') {
       return res.status(400).json({ error: 'Cannot create admin user.' });
     }
 
     // Get the company from MongoDB.
-    const company = await companiesDAO.retrieve(user.company);
+    const company = await CompaniesDAO.retrieve(user.company);
+
+    console.log('COMPANY: ' + JSON.stringify(company, null, 2) + '\n');
 
     // Tried to add a user to a company that doesn't exist.
-    if (company == null) {
-      request.statusCode = 400;
-      request.response = {
+    if (!company) {
+      response.statusCode = 400;
+      response.data = {
         error: 'Company not found. User must be associated with an existing company.',
       };
 
@@ -151,49 +84,83 @@ export default class UsersController {
       });
     }
 
-    // Create a new user in Cognito.
-    const cognitoUser = await CognitoService.addUser(
-      app,
-      user.email,
-      temporaryPassword,
-      user.phoneNumber
-    );
+    if (user.permissions.includes('app_user')) {
+      // Generate a random password of 8 characters.
+      const temporaryPassword = String(
+        password.randomPassword({
+          characters: [password.lower, password.upper, password.digits],
+          length: 8,
+        })
+      );
 
-    // Error creating user in Cognito.
-    if (cognitoUser.error != null) {
-      request.statusCode = 400;
-      request.response = { error: cognitoUser.error.message };
+      // Create a new user in Cognito.
+      const cognitoUser = await CognitoService.addUser(
+        app,
+        user.email,
+        temporaryPassword,
+        user.phoneNumber
+      );
 
-      logger.error('Error creating user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
+      // Error creating user in Cognito.
+      if (cognitoUser.error != null) {
+        request.statusCode = 400;
+        request.response = { error: cognitoUser.error.message };
 
-      return res.status(400).json({ error: cognitoUser.error.message });
+        logger.error('Error creating user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
+
+        return res.status(400).json({ error: cognitoUser.error.message });
+      }
+
+      user.cognitoId = cognitoUser.UserSub;
+
+      // Confirm the user in Cognito.
+      const confirmUser = CognitoService.adminConfirmUser(app, user.email);
+
+      // Error confirming user in Cognito.
+      if (confirmUser.error != null) {
+        request.statusCode = 400;
+        request.response = { error: confirmUser.error.message };
+
+        logger.error(
+          'Error confirming user in Cognito: ' + JSON.stringify(request, null, 2) + '\n'
+        );
+
+        return res.status(400).json({ error: confirmUser.error.message });
+      }
+
+      // If there is no error, then the user has been confirmed.
+      if (confirmUser.error == null) {
+        user.emailVerified = true;
+      }
+
+      // Variables to be inserted into email template
+      const emailData = {
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        company: company.business_profile.name,
+        password: temporaryPassword,
+      };
+
+      console.log('EMAIL DATA: ' + JSON.stringify(emailData, null, 2) + '\n');
+
+      // Insert variables into email template
+      let email = await EmailHelper.getEmailTemplateWithData('crm_new_user', emailData);
+
+      // Send email to user
+      SES.sendEmail([user.email], email.subject, email.body);
     }
 
-    user.cognitoId = cognitoUser.UserSub;
-
-    // Confirm the user in Cognito.
-    const confirmUser = CognitoService.adminConfirmUser(app, user.email);
-
-    // Error confirming user in Cognito.
-    if (confirmUser.error != null) {
-      request.statusCode = 400;
-      request.response = { error: confirmUser.error.message };
-
-      logger.error('Error confirming user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
-
-      return res.status(400).json({ error: confirmUser.error.message });
+    // If the user is a caregiver, add them to the caregivers collection.
+    if (user.role == 'caregiver') {
+      newCaregiver = await CaregiversDAO.create(user);
+    } else {
+      // Add the user to the database.
+      newUser = await UsersDAO.create(user);
     }
-
-    // If there is no error, then the user has been confirmed.
-    if (confirmUser.error == null) {
-      user.emailVerified = true;
-    }
-
-    // Add the user to the database.
-    const newUser = await usersDAO.add(user);
 
     // Error adding user to database.
-    if (newUser.error != null) {
+    if (newUser?.error) {
       // Delete the user from Cognito.
       const deleteUser = await CognitoService.adminDeleteUser(app, user.email);
 
@@ -210,25 +177,18 @@ export default class UsersController {
 
     // Add the new user to the company.
 
-    const addCompanyUser = await companiesDAO.add_user(user.company._id, newUser._id);
+    /**
+     *  const addCompanyUser = await CompaniesDAO.update(
+      { _id: company._id },
+      { $push: { team: newUser._id } }
+    );
+     */
 
-    // Variables to be inserted into email template
-    const emailData = {
-      name: user.name,
-      email: user.email,
-      password: temporaryPassword,
-      company: company.name,
-      gender: user.gender,
-    };
 
-    // Insert variables into email template
-    let email = await EmailHelper.getEmailWithData('crm_new_user', emailData);
+    response.statusCode = 201;
+    response.data = newUser;
 
-    // Send email to user
-    SES.sendEmail(user.email, email.subject, email.body);
-
-    res.status(201).json(newUser);
-
+    next(response);
     /**
        *   } catch (error) {
       request.statusCode = 500;
@@ -675,13 +635,13 @@ export default class UsersController {
 
           updateUser = {
             ...user.toJSON(),
-            ...req.body?.user || req.body,
+            ...(req.body?.user || req.body),
           };
-          console.log("UPDATE USER BEFORE: ", updateUser);
+          console.log('UPDATE USER BEFORE: ', updateUser);
 
           updateUser = await CrmUsersDAO.update(updateUser);
 
-          console.log("UPDATE USER: ", updateUser);
+          console.log('UPDATE USER: ', updateUser);
 
           user = updateUser;
         } catch (error) {
