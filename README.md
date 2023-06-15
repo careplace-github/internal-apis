@@ -19,7 +19,7 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 [![Staging Deployment](https://github.com/careplace-github/rest-api/actions/workflows/aws-deploy-stag.yml/badge.svg?branch=staging)](https://github.com/careplace-github/rest-api/actions/workflows/aws-deploy-stag.yml)
-[![Node][https://img.shields.io/badge/node-18.15.0-brightgreen]
+![Node.js Version](https://img.shields.io/badge/node-18.15.0-brightgreen)
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
