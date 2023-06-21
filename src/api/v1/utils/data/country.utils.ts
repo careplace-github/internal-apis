@@ -1,4 +1,4 @@
-import countries from "../../../../assets/data/countries.js";
+import countries from "../../../../assets/data/countries";
 
 /**
  * Class with utility functions for countries.

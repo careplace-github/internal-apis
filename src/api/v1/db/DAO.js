@@ -1,13 +1,13 @@
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../logs/logger";
 import mongoose from "mongoose";
 
-import * as Schemas from "../models/index.js";
+import * as Schemas from "../models/index";
 
-import deletedDocumentSchema from "../models/_deletion_/deletion.model.js";
-import { MONGODB_DB_DELETES_URI } from "../../../config/constants/index.js";
+import deletedDocumentSchema from "../models/_deletion_/deletion.model";
+import { MONGODB_DB_DELETES_URI } from "../../../config/constants/index";
 
-import * as LayerError from "../utils/errors/layer/index.js";
+import * as LayerError from "../utils/errors/layer/index";
 
 /**
  * Data Access Object Methods

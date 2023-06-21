@@ -1,10 +1,10 @@
 // Import schema model
-import templateSchema from "../../models/template/template.model.js";
+import templateSchema from "../../models/template/template.model";
 // Import constants
-import { MONGODB_collection_templates } from "../../../config/constants/index.js";
+import { MONGODB_collection_templates } from "../../../config/constants/index";
 // Import logger
-import logger from "../../../logs/logger.js";
-import db_document from "../DAO.js";
+import logger from "../../../logs/logger";
+import db_document from "../DAO";
 import { override } from "joi";
 
 let Template;

@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import Relative from "../models/userLogic/relatives.model.js";
+import DAO from "./DAO";
+import Relative from "../models/userLogic/relatives.model";
 
-import { MONGODB_COLLECTION_RELATIVES_NS } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_RELATIVES_NS } from "../../../config/constants/index";
 
 /**
  * @class Class to manage the EVENTS collection.

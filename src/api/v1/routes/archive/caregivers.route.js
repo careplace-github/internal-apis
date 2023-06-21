@@ -1,13 +1,13 @@
 'use strict'
 
 import Router from "express"
-import user from "../models/users.model.js"
+import user from "../models/users.model"
 import express from "express"
 
 
-import {api_url} from "../../../config/constants/index.js"
-import {registerUserValidation} from "../validators/signup.validator.js"
-import validatorMiddleware from "../middlewares/validator.middleware.js"
+import {api_url} from "../../../config/constants/index"
+import {registerUserValidation} from "../validators/signup.validator"
+import validatorMiddleware from "../middlewares/validator.middleware"
 
 
 

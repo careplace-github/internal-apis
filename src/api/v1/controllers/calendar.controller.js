@@ -1,10 +1,10 @@
-import eventsDAO from '../db/events.dao.js';
-import UsersDAO from '../db/crmUsers.dao.js';
-import eventsSeriesDAO from '../db/eventsSeries.dao.js';
-import * as Error from '../utils/errors/http/index.js';
-import authHelper from '../helpers/auth/auth.helper.js';
-import CRUD from './crud.controller.js';
-import logger from '../../../logs/logger.js';
+import eventsDAO from '../db/events.dao';
+import UsersDAO from '../db/crmUsers.dao';
+import eventsSeriesDAO from '../db/eventsSeries.dao';
+import * as Error from '../utils/errors/http/index';
+import authHelper from '../helpers/auth/auth.helper';
+import CRUD from './crud.controller';
+import logger from '../../../logs/logger';
 // helper functions
 import { generateEventsFromSeries } from '../helpers';
 

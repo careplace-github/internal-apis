@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import Order from "../models/app/orders/orders.model.js";
+import DAO from "./DAO";
+import Order from "../models/app/orders/orders.model";
 
-import {MONGODB_COLLECTION_ORDERS_NS} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_ORDERS_NS} from "../../../config/constants/index";
 
 
 

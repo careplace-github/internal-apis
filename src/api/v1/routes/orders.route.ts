@@ -2,11 +2,11 @@
 import express from "express";
 
 // Import Middlewares
-import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import InputValidation from "../middlewares/validators/inputValidation.middleware";
 import {
   AddOrderValidator,
   UpdateOrderValidator,
-} from "../validators/orders.validator.js";
+} from "../validators/orders.validator";
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 

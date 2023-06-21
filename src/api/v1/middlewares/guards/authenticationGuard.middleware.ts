@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../../../../logs/logger.js';
-import authUtils from '../../utils/auth/auth.utils.js';
-import * as Error from '../../utils/errors/http/index.js';
+import logger from '../../../../logs/logger';
+import authUtils from '../../utils/auth/auth.utils';
+import * as Error from '../../utils/errors/http/index';
 
 /**
  * @description Middleware to validate if a user is authenticated through the JWT accessToken.

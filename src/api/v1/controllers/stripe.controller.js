@@ -1,35 +1,35 @@
 // Import services
-import CognitoService from "../services/cognito.service.js";
-import SES from "../services/ses.service.js";
+import CognitoService from "../services/cognito.service";
+import SES from "../services/ses.service";
 
 // Import DAOs
-import crmUsersDAO from "../db/crmUsers.dao.js";
-import MarketplaceUsersDAO from "../db/marketplaceUsers.dao.js";
-import companiesDAO from "../db/companies.dao.js";
-import ordersDAO from "../db/orders.dao.js";
+import crmUsersDAO from "../db/crmUsers.dao";
+import MarketplaceUsersDAO from "../db/marketplaceUsers.dao";
+import companiesDAO from "../db/companies.dao";
+import ordersDAO from "../db/orders.dao";
 
-import authUtils from "../utils/auth/auth.utils.js";
+import authUtils from "../utils/auth/auth.utils";
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from "../../../config/constants/index.js";
+} from "../../../config/constants/index";
 
 // Import Utils
-import StripeService from "../services/stripe.service.js";
-import authHelper from "../helpers/auth/auth.helper.js";
-import stripeHelper from "../helpers/services/stripe.helper.js";
-import emailHelper from "../helpers/emails/email.helper.js";
-import dateUtils from "../utils/data/date.utils.js";
+import StripeService from "../services/stripe.service";
+import authHelper from "../helpers/auth/auth.helper";
+import stripeHelper from "../helpers/services/stripe.helper";
+import emailHelper from "../helpers/emails/email.helper";
+import dateUtils from "../utils/data/date.utils";
 
 import {
   STRIPE_APPLICATION_FEE,
   STRIPE_PRODUCT_ID,
-} from "../../../config/constants/index.js";
+} from "../../../config/constants/index";
 
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../logs/logger";
 
-import * as Error from "../utils/errors/http/index.js";
+import * as Error from "../utils/errors/http/index";
 
 export default class StripeController {
   static async createPaymentMethod(req, res, next) {

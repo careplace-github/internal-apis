@@ -1,5 +1,5 @@
-import httpStatusCodes from "../httpStatusCodes.js"
-import HTTP_Error from "../httpError.js";
+import httpStatusCodes from "../httpStatusCodes"
+import HTTP_Error from "../httpError";
 
 export default class API503Error extends HTTP_Error {
   constructor(

@@ -1,32 +1,32 @@
 // Import services
-import CognitoService from '../services/cognito.service.js';
-import SES from '../services/ses.service.js';
+import cognitoService from '../services/cognito.service';
+import SES from '../services/ses.service';
 
 // Import DAOs
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import caregiversDAO from '../db/caregivers.dao.js';
-import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import CRUD from './crud.controller.js';
+import crmUsersDAO from '../db/crmUsers.dao';
+import caregiversDAO from '../db/caregivers.dao';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
+import companiesDAO from '../db/companies.dao';
+import CRUD from './crud.controller';
 
-import authUtils from '../utils/auth/auth.utils.js';
+import authUtils from '../utils/auth/auth.utils';
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from '../../../config/constants/index.js';
+} from '../../../config/constants/index';
 
 // Import Utils
 import password from 'secure-random-password';
-import emailHelper from '../helpers/emails/email.helper.js';
-import stripe from '../services/stripe.service.js';
-import authHelper from '../helpers/auth/auth.helper.js';
-import SES_Service from '../services/ses.service.js';
+import emailHelper from '../helpers/emails/email.helper';
+import stripe from '../services/stripe.service';
+import authHelper from '../helpers/auth/auth.helper';
+import SES_Service from '../services/ses.service';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import requestUtils from '../utils/server/request.utils.js';
+import logger from '../../../logs/logger';
+import requestUtils from '../utils/server/request.utils';
 
-import * as Error from '../utils/errors/http/index.js';
+import * as Error from '../utils/errors/http/index';
 import { response } from 'express';
 
 const app = 'crm';
@@ -44,27 +44,27 @@ export default class UsersController {
 
     const user = req.body;
 
+    let clientID = AWS_COGNITO_CRM_CLIENT_ID;
+
     const CompaniesDAO = new companiesDAO();
     const UsersDAO = new crmUsersDAO();
     const CaregiversDAO = new caregiversDAO();
     const EmailHelper = new emailHelper();
+    const CognitoService = new cognitoService(clientID);
+
     let SES = new SES_Service();
 
     let newCaregiver;
     let newUser;
+    let temporaryPassword;
+    let cognitoUser;
 
     logger.info('Users Controller CREATE: ' + JSON.stringify(request, null, 2) + '\n');
 
     logger.info('USER: ' + JSON.stringify(user, null, 2) + '\n');
 
-    if (user.role == 'admin') {
-      return res.status(400).json({ error: 'Cannot create admin user.' });
-    }
-
     // Get the company from MongoDB.
     const company = await CompaniesDAO.retrieve(user.company);
-
-    console.log('COMPANY: ' + JSON.stringify(company, null, 2) + '\n');
 
     // Tried to add a user to a company that doesn't exist.
     if (!company) {
@@ -84,37 +84,51 @@ export default class UsersController {
       });
     }
 
+    // Remove any whitespace from the phone number.
+    user.phone = user.phone.replace(/\s/g, '');
+
     if (user.permissions.includes('app_user')) {
       // Generate a random password of 8 characters.
-      const temporaryPassword = String(
+      temporaryPassword = String(
         password.randomPassword({
           characters: [password.lower, password.upper, password.digits],
           length: 8,
         })
       );
 
-      // Create a new user in Cognito.
-      const cognitoUser = await CognitoService.addUser(
-        app,
-        user.email,
-        temporaryPassword,
-        user.phoneNumber
-      );
+      // Create a new user in the CRM Cognito User Pool.
+      try {
+        cognitoUser = await CognitoService.addUser(user.email, temporaryPassword, user.phone);
+      } catch (err) {
+        console.error('Error creating user in Cognito: ');
+        console.error(err);
+        switch (err.type) {
+          case 'INVALID_PARAMETER': {
+            console.error('Username already exists: ' + err);
+            response.statusCode = 400;
+            response.data = {
+              error: 'EMAIL_ALREADY_EXISTS',
+            };
+            return next(response);
+          }
 
-      // Error creating user in Cognito.
-      if (cognitoUser.error != null) {
-        request.statusCode = 400;
-        request.response = { error: cognitoUser.error.message };
-
-        logger.error('Error creating user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
-
-        return res.status(400).json({ error: cognitoUser.error.message });
+          default: {
+            logger.error('Internal Server Error: ' + err);
+            response.statusCode = 500;
+            response.data = {
+              error: 'Internal Server Error.',
+            };
+            return next(response);
+          }
+        }
       }
 
-      user.cognitoId = cognitoUser.UserSub;
+      console.log('COGNITO USER: ' + JSON.stringify(cognitoUser, null, 2) + '\n');
+
+      user.cognito_id = cognitoUser.UserSub;
 
       // Confirm the user in Cognito.
-      const confirmUser = CognitoService.adminConfirmUser(app, user.email);
+      const confirmUser = CognitoService.adminConfirmUser(user.email);
 
       // Error confirming user in Cognito.
       if (confirmUser.error != null) {
@@ -127,36 +141,28 @@ export default class UsersController {
 
         return res.status(400).json({ error: confirmUser.error.message });
       }
-
-      // If there is no error, then the user has been confirmed.
-      if (confirmUser.error == null) {
-        user.emailVerified = true;
-      }
-
-      // Variables to be inserted into email template
-      const emailData = {
-        name: user.name,
-        email: user.email,
-        gender: user.gender,
-        company: company.business_profile.name,
-        password: temporaryPassword,
-      };
-
-      console.log('EMAIL DATA: ' + JSON.stringify(emailData, null, 2) + '\n');
-
-      // Insert variables into email template
-      let email = await EmailHelper.getEmailTemplateWithData('crm_new_user', emailData);
-
-      // Send email to user
-      SES.sendEmail([user.email], email.subject, email.body);
     }
 
     // If the user is a caregiver, add them to the caregivers collection.
     if (user.role == 'caregiver') {
-      newCaregiver = await CaregiversDAO.create(user);
+      try {
+        newCaregiver = await CaregiversDAO.create(user);
+      } catch (err) {
+        logger.error('Error creating caregiver in MongoDB: ' + err);
+        response.statusCode = 500;
+        response.data = {
+          error: 'Internal Server Error.',
+        };
+
+        return next(response);
+      }
     } else {
-      // Add the user to the database.
-      newUser = await UsersDAO.create(user);
+      try {
+        // Add the user to the database.
+        newUser = await UsersDAO.create(user);
+      } catch (err) {
+        logger.error('Error creating user in MongoDB: ' + err);
+      }
     }
 
     // Error adding user to database.
@@ -175,20 +181,29 @@ export default class UsersController {
       return res.status(400).json({ error: newUser.error });
     }
 
-    // Add the new user to the company.
-
-    /**
-     *  const addCompanyUser = await CompaniesDAO.update(
-      { _id: company._id },
-      { $push: { team: newUser._id } }
-    );
-     */
-
-
     response.statusCode = 201;
     response.data = newUser;
 
     next(response);
+
+    if (user.permissions.includes('app_user')) {
+      // Variables to be inserted into email template
+      const emailData = {
+        name: user.name,
+        email: user.email,
+        company: company.business_profile.name,
+        password: temporaryPassword,
+      };
+
+      console.log('EMAIL DATA: ' + JSON.stringify(emailData, null, 2) + '\n');
+
+      // Insert variables into email template
+      let email = await EmailHelper.getEmailTemplateWithData('crm_new_user', emailData);
+
+      // Send email to user
+      SES.sendEmail([user.email], email.subject, email.htmlBody);
+    }
+
     /**
        *   } catch (error) {
       request.statusCode = 500;
@@ -200,7 +215,7 @@ export default class UsersController {
 
       return res.status(500).json(error);
     }
-       */
+      */
   }
 
   /**
@@ -360,21 +375,77 @@ export default class UsersController {
    */
   static async delete(req, res, next) {
     try {
-      var request = requestUtils(req);
+      let response = {};
+      let clientID = AWS_COGNITO_CRM_CLIENT_ID;
 
-      const userId = req.params.userId;
+      const userId = req.params.id;
 
-      // Check if user already exists by verifying the id
-      const userExists = await usersDAO.getUserById(userId);
-      if (!userExists) {
-        return res.status(400).send('User does not exist');
+      if (!userId) {
+        response.statusCode = 400;
+        response.response = { message: 'User id is required.' };
+        return next(response);
       }
 
-      const deletedUser = await usersDAO.deleteUser(userId);
+      let CRMUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
 
-      res.status(200).json(deletedUser);
+      let user;
+      let isDeleted = false;
+
+      // Try to retrieve user from CRMUsersDAO first
+      user = await CRMUsersDAO.retrieve(userId);
+
+      if (!user) {
+        // If user is not found in CRMUsersDAO, try to retrieve user from CaregiversDAO
+        user = await CaregiversDAO.retrieve(userId);
+
+        if (user) {
+          try {
+            // Delete user from CaregiversDAO
+            await CaregiversDAO.delete(userId);
+            isDeleted = true;
+          } catch (error) {
+            isDeleted = false;
+          }
+        }
+      } else {
+        try {
+          await CRMUsersDAO.delete(userId);
+          isDeleted = true;
+        } catch (error) {
+          isDeleted = false;
+        }
+      }
+
+      // If the user has access to the CRM, delete the user from Cognito
+      if (user?.cognito_id) {
+        const CognitoService = new cognitoService(clientID);
+        try {
+          await CognitoService.adminDeleteUser(user.cognito_id);
+        } catch (error) {
+          throw new Error._500(`Error: ${error}`);
+        }
+      }
+
+      // If user deletion is successful
+      if (isDeleted) {
+        response.statusCode = 200;
+        response.data = { message: 'User deleted.' };
+
+        logger.info(
+          'Users Controller deleteUser result: ' + JSON.stringify(response, null, 2) + '\n'
+        );
+      } else {
+        throw new Error._500(`Unable to delete user`);
+      }
+
+      next(response);
     } catch (error) {
-      next(error);
+      logger.error('Error: ', error);
+
+      response.statusCode = 500;
+      response.data = { error: error };
+      next(response);
     }
   }
 

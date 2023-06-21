@@ -34,7 +34,7 @@ import rateLimit from 'express-rate-limit';
 // Import mongoose
 import mongoose from 'mongoose';
 
-import * as Error from './api/v1/utils/errors/http/index.js';
+import * as Error from './api/v1/utils/errors/http/index';
 
 // Loads Environment Constants
 import {
@@ -48,7 +48,7 @@ import {
   MONGODB_DB_DELETES_URI,
   MONGODB_DB_ACTIVE_NS,
   MONGODB_DB_DELETES_NS,
-} from './config/constants/index.js';
+} from './config/constants/index';
 
 // Import Router Exports
 import {
@@ -69,19 +69,19 @@ import {
 } from './api/v1/routes';
 
 // Helpers
-import getServices from './api/v1/helpers/assets/services.helper.js';
+import getServices from './api/v1/helpers/assets/services.helper';
 
 // Import Middlewares
-import logger from './logs/logger.js';
-import requestLogger from './api/v1/middlewares/server/requestHandler.middleware.js';
-import errorLogger from './api/v1/middlewares/errors/errorHandler.middleware.js';
-import responseLogger from './api/v1/middlewares/server/responseHandler.middleware.js';
+import logger from './logs/logger';
+import requestLogger from './api/v1/middlewares/server/requestHandler.middleware';
+import errorLogger from './api/v1/middlewares/errors/errorHandler.middleware';
+import responseLogger from './api/v1/middlewares/server/responseHandler.middleware';
 import bodyParser from 'body-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 
 // Documentation
-import swaggerDocs from './documentation/swagger.js';
+import swaggerDocs from './documentation/swagger';
 
 const main = async () => {
   try {
@@ -273,7 +273,7 @@ const main = async () => {
             // Defines valid sources of JavaScript
             scriptSrc: [
               "'self'",
-              'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js',
+              'https://cdnjs.cloudflare.com/ajax/libs/Chart/2.9.3/Chart.min',
             ],
           },
         })
