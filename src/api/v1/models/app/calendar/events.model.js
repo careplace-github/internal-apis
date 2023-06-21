@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import * as Schemas from '../../../models/index.js';
-import * as Error from '../../../utils/errors/http/index.js';
+import * as Schemas from '../../../models/index';
+import * as Error from '../../../utils/errors/http/index';
 
 let Event;
 

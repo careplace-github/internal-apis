@@ -1,4 +1,4 @@
-import LayerError from "../layerError.js";
+import LayerError from "../layerError";
 
 /**
  * ``INTERNAL_ERROR`` is a ``LayerError`` that is thrown when a resource is not found (eg. DataBase, S3, etc).

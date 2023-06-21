@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -16,11 +16,11 @@ const caregiverSchema = new Schema(
 
     birthdate: { type: Date, required: true },
 
-    gender: { type: String, required: true, enum: ["male", "female", "other"] },
+    gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
 
-    company: { type: Schema.ObjectId, ref: "Company", required: true },
+    company: { type: Schema.ObjectId, ref: 'Company', required: true },
 
-    services: [{ type: Schema.ObjectId, ref: "Service", required: false }],
+    services: [{ type: Schema.ObjectId, ref: 'Service', required: false }],
 
     address: {
       street: { type: String, required: false },
@@ -34,7 +34,6 @@ const caregiverSchema = new Schema(
       country: {
         type: String,
         required: false,
-        enum: ["PT"],
       },
 
       coordinates: {
@@ -46,7 +45,7 @@ const caregiverSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["caregiver"],
+      enum: ['caregiver'],
     },
 
     profile_picture: { type: String, required: false },
@@ -91,4 +90,4 @@ caregiverSchema.methods.isAvailable = function (events) {
  * 'The first argument is the singular name of the collection your model is for. Mongoose automatically looks for the plural, lowercased version of your model name. Thus, for the example above, the model Tank is for the tanks collection in the database.'
  * @see https://mongoosejs.com/docs/models.html#compiling
  */
-export default Caregiver = mongoose.model("Caregiver", caregiverSchema);
+export default Caregiver = mongoose.model('Caregiver', caregiverSchema);

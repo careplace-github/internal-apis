@@ -1,4 +1,4 @@
-import LayerError from "../layerError.js";
+import LayerError from "../layerError";
 
 /**
  * ``FORBIDEN`` is a ``LayerError`` that is thrown when a user is not allowed to access a resource.

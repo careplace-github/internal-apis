@@ -1,9 +1,9 @@
 import { Timestamp } from 'bson';
 import stripe from 'stripe';
 
-import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from '../../../config/constants/index.js';
+import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from '../../../config/constants/index';
 
-import logger from '../../../logs/logger.js';
+import logger from '../../../logs/logger';
 
 /**
  * Class to manage the Stripe API

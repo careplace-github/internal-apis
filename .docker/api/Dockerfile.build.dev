@@ -4,11 +4,17 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-ENV NODE_ENV="development"
-
 RUN yarn cache clean --force
+
+RUN yarn config delete proxy
+
+RUN npm config rm proxy
+
+RUN npm config rm https-proxy
 
 RUN yarn --network-timeout 100000
 
-CMD [ "yarn", "dev" ]
+RUN yarn build
+
+CMD [ "yarn", "start" ]
 

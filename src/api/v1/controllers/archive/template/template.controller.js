@@ -1,17 +1,17 @@
 // Import services
-// -> import someService from "../services/something.service.js";
+// -> import someService from "../services/something.service";
 // Import DB
-import templatesDAO from "../../../db/template/templatesDAO.js";
+import templatesDAO from "../../../db/template/templatesDAO";
 // Immport helpers
-// -> import someHelper from "../helpers/something.helper.js";
+// -> import someHelper from "../helpers/something.helper";
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../logs/logger";
 // Import utils
-import requestUtils from "../utils/request.utils.js";
+import requestUtils from "../utils/request.utils";
 
 /**
  * Template Controller Class for the API endpoints `/templates`.
- * To use this controller one must `import TemplateController from "./controllers/template/template.controller.js";`
+ * To use this controller one must `import TemplateController from "./controllers/template/template.controller";`
  * and then use the methods as `TemplateController.index` or `TemplateController.create`.
  */
 export default class TemplateController {

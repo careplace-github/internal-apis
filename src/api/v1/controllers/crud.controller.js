@@ -1,8 +1,8 @@
-import logger from '../../../logs/logger.js';
-import * as Error from '../utils/errors/http/index.js';
-import usersDAO from '../db/crmUsers.dao.js';
-import authUtils from '../utils/auth/auth.utils.js';
-import cognito from '../services/cognito.service.js';
+import logger from '../../../logs/logger';
+import * as Error from '../utils/errors/http/index';
+import usersDAO from '../db/crmUsers.dao';
+import authUtils from '../utils/auth/auth.utils';
+import cognito from '../services/cognito.service';
 import mongoose from 'mongoose';
 
 let ObjectId = mongoose.Types.ObjectId;

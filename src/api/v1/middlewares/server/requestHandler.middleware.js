@@ -1,4 +1,4 @@
-import logger from "../../../../logs/logger.js";
+import logger from "../../../../logs/logger";
 
 export default function RequestUtils(req, res, next) {
   function handleRequest() {

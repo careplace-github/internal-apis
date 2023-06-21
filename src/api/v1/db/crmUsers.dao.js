@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import CrmUser from "../models/userLogic/crmUsers.model.js";
+import DAO from "./DAO";
+import CrmUser from "../models/userLogic/crmUsers.model";
 
-import { MONGODB_COLLECTION_CRM_USERS_NS } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_CRM_USERS_NS } from "../../../config/constants/index";
 
 /**
  * @class Class to manage the EVENTS collection.

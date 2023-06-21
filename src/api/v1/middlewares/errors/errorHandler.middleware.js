@@ -1,5 +1,5 @@
-import logger from "../../../../logs/logger.js";
-import HTTP_Error from "../../utils/errors/http/httpError.js";
+import logger from '../../../../logs/logger';
+import HTTP_Error from '../../utils/errors/http/httpError';
 
 /**
  * @todo Send the error to the error tracking service. (e.g. Sentry)
@@ -7,9 +7,7 @@ import HTTP_Error from "../../utils/errors/http/httpError.js";
  */
 export default function errorHandler(err, req, res, next) {
   function handleRequest() {
-    logger.info(
-      `Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`
-    );
+    logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`);
 
     logger.info(err instanceof Error);
 
@@ -18,32 +16,34 @@ export default function errorHandler(err, req, res, next) {
      * So we need to check if the parameter `err` is an error and handle accordingly.
      */
     if (err instanceof Error) {
-      if (err.name == "MulterError") {
+      if (err.name == 'MulterError') {
         switch (err.code) {
-          case "LIMIT_UNEXPECTED_FILE":
+          case 'LIMIT_UNEXPECTED_FILE':
             err.message = `${err.message}: ${err.field}`;
             err.statusCode = 400;
-            err.type = "BAD_REQUEST";
+            err.type = 'BAD_REQUEST';
             break;
 
           default:
             err.statusCode = 400;
-            err.type = "BAD_REQUEST";
+            err.type = 'BAD_REQUEST';
         }
       } else if (
-        err.name === "ReferenceError" ||
-        err.name === "TypeError" ||
-        err.name === "SyntaxError" ||
-        err.name === "RangeError" ||
-        err.name === "EvalError" ||
-        err.name === "URIError" ||
-        err.name === "AggregateError" ||
-        err.name === "CastError"
+        err.name === 'ReferenceError' ||
+        err.name === 'TypeError' ||
+        err.name === 'SyntaxError' ||
+        err.name === 'RangeError' ||
+        err.name === 'EvalError' ||
+        err.name === 'URIError' ||
+        err.name === 'AggregateError' ||
+        err.name === 'CastError'
       ) {
-        console.log(`JavaScript Error: ${err}`);
-        err.message = "Internal Server Error";
+        logger.error(`${err.stack} \n`);
+       
+        err.message = 'Internal Server Error';
+
         err.statusCode = 500;
-        err.type = "INTERNAL_SERVER_ERROR";
+        err.type = 'INTERNAL_SERVER_ERROR';
       }
     } else {
       /**
@@ -60,10 +60,10 @@ export default function errorHandler(err, req, res, next) {
       data: {
         error: {
           message:
-            err.message && err.type != "INTERNAL_SERVER_ERROR"
+            err.message && err.type != 'INTERNAL_SERVER_ERROR'
               ? err.message
-              : "Internal Server Error",
-          type: err.type ? err.type : "INTERNAL_SERVER_ERROR",
+              : 'Internal Server Error',
+          type: err.type ? err.type : 'INTERNAL_SERVER_ERROR',
         },
       },
       statusCode: err.statusCode ? err.statusCode : 500,

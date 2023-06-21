@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import eventSeriesSchema from "../calendar/eventsSeries.model.js";
+import eventSeriesSchema from "../calendar/eventsSeries.model";
 
 let Order;
 

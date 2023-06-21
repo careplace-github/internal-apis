@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import dateUtils from '../../../utils/data/date.utils.js';
+import dateUtils from '../../../utils/data/date.utils';
 
 const Schema = mongoose.Schema;
 

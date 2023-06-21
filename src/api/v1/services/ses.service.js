@@ -7,10 +7,10 @@ import {
   AWS_SECRET_ACESS_KEY,
   AWS_SES_SENDER_EMAIL,
   AWS_SES_REPLY_TO_EMAIL,
-} from "../../../config/constants/index.js";
+} from "../../../config/constants/index";
 
-import NodemailerHelper from "../helpers/emails/nodemailer.helper.js";
-import EmailHelper from "../helpers/emails/email.helper.js";
+import NodemailerHelper from "../helpers/emails/nodemailer.helper";
+import EmailHelper from "../helpers/emails/email.helper";
 
 /**
  * Creates a new EmailHelper instance
@@ -157,9 +157,9 @@ export default class SES {
 
   /**
    * @deprecated
-   * We are managing the templates with the folder './src/assets/emails' and using the helper EmailHelper ('./src/api/v1/helpers/email.helper.js') to manage the templates data.
+   * We are managing the templates with the folder './src/assets/emails' and using the helper EmailHelper ('./src/api/v1/helpers/email.helper') to manage the templates data.
    * If the templates don't have any attachment, we are using the function 'sendEmail' from this class to send the email.
-   * Otherwise, we are using the helper NodemailerHelper ('./src/api/v1/helpers/nodemailer.helper.js') to send the email.
+   * Otherwise, we are using the helper NodemailerHelper ('./src/api/v1/helpers/nodemailer.helper') to send the email.
    *
    * Sends an email with a template
    *
@@ -201,7 +201,7 @@ export default class SES {
    *
    * @param {String} templateName - Name of the template to create.
    * @param {String} subject - Subject of the email template to create.
-   * @param {import("aws-sdk/clients/ses.js").HtmlPart} html_body - HTML body of the email template to create.
+   * @param {import("aws-sdk/clients/ses").HtmlPart} html_body - HTML body of the email template to create.
    * @param {String} text_body - Text body of the email template to create.
    * @returns {Promise<JSON>} - Promise that resolves to the response from the SES service.
    *

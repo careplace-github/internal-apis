@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import MarketplaceUser from "../models/userLogic/marketplaceUsers.model.js";
+import DAO from "./DAO";
+import MarketplaceUser from "../models/userLogic/marketplaceUsers.model";
 
-import { MONGODB_COLLECTION_MARKETPLACE_USERS_NS } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_MARKETPLACE_USERS_NS } from "../../../config/constants/index";
 
 /**
  * @class Class to manage the EVENTS collection.

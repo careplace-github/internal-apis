@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-import fileSchema from "../models/utils/files.model.js";
+import fileSchema from "../models/utils/files.model";
 
-import logger from "../../../logs/logger.js";
+import logger from "../../../logs/logger";
 
 let File;
 

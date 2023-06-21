@@ -1,21 +1,21 @@
 // Import Cognito Service
-import cognito from '../services/cognito.service.js';
+import cognito from '../services/cognito.service';
 
 // Import database access objects
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
+import crmUsersDAO from '../db/crmUsers.dao';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
 
-import logger from '../../../logs/logger.js';
-import * as Error from '../utils/errors/http/index.js';
-import authHelper from '../helpers/auth/auth.helper.js';
-import CRUD from './crud.controller.js';
-import authUtils from '../utils/auth/auth.utils.js';
+import logger from '../../../logs/logger';
+import * as Error from '../utils/errors/http/index';
+import authHelper from '../helpers/auth/auth.helper';
+import CRUD from './crud.controller';
+import authUtils from '../utils/auth/auth.utils';
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from '../../../config/constants/index.js';
-import { countries } from '../../../assets/data/countries.js';
-import stripe from '../services/stripe.service.js';
+} from '../../../config/constants/index';
+import { countries } from '../../../assets/data/countries';
+import stripe from '../services/stripe.service';
 
 export default class AuthenticationController {
   /**

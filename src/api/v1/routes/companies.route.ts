@@ -6,8 +6,8 @@ import express from 'express';
 import CompaniesController from '../controllers/companies.controller';
 import OrdersController from '../controllers/orders.controller';
 import UsersController from '../controllers/users.controller';
-import StripeController from '../controllers/stripe.controller.js';
-import DashboardController from '../controllers/dashboard.controller.js';
+import StripeController from '../controllers/stripe.controller';
+import DashboardController from '../controllers/dashboard.controller';
 import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
 import AccessGuard from '../middlewares/guards/accessGuard.middleware';
 

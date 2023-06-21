@@ -2,7 +2,7 @@
 import express from "express";
 
 // Import Middlewares
-import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import InputValidation from "../middlewares/validators/inputValidation.middleware";
 
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 

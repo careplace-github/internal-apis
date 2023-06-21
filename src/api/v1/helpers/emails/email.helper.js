@@ -2,17 +2,17 @@ import { readFileSync, promises as fsPromises } from 'fs';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
 // Import logger
-import logger from '../../../../logs/logger.js';
+import logger from '../../../../logs/logger';
 
 import {
   AWS_SES_SENDER_EMAIL,
   AWS_SES_REPLY_TO_EMAIL,
-} from '../../../../config/constants/index.js';
+} from '../../../../config/constants/index';
 // let aws = require("@aws-sdk/client-ses");
 import htmlToText from 'html-to-text';
-import aws from 'aws-sdk/clients/ses.js';
+import aws from 'aws-sdk/clients/ses';
 
-import SES_Service from '../../services/ses.service.js';
+import SES_Service from '../../services/ses.service';
 
 // Gender id's
 const male = 0;
@@ -229,7 +229,7 @@ export default class EmailHelper {
    *
    * @param {Array<String>} receiverEmails - Array of emails to send the email to.
    * @param {String} subject - Subject of the email.
-   * @param {import("aws-sdk/clients/ses.js").HtmlPart} htmlBody - HTML body of the email.
+   * @param {import("aws-sdk/clients/ses").HtmlPart} htmlBody - HTML body of the email.
    * @param {String} textBody - Text body of the email.
    * @param {Array<File>} attachments - Array of attachments to send the email to.
    * @param {Array<String>} ccEmails - Array of emails to send the email in CC to.
@@ -259,7 +259,6 @@ export default class EmailHelper {
     const mailOptions = {
       from: AWS_SES_SENDER_EMAIL,
       to: receiverEmail,
-      replyTo: AWS_SES_REPLY_TO_EMAIL,
       cc: ccEmails,
       bcc: bccEmails,
       subject: subject,

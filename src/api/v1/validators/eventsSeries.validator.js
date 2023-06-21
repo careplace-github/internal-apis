@@ -1,6 +1,6 @@
 import { check } from "express-validator";
-import eventSchema from "../models/app/calendar/events.model.js";
-import SchemaValidation from "./schema.validator.js";
+import eventSchema from "../models/app/calendar/events.model";
+import SchemaValidation from "./schema.validator";
 
 var CreateEventSeriesValidator;
 

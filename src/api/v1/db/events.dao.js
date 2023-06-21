@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import Event from "../models/app/calendar/events.model.js";
+import DAO from "./DAO";
+import Event from "../models/app/calendar/events.model";
 
-import {MONGODB_COLLECTION_EVENTS_NS} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_EVENTS_NS} from "../../../config/constants/index";
 
 
 

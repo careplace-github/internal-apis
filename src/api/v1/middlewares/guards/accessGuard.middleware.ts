@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 
-import logger from '../../../../logs/logger.js';
+import logger from '../../../../logs/logger';
 
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from '../../../../config/constants/index.js';
+} from '../../../../config/constants/index';
 
-import authUtils from '../../utils/auth/auth.utils.js';
+import authUtils from '../../utils/auth/auth.utils';
 
-import * as Error from '../../utils/errors/http/index.js';
+import * as Error from '../../utils/errors/http/index';
 
 export default function accessGuard(app: string) {
   return async function (req: Request, res: Response, next: NextFunction) {

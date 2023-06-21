@@ -1,29 +1,29 @@
 // Import database access objects
 
 // Import Services
-import stripe from "../../services/stripe.service.js";
+import stripe from "../../services/stripe.service";
 
-import * as Error from "../../utils/errors/http/httpError.js";
+import * as Error from "../../utils/errors/http/httpError";
 
 import { buffer } from "micro";
 
 import {
   STRIPE_ACCOUNT_ENDPOINT_SECRET,
   STRIPE_CONNECT_ENDPOINT_SECRET,
-} from "../../../../config/constants/index.js";
+} from "../../../../config/constants/index";
 
-import logger from "../../../../logs/logger.js";
-import stripeHelper from "../../helpers/services/stripe.helper.js";
-import emailHelper from "../../helpers/emails/email.helper.js";
-import dateUtils from "../../utils/data/date.utils.js";
+import logger from "../../../../logs/logger";
+import stripeHelper from "../../helpers/services/stripe.helper";
+import emailHelper from "../../helpers/emails/email.helper";
+import dateUtils from "../../utils/data/date.utils";
 
-import OrdersDAO from "../../db/orders.dao.js";
+import OrdersDAO from "../../db/orders.dao";
 
 import {
   STRIPE_APPLICATION_FEE,
   STRIPE_PRODUCT_ID,
-} from "../../../../config/constants/index.js";
-import ordersDAO from "../../db/orders.dao.js";
+} from "../../../../config/constants/index";
+import ordersDAO from "../../db/orders.dao";
 
 /**
  * Controller for Stripe Webhooks

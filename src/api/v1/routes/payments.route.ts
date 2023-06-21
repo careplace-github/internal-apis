@@ -1,7 +1,7 @@
 import express from "express";
 
 // Import Controller
-import StripeController from "../controllers/stripe.controller.js";
+import StripeController from "../controllers/stripe.controller";
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
