@@ -1,15 +1,15 @@
-import StripeService from '../../services/stripe.service.js';
+import StripeService from '../../services/stripe.service';
 
-import * as LayerError from '../../utils/errors/layer/index.js';
+import * as LayerError from '../../utils/errors/layer/index';
 
 import axios from 'axios';
-import logger from '../../../../logs/logger.js';
+import logger from '../../../../logs/logger';
 
 import fs from 'fs';
 
 import * as regression from 'regression';
 
-import { STRIPE_APPLICATION_FEE } from '../../../../config/constants/index.js';
+import { STRIPE_APPLICATION_FEE } from '../../../../config/constants/index';
 
 export default class StripeHelper {
   constructor() {
@@ -241,7 +241,7 @@ export default class StripeHelper {
           filters,
           lastCharge.id
         );
-        charges.data = [...charges.data, ...moreCharges.data];
+        charges.data.push(...moreCharges.data);
       }
 
       return charges;

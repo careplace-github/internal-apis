@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import Service from "../models/admin/services.model.js";
+import DAO from "./DAO";
+import Service from "../models/admin/services.model";
 
-import {MONGODB_COLLECTION_SERVICES_NS} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_SERVICES_NS} from "../../../config/constants/index";
 
 
 

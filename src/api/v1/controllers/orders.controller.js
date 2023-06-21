@@ -1,34 +1,34 @@
 // Import Cognito Service
-import CognitoService from '../services/cognito.service.js';
+import CognitoService from '../services/cognito.service';
 
 // Import database access objects
-import ordersDAO from '../db/orders.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import usersDAO from '../db/marketplaceUsers.dao.js';
-import relativesDAO from '../db/relatives.dao.js';
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import caregiversDAO from '../db/caregivers.dao.js';
-import eventsSeriesDAO from '../db/eventsSeries.dao.js';
+import ordersDAO from '../db/orders.dao';
+import companiesDAO from '../db/companies.dao';
+import usersDAO from '../db/marketplaceUsers.dao';
+import relativesDAO from '../db/relatives.dao';
+import crmUsersDAO from '../db/crmUsers.dao';
+import caregiversDAO from '../db/caregivers.dao';
+import eventsSeriesDAO from '../db/eventsSeries.dao';
 
-import CRUD from './crud.controller.js';
+import CRUD from './crud.controller';
 
-import * as Error from '../utils/errors/http/index.js';
-import authHelper from '../helpers/auth/auth.helper.js';
+import * as Error from '../utils/errors/http/index';
+import authHelper from '../helpers/auth/auth.helper';
 
-import emailHelper from '../helpers/emails/email.helper.js';
-import SES_Service from '../services/ses.service.js';
+import emailHelper from '../helpers/emails/email.helper';
+import SES_Service from '../services/ses.service';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import dateUtils from '../utils/data/date.utils.js';
-import authUtils from '../utils/auth/auth.utils.js';
-import cognito from '../services/cognito.service.js';
+import logger from '../../../logs/logger';
+import dateUtils from '../utils/data/date.utils';
+import authUtils from '../utils/auth/auth.utils';
+import cognito from '../services/cognito.service';
 
 /**
- * Import the JSON Object from /src/assets/data/services.json
+ * Import the JSON Object from /src/assets/data/serviceson
  */
-import { services } from '../../../assets/data/services.js';
-import RelativesDAO from '../db/relatives.dao.js';
+import { services } from '../../../assets/data/services';
+import RelativesDAO from '../db/relatives.dao';
 
 /**
  *  let OrdersDAO = new ordersDAO();

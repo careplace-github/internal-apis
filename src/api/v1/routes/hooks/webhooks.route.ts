@@ -2,7 +2,7 @@
 import express from "express";
 
 // Import Controller
-import StripeWebhooksController from "../../controllers/hooks/stripeWebHook.controller.js";
+import StripeWebhooksController from "../../controllers/hooks/stripeWebHook.controller";
 const router = express.Router();
 
 router

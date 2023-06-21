@@ -8,7 +8,7 @@ const crmUserSchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    cognito_id: { type: String, required: true, unique: true },
+    cognito_id: { type: String, required: false, unique: true },
 
     name: { type: String, required: true },
 
@@ -16,7 +16,7 @@ const crmUserSchema = new Schema(
 
     phone: { type: String, required: true, unique: true },
 
-    birth_date: { type: Date, required: true },
+    birthdate: { type: Date, required: true },
 
     gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
 
@@ -34,7 +34,7 @@ const crmUserSchema = new Schema(
       country: {
         type: String,
         required: false,
-        enum: ['PT'],
+     
       },
 
       coordinates: {

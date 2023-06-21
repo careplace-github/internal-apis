@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import Caregiver from "../models/userLogic/caregivers.model.js";
+import DAO from "./DAO";
+import Caregiver from "../models/userLogic/caregivers.model";
 
-import {MONGODB_COLLECTION_CAREGIVERS_NS} from "../../../config/constants/index.js";
+import {MONGODB_COLLECTION_CAREGIVERS_NS} from "../../../config/constants/index";
 
 
 

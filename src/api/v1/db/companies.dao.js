@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
+import DAO from "./DAO";
 import Company from "../models/userLogic/companies.model";
 
-import { MONGODB_COLLECTION_COMPANIES_NS } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_COMPANIES_NS } from "../../../config/constants/index";
 
 /**
  * @class Class to manage the Companies collection.

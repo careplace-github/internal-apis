@@ -1,5 +1,5 @@
 import { check } from "express-validator";
-import orderSchema from "../models/app/orders/orders.model.js";
+import orderSchema from "../models/app/orders/orders.model";
 
 // -------------------------------------------------------------------------------------------- //
 //                                       ADD ORDER VALIDATOR                                    //
@@ -107,10 +107,10 @@ const AddOrder_ServicesValidation = check("services").custom((value) => {
   });
 
   /**
-   * Checks if the _id of each service is a valid _id by checking if it one of the Services from the "./src/assets/data/services.json" file
+   * Checks if the _id of each service is a valid _id by checking if it one of the Services from the "./src/assets/data/serviceson" file
    */
 
-  const services = require("../../assets/data/services.json");
+  const services = require("../../assets/data/serviceson");
   const servicesIds = services.map((service) => service._id);
 
   value.forEach((service) => {
@@ -435,9 +435,9 @@ const AddOrder_BillingAddressValidation = check("billing_address").custom(
       );
     }
 
-    // Check if the property country is a valid country code by checking if it is in the list of countries from the "./src/assets/data/countries.js" file.
+    // Check if the property country is a valid country code by checking if it is in the list of countries from the "./src/assets/data/countries" file.
     // The countries in this file are in an Array that contains objects in the format { code: "PT", label: "Portugal", phone: "351" }
-    const countries = require("../assets/data/countries.js");
+    const countries = require("../assets/data/countries");
 
     let countryFound = false;
     for (let i = 0; i < countries.length; i++) {
@@ -592,10 +592,10 @@ const UpdateOrder_ServicesValidation = check("services").custom((value) => {
   });
 
   /**
-   * Checks if the _id of each service is a valid _id by checking if it one of the Services from the "./src/assets/data/services.json" file
+   * Checks if the _id of each service is a valid _id by checking if it one of the Services from the "./src/assets/data/serviceson" file
    */
 
-  const services = require("../../assets/data/services.json");
+  const services = require("../../assets/data/serviceson");
   const servicesIds = services.map((service) => service._id);
 
   value.forEach((service) => {
@@ -920,9 +920,9 @@ const UpdateOrder_BillingAddressValidation = check("billing_address").custom(
       );
     }
 
-    // Check if the property country is a valid country code by checking if it is in the list of countries from the "./src/assets/data/countries.js" file.
+    // Check if the property country is a valid country code by checking if it is in the list of countries from the "./src/assets/data/countries" file.
     // The countries in this file are in an Array that contains objects in the format { code: "PT", label: "Portugal", phone: "351" }
-    const countries = require("../assets/data/countries.js");
+    const countries = require("../assets/data/countries");
 
     let countryFound = false;
     for (let i = 0; i < countries.length; i++) {

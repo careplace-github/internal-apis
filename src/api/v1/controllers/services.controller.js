@@ -1,10 +1,10 @@
 // Import logger
-import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/server/request.utils.js";
-import CRUD from "./crud.controller.js";
-import * as Error from "../utils/errors/http/index.js";
+import logger from "../../../logs/logger";
+import requestUtils from "../utils/server/request.utils";
+import CRUD from "./crud.controller";
+import * as Error from "../utils/errors/http/index";
 
-import servicesDAO from "../db/services.dao.js";
+import servicesDAO from "../db/services.dao";
 
 export default class ServicesController {
 

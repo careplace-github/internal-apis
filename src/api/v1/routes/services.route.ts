@@ -5,7 +5,7 @@ import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middl
 
 import AccessGuard from "../middlewares/guards/accessGuard.middleware";
 
-import inputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import inputValidation from "../middlewares/validators/inputValidation.middleware";
 // Import controllers
 import ServicesController from "../controllers/services.controller";
 

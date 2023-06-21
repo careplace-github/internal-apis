@@ -1,7 +1,7 @@
-import DAO from "./DAO.js";
-import EventSeries from "../models/app/calendar/eventsSeries.model.js";
+import DAO from "./DAO";
+import EventSeries from "../models/app/calendar/eventsSeries.model";
 
-import { MONGODB_COLLECTION_EVENTS_SERIES_NS } from "../../../config/constants/index.js";
+import { MONGODB_COLLECTION_EVENTS_SERIES_NS } from "../../../config/constants/index";
 
 /**
  * @class Class to manage the EVENTS collection.

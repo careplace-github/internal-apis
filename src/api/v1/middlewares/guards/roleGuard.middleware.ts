@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import authHelper from '../../helpers/auth/auth.helper';
-import logger from '../../../../logs/logger.js';
+import logger from '../../../../logs/logger';
 import requestUtils from '../../utils/server/request.utils';
 
 interface User {

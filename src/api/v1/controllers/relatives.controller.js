@@ -1,13 +1,13 @@
 // Import logger
-import logger from '../../../logs/logger.js';
+import logger from '../../../logs/logger';
 
-import authHelper from '../helpers/auth/auth.helper.js';
-import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
-import relativesDAO from '../db/relatives.dao.js';
-import ordersDAO from '../db/orders.dao.js';
-import CRUD from './crud.controller.js';
+import authHelper from '../helpers/auth/auth.helper';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
+import relativesDAO from '../db/relatives.dao';
+import ordersDAO from '../db/orders.dao';
+import CRUD from './crud.controller';
 
-import * as Error from '../utils/errors/http/index.js';
+import * as Error from '../utils/errors/http/index';
 
 export default class RelativesController {
   static async create(req, res, next) {

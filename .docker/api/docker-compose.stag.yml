@@ -1,4 +1,4 @@
-version: "3"
+version: "1.0.0"
 name: backend
 services:
   rest-api:
@@ -10,7 +10,7 @@ services:
     image: careplace/rest-api-stag:latest
     ports:
       - "8080:8080"
-    container_name: rest-api
+    container_name: rest-api-stag
     environment:
       - APP_NAME=rest_api-staging
       - CHOKIDAR_USEPOLLING=true

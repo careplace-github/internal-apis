@@ -3,7 +3,7 @@ import path from 'path';
 import multer from 'multer';
 import FilesController from '../controllers/files.controller';
 import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
-import * as Error from '../utils/errors/http/index.js';
+import * as Error from '../utils/errors/http/index';
 import fs from 'fs';
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {

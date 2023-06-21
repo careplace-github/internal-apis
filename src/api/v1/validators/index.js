@@ -1,3 +1,3 @@
-export * from "./user.validator.js"
-export * from "./events.validator.js"
-export * from "./orders.validator.js"
+export * from "./user.validator"
+export * from "./events.validator"
+export * from "./orders.validator"

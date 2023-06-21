@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { IEventSeries, IEvent } from '../../interfaces';
-import caregiversDAO from '../../db/caregivers.dao.js';
-import logger from '../../../../logs/logger.js';
+import caregiversDAO from '../../db/caregivers.dao';
+import logger from '../../../../logs/logger';
 
 export async function generateEventsFromSeries(eventSeries: IEventSeries) {
   try {

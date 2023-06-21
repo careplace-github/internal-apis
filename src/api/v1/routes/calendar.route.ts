@@ -2,14 +2,14 @@
 import express from "express";
 
 // Import Middlewares
-import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
+import InputValidation from "../middlewares/validators/inputValidation.middleware";
 import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
 import {
   AddEventValidator,
   UpdateEventValidator,
-} from "../validators/events.validator.js";
+} from "../validators/events.validator";
 
-import CreateEventSeriesValidator from "../validators/eventsSeries.validator.js";
+import CreateEventSeriesValidator from "../validators/eventsSeries.validator";
 
 // Import Controller
 import CalendarController from "../controllers/calendar.controller";

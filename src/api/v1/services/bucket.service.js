@@ -1,13 +1,13 @@
 import AWS from 'aws-sdk';
 import fs from 'fs';
-import * as Error from '../utils/errors/http/index.js';
+import * as Error from '../utils/errors/http/index';
 
 import {
   AWS_S3_BUCKET_NAME,
   AWS_S3_REGION,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
-} from '../../../config/constants/index.js';
+} from '../../../config/constants/index';
 
 /**
  * Creates a new S3 instance

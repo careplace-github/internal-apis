@@ -1,7 +1,7 @@
-import BucketService from '../services/bucket.service.js';
+import BucketService from '../services/bucket.service';
 import fs from 'fs';
-import logger from '../../../logs/logger.js';
-import * as Error from '../utils/errors/http/index.js';
+import logger from '../../../logs/logger';
+import * as Error from '../utils/errors/http/index';
 
 /**
  * Files Controller Class to manage the ``/files`` endpoints of the API.

@@ -6,7 +6,7 @@ import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middl
 
 
 // Import controllers
-import StripeController from "../controllers/stripe.controller.js";
+import StripeController from "../controllers/stripe.controller";
 const router = express.Router();
 
 

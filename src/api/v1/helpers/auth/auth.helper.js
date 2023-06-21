@@ -1,22 +1,22 @@
 // Import logger
-import logger from "../../../../logs/logger.js";
+import logger from "../../../../logs/logger";
 // Import errors helper
-import * as LayerError from "../../utils/errors/layer/index.js";
+import * as LayerError from "../../utils/errors/layer/index";
 // Authentication Provider
 
-import CognitoService from "../../services/cognito.service.js";
+import CognitoService from "../../services/cognito.service";
 
-import authUtils from "../../utils/auth/auth.utils.js";
+import authUtils from "../../utils/auth/auth.utils";
 
 import {
   AWS_COGNITO_CRM_GROUPS,
   AWS_COGNITO_MARKETPLACE_GROUPS,
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from "../../../../config/constants/index.js";
+} from "../../../../config/constants/index";
 
-import marketplaceUsersDao from "../../db/marketplaceUsers.dao.js";
-import crmUsersDao from "../../db/crmUsers.dao.js";
+import marketplaceUsersDao from "../../db/marketplaceUsers.dao";
+import crmUsersDao from "../../db/crmUsers.dao";
 
 let AuthUtils = new authUtils();
 

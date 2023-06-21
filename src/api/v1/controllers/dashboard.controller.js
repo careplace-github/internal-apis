@@ -1,15 +1,15 @@
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import ordersDAO from '../db/orders.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import CRUD from './crud.controller.js';
+import crmUsersDAO from '../db/crmUsers.dao';
+import ordersDAO from '../db/orders.dao';
+import companiesDAO from '../db/companies.dao';
+import CRUD from './crud.controller';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import stripeHelper from '../helpers/services/stripe.helper.js';
+import logger from '../../../logs/logger';
+import stripeHelper from '../helpers/services/stripe.helper';
 
-import authHelper from '../helpers/auth/auth.helper.js';
+import authHelper from '../helpers/auth/auth.helper';
 
-import * as Error from '../utils/errors/http/index.js';
+import * as Error from '../utils/errors/http/index';
 
 export default class DashboardController {
   static async getDashboard(req, res, next) {

@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 import mongodb from "mongodb";
 
 // Import the user schema
-//import User from "../models/auth/user.model.js";
-import serviceTranslationSchema from "../models/admin/servicesTranslations.model.js";
+//import User from "../models/auth/user.model";
+import serviceTranslationSchema from "../models/admin/servicesTranslations.model";
 
 // Import logger
-import logger from "../../../logs/logger.js";
+import logger from "../../../logs/logger";
 
 let ServiceTranslation;
 

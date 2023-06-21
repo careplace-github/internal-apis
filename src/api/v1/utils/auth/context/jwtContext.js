@@ -1,6 +1,6 @@
-import jwt_decode from "jwt-decode";
-import logger from "../../../../../logs/logger.js";
-import * as Error from "../../errors/http/index.js";
+import jwt_decode from 'jwt-decode';
+import logger from '../../../../../logs/logger';
+import * as Error from '../../errors/http/index';
 
 /**
  * Class with utility functions for JWT authentication context.
@@ -15,6 +15,10 @@ export default class JwtContext {
    */
   static async decodeToken(accessToken) {
     try {
+      if (!accessToken) {
+        Error._401('Unauthorized: No token provided');
+      }
+
       const decodedToken = await jwt_decode(accessToken);
       return decodedToken;
     } catch (error) {
@@ -22,11 +26,11 @@ export default class JwtContext {
         /**
          * @todo
          */
-        case "InvalidTokenError":
+        case 'InvalidTokenError':
           break;
 
         default:
-          throw new Error.InternalServerError("Internal Server Error");
+          Error._500(`Internal Server Error: ${error.message}`);
       }
     }
   }
@@ -38,14 +42,16 @@ export default class JwtContext {
    */
   static async isValidToken(accessToken) {
     try {
+      if (!accessToken) {
+        Error._401('Unauthorized: No token provided');
+      }
       const decodedToken = await this.decodeToken(accessToken);
 
       const currentTime = new Date().getTime() / 1000;
 
-      return (decodedToken.exp > currentTime);
-
+      return decodedToken.exp > currentTime;
     } catch (error) {
-      throw new Error.InternalServerError("Internal Server Error");
+      Error._500(`Internal Server Error: ${error.message}`);
     }
   }
 }
