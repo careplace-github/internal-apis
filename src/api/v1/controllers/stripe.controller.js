@@ -1,35 +1,32 @@
 // Import services
-import CognitoService from "../services/cognito.service";
-import SES from "../services/ses.service";
+import CognitoService from '../services/cognito.service';
+import SES from '../services/ses.service';
 
 // Import DAOs
-import crmUsersDAO from "../db/crmUsers.dao";
-import MarketplaceUsersDAO from "../db/marketplaceUsers.dao";
-import companiesDAO from "../db/companies.dao";
-import ordersDAO from "../db/orders.dao";
+import crmUsersDAO from '../db/crmUsers.dao';
+import MarketplaceUsersDAO from '../db/marketplaceUsers.dao';
+import companiesDAO from '../db/companies.dao';
+import ordersDAO from '../db/orders.dao';
 
-import authUtils from "../utils/auth/auth.utils";
+import authUtils from '../utils/auth/auth.utils';
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from "../../../config/constants/index";
+} from '../../../config/constants/index';
 
 // Import Utils
-import StripeService from "../services/stripe.service";
-import authHelper from "../helpers/auth/auth.helper";
-import stripeHelper from "../helpers/services/stripe.helper";
-import emailHelper from "../helpers/emails/email.helper";
-import dateUtils from "../utils/data/date.utils";
+import StripeService from '../services/stripe.service';
+import authHelper from '../helpers/auth/auth.helper';
+import stripeHelper from '../helpers/services/stripe.helper';
+import emailHelper from '../helpers/emails/email.helper';
+import dateUtils from '../utils/data/date.utils';
 
-import {
-  STRIPE_APPLICATION_FEE,
-  STRIPE_PRODUCT_ID,
-} from "../../../config/constants/index";
+import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../config/constants/index';
 
 // Import logger
-import logger from "../../../logs/logger";
+import logger from '../../../logs/logger';
 
-import * as Error from "../utils/errors/http/index";
+import * as Error from '../utils/errors/http/index';
 
 export default class StripeController {
   static async createPaymentMethod(req, res, next) {
@@ -41,9 +38,9 @@ export default class StripeController {
       let billingAddress = req.body.billing_address;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -55,7 +52,7 @@ export default class StripeController {
       let Stripe = new StripeService();
 
       let createPaymentMethod = await Stripe.createPaymentMethodWithToken(
-        "card",
+        'card',
         paymentMethodToken,
         billingAddress
       );
@@ -83,9 +80,9 @@ export default class StripeController {
       let accessToken;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let Stripe = new StripeService();
@@ -110,9 +107,9 @@ export default class StripeController {
       let paymentMethodId = req.params.id;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -127,14 +124,9 @@ export default class StripeController {
       let paymentMethod = await Stripe.getPaymentMethod(paymentMethodId);
 
       if (paymentMethod.customer !== customerId) {
-        throw new Error._403(
-          "You are not authorized to delete this payment method."
-        );
+        throw new Error._403('You are not authorized to delete this payment method.');
       }
-      let paymentMethodDeleted = await Stripe.deletePaymentMethod(
-        paymentMethodId,
-        customerId
-      );
+      let paymentMethodDeleted = await Stripe.deletePaymentMethod(paymentMethodId, customerId);
 
       let response = {
         statusCode: 200,
@@ -155,9 +147,9 @@ export default class StripeController {
       let accessToken;
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -167,7 +159,7 @@ export default class StripeController {
       let customerId = user.stripe_information?.customer_id;
 
       if (customerId === null || customerId === undefined) {
-        throw new Error._400("No customer id found.");
+        throw new Error._400('No customer id found.');
       }
 
       let Stripe = new StripeService();
@@ -196,20 +188,18 @@ export default class StripeController {
       let CompaniesDAO = new companiesDAO();
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
 
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
-      let companyId = userAttributes.find(
-        (obj) => obj.Name === "custom:company"
-      ).Value;
+      let companyId = userAttributes.find((obj) => obj.Name === 'custom:company').Value;
 
-      let company = await CompaniesDAO.query_one({
+      let company = await CompaniesDAO.queryOne({
         id: companyId,
       });
 
@@ -244,20 +234,18 @@ export default class StripeController {
       let CompaniesDAO = new companiesDAO();
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
 
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
-      let companyId = userAttributes.find(
-        (obj) => obj.Name === "custom:company"
-      ).Value;
+      let companyId = userAttributes.find((obj) => obj.Name === 'custom:company').Value;
 
-      let company = await CompaniesDAO.query_one({
+      let company = await CompaniesDAO.queryOne({
         id: companyId,
       });
 
@@ -265,10 +253,7 @@ export default class StripeController {
 
       let Stripe = new StripeService();
 
-      let externalAccount = await Stripe.getExternalAccount(
-        accountId,
-        externalAccountId
-      );
+      let externalAccount = await Stripe.getExternalAccount(accountId, externalAccountId);
 
       let response = {
         statusCode: 200,
@@ -290,20 +275,18 @@ export default class StripeController {
       let CompaniesDAO = new companiesDAO();
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
 
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
-      let companyId = userAttributes.find(
-        (obj) => obj.Name === "custom:company"
-      ).Value;
+      let companyId = userAttributes.find((obj) => obj.Name === 'custom:company').Value;
 
-      let company = await CompaniesDAO.query_one({
+      let company = await CompaniesDAO.queryOne({
         id: companyId,
       });
 
@@ -311,21 +294,13 @@ export default class StripeController {
 
       let Stripe = new StripeService();
 
-      let externalAccount = await Stripe.getExternalAccount(
-        accountId,
-        externalAccountId
-      );
+      let externalAccount = await Stripe.getExternalAccount(accountId, externalAccountId);
 
       if (externalAccount.account !== accountId) {
-        throw new Error._403(
-          "You are not authorized to delete this external account."
-        );
+        throw new Error._403('You are not authorized to delete this external account.');
       }
 
-      let externalAccountDeleted = await Stripe.deleteExternalAccount(
-        accountId,
-        externalAccountId
-      );
+      let externalAccountDeleted = await Stripe.deleteExternalAccount(accountId, externalAccountId);
 
       let response = {
         statusCode: 200,
@@ -345,20 +320,18 @@ export default class StripeController {
       let CompaniesDAO = new companiesDAO();
 
       if (req.headers.authorization) {
-        accessToken = req.headers.authorization.split(" ")[1];
+        accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400("No authorization token provided.");
+        throw new Error._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
 
       let userAttributes = await AuthHelper.getUserAttributes(accessToken);
 
-      let companyId = userAttributes.find(
-        (obj) => obj.Name === "custom:company"
-      ).Value;
+      let companyId = userAttributes.find((obj) => obj.Name === 'custom:company').Value;
 
-      let company = await CompaniesDAO.query_one({
+      let company = await CompaniesDAO.queryOne({
         id: companyId,
       });
 
@@ -391,7 +364,7 @@ export default class StripeController {
    */
   static async sendQuote(req, res, next) {}
 
-  static async createSubscriptionPaymentIntent(req, res, next) {
+  static async createSubscriptionWithPaymentMethod(req, res, next) {
     try {
       let response = {};
 
@@ -407,20 +380,7 @@ export default class StripeController {
       let StripeHelper = new stripeHelper(Stripe);
 
       if (!paymentMethodId) {
-        throw new Error._400("Missing required payment method token");
-      }
-
-      let billingAddress = req.body.billing_details;
-      if (
-        !billingAddress || // Check if billingAddress is null or undefined
-        !billingAddress.street ||
-        !billingAddress.city ||
-        !billingAddress.country ||
-        !billingAddress.postal_code ||
-        !billingAddress.name ||
-        !billingAddress.email
-      ) {
-        throw new Error._400("Missing billing address fields");
+        throw new Error._400('Missing required payment method token');
       }
 
       // Convert orderId to string
@@ -428,33 +388,33 @@ export default class StripeController {
 
       const OrdersDAO = new ordersDAO();
 
-      let order = await OrdersDAO.query_one(
+      let order = await OrdersDAO.queryOne(
         { _id: { $eq: orderId } },
 
         [
           {
-            path: "company",
-            model: "Company",
+            path: 'company',
+            model: 'Company',
           },
           {
-            path: "user",
-            model: "marketplace_users",
+            path: 'user',
+            model: 'marketplace_user',
           },
         ]
       );
 
-      // Convert order to JSON
-      //order = order.toJSON();
-
-      // Convert token to string
+      // Check if the order has an existing subscription
+      if (order.stripe_subscription_id) {
+        throw new Error._400('Order already has a subscription');
+      }
 
       let accountId = order.company.stripe_information.account_id;
       let customerId = order.user.stripe_information.customer_id;
       // Convert amount to interger
-      let amount = parseFloat(order.order_total) * 100;
+      let amount = order.order_total;
 
       let stripeCustomer = await Stripe.getCustomer(customerId);
-      let currency = stripeCustomer.currency;
+      let currency = stripeCustomer.currency || 'eur';
       let productId = STRIPE_PRODUCT_ID;
       let priceId;
       let coupon;
@@ -463,18 +423,15 @@ export default class StripeController {
        * Check if any field is missing in req.body.billing_address
        */
 
-      /**
-       * Create a payment method for the customer.
-       * @todo Check PM type through the token
-       */
-
-      if (taxId !== undefined && taxId !== null && taxId !== "") {
+      if (taxId) {
         // Check if the customer already has the tax id
         let customerTaxIds = await Stripe.getCustomerTaxIds(customerId);
 
+        console.log(`customerTaxIds: ${JSON.stringify(customerTaxIds, null, 2)}`);
+
         let taxIdExists = false;
 
-        let taxIdAux = "PT" + taxId;
+        let taxIdAux = 'PT' + taxId;
 
         for (let i = 0; i < customerTaxIds.data.length; i++) {
           if (customerTaxIds.data[i].value === taxIdAux) {
@@ -493,42 +450,34 @@ export default class StripeController {
        * Create a price for the product.
        */
       try {
-        priceId = await Stripe.createPrice(
-          productId,
-          amount,
-          currency,
-          "month"
-        );
+        priceId = await Stripe.createPrice(productId, amount, currency, 'month');
+
+        console.log('priceId: ', priceId);
+
         priceId = priceId.id;
       } catch (err) {
         console.log(`Error: ${JSON.stringify(err, null, 2)}`);
       }
 
       let subscription;
-      let stripePromotionCode;
+      let promotionCodeExists;
       let newApplicationFee;
 
-      if (
-        promotionCode !== undefined &&
-        promotionCode !== null &&
-        promotionCode !== ""
-      ) {
-        stripePromotionCode = await StripeHelper.getPromotionCodeByName(
-          promotionCode
-        );
+      if (promotionCode) {
+        console.log('promotionCode: ', promotionCode);
+        promotionCodeExists = await StripeHelper.getPromotionCodeByName(promotionCode);
 
-        if (stripePromotionCode !== null && stripePromotionCode !== undefined) {
-          coupon = stripePromotionCode.coupon;
+        if (promotionCodeExists) {
+          coupon = promotionCodeExists.coupon;
 
           try {
-            newApplicationFee =
-              await StripeHelper.calculateApplicationFeeWithPromotionCode(
-                order.order_total,
-                stripePromotionCode.id
-              );
+            newApplicationFee = await StripeHelper.calculateApplicationFeeWithPromotionCode(
+              order.order_total,
+              promotionCodeExists.id
+            );
           } catch (err) {
             switch (err.type) {
-              case "INVALID_PARAMETER":
+              case 'INVALID_PARAMETER':
                 throw new Error._400(err.message);
 
               default:
@@ -543,7 +492,7 @@ export default class StripeController {
               accountId,
               newApplicationFee,
               paymentMethodId,
-              stripePromotionCode.id
+              promotionCodeExists.id
             );
           } catch (err) {
             switch (err.type) {
@@ -552,20 +501,6 @@ export default class StripeController {
             }
           }
         } else {
-          try {
-            subscription = await Stripe.createSubscription(
-              customerId,
-              priceId,
-              accountId,
-              STRIPE_APPLICATION_FEE,
-              paymentMethodId
-            );
-          } catch (err) {
-            switch (err.type) {
-              default:
-                throw new Error._500(err.message);
-            }
-          }
         }
 
         /**
@@ -582,18 +517,42 @@ export default class StripeController {
         next(response);
 
         /**
-         * After the coupon is applied, update the subscription with the normal application fee so that the next payment is charged with the normal application fee.
-         */
-        await Stripe.updateSubscription(subscription.id, {
-          application_fee_percent: STRIPE_APPLICATION_FEE,
-          proration_behavior: "none", // Do not prorate the subscription. Charge the customer the full amount for the new plan.
-        });
-
-        /**
          * Attach the stripe subscription id to the order.
          */
         await OrdersDAO.update(order);
+      } else {
+        console.log('no promotion code');
+        try {
+          subscription = await Stripe.createSubscription(
+            customerId,
+            priceId,
+            accountId,
+            STRIPE_APPLICATION_FEE,
+            paymentMethodId
+          );
+
+          console.log('subscription: ', subscription);
+        } catch (err) {
+          switch (err.type) {
+            default:
+              console.log(err.stack);
+              throw new Error._500(err.message);
+          }
+        }
       }
+
+      // Attach the stripe subscription id to the order.
+      order.stripe_subscription_id = subscription.id;
+
+      // Update the order
+      await OrdersDAO.update(order);
+
+      response.statusCode = 200;
+      response.data = {
+        subscription: subscription,
+      };
+
+      next(response);
     } catch (err) {
       console.log(err);
 
@@ -601,8 +560,47 @@ export default class StripeController {
     }
   }
 
+  static async updateSubscriptionPaymentMethod(req, res, next) {}
+
+  static async validateCoupon(req, res, next) {
+    try {
+      let response = {};
+
+      let coupon = req.body.coupon;
+
+      let Stripe = new StripeService();
+
+      let coupons = await Stripe.listCoupons();
+
+      // Check if the coupon exists
+      let couponExists = coupons.find((c) => c.name === coupon);
+
+      if (!couponExists) {
+        response.statusCode = 404;
+        response.data = {
+          message: 'Coupon not found.',
+        };
+      } else {
+        response.statusCode = 200;
+        response.data = {
+          coupon: {
+            name: couponExists.name,
+
+            currency: couponExists.currency,
+
+            ammount_off: couponExists.amount_off,
+            percent_off: couponExists.percent_off,
+          },
+        };
+      }
+      next(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   static async listCoupons(req, res, next) {
-    let response = new Response();
+    let response = {};
     try {
       let Stripe = new StripeService();
 
@@ -621,7 +619,7 @@ export default class StripeController {
     try {
       let Stripe = new StripeService();
 
-      console.log(req.body)
+      console.log(req.body);
 
       let cardToken = await Stripe.createCardToken(req.body.card);
 

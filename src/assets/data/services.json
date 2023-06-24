@@ -1,125 +1,133 @@
-{
-  "data": [
-    {
-      "_id": "63a33cb60321ea2b81253140",
-      "description": "",
-      "image": "",
-      "name": "Lar em casa",
-      "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4addf387528ade98712ee",
-      "description": "",
-      "image": "",
-      "name": "Cuidados de higiene e conforto pessoal",
-      "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4adf6387528ade98712ef",
-      "description": "",
-      "image": "",
-      "name": "Cuidados especializados",
-      "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae05387528ade98712f0",
-      "description": "",
-      "image": "",
-      "name": "Confeção de refeições",
-      "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae13387528ade98712f1",
-      "description": "",
-      "image": "",
-      "name": "Higienização do domicílio",
-      "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae21387528ade98712f2",
-      "description": "",
-      "image": "",
-      "name": "Tratamento de roupas",
-      "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae2d387528ade98712f3",
-      "description": "",
-      "image": "",
-      "name": "Acompanhamento em deslocação ao exterior",
-      "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens.",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae3b387528ade98712f4",
-      "description": "",
-      "image": "",
-      "name": "Aquisição de bens e serviços",
-      "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação).",
-      "type": "normal"
-    },
-    {
-      "_id": "63a4ae49387528ade98712f5",
-      "description": "",
-      "image": "",
-      "name": "Venda e aluguer de equipamentos",
-      "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc.",
-      "type": "normal"
-    },
-    {
-      "_id": "64721ec2b8a1e23ce6fadf35",
-      "description": "",
-      "image": "",
-      "name": "Teleassistência",
-      "short_description": "",
-      "type": "special",
-      "icon": "ic:baseline-local-phone"
-    },
-    {
-      "_id": "64721f01b8a1e23ce6fadf36",
-      "description": "",
-      "image": "",
-      "name": "Serviços de Enfermagem ao domicílio",
-      "short_description": "",
-      "type": "special",
-      "icon": "fontisto:nursing-home"
-    },
-    {
-      "_id": "64721f17b8a1e23ce6fadf37",
-      "description": "",
-      "image": "",
-      "name": "Consulta médica online",
-      "short_description": "",
-      "type": "special",
-      "icon": "material-symbols:computer-outline"
-    },
-    {
-      "_id": "64721f27b8a1e23ce6fadf38",
-      "description": "",
-      "image": "",
-      "name": "Fisioterapia",
-      "short_description": "",
-      "type": "special",
-      "icon": "medical-icon:i-physical-therapy"
-    },
-    {
-      "_id": "64721f37b8a1e23ce6fadf39",
-      "description": "",
-      "image": "",
-      "name": "Consulta de Psicologia e Reabilitação Cognitiva",
-      "short_description": "",
-      "type": "special",
-      "icon": "fa6-solid:brain"
-    }
-  ],
-  "page": 1,
-  "documentsPerPage": 14,
-  "totalPages": 1,
-  "totalDocuments": 14
-}
+[
+  {
+    "_id": "63a33cb60321ea2b81253140",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Lar em casa",
+    "short_description": "Assistência 24 horas / 7 dias / 365 dias por ano.",
+    "type": "normal",
+    "id": "63a33cb60321ea2b81253140"
+  },
+  {
+    "_id": "63a4addf387528ade98712ee",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Cuidados de higiene e conforto pessoal",
+    "short_description": "Higiene pessoal na casa de banho ou no leito, higiene oral, posicionamentos e transferências, hidratação da pele, mudança da roupa da cama, entre outros.",
+    "type": "normal",
+    "id": "63a4addf387528ade98712ee"
+  },
+  {
+    "_id": "63a4adf6387528ade98712ef",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Cuidados especializados",
+    "short_description": "Prestação de cuidados a doentes convalescentes com AVC, Alzheimer, Parkinson, Doentes Oncológicos, Diabetes, Hipertensão, Ostomizados",
+    "type": "normal",
+    "id": "63a4adf6387528ade98712ef"
+  },
+  {
+    "_id": "63a4ae05387528ade98712f0",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-confec%CC%A7a%CC%83o-de-refeic%CC%A7o%CC%83es.jpg",
+    "name": "Confeção de refeições",
+    "short_description": "Preparação de refeições adaptadas ao gosto e necessidade do cliente.",
+    "type": "normal",
+    "id": "63a4ae05387528ade98712f0"
+  },
+  {
+    "_id": "63a4ae13387528ade98712f1",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-limpeza-de-habitac%CC%A7a%CC%83o.jpg",
+    "name": "Higienização do domicílio",
+    "short_description": "Pequenas tarefas demésticas, nomeadamente, limpeza e manutenção dos espaços utilizados pelos clientes.",
+    "type": "normal",
+    "id": "63a4ae13387528ade98712f1"
+  },
+  {
+    "_id": "63a4ae21387528ade98712f2",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Tratamento de roupas",
+    "short_description": "Cuidamos das roupas dos nossos clientes, lavando, secando e passando a ferro.",
+    "type": "normal",
+    "id": "63a4ae21387528ade98712f2"
+  },
+  {
+    "_id": "63a4ae2d387528ade98712f3",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Acompanhamento em deslocação ao exterior",
+    "short_description": "Consulta e exames médicos, atividades de lazer, serviços e/ou atividades religiosas, visitas a familiares / amigos e aquisição de bens.",
+    "type": "normal",
+    "id": "63a4ae2d387528ade98712f3"
+  },
+  {
+    "_id": "63a4ae3b387528ade98712f4",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Aquisição de bens e serviços",
+    "short_description": "Compras do quotidiano, como alimentação, medicação, pagamentos de serviços (água, luz, telefone e documentação).",
+    "type": "normal",
+    "id": "63a4ae3b387528ade98712f4"
+  },
+  {
+    "_id": "63a4ae49387528ade98712f5",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Venda e aluguer de equipamentos",
+    "short_description": "Aconselhamento na aquisição de ajudas técnicas, nomedamente camas articuladas, andarilhos, cadeiras de rodas, cadeiras de banho, etc.",
+    "type": "normal",
+    "id": "63a4ae49387528ade98712f5"
+  },
+  {
+    "_id": "64721ec2b8a1e23ce6fadf35",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Teleassistência",
+    "short_description": "",
+    "type": "special",
+    "icon": "ic:baseline-local-phone",
+    "id": "64721ec2b8a1e23ce6fadf35"
+  },
+  {
+    "_id": "64721f01b8a1e23ce6fadf36",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Serviços de Enfermagem ao domicílio",
+    "short_description": "",
+    "type": "special",
+    "icon": "fontisto:nursing-home",
+    "id": "64721f01b8a1e23ce6fadf36"
+  },
+  {
+    "_id": "64721f17b8a1e23ce6fadf37",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Consulta médica online",
+    "short_description": "",
+    "type": "special",
+    "icon": "material-symbols:computer-outline",
+    "id": "64721f17b8a1e23ce6fadf37"
+  },
+  {
+    "_id": "64721f27b8a1e23ce6fadf38",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Fisioterapia",
+    "short_description": "",
+    "type": "special",
+    "icon": "medical-icon:i-physical-therapy",
+    "id": "64721f27b8a1e23ce6fadf38"
+  },
+  {
+    "_id": "64721f37b8a1e23ce6fadf39",
+    "description": "",
+    "image": "https://careplace-staging.s3.eu-west-3.amazonaws.com/careplace-servic%CC%A7o-acompanhamento-ao-exterior.jpg",
+    "name": "Consulta de Psicologia e Reabilitação Cognitiva",
+    "short_description": "",
+    "type": "special",
+    "icon": "fa6-solid:brain",
+    "id": "64721f37b8a1e23ce6fadf39"
+  }
+]

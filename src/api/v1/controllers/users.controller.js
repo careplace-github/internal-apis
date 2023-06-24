@@ -24,7 +24,6 @@ import SES_Service from '../services/ses.service';
 
 // Import logger
 import logger from '../../../logs/logger';
-import requestUtils from '../utils/server/request.utils';
 
 import * as Error from '../utils/errors/http/index';
 import { response } from 'express';
@@ -38,7 +37,6 @@ export default class UsersController {
    */
   static async create(req, res, next) {
     // try {
-    var request = requestUtils(req);
 
     let response = {};
 
@@ -224,8 +222,6 @@ export default class UsersController {
    */
   static async retrieve(req, res, next) {
     try {
-      var request = requestUtils(req);
-
       const userId = req.params.id;
 
       let CrmUsersDAO = new crmUsersDAO();
@@ -463,13 +459,13 @@ export default class UsersController {
 
       companyId = user.company._id;
 
-      let crmUsers = await CrmUsersDAO.query_list({
+      let crmUsers = await CrmUsersDAO.queryList({
         company: companyId,
       });
 
       crmUsers = crmUsers.data;
 
-      let caregivers = await CaregiversDAO.query_list({
+      let caregivers = await CaregiversDAO.queryList({
         company: companyId,
       });
 
@@ -544,11 +540,11 @@ export default class UsersController {
         if (app === 'crm') {
           let CrmUsersDAO = new crmUsersDAO();
 
-          user = await CrmUsersDAO.query_one(
+          user = await CrmUsersDAO.queryOne(
             {
-              cognito_id: { $eq: cognitoId },
+              cognito_id: "39425f3b-a637-4e6a-9db4-97fd2132a416" ,
             },
-            {
+            [{
               path: 'company',
               model: 'Company',
               populate: [
@@ -559,17 +555,17 @@ export default class UsersController {
                 },
                 {
                   path: 'team',
-                  model: 'crm_users',
+                  model: 'crm_user',
                   select: '-__v -createdAt -updatedAt -cognito_id -settings -company',
                 },
               ],
               select: '-__v -createdAt -updatedAt',
-            }
+            }]
           );
         } else if (app === 'marketplace') {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
-          user = await MarketplaceUsersDAO.query_one({
+          user = await MarketplaceUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
         }
@@ -697,7 +693,7 @@ export default class UsersController {
         try {
           let CrmUsersDAO = new crmUsersDAO();
 
-          user = await CrmUsersDAO.query_one({
+          user = await CrmUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
 
@@ -730,7 +726,7 @@ export default class UsersController {
         try {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
-          user = await MarketplaceUsersDAO.query_one({
+          user = await MarketplaceUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
 

@@ -192,7 +192,7 @@ export default class AuthenticationController {
       let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
       try {
-        user = await MarketplaceUsersDAO.query_one({
+        user = await MarketplaceUsersDAO.queryOne({
           email: req.body.email,
         });
       } catch (error) {

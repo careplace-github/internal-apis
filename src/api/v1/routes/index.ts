@@ -12,3 +12,4 @@ export { default as paymentMethodsRoute } from './paymentMethods.route';
 export { default as relativesRoute } from './relatives.route';
 export { default as paymentsRoute } from './payments.route';
 export { default as adminRoute } from './admin.route';
+export { default as reviewsRoute } from './reviews.route';

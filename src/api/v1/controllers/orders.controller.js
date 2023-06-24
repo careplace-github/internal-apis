@@ -60,11 +60,11 @@ export default class OrdersController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      let relative = await RelativesDAO.query_one(
+      let relative = await RelativesDAO.queryOne(
         { user: user._id },
         {
           path: 'user',
-          model: 'marketplace_users',
+          model: 'marketplace_user',
         }
       );
 
@@ -76,7 +76,7 @@ export default class OrdersController {
         throw new Error._400('Relative not found');
       }
 
-      let company = await CompaniesDAO.query_one({ _id: order.company });
+      let company = await CompaniesDAO.queryOne({ _id: order.company });
 
       if (company === null || company === undefined || company === '') {
         throw new Error._400('Company not found');
@@ -170,7 +170,7 @@ export default class OrdersController {
       );
 
       const crmUsers = (
-        await CRMUsersDAO.query_list({
+        await CRMUsersDAO.queryList({
           company: { $eq: orderCreated.company },
         })
       ).data;
@@ -247,6 +247,7 @@ export default class OrdersController {
             },
             {
               path: 'user',
+              model: 'marketplace_user',
               select: 'name email phone address -_id',
             },
           ]
@@ -318,7 +319,7 @@ export default class OrdersController {
       }
 
       try {
-        documents = await OrdersDAO.query_list(
+        documents = await OrdersDAO.queryList(
           {
             user: user._id,
           },
@@ -391,7 +392,7 @@ export default class OrdersController {
       }
 
       try {
-        documents = await OrdersDAO.query_list(
+        documents = await OrdersDAO.queryList(
           {
             company: { $eq: companyId },
           },
@@ -403,7 +404,7 @@ export default class OrdersController {
           [
             {
               path: 'user',
-              model: 'marketplace_users',
+              model: 'marketplace_user',
               select: '-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v',
             },
             {
@@ -500,29 +501,28 @@ export default class OrdersController {
       next(response);
 
       // From the users.relatives array, get the relative that matches the relative id in the order
-      let relative = await RelativesDAO.query_one({ _id: order.relative });
-      let company = await CompaniesDAO.query_one({ _id: order.company });
-      let user = await UsersDAO.query_one({ _id: order.user });
+      let relative = await RelativesDAO.queryOne({ _id: order.relative });
+      let company = await CompaniesDAO.queryOne({ _id: order.company });
+      let user = await UsersDAO.queryOne({ _id: order.user });
 
-      if(order.schedule_information.recurrency !== 0) {
+      if (order.schedule_information.recurrency !== 0) {
+        let eventSeries = {
+          user: order.user,
+          company: order.company,
+          order: order._id,
+          caregiver: order.caregiver,
 
-      let eventSeries = {
-        user: order.user,
-        company: order.company,
-        order: order._id,
-        caregiver: order.caregiver,
+          start_date: order.schedule_information.start_date,
 
-        start_date: order.schedule_information.start_date,
+          recurrency_type: order.schedule_information.recurrency,
 
-        recurrency_type: order.schedule_information.recurrency,
+          schedule: order.schedule_information.schedule,
 
-        schedule: order.schedule_information.schedule,
+          title: relative.name,
+        };
 
-        title: relative.name,
-      };
-
-      let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
-    }
+        let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
+      }
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
@@ -551,7 +551,7 @@ export default class OrdersController {
         .join(', ');
 
       const crmUsers = (
-        await CRMUsersDAO.query_list({
+        await CRMUsersDAO.queryList({
           company: { $eq: order.company },
         })
       ).data;
@@ -655,6 +655,8 @@ export default class OrdersController {
 
   static async sendQuote(req, res, next) {
     try {
+      let response = {};
+
       let AuthHelper = new authHelper();
       let OrdersDAO = new ordersDAO();
       let CompaniesDAO = new companiesDAO();
@@ -669,46 +671,78 @@ export default class OrdersController {
         throw new Error._401('Missing required access token.');
       }
 
-      let companyId = await AuthHelper.getUserAttributes(accessToken).then((data) => {
-        let companyId = data.find((item) => {
-          console.log(item);
-          if (item.Name === 'custom:company') {
-            return item.Value;
-          }
-        });
+      const { order_total } = req.body;
 
-        return companyId.Value;
-      });
+      if (!order_total) {
+        throw new Error._400('Missing required fields.');
+      }
 
-      let order = await OrdersDAO.query_one({ _id: req.params.id }, [
-        {
-          path: 'relative',
-          model: 'Relative',
-        },
-        {
-          path: 'company',
-          model: 'Company',
-          populate: {
-            path: 'legal_information',
-            populate: {
-              path: 'director',
-              model: 'crm_users',
-            },
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      let companyId = user.company._id;
+
+      let order;
+
+      try {
+        order = await OrdersDAO.queryOne({ _id: req.params.id }, [
+          {
+            path: 'relative',
+            model: 'Relative',
           },
-        },
-        {
-          path: 'services',
-          model: 'Service',
-        },
-        {
-          path: 'user',
-          model: 'marketplace_users',
-        },
-      ]);
+          {
+            path: 'company',
+            model: 'Company',
+          },
+          {
+            path: 'services',
+            model: 'Service',
+          },
+          {
+            path: 'user',
+            model: 'marketplace_user',
+          },
+        ]);
+      } catch (error) {
+        switch (error.type) {
+          case 'NOT_FOUND': {
+            response.statusCode = 404;
+            response.data = {
+              error: error.message,
+              type: 'NOT_FOUND',
+            };
 
-      if (companyId != order.company._id) {
+            return next(response);
+          }
+
+          default: {
+            response.statusCode = 500;
+            response.data = {
+              error: error.message,
+            };
+
+            return next(response);
+          }
+        }
+      }
+
+      logger.info("USER'S COMPANY ID: " + companyId);
+
+      logger.info('ORDER COMPANY ID: ' + order.company._id);
+
+      logger.info('EQUALS ? ' + (companyId.toString() === order.company._id.toString()));
+
+      logger.info('USER PERMISSIONS: ' + user.permissions);
+
+      if (
+        companyId.toString() !== order.company._id.toString() ||
+        !user?.permissions?.includes('orders_edit')
+      ) {
         throw new Error._403('You are not authorized to send a quote for this order.');
       }
+
+      order.order_total = order_total;
+
+      await OrdersDAO.update(order);
 
       /**
        *  if(order.status != "pending"){
@@ -716,7 +750,7 @@ export default class OrdersController {
       }
        */
 
-      let response = {
+      response = {
         statusCode: 200,
         data: order,
       };
@@ -753,9 +787,9 @@ export default class OrdersController {
 
         link: `https://www.careplace.pt/checkout/orders/${order._id}`,
 
-        subTotal: (order.order_total / 1.23).toFixed(2),
-        taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),
-        total: order.order_total.toFixed(2),
+        subTotal: (order.order_total / 1.23 / 100).toFixed(2),
+        taxAmount: ((order.order_total - order.order_total / 1.23) / 100).toFixed(2),
+        total: (order.order_total / 100).toFixed(2),
 
         orderStart: orderStart,
         orderSchedule: schedule,
@@ -780,11 +814,16 @@ export default class OrdersController {
         userEmailPayload
       );
 
+      logger.info('EMAIL ' + order.user.email);
+
       await SES.sendEmail(
         [order.user.email],
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
       );
+
+      return;
+
       /**
        * @todo Send the email in BCC for each employee of the company that has one of the roles ['admin', 'manager', 'employee'] and that has the 'email_notifications' field set to true
        */
