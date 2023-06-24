@@ -13,8 +13,11 @@ import {
 
 import * as LayerError from '../utils/errors/layer/index';
 
-// Import logger
+// logger
 import logger from '../../../logs/logger';
+
+// interfaces
+import { ICognitoUser } from '../interfaces';
 
 /**
  * Creates a new Cognito instance
@@ -593,7 +596,7 @@ export default class Cognito {
   /**
    * Returns the user details from the Cognito service as an admin.
    * @param {String} username - Username of the user.
-   * @returns {Promise<JSON>} - Cognito user details.
+   * @returns {Promise<ICognitoUser>} - Cognito user details.
    */
   async adminGetUser(username) {
     logger.info(`Cognito Service ADMIN_GET_USER Request: \n ${JSON.stringify(username, null, 2)}`);

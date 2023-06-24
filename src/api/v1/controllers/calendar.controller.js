@@ -118,18 +118,26 @@ export default class CalendarController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      let events = await EventsDAO.query_list({ user: user._id }).then((events) => {
+      let events = await EventsDAO.queryList({ user: user._id }).then((events) => {
         return events.data;
       });
       let eventsSeries = [];
 
       if (user.permissions.includes('calendar_view')) {
-        
-        eventsSeries = await EventsSeriesDAO
-          .query_list({ company: user.company._id })
-          .then((eventsSeries) => {
-            return eventsSeries.data;
-          });
+        eventsSeries = await EventsSeriesDAO.queryList(
+          { company: user.company._id },
+          null,
+          null,
+          null,
+          [
+            {
+              path: 'order',
+              model: 'Order',
+            },
+          ]
+        ).then((eventsSeries) => {
+          return eventsSeries.data;
+        });
 
         /**
          * for each eventSeries, generate the events and add them to the events array

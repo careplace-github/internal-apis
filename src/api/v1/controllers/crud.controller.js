@@ -305,7 +305,7 @@ export default class CRUD_Methods {
       let cognitoId = decodedToken.sub;
 
       try {
-        user = await UsersDAO.query_one({
+        user = await UsersDAO.queryOne({
           cognitoId: { $eq: cognitoId },
         });
       } catch (err) {
@@ -323,7 +323,7 @@ export default class CRUD_Methods {
       }
 
       try {
-        documents = await this.DAO.query_list({
+        documents = await this.DAO.queryList({
           user: user._id,
         });
       } catch (err) {
@@ -397,7 +397,7 @@ export default class CRUD_Methods {
       }
 
       try {
-        documents = await this.DAO.query_list({
+        documents = await this.DAO.queryList({
           company: { $eq: companyId },
         });
       } catch (err) {

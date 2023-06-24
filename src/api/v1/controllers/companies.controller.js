@@ -5,7 +5,6 @@ import CRUD from './crud.controller';
 
 // Import logger
 import logger from '../../../logs/logger';
-import requestUtils from '../utils/server/request.utils';
 import StripeService from '../services/stripe.service';
 import stripeHelper from '../helpers/services/stripe.helper';
 
@@ -166,7 +165,7 @@ export default class CompaniesController {
     }
 
     let CompaniesDAO = new companiesDAO();
-    let companies = await CompaniesDAO.query_list(
+    let companies = await CompaniesDAO.queryList(
       filters,
       options,
       page,

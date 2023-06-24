@@ -5,7 +5,6 @@ import authHelper from '../helpers/auth/auth.helper';
 import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
 import relativesDAO from '../db/relatives.dao';
 import ordersDAO from '../db/orders.dao';
-import CRUD from './crud.controller';
 
 import * as Error from '../utils/errors/http/index';
 
@@ -124,9 +123,11 @@ export default class RelativesController {
         throw new Error._403('You are not allowed to access this resource');
       }
 
-      let relativeOrders = (await OrdersDAO.query_list({
-        relative: relativeId,
-      })).data;
+      let relativeOrders = (
+        await OrdersDAO.queryList({
+          relative: relativeId,
+        })
+      ).data;
 
       if (relativeOrders.length > 0) {
         throw new Error._403('You can not delete a relative with orders associated');
@@ -154,7 +155,7 @@ export default class RelativesController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      let relatives = await RelativesDAO.query_list({
+      let relatives = await RelativesDAO.queryList({
         user: user._id,
       });
 

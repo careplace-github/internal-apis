@@ -30,11 +30,13 @@ export default function accessGuard(app: string) {
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
 
-      let userClientId = decodedToken['client_id'];
+      let userClientId = decodedToken['client_id'] as string;
 
-      logger.info(decodedToken);
+      logger.info(`User Client Id: ${userClientId}`);
+      logger.info(`App Client Id: ${app}`);
 
       if (userClientId === app) {
+        logger.info(`User passed endpoint access guard.`);
         next();
       } else {
         throw new Error._403(

@@ -1,8 +1,8 @@
-import { readFileSync, promises as fsPromises } from "fs";
-import fs from "fs";
+import { readFileSync, promises as fsPromises } from 'fs';
+import fs from 'fs';
 
 // Import logger
-import logger from "../../../../logs/logger";
+import logger from '../../../../logs/logger';
 
 /**
  * Class with utility functions for dates.
@@ -10,19 +10,19 @@ import logger from "../../../../logs/logger";
 export default class DateUtils {
   async getWeekDayNumber(weekDay) {
     switch (weekDay) {
-      case "Monday":
+      case 'Monday':
         return 1;
-      case "Tuesday":
+      case 'Tuesday':
         return 2;
-      case "Wednesday":
+      case 'Wednesday':
         return 3;
-      case "Thursday":
+      case 'Thursday':
         return 4;
-      case "Friday":
+      case 'Friday':
         return 5;
-      case "Saturday":
+      case 'Saturday':
         return 6;
-      case "Sunday":
+      case 'Sunday':
         return 7;
       default:
         throw new Error(`Invalid week day: ${weekDay}`);
@@ -50,9 +50,7 @@ export default class DateUtils {
   // Helper function to get the date from the week date and the week day number
   async getDateFromWeekDateAndWeekDayNumber(weekDate, weekDayNumber) {
     const newDate = new Date(weekDate);
-    newDate.setDate(
-      newDate.getDate() + ((weekDayNumber + 7 - newDate.getDay()) % 7)
-    );
+    newDate.setDate(newDate.getDate() + ((weekDayNumber + 7 - newDate.getDay()) % 7));
     return newDate;
   }
 
@@ -98,16 +96,16 @@ export default class DateUtils {
   async getScheduleRecurrencyText(schedule) {
     console.log(`SCHEDULE: ${JSON.stringify(schedule)}`);
 
-    let response = "";
+    let response = '';
 
     let weekDays = [
-      "Segundas-feiras",
-      "Terças-feiras",
-      "Quartas-feiras",
-      "Quintas-feiras",
-      "Sextas-feiras",
-      "Sábados",
-      "Domingos",
+      'Segundas-feiras',
+      'Terças-feiras',
+      'Quartas-feiras',
+      'Quintas-feiras',
+      'Sextas-feiras',
+      'Sábados',
+      'Domingos',
     ];
 
     for (let i = 0; i < schedule.length; i++) {
@@ -143,18 +141,18 @@ export default class DateUtils {
     const date = new Date(unixTimestamp * 1000);
 
     const months = [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez',
     ];
 
     const month = months[date.getMonth()];
@@ -184,18 +182,18 @@ export default class DateUtils {
     date = new Date(date);
 
     const months = [
-      "Jan",
-      "Fev",
-      "Mar",
-      "Abr",
-      "Mai",
-      "Jun",
-      "Jul",
-      "Ago",
-      "Set",
-      "Out",
-      "Nov",
-      "Dez",
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez',
     ];
 
     const month = months[date.getMonth()];

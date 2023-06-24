@@ -139,13 +139,13 @@ export default class Stripe {
   async listCharges(filters = {}, options = {}) {
     try {
       const charges = await this.stripeClient.charges.list(filters, options);
-  
-      logger.info("STRIPE_SERVICE: " + JSON.stringify(charges, null, 2));
-  
+
+      logger.info('STRIPE_SERVICE: ' + JSON.stringify(charges, null, 2));
+
       return charges;
     } catch (error) {
       logger.error('ERROR: ', error);
-  
+
       throw error;
     }
   }
@@ -635,9 +635,11 @@ export default class Stripe {
       application_fee_percent: applicationFee,
       default_payment_method: paymentMethod,
 
-      automatic_tax: {
+      /**
+       *    automatic_tax: {
         enabled: true,
       },
+       */
 
       //coupon: coupon,
       promotion_code: promotionCode,

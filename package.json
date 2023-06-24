@@ -10,15 +10,16 @@
     ]
   },
   "scripts": {
-    "start": "node build/server.cjs",
+    "start": "node build/server.js",
     "build": "rimraf ./build && tsc --project tsconfig.json",
     "dev": "yarn dev:backend",
-    "dev:backend": "nodemon --exec ts-node --esm ./src/server.cjs",
+    "dev:backend": "nodemon --exec ts-node --esm ./src/server.ts",
     "dev:ngrok": "npx ngrok http 8080 --host-header=rewrite --config=ngrok.yml",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix"
+    "lint:fix": "eslint . --ext .js,.ts --fix",
+    "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
   },
   "repository": {
     "type": "git",
@@ -70,6 +71,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "point-in-polygon": "^1.1.0",
+    "prettier": "^2.8.8",
     "regression": "^2.0.1",
     "request": "^2.88.2",
     "secure-random-password": "^0.2.3",
