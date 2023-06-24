@@ -1,14 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import authHelper from '../../helpers/auth/auth.helper';
 import logger from '../../../../logs/logger';
-import requestUtils from '../../utils/server/request.utils';
 
 interface User {
   role: string;
 }
 
 interface RequestUtilsResponse {
-  response?: { message: string; error?: any };
+  data?: any;
   statusCode?: number;
 }
 
@@ -30,14 +29,13 @@ interface RequestUtilsResponse {
  *  [...]
  * });
  */
-export default function validateRole(roles: string[]): (req: Request, res: Response, next: NextFunction) => void {
+export default function validateRole(
+  roles: string[]
+): (req: Request, res: Response, next: NextFunction) => void {
   return function (req: Request, res: Response, next: NextFunction): void {
     async function handleRequest() {
-      const request: RequestUtilsResponse = await requestUtils(req);
       try {
-        logger.info(
-          'Authentication Validation Middleware: ' + JSON.stringify(request, null, 2) + '\n'
-        );
+        let response: RequestUtilsResponse = {};
 
         const AuthHelper = new authHelper();
 
@@ -50,43 +48,40 @@ export default function validateRole(roles: string[]): (req: Request, res: Respo
             const userRole = user.role;
 
             if (roles.includes(userRole)) {
-              request.response = { message: 'User passed role based guard.' };
-              request.statusCode = 200;
+              response.data = { message: 'User passed role based guard.' };
+              response.statusCode = 200;
 
-              logger.info(JSON.stringify(request, null, 2) + '\n');
+              logger.info(JSON.stringify(response, null, 2) + '\n');
 
               next();
             } else {
-              request.response = {
+              response.data = {
                 message: 'User did not pass the role based guard.',
               };
-              request.statusCode = 403;
+              response.statusCode = 403;
 
-              logger.info(JSON.stringify(request, null, 2) + '\n');
+              logger.info(JSON.stringify(response, null, 2) + '\n');
 
               res.status(403).send('Forbidden');
             }
           } else {
-            request.response = { message: 'No token provided' };
-            request.statusCode = 400;
+            response.data = { message: 'No token provided' };
+            response.statusCode = 400;
 
-            logger.warn(JSON.stringify(request, null, 2) + '\n');
+            logger.warn(JSON.stringify(response, null, 2) + '\n');
 
             res.status(400).send('No token provided.');
           }
         } else {
-          request.response = { message: 'Invalid token' };
-          request.statusCode = 400;
+          response.data = { message: 'Invalid token' };
+          response.statusCode = 400;
 
-          logger.warn(JSON.stringify(request, null, 2) + '\n');
+          logger.warn(JSON.stringify(response, null, 2) + '\n');
 
           res.status(400).send('Invalid token');
         }
       } catch (error: any) {
-        request.statusCode = 500;
-        request.response = { message: error };
-
-        logger.error('Internal error: ' + JSON.stringify(request, null, 2) + '\n');
+        console.log(error.stack);
       }
     }
     handleRequest();

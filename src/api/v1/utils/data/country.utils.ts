@@ -1,19 +1,19 @@
-import countries from "../../../../assets/data/countries";
+import { countries } from '../../../../assets/data/countries';
 
 /**
  * Class with utility functions for countries.
  */
 export default class CountryUtils {
-  async getCountryLabel(country_code) {
+  async getCountryLabel(country_code: string) {
     const country = countries.find((country) => country.code === country_code);
 
-    return country.label;
+    return country?.label;
   }
 
-  async getCountryPhone(country_code) {
+  async getCountryPhone(country_code: string) {
     const country = countries.find((country) => country.code === country_code);
 
-    return country.phone;
+    return country?.phone;
   }
 
   async getCountryPhones() {

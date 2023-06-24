@@ -1,14 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IEventSeries, IEvent } from '../../interfaces';
+import { IEventSeries, IEvent, ICaregiver } from '../../interfaces';
 import caregiversDAO from '../../db/caregivers.dao';
 import logger from '../../../../logs/logger';
+import { Document, Types } from 'mongoose';
+
+import { IOrder } from '../../interfaces';
+import { EventModel } from '../../models';
 
 export async function generateEventsFromSeries(eventSeries: IEventSeries) {
   try {
     let events: IEvent[] = [];
     const CaregiversDAO = new caregiversDAO();
 
-    const caregiver = await CaregiversDAO.retrieve(eventSeries.caregiver);
+    if (!eventSeries.order) {
+      throw new Error('Order not found');
+    }
+
+    const order = eventSeries?.order as IOrder;
+
+    const caregiverId = (order.caregiver as Types.ObjectId).toString();
+
+    const caregiver = await CaregiversDAO.retrieve(caregiverId);
 
     if (!caregiver) {
       throw new Error('Caregiver not found');
@@ -57,10 +69,10 @@ export async function generateEventsFromSeries(eventSeries: IEventSeries) {
       for (const day of eventSeries.schedule) {
         //
         const startDate = new Date(
-          day.start.getTime() + getRecurrencyIncrement(eventSeries.recurrency_type, multiplier)
+          day.start.getTime() + getRecurrencyIncrement(eventSeries.recurrency, multiplier)
         );
         const endDate = new Date(
-          day.end.getTime() + getRecurrencyIncrement(eventSeries.recurrency_type, multiplier)
+          day.end.getTime() + getRecurrencyIncrement(eventSeries.recurrency, multiplier)
         );
 
         // If the start date is later than the series end date, stop creating events
@@ -69,17 +81,13 @@ export async function generateEventsFromSeries(eventSeries: IEventSeries) {
         }
 
         // Create a new event
-        const event: IEvent = {
-          _id: uuidv4(),
-          series: eventSeries._id,
-          order: eventSeries.order,
-          caregiver: {
-            _id: caregiver._id,
-            name: caregiver.name,
-            profile_picture: caregiver.profile_picture,
-          },
-
+        let event = new EventModel({
+          // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
+          _id: new Types.ObjectId(),
+          series: eventSeries._id as Types.ObjectId,
           type: 'company',
+          order: eventSeries.order as IOrder,
+          caregiver: caregiver as ICaregiver,
           title: eventSeries.title,
           description: eventSeries.description,
           start: startDate,
@@ -87,7 +95,12 @@ export async function generateEventsFromSeries(eventSeries: IEventSeries) {
           allDay: eventSeries.allDay,
           location: eventSeries.location,
           textColor: eventSeries.textColor,
-        };
+        });
+
+        event.toJSON();
+
+        event._id = uuidv4();
+      
 
         // Add the event to the list of events
         events.push(event);
@@ -103,7 +116,7 @@ export async function generateEventsFromSeries(eventSeries: IEventSeries) {
 }
 
 function getRecurrencyIncrement(
-  recurrencyType: IEventSeries['recurrency_type'],
+  recurrencyType: IEventSeries['recurrency'],
   multiplier = 1
 ): number {
   const increment: number = getIncrementValue(recurrencyType, multiplier);
@@ -112,10 +125,11 @@ function getRecurrencyIncrement(
   return incrementMillis;
 }
 
-function getIncrementValue(
-  recurrencyType: IEventSeries['recurrency_type'],
-  multiplier = 1
-): number {
+function getIncrementValue(recurrencyType: IEventSeries['recurrency'], multiplier = 1): number {
+  logger.info('recurrencyType: ', recurrencyType);
+
+  logger.info('typeof: ', typeof recurrencyType);
+
   switch (recurrencyType) {
     // Weekly (every 1 week)
     case 1:

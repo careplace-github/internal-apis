@@ -1,16 +1,16 @@
 // Class to manage the AWS SES service
 
-import AWS from "aws-sdk";
+import AWS from 'aws-sdk';
 import {
   AWS_SES_REGION,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
   AWS_SES_SENDER_EMAIL,
   AWS_SES_REPLY_TO_EMAIL,
-} from "../../../config/constants/index";
+} from '../../../config/constants/index';
 
-import NodemailerHelper from "../helpers/emails/nodemailer.helper";
-import EmailHelper from "../helpers/emails/email.helper";
+import NodemailerHelper from '../helpers/emails/nodemailer.helper';
+import EmailHelper from '../helpers/emails/email.helper';
 
 /**
  * Creates a new EmailHelper instance
@@ -53,31 +53,24 @@ export default class SES {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendEmail-property
    */
-  async sendEmail(
-    receiverEmails,
-    subject,
-    htmlBody,
-    textBody = "",
-    ccEmails,
-    bccEmails
-  ) {
+  async sendEmail(receiverEmails, subject, htmlBody, textBody = '', ccEmails, bccEmails) {
     // https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html
     const params = {
       Message: {
         Body: {
           Html: {
-            Charset: "UTF-8",
+            Charset: 'UTF-8',
             Data: htmlBody,
           },
           Text: {
-            Charset: "UTF-8",
-            Data: textBody ? textBody : "htmlBody",
+            Charset: 'UTF-8',
+            Data: textBody ? textBody : 'htmlBody',
           },
         },
 
         // Subject
         Subject: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: subject,
         },
       },
@@ -90,10 +83,10 @@ export default class SES {
       },
 
       // ReplyTo
-      ReplyToAddresses: ["suporte@careplace.pt"],
+      ReplyToAddresses: ['suporte@careplace.pt'],
 
       // Source
-      Source: "Careplace <noreply@careplace.pt>",
+      Source: 'Careplace <noreply@careplace.pt>',
     };
 
     return this.ses.sendEmail(params).promise();
@@ -124,12 +117,9 @@ export default class SES {
     bccEmails
   ) {
     // Check if the template is not null, undefined or empty
-    if (template !== null && template !== undefined && template !== "") {
+    if (template !== null && template !== undefined && template !== '') {
       // Get the email template with embebed data from the helper
-      const emailToSend = await this.emailHelper.getEmailWithData(
-        template,
-        templateData
-      );
+      const emailToSend = await this.emailHelper.getEmailWithData(template, templateData);
 
       // Send the email with the transporter
       return this.transporter.sendEmailWithAttachment(
@@ -178,16 +168,16 @@ export default class SES {
       Message: {
         Body: {
           Html: {
-            Charset: "UTF-8",
+            Charset: 'UTF-8',
             Data: template,
           },
         },
         Subject: {
-          Charset: "UTF-8",
-          Data: "Subject",
+          Charset: 'UTF-8',
+          Data: 'Subject',
         },
       },
-      Source: "",
+      Source: '',
       Template: templateData,
     };
 
