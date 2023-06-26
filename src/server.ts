@@ -1,19 +1,23 @@
-// Import the express module
-import express, { Request, Response, NextFunction } from 'express';
-
-// Import application security modules
-import helmet from 'helmet';
+// body-parser
+import bodyParser from 'body-parser';
+// cors
 import cors from 'cors';
-import hpp from 'hpp';
-
+// express
+import express, { Request, Response, NextFunction } from 'express';
+// express-mongo-sanitize
+import mongoSanitize from 'express-mongo-sanitize';
+// express-rate-limit
 import rateLimit from 'express-rate-limit';
-
-// Import mongoose
+// helmet
+import helmet from 'helmet';
+// hpp
+import hpp from 'hpp';
+// mongoose
 import mongoose from 'mongoose';
+// xss-clean
+import xss from 'xss-clean';
 
-import * as Error from './api/v1/utils/errors/http/index';
-
-// Loads Environment Constants
+// config
 import {
   ENV,
   HOST,
@@ -25,9 +29,21 @@ import {
   MONGODB_DB_DELETES_URI,
   MONGODB_DB_ACTIVE_NS,
   MONGODB_DB_DELETES_NS,
-} from './config/constants/index';
+} from './config/constants';
+// documentation
+import swaggerDocs from './documentation/swagger';
+// logger
+import logger from './logs/logger';
 
-// Import Router Exports
+// helpers
+import { getServices } from '@api/v1/helpers';
+// middlewares
+import {
+  RequestHandlerMiddleware,
+  ResponseHandlerMiddleware,
+  ErrorHandlerMiddleware,
+} from '@api/v1/middlewares';
+// routes
 import {
   configRoute,
   filesRoute,
@@ -44,22 +60,9 @@ import {
   paymentsRoute,
   adminRoute,
   reviewsRoute,
-} from './api/v1/routes';
-
-// Helpers
-import getServices from './api/v1/helpers/assets/services.helper';
-
-// Import Middlewares
-import logger from './logs/logger';
-import requestLogger from './api/v1/middlewares/server/requestHandler.middleware';
-import errorLogger from './api/v1/middlewares/errors/errorHandler.middleware';
-import responseLogger from './api/v1/middlewares/server/responseHandler.middleware';
-import bodyParser from 'body-parser';
-import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
-
-// Documentation
-import swaggerDocs from './documentation/swagger';
+} from '@api/v1/routes';
+// utils
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 const main = async () => {
   let app: express.Application;
@@ -384,7 +387,7 @@ const main = async () => {
       });
 
       // Middleware to log all the HTTP requests
-      app.use(requestLogger);
+      app.use(RequestHandlerMiddleware);
 
       // Routes middlewares
 
@@ -406,9 +409,9 @@ const main = async () => {
       app.use(API_ROUTE, adminRoute);
 
       // Middleware to handle and log all the errors
-      app.use(errorLogger);
+      app.use(ErrorHandlerMiddleware);
       // Middleware to handle and log all the HTTP responses
-      app.use(responseLogger);
+      app.use(ResponseHandlerMiddleware);
 
       logger.info(`Application Middlewares Applied Successfully!`);
 
@@ -429,7 +432,7 @@ const main = async () => {
       });
     } catch (error) {
       console.log(`Unable to start Express Application: ${error}`);
-      throw new Error._500(`Unable to start Express Application: ${error}`);
+      throw new HTTPError._500(`Unable to start Express Application: ${error}`);
     }
 
     try {
@@ -449,7 +452,7 @@ const main = async () => {
 
       logger.info('Fetched all the necessary assets successfully!');
     } catch (error) {
-      throw new Error._503(`Service Unavailable: ${error}`);
+      throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
 
     try {
@@ -474,11 +477,11 @@ const main = async () => {
       app.listen(443, () => {});
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);
-      throw new Error._500(`Unable to start the HTTP Server: ${error}`);
+      throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
     }
   } catch (error) {
     console.log(`Internal Error: ${error}`);
-    throw new Error._500(`Internal Error: ${error}`);
+    throw new HTTPError._500(`Internal Error: ${error}`);
   }
 };
 

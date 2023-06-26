@@ -9,7 +9,7 @@ import {
 
 import authUtils from '../../utils/auth/auth.utils';
 
-import * as Error from '../../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 export default function accessGuard(app: string) {
   return async function (req: Request, res: Response, next: NextFunction) {
@@ -23,7 +23,7 @@ export default function accessGuard(app: string) {
       }
 
       if (!req.headers.authorization) {
-        throw new Error._401(`Missing required authorization header.`);
+        throw new HTTPError._401(`Missing required authorization header.`);
       }
 
       let accessToken = req.headers.authorization.split(' ')[1];
@@ -39,7 +39,7 @@ export default function accessGuard(app: string) {
         logger.info(`User passed endpoint access guard.`);
         next();
       } else {
-        throw new Error._403(
+        throw new HTTPError._403(
           `You do not have access to this endpoint. Please contact your administrator.`
         );
       }

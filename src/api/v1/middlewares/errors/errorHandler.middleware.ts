@@ -4,9 +4,9 @@ import HTTP_Error from '../../utils/errors/http/httpError';
 import LayerError from '../../utils/errors/layer/layerError';
 import { MulterError } from 'multer';
 
-import { IApiResponse } from '../../interfaces';
+import { IAPIResponse } from '../../interfaces';
 
-export default function errorHandler(
+export default function ErrorHandler(
   err: HTTP_Error | LayerError | MulterError | Error | any,
   req: Request,
   res: Response,
@@ -17,7 +17,7 @@ export default function errorHandler(
   if (err instanceof HTTP_Error && err.isOperational) {
     // Handle operational HTTP_Error
     logger.info(`Operational HTTP_Error: ${err.stack}`);
-    const response: IApiResponse = {
+    const response: IAPIResponse = {
       data: {
         error: {
           message: err.message,
@@ -32,7 +32,7 @@ export default function errorHandler(
   if (err instanceof LayerError && err.isOperational) {
     // Handle operational LayerError
     logger.info(`Operational LayerError: ${err.stack}`);
-    const response: IApiResponse = {
+    const response: IAPIResponse = {
       data: {
         error: {
           message: err.message,
@@ -62,7 +62,7 @@ export default function errorHandler(
         type = 'BAD_REQUEST';
     }
 
-    const response: IApiResponse = {
+    const response: IAPIResponse = {
       data: {
         error: {
           message,

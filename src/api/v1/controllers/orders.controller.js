@@ -12,7 +12,7 @@ import eventsSeriesDAO from '../db/eventsSeries.dao';
 
 import CRUD from './crud.controller';
 
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import authHelper from '../helpers/auth/auth.helper';
 
 import emailHelper from '../helpers/emails/email.helper';
@@ -48,7 +48,7 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       let CompaniesDAO = new companiesDAO();
@@ -69,17 +69,17 @@ export default class OrdersController {
       );
 
       if (relative === null || relative === undefined || relative === '') {
-        throw new Error._400('Relative not found');
+        throw new HTTPError._400('Relative not found');
       }
 
       if (relative === null || relative === undefined || relative === '') {
-        throw new Error._400('Relative not found');
+        throw new HTTPError._400('Relative not found');
       }
 
       let company = await CompaniesDAO.queryOne({ _id: order.company });
 
       if (company === null || company === undefined || company === '') {
-        throw new Error._400('Company not found');
+        throw new HTTPError._400('Company not found');
       }
 
       order.user = user._id;
@@ -224,7 +224,7 @@ export default class OrdersController {
 
         user = await AuthHelper.getUserFromDB(accessToken);
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
@@ -255,7 +255,7 @@ export default class OrdersController {
       } catch (err) {
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -278,16 +278,16 @@ export default class OrdersController {
     let updatedOrder = req.body;
 
     if (updatedOrder.company && order.company !== updatedOrder.company) {
-      throw new Error.BadRequest('You cannot change the company of an order.');
+      throw new HTTPError.BadRequest('You cannot change the company of an order.');
     }
     if (updatedOrder.user && order.user !== updatedOrder.user) {
-      throw new Error.BadRequest('You cannot change the user of an order.');
+      throw new HTTPError.BadRequest('You cannot change the user of an order.');
     }
     if (updatedOrder.relatives && order.relatives !== updatedOrder.relatives) {
-      throw new Error.BadRequest('You cannot change the relatives of an order.');
+      throw new HTTPError.BadRequest('You cannot change the relatives of an order.');
     }
     if (updatedOrder.caregiver && order.caregiver !== updatedOrder.caregiver) {
-      throw new Error.BadRequest('You cannot change the caregiver of an order.');
+      throw new HTTPError.BadRequest('You cannot change the caregiver of an order.');
     }
     await OrdersCRUD.update(req, res, next);
   }
@@ -315,7 +315,7 @@ export default class OrdersController {
 
         user = await AuthHelper.getUserFromDB(accessToken);
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
@@ -345,7 +345,7 @@ export default class OrdersController {
       } catch (err) {
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -377,7 +377,7 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
@@ -387,7 +387,7 @@ export default class OrdersController {
         console.log(`ERROR 4: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -428,7 +428,7 @@ export default class OrdersController {
         console.log(`ERROR 5: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -461,17 +461,17 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       if (!caregiver) {
-        throw new Error._400('Missing caregiver.');
+        throw new HTTPError._400('Missing caregiver.');
       }
 
       let caregiverExists = await CaregiversDAO.retrieve(caregiver);
 
       if (!caregiverExists) {
-        throw new Error._400('Caregiver does not exist.');
+        throw new HTTPError._400('Caregiver does not exist.');
       }
 
       let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
@@ -481,11 +481,11 @@ export default class OrdersController {
       let order = await OrdersDAO.retrieve(req.params.id);
 
       if (companyId.toString() !== order.company.toString()) {
-        throw new Error._403('You are not authorized to accept this order.');
+        throw new HTTPError._403('You are not authorized to accept this order.');
       }
 
       if (order.status !== 'new') {
-        throw new Error._400('You cannot accept this order.');
+        throw new HTTPError._400('You cannot accept this order.');
       }
 
       order.status = 'accepted';
@@ -668,13 +668,13 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       const { order_total } = req.body;
 
       if (!order_total) {
-        throw new Error._400('Missing required fields.');
+        throw new HTTPError._400('Missing required fields.');
       }
 
       const user = await AuthHelper.getUserFromDB(accessToken);
@@ -737,7 +737,7 @@ export default class OrdersController {
         companyId.toString() !== order.company._id.toString() ||
         !user?.permissions?.includes('orders_edit')
       ) {
-        throw new Error._403('You are not authorized to send a quote for this order.');
+        throw new HTTPError._403('You are not authorized to send a quote for this order.');
       }
 
       order.order_total = order_total;
@@ -746,7 +746,7 @@ export default class OrdersController {
 
       /**
        *  if(order.status != "pending"){
-        throw new Error._400("You cannot send a quote for this order.");
+        throw new HTTPError._400("You cannot send a quote for this order.");
       }
        */
 

@@ -27,5 +27,5 @@ export type { default as ISettings } from './misc/settings.interface';
 /**
  * Server Interfaces
  */
-export type { default as IApiResponse } from './server/apiResponse.interface';
+export type { default as IAPIResponse } from './server/apiResponse.interface';
 export * from './server/db.interface';

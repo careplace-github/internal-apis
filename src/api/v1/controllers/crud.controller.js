@@ -1,5 +1,5 @@
 import logger from '../../../logs/logger';
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import usersDAO from '../db/crmUsers.dao';
 import authUtils from '../utils/auth/auth.utils';
 import cognito from '../services/cognito.service';
@@ -14,7 +14,7 @@ export default class CRUD_Methods {
 
   constructor(dao) {
     if (!dao) {
-      throw new Error._400('DAO is undefined.');
+      throw new HTTPError._400('DAO is undefined.');
     }
     this.DAO = dao;
   }
@@ -68,7 +68,7 @@ export default class CRUD_Methods {
       } catch (err) {
         console.log('AQUI 5' + err);
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+          throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
         }
       }
 
@@ -106,7 +106,7 @@ export default class CRUD_Methods {
       } catch (err) {
         console.log(err);
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+          throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
         }
       }
 
@@ -148,9 +148,9 @@ export default class CRUD_Methods {
       } catch (err) {
         switch (err.type) {
           case 'NOT_FOUND':
-            throw new Error._400(`${this.DAO.Type} does not exist.`);
+            throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -191,7 +191,7 @@ export default class CRUD_Methods {
         let userExists = await usersDAO.retrieve(document.user);
       } catch (err) {
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400('User does not exist. Need a valid User to create an event.');
+          throw new HTTPError._400('User does not exist. Need a valid User to create an event.');
         }
       }
 
@@ -231,7 +231,7 @@ export default class CRUD_Methods {
         documentExists = await this.DAO.retrieve(documentId);
       } catch (err) {
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+          throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
         }
       }
 
@@ -246,7 +246,7 @@ export default class CRUD_Methods {
         } catch (err) {
           // If the user does not exist, throw an error.
           if (err.type === 'NOT_FOUND') {
-            throw new Error._400('User does not exist. Need a valid User to update an Event.');
+            throw new HTTPError._400('User does not exist. Need a valid User to update an Event.');
           }
         }
       }
@@ -297,7 +297,7 @@ export default class CRUD_Methods {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
@@ -312,13 +312,13 @@ export default class CRUD_Methods {
         console.log(`ERROR 4: ${err.message}`);
         switch (err.type) {
           case 'NOT_FOUND':
-            throw new Error._400('User does not exist.');
+            throw new HTTPError._400('User does not exist.');
 
           case 'INVALID_PARAMETER':
-            throw new Error._400(err.message);
+            throw new HTTPError._400(err.message);
 
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -329,14 +329,14 @@ export default class CRUD_Methods {
       } catch (err) {
         switch (err.type) {
           case 'INVALID_PARAMETER':
-            throw new Error._400(err.message);
+            throw new HTTPError._400(err.message);
 
           case 'NOT_FOUND':
             documents = [];
             break;
 
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -377,7 +377,7 @@ export default class CRUD_Methods {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
@@ -392,7 +392,7 @@ export default class CRUD_Methods {
         console.log(`ERROR 4: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -404,7 +404,7 @@ export default class CRUD_Methods {
         console.log(`ERROR 5: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 

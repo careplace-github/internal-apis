@@ -1,7 +1,7 @@
 import BucketService from '../services/bucket.service';
 import fs from 'fs';
 import logger from '../../../logs/logger';
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 /**
  * Files Controller Class to manage the ``/files`` endpoints of the API.
@@ -22,7 +22,7 @@ export default class FilesController {
       const file = req.file;
 
       if (file == null || file == undefined) {
-        throw new Error._400('Missing required file.');
+        throw new HTTPError._400('Missing required file.');
       }
 
       let fileUpload = await Bucket.uploadFile(file);

@@ -9,7 +9,7 @@ import stripeHelper from '../helpers/services/stripe.helper';
 
 import authHelper from '../helpers/auth/auth.helper';
 
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 export default class DashboardController {
   static async getDashboard(req, res, next) {
@@ -23,7 +23,7 @@ export default class DashboardController {
     if (req.headers.authorization) {
       accessToken = req.headers.authorization.split(' ')[1];
     } else {
-      throw new Error._401('Missing required access token.');
+      throw new HTTPError._401('Missing required access token.');
     }
 
     let user = await AuthHelper.getUserFromDB(accessToken);
@@ -31,7 +31,7 @@ export default class DashboardController {
     let companyId = user.company._id;
 
     if (companyId === null || companyId === undefined) {
-      throw new Error._401('Missing required access token.');
+      throw new HTTPError._401('Missing required access token.');
     }
 
     let company = await CompaniesDAO.retrieve(companyId);

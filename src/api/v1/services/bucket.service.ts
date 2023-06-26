@@ -3,7 +3,7 @@ import AWS, { S3 } from 'aws-sdk';
 // fs
 import fs from 'fs';
 // utils
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 // logger
 import logger from '../../../logs/logger';
 // constants
@@ -51,7 +51,7 @@ export default class S3Manager {
    */
   async uploadFile(file: fs.PathLike, ACL?: string): Promise<AWS.S3.ManagedUpload.SendData> {
     if (!file) {
-      throw new Error._400('No file found.');
+      throw new HTTPError._400('No file found.');
     }
 
     // Read content from the file

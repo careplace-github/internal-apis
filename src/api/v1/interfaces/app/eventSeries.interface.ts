@@ -15,7 +15,6 @@ export default interface IEventSeries extends Document {
   // If type is company
   company?: Types.ObjectId | ICompany;
   order?: Types.ObjectId | IOrder;
-  caregiver?: Types.ObjectId | ICaregiver;
 
   start_date: Date;
   recurrency: OrderRecurrency;

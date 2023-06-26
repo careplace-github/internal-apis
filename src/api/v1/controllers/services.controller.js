@@ -1,7 +1,7 @@
 // Import logger
 import logger from '../../../logs/logger';
 import CRUD from './crud.controller';
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 import servicesDAO from '../db/services.dao';
 
@@ -12,7 +12,7 @@ export default class ServicesController {
     try {
       var services = await ServicesDAO.queryList();
     } catch (err) {
-      throw new Error._500(err);
+      throw new HTTPError._500(err);
     }
 
     res.status(200).json(services);

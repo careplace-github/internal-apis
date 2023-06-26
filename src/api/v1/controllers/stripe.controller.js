@@ -26,7 +26,7 @@ import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../config/const
 // Import logger
 import logger from '../../../logs/logger';
 
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 export default class StripeController {
   static async createPaymentMethod(req, res, next) {
@@ -40,7 +40,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -82,7 +82,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let Stripe = new StripeService();
@@ -109,7 +109,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -124,7 +124,7 @@ export default class StripeController {
       let paymentMethod = await Stripe.getPaymentMethod(paymentMethodId);
 
       if (paymentMethod.customer !== customerId) {
-        throw new Error._403('You are not authorized to delete this payment method.');
+        throw new HTTPError._403('You are not authorized to delete this payment method.');
       }
       let paymentMethodDeleted = await Stripe.deletePaymentMethod(paymentMethodId, customerId);
 
@@ -149,7 +149,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -159,7 +159,7 @@ export default class StripeController {
       let customerId = user.stripe_information?.customer_id;
 
       if (customerId === null || customerId === undefined) {
-        throw new Error._400('No customer id found.');
+        throw new HTTPError._400('No customer id found.');
       }
 
       let Stripe = new StripeService();
@@ -190,7 +190,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -236,7 +236,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -277,7 +277,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -297,7 +297,7 @@ export default class StripeController {
       let externalAccount = await Stripe.getExternalAccount(accountId, externalAccountId);
 
       if (externalAccount.account !== accountId) {
-        throw new Error._403('You are not authorized to delete this external account.');
+        throw new HTTPError._403('You are not authorized to delete this external account.');
       }
 
       let externalAccountDeleted = await Stripe.deleteExternalAccount(accountId, externalAccountId);
@@ -322,7 +322,7 @@ export default class StripeController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -380,7 +380,7 @@ export default class StripeController {
       let StripeHelper = new stripeHelper(Stripe);
 
       if (!paymentMethodId) {
-        throw new Error._400('Missing required payment method token');
+        throw new HTTPError._400('Missing required payment method token');
       }
 
       // Convert orderId to string
@@ -405,7 +405,7 @@ export default class StripeController {
 
       // Check if the order has an existing subscription
       if (order.stripe_subscription_id) {
-        throw new Error._400('Order already has a subscription');
+        throw new HTTPError._400('Order already has a subscription');
       }
 
       let accountId = order.company.stripe_information.account_id;
@@ -478,10 +478,10 @@ export default class StripeController {
           } catch (err) {
             switch (err.type) {
               case 'INVALID_PARAMETER':
-                throw new Error._400(err.message);
+                throw new HTTPError._400(err.message);
 
               default:
-                throw new Error._500(err.message);
+                throw new HTTPError._500(err.message);
             }
           }
 
@@ -497,7 +497,7 @@ export default class StripeController {
           } catch (err) {
             switch (err.type) {
               default:
-                throw new Error._500(err.message);
+                throw new HTTPError._500(err.message);
             }
           }
         } else {
@@ -536,7 +536,7 @@ export default class StripeController {
           switch (err.type) {
             default:
               console.log(err.stack);
-              throw new Error._500(err.message);
+              throw new HTTPError._500(err.message);
           }
         }
       }
