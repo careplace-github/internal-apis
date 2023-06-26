@@ -13,7 +13,6 @@ export default interface IEvent extends Document {
   user?: Types.ObjectId | ICRMUser;
   // If type is company
   order?: Types.ObjectId | IOrder;
-  caregiver?: Types.ObjectId | ICaregiver;
 
   title: string;
   description: string;

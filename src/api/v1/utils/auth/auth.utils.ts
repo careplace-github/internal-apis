@@ -1,6 +1,6 @@
 import jwtContext from './context/jwtContext';
 import logger from '../../../../logs/logger';
-import * as Error from '../errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 /**
  * Class with utility functions for authentication with different authentication contexts.
@@ -15,7 +15,7 @@ export default class AuthUtils {
     logger.info(`Authentication Utils DECODE_JWT_TOKEN Request: \n ${accessToken}`);
 
     if (!accessToken) {
-      throw new Error._401('Unauthorized: No token provided');
+      throw new HTTPError._401('Unauthorized: No token provided');
     }
 
     const decodedToken = await jwtContext.decodeToken(accessToken);
@@ -31,7 +31,7 @@ export default class AuthUtils {
     logger.info(`Authentication Utils IS_VALID_JWT_TOKEN Request: \n ${accessToken}`);
 
     if (!accessToken) {
-      throw new Error._401('Unauthorized: No token provided');
+      throw new HTTPError._401('Unauthorized: No token provided');
     }
 
     const isValidToken = await jwtContext.isValidToken(accessToken);

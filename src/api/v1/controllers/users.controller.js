@@ -25,7 +25,7 @@ import SES_Service from '../services/ses.service';
 // Import logger
 import logger from '../../../logs/logger';
 
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import { response } from 'express';
 
 const app = 'crm';
@@ -419,7 +419,7 @@ export default class UsersController {
         try {
           await CognitoService.adminDeleteUser(user.cognito_id);
         } catch (error) {
-          throw new Error._500(`Error: ${error}`);
+          throw new HTTPError._500(`Error: ${error}`);
         }
       }
 
@@ -432,7 +432,7 @@ export default class UsersController {
           'Users Controller deleteUser result: ' + JSON.stringify(response, null, 2) + '\n'
         );
       } else {
-        throw new Error._500(`Unable to delete user`);
+        throw new HTTPError._500(`Unable to delete user`);
       }
 
       next(response);
@@ -507,7 +507,7 @@ export default class UsersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -572,9 +572,9 @@ export default class UsersController {
       } catch (error) {
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User not found.');
+            throw new HTTPError._404('User not found.');
           default:
-            throw new Error._500(error);
+            throw new HTTPError._500(error);
         }
       }
 
@@ -656,7 +656,7 @@ export default class UsersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -715,9 +715,9 @@ export default class UsersController {
           console.log(error);
           switch (error.type) {
             case 'NOT_FOUND':
-              throw new Error._404('User not found.');
+              throw new HTTPError._404('User not found.');
             default:
-              throw new Error._500(error);
+              throw new HTTPError._500(error);
           }
         }
       }
@@ -741,9 +741,9 @@ export default class UsersController {
         } catch (error) {
           switch (error.type) {
             case 'NOT_FOUND':
-              throw new Error._404('User not found.');
+              throw new HTTPError._404('User not found.');
             default:
-              throw new Error._500(error);
+              throw new HTTPError._500(error);
           }
         }
       }

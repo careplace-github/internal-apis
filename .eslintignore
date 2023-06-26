@@ -7,5 +7,7 @@
 package.json
 package-lock.json
 
+src/api/v1/services/ts/*
+
 src/_mock
 /config

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../../../../logs/logger';
 import authUtils from '../../utils/auth/auth.utils';
-import * as Error from '../../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 /**
  * @description Middleware to validate if a user is authenticated through the JWT accessToken.
@@ -29,7 +29,7 @@ export default function validateAuth(req: Request, res: Response, next: NextFunc
         // Extract the accessToken from the header
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('Missing or invalid token.');
+        throw new HTTPError._400('Missing or invalid token.');
       }
 
       // accessToken provided
@@ -39,10 +39,10 @@ export default function validateAuth(req: Request, res: Response, next: NextFunc
         if (isLoggedIn) {
           next();
         } else {
-          throw new Error._401('Access token is expired.');
+          throw new HTTPError._401('Access token is expired.');
         }
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
     } catch (error: any) {
       logger.error(`Authentication Guard Middleware Internal Server Error: ${error.stack}`);
