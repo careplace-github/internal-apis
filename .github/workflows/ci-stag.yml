@@ -1,4 +1,4 @@
-name: Staging Build
+name: [STAGING] Continuous Integration (CI)
 
 on:
   pull_request:
