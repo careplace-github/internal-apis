@@ -1,4 +1,4 @@
-name: Development Build
+name: [DEVELOPMENT] Continuous Integration (CI)
 
 on:
   push:
