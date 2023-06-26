@@ -45,7 +45,7 @@ export default function responseHandler(
 
     let logResponse = {
       request: request,
-      response: response.data,
+      response: response,
     };
 
     if (!response.data || response.statusCode === undefined || response.statusCode === null) {

@@ -2,7 +2,7 @@
   "root": true,
   "env": {
     "browser": true,
-    "es2021": true
+    "es2221": true
   },
   "plugins": [
     "@typescript-eslint",
@@ -34,46 +34,54 @@
         "alwaysTryTypes": true
       },
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": ["node_modules", "src/"],
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "src/"
+        ],
       }
     }
   },
+  /**
+    * 0 = off, 1 = warn, 2 = error
+    */
   "rules": {
-    "eqeqeq": 0, // Remove
-    "react-hooks/exhaustive-deps": 0, // Remove
-    "import/no-unresolved": 0, // Remove
-    "react-hooks/rules-of-hooks": 0, // Remove
-    "prefer-regex-literals": 0, // Remove
-    "import/no-named-as-default-member": 0, // Remove
-    "import/no-named-as-default": 0, // Remove
-    "import/extensions": 0, // Remove
-    "jsx-a11y/no-noninteractive-element-interactions": 0, // Remove
-    "jsx-a11y/click-events-have-key-events": 0, // Remove
-    "arrow-body-style": 0, // Remove
-
-
-    "react/jsx-no-constructed-context-values": 0,
-
-    "no-alert": 0,
-    "camelcase": 0,
-    "no-console": 0,
-    "no-unused-vars": 0,
-    "no-param-reassign": 0,
-    "no-underscore-dangle": 0,
-    "no-restricted-exports": 0,
-    "react/no-children-prop": 0,
-    "react/react-in-jsx-scope": 0,
-    "jsx-a11y/anchor-is-valid": 0,
-    "react/no-array-index-key": 0,
-    "no-promise-executor-return": 0,
-    "react/require-default-props": 0,
-    "react/jsx-props-no-spreading": 0,
-    "import/prefer-default-export": 0,
-    "react/function-component-definition": 0,
-    "@typescript-eslint/naming-convention": 0,
-    "jsx-a11y/control-has-associated-label": 0,
-    "@typescript-eslint/no-use-before-define": 0,
+    "eqeqeq": 2,
+    "react-hooks/exhaustive-deps": 2,
+    "import/no-unresolved": 2,
+    "react-hooks/rules-of-hooks": 2,
+    "prefer-regex-literals": 2,
+    "import/no-named-as-default-member": 2,
+    "import/no-named-as-default": 2,
+    "import/extensions": 2,
+    "jsx-a11y/no-noninteractive-element-interactions": 2,
+    "jsx-a11y/click-events-have-key-events": 2,
+    "arrow-body-style": 2,
+    "react/jsx-no-constructed-context-values": 2,
+    "no-alert": 2,
+    "camelcase": 2,
+    "no-console": 2,
+    "no-unused-vars": 2,
+    "no-param-reassign": 2,
+    "no-underscore-dangle": 2,
+    "no-restricted-exports": 2,
+    "react/no-children-prop": 2,
+    "react/react-in-jsx-scope": 2,
+    "jsx-a11y/anchor-is-valid": 2,
+    "react/no-array-index-key": 2,
+    "no-promise-executor-return": 2,
+    "react/require-default-props": 2,
+    "react/jsx-props-no-spreading": 2,
+    "import/prefer-default-export": 2,
+    "react/function-component-definition": 2,
+    "@typescript-eslint/naming-convention": 2,
+    "jsx-a11y/control-has-associated-label": 2,
+    "@typescript-eslint/no-use-before-define": 2,
     "react/jsx-no-useless-fragment": [
       1,
       {

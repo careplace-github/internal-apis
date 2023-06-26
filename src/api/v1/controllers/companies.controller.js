@@ -10,7 +10,7 @@ import stripeHelper from '../helpers/services/stripe.helper';
 
 import authHelper from '../helpers/auth/auth.helper';
 
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import * as LayerError from '../utils/errors/layer/index';
 
 export default class CompaniesController {
@@ -37,7 +37,7 @@ export default class CompaniesController {
       } catch (err) {
         console.log(err);
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+          throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
         }
       }
       if (req.body.serviceArea && req.body.serviceArea.length !== 0) {

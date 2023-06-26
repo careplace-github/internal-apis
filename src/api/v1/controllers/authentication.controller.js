@@ -6,7 +6,7 @@ import crmUsersDAO from '../db/crmUsers.dao';
 import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
 
 import logger from '../../../logs/logger';
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import authHelper from '../helpers/auth/auth.helper';
 import CRUD from './crud.controller';
 import authUtils from '../utils/auth/auth.utils';
@@ -33,7 +33,7 @@ export default class AuthenticationController {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
         app = 'marketplace';
       } else {
-        throw new Error._400('Invalid login request.');
+        throw new HTTPError._400('Invalid login request.');
       }
 
       Cognito = new cognito(clientId);
@@ -54,10 +54,10 @@ export default class AuthenticationController {
       } catch (err) {
         switch (err.type) {
           case 'INVALID_PARAMETER':
-            throw new Error._400(err.message);
+            throw new HTTPError._400(err.message);
 
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -71,10 +71,10 @@ export default class AuthenticationController {
       } catch (err) {
         switch (err.type) {
           case 'INVALID_PARAMETER':
-            throw new Error._400(err.message);
+            throw new HTTPError._400(err.message);
 
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -88,10 +88,10 @@ export default class AuthenticationController {
     } catch (err) {
       switch (err.type) {
         case 'INVALID_PARAMETER':
-          throw new Error._400(err.message);
+          throw new HTTPError._400(err.message);
 
         default:
-          throw new Error._500(err.message);
+          throw new HTTPError._500(err.message);
       }
     }
   }
@@ -114,7 +114,7 @@ export default class AuthenticationController {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
         app = 'marketplace';
       } else {
-        throw new Error._400('Invalid request.');
+        throw new HTTPError._400('Invalid request.');
       }
 
       Cognito = new cognito(clientId);
@@ -126,13 +126,13 @@ export default class AuthenticationController {
       } catch (error) {
         switch (error.type) {
           case 'INVALID_PARAMETER':
-            throw new Error._400(error.message);
+            throw new HTTPError._400(error.message);
 
           case 'NOT_FOUND':
-            throw new Error._404(error.message);
+            throw new HTTPError._404(error.message);
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 
@@ -164,7 +164,7 @@ export default class AuthenticationController {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
         app = 'marketplace';
       } else {
-        throw new Error._400('Invalid request.');
+        throw new HTTPError._400('Invalid request.');
       }
 
       Cognito = new cognito(clientId);
@@ -176,13 +176,13 @@ export default class AuthenticationController {
       } catch (error) {
         switch (error.type) {
           case 'INVALID_PARAMETER':
-            throw new Error._400(error.message);
+            throw new HTTPError._400(error.message);
 
           case 'NOT_FOUND':
-            throw new Error._404(error.message);
+            throw new HTTPError._404(error.message);
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 
@@ -196,7 +196,7 @@ export default class AuthenticationController {
           email: req.body.email,
         });
       } catch (error) {
-        throw new Error._500(error.message);
+        throw new HTTPError._500(error.message);
       }
 
       /**
@@ -222,7 +222,7 @@ export default class AuthenticationController {
 
         await MarketplaceUsersDAO.update(user);
       } catch (error) {
-        throw new Error._500(error.message);
+        throw new HTTPError._500(error.message);
       }
 
       response.statusCode = 200;
@@ -267,7 +267,7 @@ export default class AuthenticationController {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
         app = 'marketplace';
       } else {
-        throw new Error._400('Invalid login request.');
+        throw new HTTPError._400('Invalid login request.');
       }
 
       let Cognito = new cognito(clientId);
@@ -280,13 +280,13 @@ export default class AuthenticationController {
         logger.error(`Authentication Controller LOGIN Error: \n ${JSON.stringify(error, null, 2)}`);
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User does not exist.');
+            throw new HTTPError._404('User does not exist.');
 
           case 'UNAUTHORIZED':
-            throw new Error._401(error.message);
+            throw new HTTPError._401(error.message);
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 
@@ -345,7 +345,7 @@ export default class AuthenticationController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('Missing required authorization token.');
+        throw new HTTPError._400('Missing required authorization token.');
       }
 
       let Cognito = new cognito(accessToken);
@@ -359,16 +359,16 @@ export default class AuthenticationController {
       } catch (error) {
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User does not exist.');
+            throw new HTTPError._404('User does not exist.');
 
           case 'UNAUTHORIZED':
-            throw new Error._401(error.message);
+            throw new HTTPError._401(error.message);
 
           case 'ATTEMPT_LIMIT':
-            throw new Error._400(error.message);
+            throw new HTTPError._400(error.message);
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 
@@ -403,7 +403,7 @@ export default class AuthenticationController {
       if (req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       try {
@@ -415,16 +415,16 @@ export default class AuthenticationController {
 
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User does not exist.');
+            throw new HTTPError._404('User does not exist.');
 
           case 'UNAUTHORIZED':
-            throw new Error._401('Token has expired.');
+            throw new HTTPError._401('Token has expired.');
 
           case 'INVALID_PARAMETER':
-            throw new Error._400('Invalid access token.');
+            throw new HTTPError._400('Invalid access token.');
 
           default:
-            throw new Error._500('Internal server error.');
+            throw new HTTPError._500('Internal server error.');
         }
       }
 
@@ -461,7 +461,7 @@ export default class AuthenticationController {
       } else if (req.url === `/auth/marketplace/send/forgot-password-code`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
       } else {
-        throw new Error._400('Invalid login request.');
+        throw new HTTPError._400('Invalid login request.');
       }
 
       Cognito = new cognito(clientId);
@@ -471,10 +471,10 @@ export default class AuthenticationController {
       } catch (error) {
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User not found');
+            throw new HTTPError._404('User not found');
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 
@@ -510,7 +510,7 @@ export default class AuthenticationController {
       } else if (req.url === `/auth/marketplace/verify/forgot-password-code`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
       } else {
-        throw new Error._400('Invalid login request.');
+        throw new HTTPError._400('Invalid login request.');
       }
 
       Cognito = new cognito(clientId);
@@ -524,13 +524,13 @@ export default class AuthenticationController {
       } catch (error) {
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User not found');
+            throw new HTTPError._404('User not found');
 
           case 'INVALID_CODE':
-            throw new Error._400('Invalid code. Please request a new code.');
+            throw new HTTPError._400('Invalid code. Please request a new code.');
 
           default:
-            throw new Error._500(error.message);
+            throw new HTTPError._500(error.message);
         }
       }
 

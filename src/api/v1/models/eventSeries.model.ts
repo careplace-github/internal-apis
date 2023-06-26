@@ -7,10 +7,13 @@ const eventSeriesSchema: Schema<IEventSeries> = new Schema<IEventSeries>(
   {
     _id: Schema.Types.ObjectId,
     type: { type: String, required: true, enum: ['personal', 'company'] },
+
+    // If type is personal
     user: { type: Schema.Types.ObjectId, ref: 'crm_users', required: false },
+    // If type is company
     company: { type: Schema.Types.ObjectId, ref: 'companies', required: false },
     order: { type: Schema.Types.ObjectId, ref: 'orders', required: false },
-    caregiver: { type: Schema.Types.ObjectId, ref: 'caregivers', required: false },
+    
     start_date: { type: Date, required: true },
     recurrency: { type: Number, required: true, enum: [1, 2, 4] },
     schedule: [

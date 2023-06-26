@@ -1,4 +1,4 @@
-export default interface IApiResponse {
+export default interface IAPIResponse {
   statusCode: number;
   data: any;
 }

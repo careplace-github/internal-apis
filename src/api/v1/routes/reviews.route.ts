@@ -7,12 +7,13 @@ import AccessGuard from '../middlewares/guards/accessGuard.middleware';
 const router = express.Router();
 
 router
-  .route('/reviews/orders/:id')
+  .route('/companies/:id/reviews')
   .post(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.create)
+  .get(ReviewsController.getCompanyReviews);
 
 router
-  .route('/reviews/companies/:id')
-  .get(ReviewsController.listCompanyReviews);
-
+  .route('/reviews/:id')
+  .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.retrieve)
+  .put(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.update);
 
 export default router;

@@ -58,10 +58,10 @@ export default class StripeWebhooksController {
       if (req.headers['stripe-signature']) {
         sig = req.headers['stripe-signature'];
       } else {
-        throw new Error._401('Invalid signature.');
+        throw new HTTPError._401('Invalid signature.');
       }
     } else {
-      throw new Error._401('No headers provided.');
+      throw new HTTPError._401('No headers provided.');
     }
 
     // let reqBuffer = await buffer(req);

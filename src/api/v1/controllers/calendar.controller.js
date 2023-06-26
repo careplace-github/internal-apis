@@ -1,12 +1,12 @@
 import eventsDAO from '../db/events.dao';
 import UsersDAO from '../db/crmUsers.dao';
 import eventsSeriesDAO from '../db/eventsSeries.dao';
-import * as Error from '../utils/errors/http/index';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import authHelper from '../helpers/auth/auth.helper';
 import CRUD from './crud.controller';
 import logger from '../../../logs/logger';
 // helper functions
-import { generateEventsFromSeries } from '../helpers';
+import { OrdersHelper } from '../helpers';
 
 let EventsDAO = new eventsDAO();
 let EventsSeriesDAO = new eventsSeriesDAO();
@@ -35,7 +35,7 @@ export default class CalendarController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       let user = await AuthHelper.getUserFromDB(accessToken);
@@ -113,7 +113,7 @@ export default class CalendarController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       let user = await AuthHelper.getUserFromDB(accessToken);
@@ -139,13 +139,15 @@ export default class CalendarController {
           return eventsSeries.data;
         });
 
+        logger.info('Events Series 1: ' + eventsSeries);
+
         /**
          * for each eventSeries, generate the events and add them to the events array
          */
         for (let i = 0; i < eventsSeries.length; i++) {
           let eventSeries = eventsSeries[i];
 
-          let eventsGenerated = await generateEventsFromSeries(eventSeries);
+          let eventsGenerated = await OrdersHelper.generateEventsFromSeries(eventSeries);
 
           events = [...events, ...eventsGenerated];
         }
@@ -184,7 +186,9 @@ export default class CalendarController {
         let userExists = await usersDAO.retrieve(eventSeries.user);
       } catch (err) {
         if (err.type === 'NOT_FOUND' || err.name === 'CastError') {
-          throw new Error._400('User does not exist. Need a valid User to create an event series.');
+          throw new HTTPError._400(
+            'User does not exist. Need a valid User to create an event series.'
+          );
         }
       }
 
