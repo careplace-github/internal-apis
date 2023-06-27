@@ -238,12 +238,12 @@ export default class ReviewsController {
       if (req.query.sortBy) {
         if (req.query.sortBy === 'date') {
           options.sort = {
-            createdAt: req.query.sortOrder === 'desc' ? -1 : 1,
+            updatedAt: req.query.sortOrder === 'desc' ? -1 : 1,
           };
         }
       } else {
         options.sort = {
-          createdAt: req.query.sortOrder === 'desc' ? -1 : 1,
+          updatedAt: req.query.sortOrder === 'desc' ? -1 : 1,
         };
       }
 
