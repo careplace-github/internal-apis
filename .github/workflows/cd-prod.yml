@@ -89,3 +89,39 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+  release:
+            name: Release
+            needs: deploy
+            runs-on: ubuntu-latest
+        
+            steps:
+              - name: Checkout
+                uses: actions/checkout@v3
+        
+              - name: Determine Release Version
+                id: version
+                uses: docker://conventionaltools/conventional-recommended-bump-action:v1.2.1
+        
+              - name: Generate Changelog
+                id: changelog
+                uses: docker://conventionaltools/conventional-changelog-action:v1.4.2
+                with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  preset: angular
+        
+              - name: Update Changelog
+                run: |
+                  echo "${{ steps.changelog.outputs.changelog }}" >> changelog.md
+                shell: bash
+        
+              - name: Create Release
+                id: create_release
+                uses: actions/create-release@v1
+                env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                with:
+                  tag_name: ${{ steps.version.outputs.version }}
+                  release_name: Release ${{ steps.version.outputs.version }}
+                  body: ${{ steps.changelog.outputs.changelog }}
+                  draft: false
+                  prerelease: false
