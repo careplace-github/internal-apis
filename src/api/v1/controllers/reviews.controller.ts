@@ -129,6 +129,65 @@ export default class ReviewsController {
     }
   }
 
+  static async checkEligibility(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: 100, // request received
+        data: {},
+      };
+
+      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
+
+      const companyId = req.params.id;
+
+      let orders: IQueryListResponse<IOrder>;
+      let filters: FilterQuery<IReview>;
+
+      filters = {
+        user: user._id,
+        company: companyId,
+        status: {
+          $in: ['pending_payment', 'active', 'completed'],
+        },
+      };
+
+      orders = await ReviewsController.OrdersDAO.queryList(filters);
+
+      if (orders.data.length === 0) {
+        response.statusCode = 200;
+        response.data = {
+          eligible: false,
+        };
+
+        return next(response);
+      } else {
+        response.data.eligible = true;
+      }
+
+      try {
+        const existingReview = await ReviewsController.ReviewsDAO.queryOne({
+          company: companyId,
+          user: user._id,
+        });
+
+        if (existingReview) {
+          response.data.type = 'update';
+        }
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            response.data.type = 'create';
+        }
+      }
+
+      response.statusCode = 200;
+      next(response);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
