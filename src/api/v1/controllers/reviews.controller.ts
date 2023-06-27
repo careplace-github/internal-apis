@@ -300,6 +300,11 @@ export default class ReviewsController {
             updatedAt: req.query.sortOrder === 'desc' ? -1 : 1,
           };
         }
+        if (req.query.sortBy === 'relevance') {
+          options.sort = {
+            rating: -1,
+          };
+        }
       } else {
         options.sort = {
           updatedAt: req.query.sortOrder === 'desc' ? -1 : 1,
