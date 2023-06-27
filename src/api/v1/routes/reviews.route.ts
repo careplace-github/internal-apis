@@ -16,4 +16,8 @@ router
   .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.retrieve)
   .put(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.update);
 
+router
+  .route('/companies/:id/reviews/eligibility')
+  .post(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.checkEligibility);
+
 export default router;
