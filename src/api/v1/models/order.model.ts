@@ -31,17 +31,24 @@ const orderSchema: Schema<IOrder> = new Schema<IOrder>(
     },
     decline_reason: { type: String, required: false },
     order_total: { type: Number, required: false },
-    address: {
-      street: { type: String, required: true },
-      postal_code: { type: String, required: true },
-      state: { type: String, required: false },
-      city: { type: String, required: true },
-      country: { type: String, required: true, enum: ['PT', 'ES', 'US', 'UK'] },
-      coordinates: { type: Array, required: true },
-    },
+
     screening_visit: { type: Schema.Types.ObjectId, ref: 'Event', required: false, default: null },
     observations: { type: String, required: false, default: null },
-    stripe_subscription_id: { type: String, required: false, default: null },
+    stripe_information: {
+      subscription_id: { type: String, required: false, default: null },
+    },
+    billing_details: {
+      name: { type: String, required: true, default: null },
+      email: { type: String, required: true, default: null },
+      address: {
+        street: { type: String, required: true, default: null },
+        postal_code: { type: String, required: true, default: null },
+        state: { type: String, required: false, default: null },
+        city: { type: String, required: true, default: null },
+        country: { type: String, required: true, default: null },
+      },
+      tax_id: { type: String, required: false, default: null },
+    },
   },
   {
     timestamps: true, // createdAt, updatedAt
