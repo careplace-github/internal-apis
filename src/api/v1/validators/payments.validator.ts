@@ -31,13 +31,6 @@ const Checkout_BillingDetailsValidation = check('billing_details').custom((value
   }
 
   /**
-   * Check if the tax_id is missing
-   */
-  if (!value.tax_id) {
-    missingFields.push('tax_id');
-  }
-
-  /**
    * Check if the address is missing
    */
   if (!value.address) {
