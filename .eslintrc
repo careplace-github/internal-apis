@@ -1,29 +1,19 @@
 {
   "root": true,
   "env": {
-    "browser": true,
-    "es2221": true
+    "es2021": true
   },
-  "plugins": [
-    "@typescript-eslint",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
-    "airbnb",
-    "airbnb-typescript",
-    "airbnb/hooks",
+    "airbnb-base",
     "prettier",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "plugin:import/typescript",
-    "plugin:@next/next/recommended",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": "latest",
+    "ecmaVersion": 2021,
     "sourceType": "module",
     "project": "./tsconfig.json",
     "warnOnUnsupportedTypeScriptVersion": false
@@ -34,35 +24,19 @@
         "alwaysTryTypes": true
       },
       "node": {
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx"
-        ],
-        "moduleDirectory": [
-          "node_modules",
-          "src/"
-        ],
+        "extensions": [".js", ".ts"],
+        "moduleDirectory": ["node_modules", "src/"]
       }
     }
   },
-  /**
-    * 0 = off, 1 = warn, 2 = error
-    */
   "rules": {
     "eqeqeq": 2,
-    "react-hooks/exhaustive-deps": 2,
     "import/no-unresolved": 2,
-    "react-hooks/rules-of-hooks": 2,
     "prefer-regex-literals": 2,
     "import/no-named-as-default-member": 2,
     "import/no-named-as-default": 2,
     "import/extensions": 2,
-    "jsx-a11y/no-noninteractive-element-interactions": 2,
-    "jsx-a11y/click-events-have-key-events": 2,
     "arrow-body-style": 2,
-    "react/jsx-no-constructed-context-values": 2,
     "no-alert": 2,
     "camelcase": 2,
     "no-console": 2,
@@ -70,35 +44,14 @@
     "no-param-reassign": 2,
     "no-underscore-dangle": 2,
     "no-restricted-exports": 2,
-    "react/no-children-prop": 2,
-    "react/react-in-jsx-scope": 2,
-    "jsx-a11y/anchor-is-valid": 2,
-    "react/no-array-index-key": 2,
-    "no-promise-executor-return": 2,
-    "react/require-default-props": 2,
-    "react/jsx-props-no-spreading": 2,
     "import/prefer-default-export": 2,
-    "react/function-component-definition": 2,
     "@typescript-eslint/naming-convention": 2,
-    "jsx-a11y/control-has-associated-label": 2,
     "@typescript-eslint/no-use-before-define": 2,
-    "react/jsx-no-useless-fragment": [
-      1,
-      {
-        "allowExpressions": true
-      }
-    ],
     "prefer-destructuring": [
       1,
       {
         "object": true,
         "array": false
-      }
-    ],
-    "react/no-unstable-nested-components": [
-      1,
-      {
-        "allowAsProps": true
       }
     ],
     "@typescript-eslint/no-unused-vars": [
@@ -107,11 +60,11 @@
         "args": "none"
       }
     ],
-    "react/jsx-no-duplicate-props": [
-      1,
-      {
-        "ignoreCase": false
-      }
-    ]
+
+    // Additional rules for REST API development
+    "consistent-return": 2,
+    "no-shadow": 2,
+    "no-throw-literal": 2,
+    "prefer-arrow-callback": 2
   }
 }
