@@ -26,6 +26,11 @@ export default function ErrorHandler(
       },
       statusCode: err.statusCode,
     };
+
+    if (err.type === 'INTERNAL_SERVER_ERROR') {
+      response.data.error.message = 'Internal Server Error.';
+    }
+
     return next(response);
   }
 
