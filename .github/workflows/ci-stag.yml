@@ -2,9 +2,9 @@ name: "[STAGING] Continuous Integration (CI)"
 
 on:
   pull_request:
-    branches: [ release/* ]
+    branches: [ release/*, staging]
   push:
-    branches: [ release/* ]
+    branches: [ release/*, staging ]
 
 jobs:
   build:
