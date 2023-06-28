@@ -1,0 +1,22 @@
+# EditorConfig is a file format supported by most code editors. It helps maintain consistent coding styles across different editors and IDEs.
+
+# Top-most EditorConfig file in the project.
+root = true
+
+# Indentation settings
+[*]
+indent_style = space
+indent_size = 2
+
+# TypeScript files
+[*.ts]
+indent_style = space
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Exclude certain files or directories
+[dist/**]
+exclude_patterns = true
+

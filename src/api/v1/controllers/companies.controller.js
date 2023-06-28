@@ -1,18 +1,17 @@
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import ordersDAO from '../db/orders.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import CRUD from './crud.controller.js';
+import crmUsersDAO from '../db/crmUsers.dao';
+import ordersDAO from '../db/orders.dao';
+import companiesDAO from '../db/companies.dao';
+import CRUD from './crud.controller';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import requestUtils from '../utils/server/request.utils.js';
-import StripeService from '../services/stripe.service.js';
-import stripeHelper from '../helpers/services/stripe.helper.js';
+import logger from '../../../logs/logger';
+import StripeService from '../services/stripe.service';
+import stripeHelper from '../helpers/services/stripe.helper';
 
-import authHelper from '../helpers/auth/auth.helper.js';
+import authHelper from '../helpers/auth/auth.helper';
 
-import * as Error from '../utils/errors/http/index.js';
-import * as LayerError from '../utils/errors/layer/index.js';
+import { HTTPError } from '@api/v1/utils/errors/http';
+import * as LayerError from '../utils/errors/layer/index';
 
 export default class CompaniesController {
   static async create(req, res, next) {}
@@ -38,7 +37,7 @@ export default class CompaniesController {
       } catch (err) {
         console.log(err);
         if (err.type === 'NOT_FOUND') {
-          throw new Error._400(`${this.DAO.Type} does not exist.`);
+          throw new HTTPError._400(`${this.DAO.Type} does not exist.`);
         }
       }
       if (req.body.serviceArea && req.body.serviceArea.length !== 0) {
@@ -166,7 +165,7 @@ export default class CompaniesController {
     }
 
     let CompaniesDAO = new companiesDAO();
-    let companies = await CompaniesDAO.query_list(
+    let companies = await CompaniesDAO.queryList(
       filters,
       options,
       page,

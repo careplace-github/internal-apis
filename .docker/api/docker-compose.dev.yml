@@ -1,7 +1,7 @@
-version: "3"
+version: "1.0.0"
 name: backend
 services:
-  api:
+  rest-api:
     stdin_open: true
     tty: true
     build: 
@@ -10,7 +10,7 @@ services:
     image: careplace/rest-api-dev:latest
     ports:
       - "8080:8080"
-    container_name: rest-api
+    container_name: rest-api-dev
     volumes:
       - ../../:/usr/src/app
     environment:

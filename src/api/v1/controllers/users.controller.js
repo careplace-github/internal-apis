@@ -1,31 +1,31 @@
 // Import services
-import CognitoService from '../services/cognito.service.js';
-import SES from '../services/ses.service.js';
+import cognitoService from '../services/cognito.service';
+import SES from '../services/ses.service';
 
 // Import DAOs
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import caregiversDAO from '../db/caregivers.dao.js';
-import marketplaceUsersDAO from '../db/marketplaceUsers.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import CRUD from './crud.controller.js';
+import crmUsersDAO from '../db/crmUsers.dao';
+import caregiversDAO from '../db/caregivers.dao';
+import marketplaceUsersDAO from '../db/marketplaceUsers.dao';
+import companiesDAO from '../db/companies.dao';
+import CRUD from './crud.controller';
 
-import authUtils from '../utils/auth/auth.utils.js';
+import authUtils from '../utils/auth/auth.utils';
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from '../../../config/constants/index.js';
+} from '../../../config/constants/index';
 
 // Import Utils
 import password from 'secure-random-password';
-import EmailHelper from '../helpers/emails/email.helper.js';
-import stripe from '../services/stripe.service.js';
-import authHelper from '../helpers/auth/auth.helper.js';
+import emailHelper from '../helpers/emails/email.helper';
+import stripe from '../services/stripe.service';
+import authHelper from '../helpers/auth/auth.helper';
+import SES_Service from '../services/ses.service';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import requestUtils from '../utils/server/request.utils.js';
+import logger from '../../../logs/logger';
 
-import * as Error from '../utils/errors/http/index.js';
+import { HTTPError } from '@api/v1/utils/errors/http';
 import { response } from 'express';
 
 const app = 'crm';
@@ -35,108 +35,39 @@ export default class UsersController {
    * @debug
    * @description
    */
-  static async index(req, res, next) {
-    try {
-      var request = requestUtils(req);
-
-      let filters = {};
-      let options = {};
-      let page = req.query.page != null ? req.query.page : null;
-      let mongodbResponse;
-
-      logger.info('Users Controller INDEX: ' + JSON.stringify(request, null, 2) + '\n');
-
-      // If the companyId query parameter is not null, then we will filter the results by the companyId query parameter.
-      if (req.query.companyId) {
-        filters.companyId = req.query.companyId;
-      }
-
-      // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
-      if (req.query.sortBy) {
-        // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
-        // Otherwise, we will by default sort the results by ascending order.
-        options.sort = {
-          [req.query.sortBy]: req.query.sortOrder == 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
-        };
-      }
-
-      logger.info(
-        'Attempting to get users from MongoDB: ' +
-          JSON.stringify(
-            {
-              filters: filters,
-              options: options,
-              page: page,
-            },
-            null,
-            2
-          ) +
-          '\n'
-      );
-
-      // Get the users from MongoDB.
-      mongodbResponse = await usersDAO.get_list(filters, options, page);
-
-      // If there is an error, then we will return the error.
-      if (mongodbResponse.error != null) {
-        request.statusCode = 400;
-        request.response = { error: mongodbResponse.error.message };
-
-        logger.error(
-          'Error fetching users from MongoDB: ' + JSON.stringify(request, null, 2) + '\n'
-        );
-
-        return res.status(400).json({ error: mongodbResponse.error.message });
-      }
-      // Otherwise, we will return the users.
-      else {
-        request.statusCode = 200;
-        request.response = mongodbResponse;
-
-        return res.status(200).json(mongodbResponse);
-      }
-    } catch (error) {
-      // If there is an internal error, then we will return the error.
-      request.statusCode = 500;
-      request.response = { error: error };
-
-      logger.error('Internal error: ' + JSON.stringify(request, null, 2) + '\n');
-
-      return res.status(500).json({ error: error });
-    }
-  }
-
-  /**
-   * @debug
-   * @description
-   */
   static async create(req, res, next) {
     // try {
-    var request = requestUtils(req);
+
+    let response = {};
 
     const user = req.body;
 
+    let clientID = AWS_COGNITO_CRM_CLIENT_ID;
+
+    const CompaniesDAO = new companiesDAO();
+    const UsersDAO = new crmUsersDAO();
+    const CaregiversDAO = new caregiversDAO();
+    const EmailHelper = new emailHelper();
+    const CognitoService = new cognitoService(clientID);
+
+    let SES = new SES_Service();
+
+    let newCaregiver;
+    let newUser;
+    let temporaryPassword;
+    let cognitoUser;
+
     logger.info('Users Controller CREATE: ' + JSON.stringify(request, null, 2) + '\n');
 
-    // Generate a random password of 8 characters.
-    const temporaryPassword = String(
-      password.randomPassword({
-        characters: [password.lower, password.upper, password.digits],
-        length: 8,
-      })
-    );
-
-    if (user.role == 'admin') {
-      return res.status(400).json({ error: 'Cannot create admin user.' });
-    }
+    logger.info('USER: ' + JSON.stringify(user, null, 2) + '\n');
 
     // Get the company from MongoDB.
-    const company = await companiesDAO.retrieve(user.company);
+    const company = await CompaniesDAO.retrieve(user.company);
 
     // Tried to add a user to a company that doesn't exist.
-    if (company == null) {
-      request.statusCode = 400;
-      request.response = {
+    if (!company) {
+      response.statusCode = 400;
+      response.data = {
         error: 'Company not found. User must be associated with an existing company.',
       };
 
@@ -151,49 +82,89 @@ export default class UsersController {
       });
     }
 
-    // Create a new user in Cognito.
-    const cognitoUser = await CognitoService.addUser(
-      app,
-      user.email,
-      temporaryPassword,
-      user.phoneNumber
-    );
+    // Remove any whitespace from the phone number.
+    user.phone = user.phone.replace(/\s/g, '');
 
-    // Error creating user in Cognito.
-    if (cognitoUser.error != null) {
-      request.statusCode = 400;
-      request.response = { error: cognitoUser.error.message };
+    if (user.permissions.includes('app_user')) {
+      // Generate a random password of 8 characters.
+      temporaryPassword = String(
+        password.randomPassword({
+          characters: [password.lower, password.upper, password.digits],
+          length: 8,
+        })
+      );
 
-      logger.error('Error creating user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
+      // Create a new user in the CRM Cognito User Pool.
+      try {
+        cognitoUser = await CognitoService.addUser(user.email, temporaryPassword, user.phone);
+      } catch (err) {
+        console.error('Error creating user in Cognito: ');
+        console.error(err);
+        switch (err.type) {
+          case 'INVALID_PARAMETER': {
+            console.error('Username already exists: ' + err);
+            response.statusCode = 400;
+            response.data = {
+              error: 'EMAIL_ALREADY_EXISTS',
+            };
+            return next(response);
+          }
 
-      return res.status(400).json({ error: cognitoUser.error.message });
+          default: {
+            logger.error('Internal Server Error: ' + err);
+            response.statusCode = 500;
+            response.data = {
+              error: 'Internal Server Error.',
+            };
+            return next(response);
+          }
+        }
+      }
+
+      console.log('COGNITO USER: ' + JSON.stringify(cognitoUser, null, 2) + '\n');
+
+      user.cognito_id = cognitoUser.UserSub;
+
+      // Confirm the user in Cognito.
+      const confirmUser = CognitoService.adminConfirmUser(user.email);
+
+      // Error confirming user in Cognito.
+      if (confirmUser.error != null) {
+        request.statusCode = 400;
+        request.response = { error: confirmUser.error.message };
+
+        logger.error(
+          'Error confirming user in Cognito: ' + JSON.stringify(request, null, 2) + '\n'
+        );
+
+        return res.status(400).json({ error: confirmUser.error.message });
+      }
     }
 
-    user.cognitoId = cognitoUser.UserSub;
+    // If the user is a caregiver, add them to the caregivers collection.
+    if (user.role == 'caregiver') {
+      try {
+        newCaregiver = await CaregiversDAO.create(user);
+      } catch (err) {
+        logger.error('Error creating caregiver in MongoDB: ' + err);
+        response.statusCode = 500;
+        response.data = {
+          error: 'Internal Server Error.',
+        };
 
-    // Confirm the user in Cognito.
-    const confirmUser = CognitoService.adminConfirmUser(app, user.email);
-
-    // Error confirming user in Cognito.
-    if (confirmUser.error != null) {
-      request.statusCode = 400;
-      request.response = { error: confirmUser.error.message };
-
-      logger.error('Error confirming user in Cognito: ' + JSON.stringify(request, null, 2) + '\n');
-
-      return res.status(400).json({ error: confirmUser.error.message });
+        return next(response);
+      }
+    } else {
+      try {
+        // Add the user to the database.
+        newUser = await UsersDAO.create(user);
+      } catch (err) {
+        logger.error('Error creating user in MongoDB: ' + err);
+      }
     }
-
-    // If there is no error, then the user has been confirmed.
-    if (confirmUser.error == null) {
-      user.emailVerified = true;
-    }
-
-    // Add the user to the database.
-    const newUser = await usersDAO.add(user);
 
     // Error adding user to database.
-    if (newUser.error != null) {
+    if (newUser?.error) {
       // Delete the user from Cognito.
       const deleteUser = await CognitoService.adminDeleteUser(app, user.email);
 
@@ -208,26 +179,28 @@ export default class UsersController {
       return res.status(400).json({ error: newUser.error });
     }
 
-    // Add the new user to the company.
+    response.statusCode = 201;
+    response.data = newUser;
 
-    const addCompanyUser = await companiesDAO.add_user(user.company._id, newUser._id);
+    next(response);
 
-    // Variables to be inserted into email template
-    const emailData = {
-      name: user.name,
-      email: user.email,
-      password: temporaryPassword,
-      company: company.name,
-      gender: user.gender,
-    };
+    if (user.permissions.includes('app_user')) {
+      // Variables to be inserted into email template
+      const emailData = {
+        name: user.name,
+        email: user.email,
+        company: company.business_profile.name,
+        password: temporaryPassword,
+      };
 
-    // Insert variables into email template
-    let email = await EmailHelper.getEmailWithData('crm_new_user', emailData);
+      console.log('EMAIL DATA: ' + JSON.stringify(emailData, null, 2) + '\n');
 
-    // Send email to user
-    SES.sendEmail(user.email, email.subject, email.body);
+      // Insert variables into email template
+      let email = await EmailHelper.getEmailTemplateWithData('crm_new_user', emailData);
 
-    res.status(201).json(newUser);
+      // Send email to user
+      SES.sendEmail([user.email], email.subject, email.htmlBody);
+    }
 
     /**
        *   } catch (error) {
@@ -240,7 +213,7 @@ export default class UsersController {
 
       return res.status(500).json(error);
     }
-       */
+      */
   }
 
   /**
@@ -249,8 +222,6 @@ export default class UsersController {
    */
   static async retrieve(req, res, next) {
     try {
-      var request = requestUtils(req);
-
       const userId = req.params.id;
 
       let CrmUsersDAO = new crmUsersDAO();
@@ -400,21 +371,77 @@ export default class UsersController {
    */
   static async delete(req, res, next) {
     try {
-      var request = requestUtils(req);
+      let response = {};
+      let clientID = AWS_COGNITO_CRM_CLIENT_ID;
 
-      const userId = req.params.userId;
+      const userId = req.params.id;
 
-      // Check if user already exists by verifying the id
-      const userExists = await usersDAO.getUserById(userId);
-      if (!userExists) {
-        return res.status(400).send('User does not exist');
+      if (!userId) {
+        response.statusCode = 400;
+        response.response = { message: 'User id is required.' };
+        return next(response);
       }
 
-      const deletedUser = await usersDAO.deleteUser(userId);
+      let CRMUsersDAO = new crmUsersDAO();
+      let CaregiversDAO = new caregiversDAO();
 
-      res.status(200).json(deletedUser);
+      let user;
+      let isDeleted = false;
+
+      // Try to retrieve user from CRMUsersDAO first
+      user = await CRMUsersDAO.retrieve(userId);
+
+      if (!user) {
+        // If user is not found in CRMUsersDAO, try to retrieve user from CaregiversDAO
+        user = await CaregiversDAO.retrieve(userId);
+
+        if (user) {
+          try {
+            // Delete user from CaregiversDAO
+            await CaregiversDAO.delete(userId);
+            isDeleted = true;
+          } catch (error) {
+            isDeleted = false;
+          }
+        }
+      } else {
+        try {
+          await CRMUsersDAO.delete(userId);
+          isDeleted = true;
+        } catch (error) {
+          isDeleted = false;
+        }
+      }
+
+      // If the user has access to the CRM, delete the user from Cognito
+      if (user?.cognito_id) {
+        const CognitoService = new cognitoService(clientID);
+        try {
+          await CognitoService.adminDeleteUser(user.cognito_id);
+        } catch (error) {
+          throw new HTTPError._500(`Error: ${error}`);
+        }
+      }
+
+      // If user deletion is successful
+      if (isDeleted) {
+        response.statusCode = 200;
+        response.data = { message: 'User deleted.' };
+
+        logger.info(
+          'Users Controller deleteUser result: ' + JSON.stringify(response, null, 2) + '\n'
+        );
+      } else {
+        throw new HTTPError._500(`Unable to delete user`);
+      }
+
+      next(response);
     } catch (error) {
-      next(error);
+      logger.error('Error: ', error);
+
+      response.statusCode = 500;
+      response.data = { error: error };
+      next(response);
     }
   }
 
@@ -432,13 +459,13 @@ export default class UsersController {
 
       companyId = user.company._id;
 
-      let crmUsers = await CrmUsersDAO.query_list({
+      let crmUsers = await CrmUsersDAO.queryList({
         company: companyId,
       });
 
       crmUsers = crmUsers.data;
 
-      let caregivers = await CaregiversDAO.query_list({
+      let caregivers = await CaregiversDAO.queryList({
         company: companyId,
       });
 
@@ -480,7 +507,7 @@ export default class UsersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -513,11 +540,11 @@ export default class UsersController {
         if (app === 'crm') {
           let CrmUsersDAO = new crmUsersDAO();
 
-          user = await CrmUsersDAO.query_one(
+          user = await CrmUsersDAO.queryOne(
             {
-              cognito_id: { $eq: cognitoId },
+              cognito_id: "39425f3b-a637-4e6a-9db4-97fd2132a416" ,
             },
-            {
+            [{
               path: 'company',
               model: 'Company',
               populate: [
@@ -528,26 +555,26 @@ export default class UsersController {
                 },
                 {
                   path: 'team',
-                  model: 'crm_users',
+                  model: 'crm_user',
                   select: '-__v -createdAt -updatedAt -cognito_id -settings -company',
                 },
               ],
               select: '-__v -createdAt -updatedAt',
-            }
+            }]
           );
         } else if (app === 'marketplace') {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
-          user = await MarketplaceUsersDAO.query_one({
+          user = await MarketplaceUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
         }
       } catch (error) {
         switch (error.type) {
           case 'NOT_FOUND':
-            throw new Error._404('User not found.');
+            throw new HTTPError._404('User not found.');
           default:
-            throw new Error._500(error);
+            throw new HTTPError._500(error);
         }
       }
 
@@ -629,7 +656,7 @@ export default class UsersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._400('No authorization token provided.');
+        throw new HTTPError._400('No authorization token provided.');
       }
 
       let AuthHelper = new authHelper();
@@ -666,7 +693,7 @@ export default class UsersController {
         try {
           let CrmUsersDAO = new crmUsersDAO();
 
-          user = await CrmUsersDAO.query_one({
+          user = await CrmUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
 
@@ -675,22 +702,22 @@ export default class UsersController {
 
           updateUser = {
             ...user.toJSON(),
-            ...req.body?.user || req.body,
+            ...(req.body?.user || req.body),
           };
-          console.log("UPDATE USER BEFORE: ", updateUser);
+          console.log('UPDATE USER BEFORE: ', updateUser);
 
           updateUser = await CrmUsersDAO.update(updateUser);
 
-          console.log("UPDATE USER: ", updateUser);
+          console.log('UPDATE USER: ', updateUser);
 
           user = updateUser;
         } catch (error) {
           console.log(error);
           switch (error.type) {
             case 'NOT_FOUND':
-              throw new Error._404('User not found.');
+              throw new HTTPError._404('User not found.');
             default:
-              throw new Error._500(error);
+              throw new HTTPError._500(error);
           }
         }
       }
@@ -699,7 +726,7 @@ export default class UsersController {
         try {
           let MarketplaceUsersDAO = new marketplaceUsersDAO();
 
-          user = await MarketplaceUsersDAO.query_one({
+          user = await MarketplaceUsersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
 
@@ -714,9 +741,9 @@ export default class UsersController {
         } catch (error) {
           switch (error.type) {
             case 'NOT_FOUND':
-              throw new Error._404('User not found.');
+              throw new HTTPError._404('User not found.');
             default:
-              throw new Error._500(error);
+              throw new HTTPError._500(error);
           }
         }
       }

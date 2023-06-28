@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 
-import logger from '../../../../logs/logger.js';
+import logger from '../../../../logs/logger';
 
 import {
   AWS_COGNITO_CRM_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
-} from '../../../../config/constants/index.js';
+} from '../../../../config/constants/index';
 
-import authUtils from '../../utils/auth/auth.utils.js';
+import authUtils from '../../utils/auth/auth.utils';
 
-import * as Error from '../../utils/errors/http/index.js';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
 export default function accessGuard(app: string) {
   return async function (req: Request, res: Response, next: NextFunction) {
@@ -23,21 +23,23 @@ export default function accessGuard(app: string) {
       }
 
       if (!req.headers.authorization) {
-        throw new Error._401(`Missing required authorization header.`);
+        throw new HTTPError._401(`Missing required authorization header.`);
       }
 
       let accessToken = req.headers.authorization.split(' ')[1];
 
       let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
 
-      let userClientId = decodedToken['client_id'];
+      let userClientId = decodedToken['client_id'] as string;
 
-      logger.info(decodedToken);
+      logger.info(`User Client Id: ${userClientId}`);
+      logger.info(`App Client Id: ${app}`);
 
       if (userClientId === app) {
+        logger.info(`User passed endpoint access guard.`);
         next();
       } else {
-        throw new Error._403(
+        throw new HTTPError._403(
           `You do not have access to this endpoint. Please contact your administrator.`
         );
       }

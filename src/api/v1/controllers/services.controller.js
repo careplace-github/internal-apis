@@ -1,28 +1,22 @@
 // Import logger
-import logger from "../../../logs/logger.js";
-import requestUtils from "../utils/server/request.utils.js";
-import CRUD from "./crud.controller.js";
-import * as Error from "../utils/errors/http/index.js";
+import logger from '../../../logs/logger';
+import CRUD from './crud.controller';
+import { HTTPError } from '@api/v1/utils/errors/http';
 
-import servicesDAO from "../db/services.dao.js";
+import servicesDAO from '../db/services.dao';
 
 export default class ServicesController {
-
-
   static async listServices(req, res, next) {
     let ServicesDAO = new servicesDAO();
 
     try {
-      var services = await ServicesDAO.query_list();
+      var services = await ServicesDAO.queryList();
     } catch (err) {
-      throw new Error._500(err);
+      throw new HTTPError._500(err);
     }
 
     res.status(200).json(services);
   }
-
-
-
 
   static async create(req, res, next) {}
 

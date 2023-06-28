@@ -1,34 +1,29 @@
 // Import the express module
-import express from "express";
+import express from 'express';
 
 // Import Middlewares
-import InputValidation from "../middlewares/validators/inputValidation.middleware.js";
-import AuthenticationGuard from "../middlewares/guards/authenticationGuard.middleware";
-import {
-  AddEventValidator,
-  UpdateEventValidator,
-} from "../validators/events.validator.js";
+import InputValidation from '../middlewares/validators/inputValidation.middleware';
+import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
+import { AddEventValidator, UpdateEventValidator } from '../validators/events.validator';
 
-import CreateEventSeriesValidator from "../validators/eventsSeries.validator.js";
 
 // Import Controller
-import CalendarController from "../controllers/calendar.controller";
-import AccessGuard from "../middlewares/guards/accessGuard.middleware";
+import CalendarController from '../controllers/calendar.controller';
+import AccessGuard from '../middlewares/guards/accessGuard.middleware';
 
 const router = express.Router();
 
 router
-  .route("/calendar/events")
+  .route('/calendar/events')
   .get(
     AuthenticationGuard,
-    AccessGuard("crm"),
-    
-    
+    AccessGuard('crm'),
+
     CalendarController.listEvents
   )
   .post(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     AddEventValidator,
     InputValidation,
@@ -36,59 +31,45 @@ router
   );
 
 router
-  .route("/calendar/events/:id")
-  .get(
-    AuthenticationGuard,
-    AccessGuard("crm"),
-    InputValidation,
-    CalendarController.retrieveEvent
-  )
+  .route('/calendar/events/:id')
+  .get(AuthenticationGuard, AccessGuard('crm'), InputValidation, CalendarController.retrieveEvent)
   .put(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     UpdateEventValidator,
     InputValidation,
     CalendarController.update_event
   )
-  .delete(
-    AuthenticationGuard,
-    AccessGuard("crm"),
-    InputValidation,
-    CalendarController.deleteEvent
-  );
+  .delete(AuthenticationGuard, AccessGuard('crm'), InputValidation, CalendarController.deleteEvent);
 
 router
-  .route("/calendar/events-series")
+  .route('/calendar/events-series')
   .get(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     CalendarController.listEventsSeries
   )
-  .post(
-    AuthenticationGuard,
-    InputValidation,
-    CalendarController.createEventSeries
-  );
+  .post(AuthenticationGuard, InputValidation, CalendarController.createEventSeries);
 
 router
-  .route("/calendar/events-series/:id")
+  .route('/calendar/events-series/:id')
   .get(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     CalendarController.retrieveEventSeries
   )
   .put(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     CalendarController.updateEventSeries
   )
   .delete(
     AuthenticationGuard,
-    AccessGuard("crm"),
+    AccessGuard('crm'),
     InputValidation,
     CalendarController.deleteEventSeries
   );
