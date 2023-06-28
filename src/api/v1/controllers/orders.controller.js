@@ -1,34 +1,34 @@
 // Import Cognito Service
-import CognitoService from '../services/cognito.service.js';
+import CognitoService from '../services/cognito.service';
 
 // Import database access objects
-import ordersDAO from '../db/orders.dao.js';
-import companiesDAO from '../db/companies.dao.js';
-import usersDAO from '../db/marketplaceUsers.dao.js';
-import relativesDAO from '../db/relatives.dao.js';
-import crmUsersDAO from '../db/crmUsers.dao.js';
-import caregiversDAO from '../db/caregivers.dao.js';
-import eventsSeriesDAO from '../db/eventsSeries.dao.js';
+import ordersDAO from '../db/orders.dao';
+import companiesDAO from '../db/companies.dao';
+import usersDAO from '../db/marketplaceUsers.dao';
+import relativesDAO from '../db/relatives.dao';
+import crmUsersDAO from '../db/crmUsers.dao';
+import caregiversDAO from '../db/caregivers.dao';
+import eventsSeriesDAO from '../db/eventsSeries.dao';
 
-import CRUD from './crud.controller.js';
+import CRUD from './crud.controller';
 
-import * as Error from '../utils/errors/http/index.js';
-import authHelper from '../helpers/auth/auth.helper.js';
+import { HTTPError } from '@api/v1/utils/errors/http';
+import authHelper from '../helpers/auth/auth.helper';
 
-import emailHelper from '../helpers/emails/email.helper.js';
-import SES_Service from '../services/ses.service.js';
+import emailHelper from '../helpers/emails/email.helper';
+import SES_Service from '../services/ses.service';
 
 // Import logger
-import logger from '../../../logs/logger.js';
-import dateUtils from '../utils/data/date.utils.js';
-import authUtils from '../utils/auth/auth.utils.js';
-import cognito from '../services/cognito.service.js';
+import logger from '../../../logs/logger';
+import dateUtils from '../utils/data/date.utils';
+import authUtils from '../utils/auth/auth.utils';
+import cognito from '../services/cognito.service';
 
 /**
- * Import the JSON Object from /src/assets/data/services.json
+ * Import the JSON Object from /src/assets/data/serviceson
  */
-import { services } from '../../../assets/data/services.js';
-import RelativesDAO from '../db/relatives.dao.js';
+import { services } from '../../../assets/data/services';
+import RelativesDAO from '../db/relatives.dao';
 
 /**
  *  let OrdersDAO = new ordersDAO();
@@ -48,7 +48,7 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       let CompaniesDAO = new companiesDAO();
@@ -60,26 +60,26 @@ export default class OrdersController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      let relative = await RelativesDAO.query_one(
+      let relative = await RelativesDAO.queryOne(
         { user: user._id },
         {
           path: 'user',
-          model: 'marketplace_users',
+          model: 'marketplace_user',
         }
       );
 
       if (relative === null || relative === undefined || relative === '') {
-        throw new Error._400('Relative not found');
+        throw new HTTPError._400('Relative not found');
       }
 
       if (relative === null || relative === undefined || relative === '') {
-        throw new Error._400('Relative not found');
+        throw new HTTPError._400('Relative not found');
       }
 
-      let company = await CompaniesDAO.query_one({ _id: order.company });
+      let company = await CompaniesDAO.queryOne({ _id: order.company });
 
       if (company === null || company === undefined || company === '') {
-        throw new Error._400('Company not found');
+        throw new HTTPError._400('Company not found');
       }
 
       order.user = user._id;
@@ -170,7 +170,7 @@ export default class OrdersController {
       );
 
       const crmUsers = (
-        await CRMUsersDAO.query_list({
+        await CRMUsersDAO.queryList({
           company: { $eq: orderCreated.company },
         })
       ).data;
@@ -224,7 +224,7 @@ export default class OrdersController {
 
         user = await AuthHelper.getUserFromDB(accessToken);
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
@@ -247,6 +247,7 @@ export default class OrdersController {
             },
             {
               path: 'user',
+              model: 'marketplace_user',
               select: 'name email phone address -_id',
             },
           ]
@@ -254,7 +255,7 @@ export default class OrdersController {
       } catch (err) {
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -277,16 +278,16 @@ export default class OrdersController {
     let updatedOrder = req.body;
 
     if (updatedOrder.company && order.company !== updatedOrder.company) {
-      throw new Error.BadRequest('You cannot change the company of an order.');
+      throw new HTTPError.BadRequest('You cannot change the company of an order.');
     }
     if (updatedOrder.user && order.user !== updatedOrder.user) {
-      throw new Error.BadRequest('You cannot change the user of an order.');
+      throw new HTTPError.BadRequest('You cannot change the user of an order.');
     }
     if (updatedOrder.relatives && order.relatives !== updatedOrder.relatives) {
-      throw new Error.BadRequest('You cannot change the relatives of an order.');
+      throw new HTTPError.BadRequest('You cannot change the relatives of an order.');
     }
     if (updatedOrder.caregiver && order.caregiver !== updatedOrder.caregiver) {
-      throw new Error.BadRequest('You cannot change the caregiver of an order.');
+      throw new HTTPError.BadRequest('You cannot change the caregiver of an order.');
     }
     await OrdersCRUD.update(req, res, next);
   }
@@ -314,11 +315,11 @@ export default class OrdersController {
 
         user = await AuthHelper.getUserFromDB(accessToken);
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
-        documents = await OrdersDAO.query_list(
+        documents = await OrdersDAO.queryList(
           {
             user: user._id,
           },
@@ -344,7 +345,7 @@ export default class OrdersController {
       } catch (err) {
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -376,7 +377,7 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('No Authorization header found.');
+        throw new HTTPError._401('No Authorization header found.');
       }
 
       try {
@@ -386,12 +387,12 @@ export default class OrdersController {
         console.log(`ERROR 4: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
       try {
-        documents = await OrdersDAO.query_list(
+        documents = await OrdersDAO.queryList(
           {
             company: { $eq: companyId },
           },
@@ -403,7 +404,7 @@ export default class OrdersController {
           [
             {
               path: 'user',
-              model: 'marketplace_users',
+              model: 'marketplace_user',
               select: '-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v',
             },
             {
@@ -427,7 +428,7 @@ export default class OrdersController {
         console.log(`ERROR 5: ${err}`);
         switch (err.type) {
           default:
-            throw new Error._500(err.message);
+            throw new HTTPError._500(err.message);
         }
       }
 
@@ -460,17 +461,17 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
       if (!caregiver) {
-        throw new Error._400('Missing caregiver.');
+        throw new HTTPError._400('Missing caregiver.');
       }
 
       let caregiverExists = await CaregiversDAO.retrieve(caregiver);
 
       if (!caregiverExists) {
-        throw new Error._400('Caregiver does not exist.');
+        throw new HTTPError._400('Caregiver does not exist.');
       }
 
       let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
@@ -480,11 +481,11 @@ export default class OrdersController {
       let order = await OrdersDAO.retrieve(req.params.id);
 
       if (companyId.toString() !== order.company.toString()) {
-        throw new Error._403('You are not authorized to accept this order.');
+        throw new HTTPError._403('You are not authorized to accept this order.');
       }
 
       if (order.status !== 'new') {
-        throw new Error._400('You cannot accept this order.');
+        throw new HTTPError._400('You cannot accept this order.');
       }
 
       order.status = 'accepted';
@@ -500,29 +501,28 @@ export default class OrdersController {
       next(response);
 
       // From the users.relatives array, get the relative that matches the relative id in the order
-      let relative = await RelativesDAO.query_one({ _id: order.relative });
-      let company = await CompaniesDAO.query_one({ _id: order.company });
-      let user = await UsersDAO.query_one({ _id: order.user });
+      let relative = await RelativesDAO.queryOne({ _id: order.relative });
+      let company = await CompaniesDAO.queryOne({ _id: order.company });
+      let user = await UsersDAO.queryOne({ _id: order.user });
 
-      if(order.schedule_information.recurrency !== 0) {
+      if (order.schedule_information.recurrency !== 0) {
+        let eventSeries = {
+          user: order.user,
+          company: order.company,
+          order: order._id,
+          caregiver: order.caregiver,
 
-      let eventSeries = {
-        user: order.user,
-        company: order.company,
-        order: order._id,
-        caregiver: order.caregiver,
+          start_date: order.schedule_information.start_date,
 
-        start_date: order.schedule_information.start_date,
+          recurrency_type: order.schedule_information.recurrency,
 
-        recurrency_type: order.schedule_information.recurrency,
+          schedule: order.schedule_information.schedule,
 
-        schedule: order.schedule_information.schedule,
+          title: relative.name,
+        };
 
-        title: relative.name,
-      };
-
-      let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
-    }
+        let eventSeriesAdded = await EventsSeriesDAO.create(eventSeries);
+      }
 
       let EmailHelper = new emailHelper();
       let SES = new SES_Service();
@@ -551,7 +551,7 @@ export default class OrdersController {
         .join(', ');
 
       const crmUsers = (
-        await CRMUsersDAO.query_list({
+        await CRMUsersDAO.queryList({
           company: { $eq: order.company },
         })
       ).data;
@@ -655,6 +655,8 @@ export default class OrdersController {
 
   static async sendQuote(req, res, next) {
     try {
+      let response = {};
+
       let AuthHelper = new authHelper();
       let OrdersDAO = new ordersDAO();
       let CompaniesDAO = new companiesDAO();
@@ -666,57 +668,89 @@ export default class OrdersController {
       if (req.headers.authorization) {
         accessToken = req.headers.authorization.split(' ')[1];
       } else {
-        throw new Error._401('Missing required access token.');
+        throw new HTTPError._401('Missing required access token.');
       }
 
-      let companyId = await AuthHelper.getUserAttributes(accessToken).then((data) => {
-        let companyId = data.find((item) => {
-          console.log(item);
-          if (item.Name === 'custom:company') {
-            return item.Value;
-          }
-        });
+      const { order_total } = req.body;
 
-        return companyId.Value;
-      });
+      if (!order_total) {
+        throw new HTTPError._400('Missing required fields.');
+      }
 
-      let order = await OrdersDAO.query_one({ _id: req.params.id }, [
-        {
-          path: 'relative',
-          model: 'Relative',
-        },
-        {
-          path: 'company',
-          model: 'Company',
-          populate: {
-            path: 'legal_information',
-            populate: {
-              path: 'director',
-              model: 'crm_users',
-            },
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      let companyId = user.company._id;
+
+      let order;
+
+      try {
+        order = await OrdersDAO.queryOne({ _id: req.params.id }, [
+          {
+            path: 'relative',
+            model: 'Relative',
           },
-        },
-        {
-          path: 'services',
-          model: 'Service',
-        },
-        {
-          path: 'user',
-          model: 'marketplace_users',
-        },
-      ]);
+          {
+            path: 'company',
+            model: 'Company',
+          },
+          {
+            path: 'services',
+            model: 'Service',
+          },
+          {
+            path: 'user',
+            model: 'marketplace_user',
+          },
+        ]);
+      } catch (error) {
+        switch (error.type) {
+          case 'NOT_FOUND': {
+            response.statusCode = 404;
+            response.data = {
+              error: error.message,
+              type: 'NOT_FOUND',
+            };
 
-      if (companyId != order.company._id) {
-        throw new Error._403('You are not authorized to send a quote for this order.');
+            return next(response);
+          }
+
+          default: {
+            response.statusCode = 500;
+            response.data = {
+              error: error.message,
+            };
+
+            return next(response);
+          }
+        }
       }
+
+      logger.info("USER'S COMPANY ID: " + companyId);
+
+      logger.info('ORDER COMPANY ID: ' + order.company._id);
+
+      logger.info('EQUALS ? ' + (companyId.toString() === order.company._id.toString()));
+
+      logger.info('USER PERMISSIONS: ' + user.permissions);
+
+      if (
+        companyId.toString() !== order.company._id.toString() ||
+        !user?.permissions?.includes('orders_edit')
+      ) {
+        throw new HTTPError._403('You are not authorized to send a quote for this order.');
+      }
+
+      order.order_total = order_total;
+
+      await OrdersDAO.update(order);
 
       /**
        *  if(order.status != "pending"){
-        throw new Error._400("You cannot send a quote for this order.");
+        throw new HTTPError._400("You cannot send a quote for this order.");
       }
        */
 
-      let response = {
+      response = {
         statusCode: 200,
         data: order,
       };
@@ -753,9 +787,9 @@ export default class OrdersController {
 
         link: `https://www.careplace.pt/checkout/orders/${order._id}`,
 
-        subTotal: (order.order_total / 1.23).toFixed(2),
-        taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),
-        total: order.order_total.toFixed(2),
+        subTotal: (order.order_total / 1.23 / 100).toFixed(2),
+        taxAmount: ((order.order_total - order.order_total / 1.23) / 100).toFixed(2),
+        total: (order.order_total / 100).toFixed(2),
 
         orderStart: orderStart,
         orderSchedule: schedule,
@@ -780,11 +814,16 @@ export default class OrdersController {
         userEmailPayload
       );
 
+      logger.info('EMAIL ' + order.user.email);
+
       await SES.sendEmail(
         [order.user.email],
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
       );
+
+      return;
+
       /**
        * @todo Send the email in BCC for each employee of the company that has one of the roles ['admin', 'manager', 'employee'] and that has the 'email_notifications' field set to true
        */

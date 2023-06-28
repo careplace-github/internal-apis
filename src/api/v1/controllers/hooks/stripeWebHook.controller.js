@@ -1,29 +1,26 @@
 // Import database access objects
 
 // Import Services
-import stripe from "../../services/stripe.service.js";
+import stripe from '../../services/stripe.service';
 
-import * as Error from "../../utils/errors/http/httpError.js";
+import * as Error from '../../utils/errors/http/httpError';
 
-import { buffer } from "micro";
+import { buffer } from 'micro';
 
 import {
   STRIPE_ACCOUNT_ENDPOINT_SECRET,
   STRIPE_CONNECT_ENDPOINT_SECRET,
-} from "../../../../config/constants/index.js";
+} from '../../../../config/constants/index';
 
-import logger from "../../../../logs/logger.js";
-import stripeHelper from "../../helpers/services/stripe.helper.js";
-import emailHelper from "../../helpers/emails/email.helper.js";
-import dateUtils from "../../utils/data/date.utils.js";
+import logger from '../../../../logs/logger';
+import stripeHelper from '../../helpers/services/stripe.helper';
+import emailHelper from '../../helpers/emails/email.helper';
+import dateUtils from '../../utils/data/date.utils';
 
-import OrdersDAO from "../../db/orders.dao.js";
+import OrdersDAO from '../../db/orders.dao';
 
-import {
-  STRIPE_APPLICATION_FEE,
-  STRIPE_PRODUCT_ID,
-} from "../../../../config/constants/index.js";
-import ordersDAO from "../../db/orders.dao.js";
+import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../../config/constants/index';
+import ordersDAO from '../../db/orders.dao';
 
 /**
  * Controller for Stripe Webhooks
@@ -58,22 +55,18 @@ export default class StripeWebhooksController {
     let OrdersDAO = new ordersDAO();
 
     if (req.headers) {
-      if (req.headers["stripe-signature"]) {
-        sig = req.headers["stripe-signature"];
+      if (req.headers['stripe-signature']) {
+        sig = req.headers['stripe-signature'];
       } else {
-        throw new Error._401("Invalid signature.");
+        throw new HTTPError._401('Invalid signature.');
       }
     } else {
-      throw new Error._401("No headers provided.");
+      throw new HTTPError._401('No headers provided.');
     }
 
     // let reqBuffer = await buffer(req);
 
-    event = await Stripe.constructEvent(
-      req.body,
-      sig,
-      STRIPE_CONNECT_ENDPOINT_SECRET
-    );
+    event = await Stripe.constructEvent(req.body, sig, STRIPE_CONNECT_ENDPOINT_SECRET);
 
     /**
      * Handle the Event Notifications for Connect Integration
@@ -84,43 +77,43 @@ export default class StripeWebhooksController {
       /**
        * Occurs when a user disconnects from your account and can be used to trigger required cleanup on your server. Available for Standard accounts.
        */
-      case "account.application.deauthorized	":
+      case 'account.application.deauthorized	':
         break;
 
       /**
        *	Allows you to monitor changes to connected account requirements and status changes. Available for Standard, Express, and Custom accounts.
        */
-      case "account.updated":
+      case 'account.updated':
         break;
 
       /**
        *	If you use the Persons API, allows you to monitor changes to requirements and status changes for individuals. Available for Express and Custom accounts.
        */
-      case "person.updated":
+      case 'person.updated':
         break;
 
       /**
        *	Occurs when a payment intent results in a successful charge. Available for all payments, including destination and direct charges
        */
-      case "payment_intent.succeeded":
+      case 'payment_intent.succeeded':
         break;
 
       /**
        *	Occurs when your Stripe balance has been updated (for example, when funds you’ve added from your bank account are available for transfer to your connected account).
        */
-      case "balance.available":
+      case 'balance.available':
         break;
 
       /**
        *Occurs when a bank account or debit card attached to a connected account is updated, which can impact payouts. Available for Express and Custom accounts.
        */
-      case "account.external_account.updated":
+      case 'account.external_account.updated':
         break;
 
       /**
        *	Occurs when a payout fails. When a payout fails, the external account involved will be disabled, and no automatic or manual payouts can go through until the external account is updated.
        */
-      case "payout.failed":
+      case 'payout.failed':
         break;
     }
 
@@ -133,38 +126,38 @@ export default class StripeWebhooksController {
       /**
        * Sent when a Customer is successfully created.
        */
-      case "customer.created":
+      case 'customer.created':
         break;
 
       /**
        *	Sent when the subscription is created. The subscription status may be incomplete if customer authentication is required to complete the payment or if you set payment_behavior to default_incomplete. For more details, read about subscription payment behavior.
        */
-      case "customer.subscription.created":
+      case 'customer.subscription.created':
         break;
 
       /**
        * Sent when a customer’s subscription ends.
        */
-      case "customer.subscription.deleted":
+      case 'customer.subscription.deleted':
         break;
 
       /**
        * 	Sent three days before the trial period ends. If the trial is less than three days, this event is triggered.
        */
-      case "customer.subscription.trial_will_end":
+      case 'customer.subscription.trial_will_end':
         break;
 
       /**
        * Sent when the subscription is successfully started, after the payment is confirmed. Also sent whenever a subscription is changed. For example, adding a coupon, applying a discount, adding an invoice item, and changing plans all trigger this event.
        */
-      case "customer.subscription.updated":
+      case 'customer.subscription.updated':
         break;
 
       /**
        * Sent when an invoice is created for a new or renewing subscription. If Stripe fails to receive a successful response to invoice.created, then finalizing all invoices with automatic collection is delayed for up to 72 hours. Read more about finalizing invoices.
        * Respond to the notification by sending a request to the Finalize an invoice API.
        */
-      case "invoice.created":
+      case 'invoice.created':
         break;
 
       /**
@@ -172,7 +165,7 @@ export default class StripeWebhooksController {
        * You can send the invoice to the customer. Read more about invoice finalization.
        * Depending on your settings, Stripe automatically charges the default payment method or attempts collection. Read more about emails after finalization.
        */
-      case "invoice.finalized":
+      case 'invoice.finalized':
         break;
 
       /**
@@ -183,52 +176,50 @@ export default class StripeWebhooksController {
        * If automatic_tax[status]=failed, retry the request later.
        */
 
-      case "invoice.finalization_failed":
+      case 'invoice.finalization_failed':
         break;
 
       /**
        * Sent when the invoice is successfully paid. You can provision access to your product when you receive this event and the subscription status is active.
        */
-      case "invoice.paid":
+      case 'invoice.paid':
         let subscriptionId = event.data.object.subscription;
         let chargeId = event.data.object.charge;
 
         let receipt = await StripeHelper.getReceipt(subscriptionId);
 
-        let receiptDate = await DateUtils.getDateFromUnixTimestamp(
-          event.data.object.created
-        );
+        let receiptDate = await DateUtils.getDateFromUnixTimestamp(event.data.object.created);
 
         let order;
 
         while (order === null || order === undefined) {
-          order = await OrdersDAO.query_one(
+          order = await OrdersDAO.queryOne(
             {
               stripe_subscription_id: subscriptionId,
             },
             [
               {
-                path: "relative",
-                model: "Relative",
+                path: 'relative',
+                model: 'Relative',
               },
               {
-                path: "company",
-                model: "Company",
+                path: 'company',
+                model: 'Company',
                 populate: {
-                  path: "legal_information",
+                  path: 'legal_information',
                   populate: {
-                    path: "director",
-                    model: "crm_users",
+                    path: 'director',
+                    model: 'crm_user',
                   },
                 },
               },
               {
-                path: "services",
-                model: "Service",
+                path: 'services',
+                model: 'Service',
               },
               {
-                path: "user",
-                model: "marketplace_users",
+                path: 'user',
+                model: 'marketplace_user',
               },
             ]
           );
@@ -244,11 +235,9 @@ export default class StripeWebhooksController {
           .map((service) => {
             return service.name;
           })
-          .join(", ");
+          .join(', ');
 
-        let birthdate = await DateUtils.convertDateToReadableString(
-          order.relative.birthdate
-        );
+        let birthdate = await DateUtils.convertDateToReadableString(order.relative.birthdate);
 
         let orderStart = await DateUtils.convertDateToReadableString2(
           order.schedule_information.start_date
@@ -260,12 +249,8 @@ export default class StripeWebhooksController {
 
         let receiptLink = await StripeHelper.getReceiptLink(subscriptionId);
 
-        let paymentMethod = await StripeHelper.getPaymentMethodByChargeId(
-          chargeId
-        );
-        let billingAddress = await StripeHelper.getBillingAddressByChargeId(
-          chargeId
-        );
+        let paymentMethod = await StripeHelper.getPaymentMethodByChargeId(chargeId);
+        let billingAddress = await StripeHelper.getBillingAddressByChargeId(chargeId);
 
         logger.inf;
 
@@ -282,13 +267,13 @@ export default class StripeWebhooksController {
           taxAmount: (event.data.object.tax / 100).toFixed(2),
           total: (event.data.object.total / 100).toFixed(2),
 
-          orderNumber: event.data.object.number.replace("A53F4B19-", ""),
+          orderNumber: event.data.object.number.replace('A53F4B19-', ''),
           receiptDate: receiptDate,
 
           paymentMethod:
             paymentMethod.card.brand !== null
               ? paymentMethod.card.brand.toUpperCase()
-              : "SEPA Direct Debit",
+              : 'SEPA Direct Debit',
 
           relativeName: order.relative.name,
           relativeBirthdate: birthdate,
@@ -296,7 +281,7 @@ export default class StripeWebhooksController {
             order.relative.medical_information !== undefined &&
             order.relative.medical_information !== null
               ? relative.medical_information
-              : "n/a",
+              : 'n/a',
 
           relativeStreet: order.relative.address.street,
           relativeCity: order.relative.address.city,
@@ -304,11 +289,10 @@ export default class StripeWebhooksController {
           relativeCountry: order.relative.address.country,
         };
 
-        let marketplaceOrderPayedEmail =
-          await EmailHelper.getEmailTemplateWithData(
-            "marketplace_order_payed",
-            userEmailPayload
-          );
+        let marketplaceOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
+          'marketplace_order_payed',
+          userEmailPayload
+        );
 
         await EmailHelper.sendEmailWithAttachment(
           paymentMethod.billing_details.email,
@@ -317,7 +301,7 @@ export default class StripeWebhooksController {
           null,
           [receipt],
           null,
-          "orders@staging.careplace.pt"
+          'orders@staging.careplace.pt'
         );
 
         let companyEmailPayload = {
@@ -341,7 +325,7 @@ export default class StripeWebhooksController {
             order.relative.medical_information !== undefined &&
             order.relative.medical_information !== null
               ? relative.medical_information
-              : "n/a",
+              : 'n/a',
 
           relativeStreet: order.relative.address.street,
           relativeCity: order.relative.address.city,
@@ -353,7 +337,7 @@ export default class StripeWebhooksController {
         };
 
         let crmOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
-          "crm_order_payed",
+          'crm_order_payed',
           companyEmailPayload
         );
 
@@ -364,7 +348,7 @@ export default class StripeWebhooksController {
           null,
           [receipt],
           null,
-          "orders@staging.careplace.pt"
+          'orders@staging.careplace.pt'
         );
 
         break;
@@ -372,7 +356,7 @@ export default class StripeWebhooksController {
       /**
        * Sent when the invoice requires customer authentication. Learn how to handle the subscription when the invoice requires action.
        */
-      case "invoice.payment_action_required":
+      case 'invoice.payment_action_required':
         break;
 
       /**
@@ -381,31 +365,31 @@ export default class StripeWebhooksController {
        * If you’re using PaymentIntents, collect new payment information and confirm the PaymentIntent.
        * Update the default payment method on the subscription.
        */
-      case "invoice.payment_failed":
+      case 'invoice.payment_failed':
         break;
 
       /**
        * Sent a few days prior to the renewal of the subscription. The number of days is based on the number set for Upcoming renewal events in the Dashboard. You can still add extra invoice items, if needed.
        */
-      case "invoice.upcoming":
+      case 'invoice.upcoming':
         break;
 
       /**
        * Sent when a payment succeeds or fails. If payment is successful the paid attribute is set to true and the status is paid. If payment fails, paid is set to false and the status remains open. Payment failures also trigger a invoice.payment_failed event.
        */
-      case "invoice.updated":
+      case 'invoice.updated':
         break;
 
       /**
        * Sent when a PaymentIntent is created.
        */
-      case "payment_intent.created":
+      case 'payment_intent.created':
         break;
 
       /**
        * Sent when a PaymentIntent has successfully completed payment.
        */
-      case "payment_intent.succeeded":
+      case 'payment_intent.succeeded':
         break;
 
       default:

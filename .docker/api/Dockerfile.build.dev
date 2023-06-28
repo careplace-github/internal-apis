@@ -1,0 +1,20 @@
+FROM node:16.17.0-bullseye-slim
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN yarn cache clean --force
+
+RUN yarn config delete proxy
+
+RUN npm config rm proxy
+
+RUN npm config rm https-proxy
+
+RUN yarn --network-timeout 100000
+
+RUN yarn build
+
+CMD [ "yarn", "start" ]
+
