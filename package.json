@@ -82,7 +82,9 @@
     "stripe": "^11.4.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.4.0",
+    "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4",
     "uuid": "^9.0.0",
     "winston": "^3.8.2",
@@ -123,7 +125,6 @@
     "rimraf": "^5.0.0",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.1",
     "webpack-cli": "^4.10.0"
   }
 }
