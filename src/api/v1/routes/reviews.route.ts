@@ -24,4 +24,9 @@ router
   .route('/users/reviews')
   .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.getUserReviews);
 
+  router
+  .route('/users/reviews/companies/:id')
+  .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.getUserCompanyReview);
+
+
 export default router;
