@@ -10,11 +10,11 @@
     ]
   },
   "scripts": {
-    "start": "node build/server.js",
+    "start": "ts-node --project tsconfig.json -r tsconfig-paths/register build/server.js",
     "build": "rimraf ./build && tsc --project tsconfig.json",
     "dev": "yarn dev:backend",
     "dev:backend": "nodemon --exec ts-node -r tsconfig-paths/register --esm ./src/server.ts",
-    "dev:ngrok": "npx ngrok http 8080 --host-header=rewrite --config=ngrok.yml",
+    "dev:ngrok": "npx ngrok http 8080 --host-header=rewrite --config=.ngrok/ngrok.yml",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .js,.ts",
