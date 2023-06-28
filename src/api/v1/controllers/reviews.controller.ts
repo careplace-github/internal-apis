@@ -342,4 +342,40 @@ export default class ReviewsController {
       next(error);
     }
   }
+
+  static async getUserReviews(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      let response: IAPIResponse = {
+        statusCode: 100, // request received
+        data: {},
+      };
+
+      const accessToken = req.headers['authorization']!.split(' ')[1];
+
+      const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
+
+      const userId = user._id;
+
+      const filters: FilterQuery<IReview> = {
+        user: userId,
+      };
+
+      const reviews = (await ReviewsController.ReviewsDAO.queryList(filters))
+
+      response.data = reviews.data;
+
+      if (reviews.data.length === 0) {
+        response.statusCode = 204;
+      } else {
+        response.statusCode = 200;
+      }
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+
+      return next(new HTTPError._500(error.message));
+    }
+  }
 }
