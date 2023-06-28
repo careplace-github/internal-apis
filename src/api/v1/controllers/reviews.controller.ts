@@ -123,9 +123,9 @@ export default class ReviewsController {
 
       // Pass to the next middleware to handle the response
       next(response);
-    } catch (error) {
+    } catch (error: any) {
       // Pass to the next middleware to handle the error
-      next(error);
+      return next(new HTTPError._500(error.message));
     }
   }
 
@@ -183,8 +183,9 @@ export default class ReviewsController {
 
       response.statusCode = 200;
       next(response);
-    } catch (error) {
-      next(error);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
     }
   }
 
@@ -210,9 +211,9 @@ export default class ReviewsController {
 
       // Pass to the next middleware to handle the response
       next(response);
-    } catch (error) {
+    } catch (error: any) {
       // Pass to the next middleware to handle the error
-      next(error);
+      return next(new HTTPError._500(error.message));
     }
   }
 
@@ -272,9 +273,9 @@ export default class ReviewsController {
 
       // Pass to the next middleware to handle the response
       next(response);
-    } catch (error) {
+    } catch (error: any) {
       // Pass to the next middleware to handle the error
-      next(error);
+      return next(new HTTPError._500(error.message));
     }
   }
 
@@ -337,9 +338,9 @@ export default class ReviewsController {
 
       // Pass to the next middleware to handle the response
       next(response);
-    } catch (error) {
+    } catch (error: any) {
       // Pass to the next middleware to handle the error
-      next(error);
+      return next(new HTTPError._500(error.message));
     }
   }
 
@@ -360,7 +361,7 @@ export default class ReviewsController {
         user: userId,
       };
 
-      const reviews = (await ReviewsController.ReviewsDAO.queryList(filters))
+      const reviews = await ReviewsController.ReviewsDAO.queryList(filters);
 
       response.data = reviews.data;
 
@@ -374,7 +375,6 @@ export default class ReviewsController {
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
-
       return next(new HTTPError._500(error.message));
     }
   }
