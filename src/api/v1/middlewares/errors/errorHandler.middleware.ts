@@ -78,6 +78,18 @@ export default function ErrorHandler(
     };
     return next(response);
   }
+  if (err instanceof Error) {
+    const response: IAPIResponse = {
+      data: {
+        error: {
+          message: err.message,
+          type: 'VALIDATION_ERROR',
+        },
+      },
+      statusCode: 400,
+    };
+    return next(response);
+  }
 
   /**
    * If the err is not an instance of HTTP_Error or LayerError, then it is a normal response that successfully passed through the application.
