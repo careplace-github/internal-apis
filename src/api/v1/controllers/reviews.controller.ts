@@ -378,4 +378,56 @@ export default class ReviewsController {
       return next(new HTTPError._500(error.message));
     }
   }
+
+  static async getUserCompanyReview(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let response: IAPIResponse = {
+        statusCode: 100, // request received
+        data: {},
+      };
+
+      const accessToken = req.headers['authorization']!.split(' ')[1];
+
+      const companyId = req.params.id;
+
+      if (!companyId) {
+        throw new HTTPError._400('Company ID is required.');
+      }
+
+      const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
+
+      const userId = user._id;
+
+      const filters: FilterQuery<IReview> = {
+        user: userId,
+        company: companyId,
+      };
+
+      try {
+        const review = await ReviewsController.ReviewsDAO.queryOne(filters);
+
+        response.data = review;
+
+        response.statusCode = 200;
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            response.statusCode = 204;
+            break;
+          default:
+            throw new HTTPError._500(error.message);
+        }
+      }
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
 }
