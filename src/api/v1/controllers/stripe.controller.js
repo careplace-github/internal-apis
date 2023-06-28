@@ -124,7 +124,9 @@ export default class StripeController {
       let paymentMethod = await Stripe.getPaymentMethod(paymentMethodId);
 
       if (paymentMethod.customer !== customerId) {
-        throw new HTTPError._403('You are not authorized to delete this payment method.');
+        logger.info('paymentMethod.customer: ' + paymentMethod.customer);
+        logger.info('customerId: ' + customerId);
+        return next(new HTTPError._403('You are not authorized to delete this payment method.'));
       }
 
       let OrdersDAO = new ordersDAO();
@@ -132,20 +134,26 @@ export default class StripeController {
       let filters = {
         user: user._id,
         // status should be active or pending_payment
-        status: 'active' | 'pending_payment',
+        status: ['active', 'pending_payment'],
       };
 
-      let orders = await OrdersDAO.queryList({
-        filters,
-      });
+      let orders = (
+        await OrdersDAO.queryList({
+          filters,
+        })
+      ).data;
 
       for (let order of orders) {
-        let subscriptionId = order.stripe_subscription_id;
+        let subscriptionId = order.stripe_information.subscription_id;
 
-        let subscription = await Stripe.getSubscription(subscriptionId);
+        let subscription;
+
+        if (subscriptionId) {
+          subscription = await Stripe.getSubscription(subscriptionId);
+        }
 
         // Check if the payment method the customer is trying to delete is the default payment method for the subscription.
-        if (subscription.default_payment_method === paymentMethodId) {
+        if (subscription?.default_payment_method === paymentMethodId) {
           return next(
             new HTTPError._403(
               'You cannot delete a payment method that is associated with an active order.'
