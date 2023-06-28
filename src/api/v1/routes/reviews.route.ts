@@ -18,6 +18,6 @@ router
 
 router
   .route('/companies/:id/reviews/eligibility')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.checkEligibility);
+  .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.checkEligibility);
 
 export default router;
