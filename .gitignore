@@ -11,3 +11,4 @@ yarn.lock
 .env.development
 .env.production
 .env.local
+yarn-error.log
