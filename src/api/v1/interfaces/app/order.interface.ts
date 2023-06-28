@@ -26,9 +26,16 @@ export default interface IOrder extends Document {
   status: OrderStatus;
   decline_reason?: string;
   order_total: number;
-  address: IAddress;
   screening_visit?: IEvent;
   screening_visit_status?: Types.ObjectId | OrderScreeningVisitStatus;
   observations?: string;
-  stripe_subscription_id?: string;
+  stripe_information: {
+    subscription_id?: string;
+  };
+  billing_details: {
+    name: string;
+    email: string;
+    address: IAddress;
+    tax_id?: string;
+  };
 }
