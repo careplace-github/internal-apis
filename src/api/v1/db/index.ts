@@ -1,5 +1,5 @@
 export { default as CaregiversDAO } from './caregivers.dao';
-export { default as CompaniesDAO } from './companies.dao';
+export { default as HealthUnitsDAO } from './health-units.dao';
 export { default as CollaboratorsDAO } from './collaborators.dao';
 export { default as EventsDAO } from './events.dao';
 export { default as EventSeriesDAO } from './event-series.dao';
@@ -7,5 +7,5 @@ export { default as FilesDAO } from './files.dao';
 export { default as CustomersDAO } from './customers.dao';
 export { default as HomeCareOrdersDAO } from './orders.dao';
 export { default as PatientsDAO } from './patients.dao';
-export { default as CompanyReviewsDAO } from './company-reviews.dao';
+export { default as HealthUnitReviewsDAO } from './health-unit-reviews.dao';
 export { default as ServicesDAO } from './services.dao';

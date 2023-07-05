@@ -1,25 +1,25 @@
+---
 openapi: 3.0.3
 info:
   title: Careplace - Backend REST API
   description: |-
     Careplace REST API Documentation - OpenAPI Specification 3.0.3.
     This REST API is used to manage all Careplace applications.
-  termsOfService: "https://www.careplace.pt/termos-e-condicoes"
+  termsOfService: https://www.careplace.pt/termos-e-condicoes
   contact:
     email: admin@careplace.pt
   version: 1.0.0
 servers:
-  - url: "http://localhost:8080/api/v1"
+  - url: http://localhost:8080/api/v1
     description: Development Environment
     default: true
- 
 tags:
   - name: Authentication
     description: Authentication operations
   - name: Users
     description: Users operations
-  - name: Companies
-    description: Companies operations
+  - name: Health Units
+    description: Health Units operations
   - name: Orders
     description: Orders operations
   - name: Checkout
@@ -58,8 +58,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -100,8 +100,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -139,8 +139,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -172,8 +172,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -190,14 +190,12 @@ paths:
       tags:
         - Authentication
       summary: CRM Verify Forgot Password
-      description: >-
-        Verifies the forgot password code sent to the CRM user email and changes
-        the password.
+      description: Verifies the forgot password code sent to the CRM user email and
+        changes the password.
       operationId: crmForgotPassword
       requestBody:
-        description: >-
-          Verify forgot password code sent to the CRM user email and change the
-          password.
+        description: Verify forgot password code sent to the CRM user email and change
+          the password.
         content:
           application/json:
             schema:
@@ -215,8 +213,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -246,13 +244,11 @@ paths:
       tags:
         - Authentication
       summary: Marketplace Verify Forgot Password
-      description: >-
-        Verifies the forgot password code sent to the Marketplace user email and
-        changes the password.
+      description: Verifies the forgot password code sent to the Marketplace user
+        email and changes the password.
       operationId: crmForgotPassword
       requestBody:
-        description: >-
-          Verify forgot password code sent to the Marketplace user email and
+        description: Verify forgot password code sent to the Marketplace user email and
           change the password.
         content:
           application/json:
@@ -271,8 +267,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -302,10 +298,9 @@ paths:
       tags:
         - Authentication
       summary: Marketplace Send Confirmation Code
-      description: >-
-        Sends a confirmation code to the Marketplace user phone number. This
-        code is used to confirm the phone number address so that the user can
-        login. This endpoint should also be used to resend the confirmation
+      description: Sends a confirmation code to the Marketplace user phone number.
+        This code is used to confirm the phone number address so that the user
+        can login. This endpoint should also be used to resend the confirmation
         code.
       operationId: marketplaceSendConfirmationCode
       requestBody:
@@ -321,8 +316,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -352,14 +347,12 @@ paths:
       tags:
         - Authentication
       summary: Marketplace Verify Confirmation Code
-      description: >-
-        Verifies the confirmation code sent to the Marketplace user phone number
-        and confirms the phone number  so that the user can login.
+      description: Verifies the confirmation code sent to the Marketplace user phone
+        number and confirms the phone number  so that the user can login.
       operationId: marketplaceVerifyConfirmationCode
       requestBody:
-        description: >-
-          Verify confirmation code sent to the Marketplace user phone number and
-          confirm the phone number  so that the user can login.
+        description: Verify confirmation code sent to the Marketplace user phone number
+          and confirm the phone number  so that the user can login.
         content:
           application/json:
             schema:
@@ -374,8 +367,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -409,8 +402,8 @@ paths:
       operationId: logout
       security:
         - jwt_context:
-            - "write:pets"
-            - "read:pets"
+            - write:pets
+            - read:pets
       responses:
         "200":
           description: Ok
@@ -471,8 +464,8 @@ paths:
         required: true
       security:
         - jwt_context:
-            - "write:pets"
-            - "read:pets"
+            - write:pets
+            - read:pets
       responses:
         "200":
           description: Ok
@@ -1003,13 +996,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/search:
+  health-units/search:
     get:
       tags:
-        - Companies
-      summary: Search companies
-      description: Search companies by name.
-      operationId: searchCompanies
+        - Health Units
+      summary: Search Health Units
+      description: Search Health Units by name.
+      operationId: searchHealth Units
       parameters:
         - name: services
           in: query
@@ -1061,10 +1054,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  companies:
+                  Health Units:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Company"
+                      $ref: "#/components/schemas/healthUnit"
         "400":
           description: Bad Request
           content:
@@ -1078,17 +1071,17 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/{companyId}":
+  "health-units/{healthUnitId}":
     get:
       tags:
-        - Companies
-      summary: Get company
-      description: Get company by id.
-      operationId: getCompany
+        - Health Units
+      summary: Get healthUnit
+      description: Get healthUnit by id.
+      operationId: gethealthUnit
       parameters:
-        - name: companyId
+        - name: healthUnitId
           in: path
-          description: Company id
+          description: healthUnit id
           required: true
           schema:
             type: string
@@ -1100,8 +1093,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  company:
-                    $ref: "#/components/schemas/Company"
+                  healthUnit:
+                    $ref: "#/components/schemas/healthUnit"
         "400":
           description: Bad Request
           content:
@@ -1115,13 +1108,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/dashboard:
+  health-units/dashboard:
     get:
       tags:
-        - Companies
-      summary: Get company dashboard
-      description: Get company dashboard.
-      operationId: getCompanyDashboard
+        - Health Units
+      summary: Get healthUnit dashboard
+      description: Get healthUnit dashboard.
+      operationId: gethealthUnitDashboard
       security:
         - jwt_context:
             - write
@@ -1134,8 +1127,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  company:
-                    $ref: "#/components/schemas/Company"
+                  healthUnit:
+                    $ref: "#/components/schemas/healthUnit"
         "400":
           description: Bad Request
           content:
@@ -1162,13 +1155,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/orders:
+  health-units/orders:
     get:
       tags:
-        - Companies
-      summary: Get company orders
-      description: Get company orders.
-      operationId: getCompanyOrders
+        - Health Units
+      summary: Get healthUnit orders
+      description: Get healthUnit orders.
+      operationId: gethealthUnitOrders
       security:
         - jwt_context:
             - write
@@ -1213,16 +1206,16 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company order
-      description: Create company order.
-      operationId: createCompanyOrder
+        - Health Units
+      summary: Create healthUnit order
+      description: Create healthUnit order.
+      operationId: createhealthUnitOrder
       security:
         - jwt_context:
             - write
             - read
       requestBody:
-        description: Create company order.
+        description: Create healthUnit order.
         content:
           application/json:
             schema:
@@ -1265,13 +1258,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}":
+  "health-units/orders/{orderId}":
     get:
       tags:
-        - Companies
-      summary: Get company order
-      description: Get company order by id.
-      operationId: getCompanyOrder
+        - Health Units
+      summary: Get healthUnit order
+      description: Get healthUnit order by id.
+      operationId: gethealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -1322,10 +1315,10 @@ paths:
                     example: INVALID_REQUEST
     put:
       tags:
-        - Companies
-      summary: Update company order
-      description: Update company order by id.
-      operationId: updateCompanyOrder
+        - Health Units
+      summary: Update healthUnit order
+      description: Update healthUnit order by id.
+      operationId: updatehealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -1383,14 +1376,13 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company order
-      description: >-
-        Delete company order by id. This only works for orders that were created
-        by the company. Orders that were created by the user (from the
-        Marketplace) can only be declined by using the
-        '/companies/orders/{orderId}/decline' endpoint.
-      operationId: deleteCompanyOrder
+        - Health Units
+      summary: Delete healthUnit order
+      description: Delete healthUnit order by id. This only works for orders that were
+        created by the healthUnit. Orders that were created by the user (from
+        the Marketplace) can only be declined by using the
+        'health-units/orders/{orderId}/decline' endpoint.
+      operationId: deletehealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -1439,10 +1431,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/decline":
+  "health-units/orders/{orderId}/decline":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Reject order
       description: Reject order by id.
       operationId: rejectOrder
@@ -1494,10 +1486,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/accept":
+  "health-units/orders/{orderId}/accept":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Accept order
       description: Accept order by id.
       operationId: acceptOrder
@@ -1549,10 +1541,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/send-quote":
+  "health-units/orders/{orderId}/send-quote":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Send quote
       description: Send quote by id.
       operationId: sendQuote
@@ -1613,10 +1605,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/schedule-visit":
+  "health-units/orders/{orderId}/schedule-visit":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Schedule visit
       description: Schedule visit by id.
       operationId: scheduleVisit
@@ -1680,13 +1672,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/users:
+  health-units/users:
     get:
       tags:
-        - Companies
-      summary: Get company users
-      description: Get company users.
-      operationId: getCompanyUsers
+        - Health Units
+      summary: Get healthUnit users
+      description: Get healthUnit users.
+      operationId: gethealthUnitUsers
       security:
         - jwt_context:
             - write
@@ -1731,10 +1723,10 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company user
-      description: Create company user.
-      operationId: createCompanyUser
+        - Health Units
+      summary: Create healthUnit user
+      description: Create healthUnit user.
+      operationId: createhealthUnitUser
       security:
         - jwt_context:
             - write
@@ -1748,13 +1740,13 @@ paths:
                 email:
                   type: string
                   example: null
-  "/companies/users/{userId}":
+  "health-units/users/{userId}":
     get:
       tags:
-        - Companies
-      summary: Get company user
-      description: Get company user by id.
-      operationId: getCompanyUser
+        - Health Units
+      summary: Get healthUnit user
+      description: Get healthUnit user by id.
+      operationId: gethealthUnitUser
       security:
         - jwt_context:
             - write
@@ -1804,10 +1796,10 @@ paths:
                     example: INVALID_REQUEST
     put:
       tags:
-        - Companies
-      summary: Update company user
-      description: Update company user by id.
-      operationId: updateCompanyUser
+        - Health Units
+      summary: Update healthUnit user
+      description: Update healthUnit user by id.
+      operationId: updatehealthUnitUser
       security:
         - jwt_context:
             - write
@@ -1869,10 +1861,10 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company user
-      description: Delete company user by id.
-      operationId: deleteCompanyUser
+        - Health Units
+      summary: Delete healthUnit user
+      description: Delete healthUnit user by id.
+      operationId: deletehealthUnitUser
       security:
         - jwt_context:
             - write
@@ -1921,13 +1913,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/external-accounts:
+  health-units/external-accounts:
     get:
       tags:
-        - Companies
-      summary: Get company external accounts
-      description: Get company external accounts.
-      operationId: getCompanyExternalAccounts
+        - Health Units
+      summary: Get healthUnit external accounts
+      description: Get healthUnit external accounts.
+      operationId: gethealthUnitExternalAccounts
       security:
         - jwt_context:
             - write
@@ -1971,10 +1963,10 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company external account
-      description: Create company external account.
-      operationId: createCompanyExternalAccount
+        - Health Units
+      summary: Create healthUnit external account
+      description: Create healthUnit external account.
+      operationId: createhealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -2023,13 +2015,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/external-accounts/{externalAccountId}":
+  "health-units/external-accounts/{externalAccountId}":
     get:
       tags:
-        - Companies
-      summary: Get company external account
-      description: Get company external account by id.
-      operationId: getCompanyExternalAccount
+        - Health Units
+      summary: Get healthUnit external account
+      description: Get healthUnit external account by id.
+      operationId: gethealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -2078,10 +2070,10 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company external account
-      description: Delete company external account by id.
-      operationId: deleteCompanyExternalAccount
+        - Health Units
+      summary: Delete healthUnit external account
+      description: Delete healthUnit external account by id.
+      operationId: deletehealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -2167,13 +2159,12 @@ paths:
       tags:
         - Checkout
       summary: Create payment intent
-      description: >-
-        Create payment intent for order. If the user does not have a payment
-        method, the payment intent will be created with the payment method token
-        from the request body. To create a payment method token, use the
-        Stripe.js library. If the user has a payment method, the payment intent
-        will be created with the payment method id from the request body. @see
-        https://stripe.com/docs/stripe-js
+      description: Create payment intent for order. If the user does not have a
+        payment method, the payment intent will be created with the payment
+        method token from the request body. To create a payment method token,
+        use the Stripe.js library. If the user has a payment method, the payment
+        intent will be created with the payment method id from the request body.
+        @see https://stripe.com/docs/stripe-js
       operationId: createPaymentIntent
       security:
         - jwt_context:
@@ -2355,10 +2346,10 @@ paths:
       tags:
         - Payment Methods
       summary: Create a payment method
-      description: >-
-        Create a payment method. At the moment it only supports credit/debit
-        cards. To create the payment_method_token the Client Application needs
-        to use the Stripe JS library. @see https://stripe.com/docs/stripe-js
+      description: Create a payment method. At the moment it only supports
+        credit/debit cards. To create the payment_method_token the Client
+        Application needs to use the Stripe JS library. @see
+        https://stripe.com/docs/stripe-js
       operationId: createPaymentMethod
       security:
         - jwt_context:
@@ -2707,8 +2698,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -2848,8 +2839,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -3000,8 +2991,8 @@ paths:
         required: true
         security:
           - jwt_context:
-              - "write:pets"
-              - "read:pets"
+              - write:pets
+              - read:pets
       responses:
         "200":
           description: Ok
@@ -3015,8 +3006,7 @@ paths:
                     example: 17066.pdf
                   url:
                     type: string
-                    example: >-
-                      https://careplace-staging.s3.eu-west-3.amazonaws.com/17066.pdf
+                    example: https://careplace-staging.s3.eu-west-3.amazonaws.com/17066.pdf
                   version:
                     type: string
                     example: uY0K7emb2fm3OGl57Ro4u24mvLKDOiwk
@@ -3118,9 +3108,9 @@ components:
           example: 39425f3b-a637-4e6a-9db4-97fd2132a416
         profile_picture:
           type: string
-          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
-        company:
-          $ref: "#/components/schemas/Company"
+          example: https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
+        healthUnit:
+          $ref: "#/components/schemas/healthUnit"
         name:
           type: string
           example: Henrique Fonseca
@@ -3209,7 +3199,7 @@ components:
           example: 39425f3b-a637-4e6a-9db4-97fd2132a416
         profile_picture:
           type: string
-          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+          example: https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
         name:
           type: string
           example: João Antão
@@ -3313,7 +3303,7 @@ components:
           $ref: "#/components/schemas/Marketplace_User"
         profile_picture:
           type: string
-          example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
+          example: https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
         name:
           type: string
           example: John Wick
@@ -3373,7 +3363,7 @@ components:
         updatedAt:
           type: timestamp
           example: 2019-03-27T12:00:00.000Z
-    Company:
+    healthUnit:
       type: object
       properties:
         _id:
@@ -3387,21 +3377,19 @@ components:
               example: Careplace
             email:
               type: string
-              example: geral@company.pt
+              example: geral@healthUnit.pt
             phone:
               type: string
               example: 9CareplaceDemo-123!78
             website:
               type: string
-              example: www.company.pt
+              example: www.healthUnit.pt
             logo:
               type: string
-              example: >-
-                https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
+              example: https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
             banner:
               type: string
-              example: >-
-                https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
+              example: https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg
         services:
           type: array
           items:
@@ -3426,7 +3414,7 @@ components:
           properties:
             name:
               type: string
-              example: "CAREPLACE, LDA."
+              example: CAREPLACE, LDA.
             director:
               $ref: "#/components/schemas/CRM_User"
             tax_id:
@@ -3591,8 +3579,8 @@ components:
         _id:
           type: string
           example: 63cad0df068be823de4ad559
-        company:
-          $ref: "#/components/schemas/Company"
+        healthUnit:
+          $ref: "#/components/schemas/healthUnit"
         caregiver:
           $ref: "#/components/schemas/CRM_User"
         user:
@@ -3707,7 +3695,7 @@ components:
           example: Bathing
         image:
           type: string
-          example: "https://www.google.com"
+          example: https://www.google.com
         createdAt:
           type: timestamp
           example: 2019-03-27T12:00:00.000Z

@@ -13,7 +13,8 @@
     "start": "ts-node --project tsconfig.json -r tsconfig-paths/register build/server.js",
     "build": "rimraf ./build && tsc --project tsconfig.json",
     "dev": "yarn dev:backend",
-    "dev:backend": "nodemon --exec ts-node -r tsconfig-paths/register --esm ./src/server.ts",
+    "dev:backend": "nodemon --exec \"node --trace-warnings --experimental-modules -r ts-node/register -r tsconfig-paths/register\" ./src/server.ts",
+
     "dev:ngrok": "npx ngrok http 8080 --host-header=rewrite --config=.ngrok/ngrok.yml",
     "test": "jest --coverage",
     "test:watch": "jest --watch",

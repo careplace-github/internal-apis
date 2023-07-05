@@ -1,7 +1,7 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // interfaces
-import { IAddress, ICompany, IService } from '../';
+import { IAddress, IHealthUnit, IService } from '../';
 // types
 import { Gender, Permission, Role } from '../types';
 
@@ -13,7 +13,7 @@ interface ICaregiver {
   phone: string;
   birthdate: Date;
   gender: Gender;
-  company: Types.ObjectId | ICompany;
+  health_unit: Types.ObjectId | IHealthUnit;
   services: Types.ObjectId[] | IService[];
   address: IAddress;
   role: Exclude<Role, 'technical_direction' | 'social_worker' | 'hr'>;

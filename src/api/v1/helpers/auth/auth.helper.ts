@@ -142,8 +142,8 @@ export default class AuthHelper {
           },
 
           {
-            path: 'company',
-            model: 'Company',
+            path: 'health_unit',
+            model: 'HealthUnit',
           }
         );
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {

@@ -203,8 +203,8 @@ export default class StripeWebhooksController {
                 model: 'Relative',
               },
               {
-                path: 'company',
-                model: 'Company',
+                path: 'health_unit',
+                model: 'HealthUnit',
                 populate: {
                   path: 'legal_information',
                   populate: {
@@ -256,7 +256,7 @@ export default class StripeWebhooksController {
 
         let userEmailPayload = {
           name: order.user.name,
-          company: order.company.business_profile.name,
+          healthUnit: order.health_unit.business_profile.name,
 
           link: receiptLink,
 
@@ -304,9 +304,9 @@ export default class StripeWebhooksController {
           'orders@staging.careplace.pt'
         );
 
-        let companyEmailPayload = {
-          name: order.company.legal_information.director.name,
-          company: order.company.business_profile.name,
+        let healthUnitEmailPayload = {
+          name: order.health_unit.legal_information.director.name,
+          healthUnit: order.health_unit.business_profile.name,
 
           link: `https://sales.careplace.pt/orders/${order._id}`,
 
@@ -338,7 +338,7 @@ export default class StripeWebhooksController {
 
         let crmOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
           'crm_order_payed',
-          companyEmailPayload
+          healthUnitEmailPayload
         );
 
         await EmailHelper.sendEmailWithAttachment(

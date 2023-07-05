@@ -6,7 +6,7 @@ import { IHomeCareOrderModel } from '../interfaces';
 const HomeCareOrderSchema: Schema<IHomeCareOrderModel> = new Schema<IHomeCareOrderModel>(
   {
     _id: Schema.Types.ObjectId,
-    company: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
     caregiver: { type: Schema.Types.ObjectId, ref: 'Caregiver', required: false },
     customer: { type: Schema.Types.ObjectId, ref: 'marketplace_users', required: true },
     patient: { type: Schema.Types.ObjectId, ref: 'patient', required: true },

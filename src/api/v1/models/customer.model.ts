@@ -6,7 +6,6 @@ import { ICustomerModel } from '../interfaces';
 const CustomerSchema: Schema<ICustomerModel> = new Schema<ICustomerModel>(
   {
     _id: Schema.Types.ObjectId,
-    company: { type: Schema.Types.ObjectId, ref: 'company', required: false },
 
     cognito_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },

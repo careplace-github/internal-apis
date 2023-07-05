@@ -1,12 +1,21 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // Interfaces
-import { IAddress, ICaregiver, ICollaborator, IService } from '../';
+import { IAddress, ICaregiver, ICollaborator, IService } from '..';
 // Types
 import { Coordinates } from '../types';
 
-interface ICompany {
+interface IHealthUnit {
   _id: Types.ObjectId | string;
+
+  /**
+   *
+   * - Agency / Empresa SAD
+   * - Retirement Homes / Lares de Idosos
+   * - Senior Residences / Residências Sénior
+   */
+  type: 'agency' | 'retirement_home' | 'senior_residence';
+
   business_profile: {
     name: string;
     about: string;
@@ -66,6 +75,6 @@ interface ICompany {
   is_active: boolean;
 }
 
-type ICompanyModel = ICompany & Document;
+type IHealthUnitModel = IHealthUnit & Document;
 
-export { ICompany, ICompanyModel };
+export { IHealthUnit, IHealthUnitModel };

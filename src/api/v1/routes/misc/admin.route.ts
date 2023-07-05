@@ -7,7 +7,7 @@ import InputValidation from '../../middlewares/validators/inputValidation.middle
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
 
 // Import Controller
-import CompaniesController from '../../controllers/companies.controller';
+import healthUnitsController from '../../controllers/health-units.controller';
 import ServicesController from '../../controllers/services.controller';
 import StripeController from '../../controllers/payments.controller';
 import { bool } from 'aws-sdk/clients/signer';
@@ -141,7 +141,7 @@ function calculateAmounts(
   if (discount && discount?.amount_off) {
     discountOrderTotal = orderTotal - discount.amount_off;
 
-    const companyPercentage = Number(
+    const healthUnitPercentage = Number(
       (
         ((orderTotal * ((100 - applicationFee) / 100)) / (orderTotal - discount.amount_off)) *
         100
@@ -149,7 +149,6 @@ function calculateAmounts(
     );
     console.log('NEW APPLICATION FEE: ' + applicationFee);
 
-    console.log('COMPANY PERCENTAGE: ' + companyPercentage);
 
     stripeProcessingFees = Number(
       (discountOrderTotal * (stripePercentageFee / 100) + stripeFixedFee).toFixed(2)
@@ -159,7 +158,7 @@ function calculateAmounts(
       ((stripeProcessingFees / discountOrderTotal) * 100).toFixed(2)
     );
 
-    newApplicationFee = Number((100 - companyPercentage).toFixed(2));
+    newApplicationFee = Number((100 - healthUnitPercentage).toFixed(2));
 
     careplaceEarningsPercentage = Number((newApplicationFee - stripeTotalFeePercentage).toFixed(2));
 
@@ -173,7 +172,7 @@ function calculateAmounts(
 
     console.log('NEW APPLICATION FEE: ' + applicationFee);
 
-    if (careplaceEarningsPercentage < MIN_CAREPLACE_EARNINGS_PERCENTAGE || companyPercentage <= 0) {
+    if (careplaceEarningsPercentage < MIN_CAREPLACE_EARNINGS_PERCENTAGE || healthUnitPercentage <= 0) {
       /**
        * Change the application fee to reflect the discount for the client and still maintain the 85% minimum earnings for the connected account
        * It should take into account the stripe processing fees

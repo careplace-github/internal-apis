@@ -9,7 +9,7 @@ export async function getServices() {
   let servicesDAO = new ServicesDAO();
 
   try {
-    var services = await servicesDAO.queryList({}, {}, 1, 1000);
+    var services = await servicesDAO.queryList({}, {}, undefined, undefined);
   } catch (err: any) {
     throw new HTTPError._500(err.message);
   }
