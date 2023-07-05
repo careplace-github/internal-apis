@@ -16,7 +16,9 @@ export { default as AuthHelper } from './auth/auth.helper';
 /**
  * Email Helpers
  */
+export { default as EmailHelper } from './emails/email.helper';
 
 /**
  * Services Helpers
  */
+export { default as StripeHelper } from './services/stripe.helper';

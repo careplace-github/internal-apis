@@ -1,5 +1,5 @@
 import ServicesDAO from '../../db/services.dao';
-import { HTTPError } from '@api/v1/utils/errors/http';
+import { HTTPError } from '@api/v1/utils';
 import fs from 'fs';
 
 /**
@@ -9,8 +9,7 @@ export async function getServices() {
   let servicesDAO = new ServicesDAO();
 
   try {
-    var services = await servicesDAO.queryList({}, {}, 1, 1000 );
-
+    var services = await servicesDAO.queryList({}, {}, 1, 1000);
   } catch (err: any) {
     throw new HTTPError._500(err.message);
   }

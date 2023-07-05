@@ -1,18 +1,17 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // interfaces
-import { IAddress, ICaregiver, ICRMUser, IEventSeries, IOrder } from '../';
+import { IAddress, ICaregiver, ICollaborator, ICompany, IEventSeries, IHomeCareOrder } from '../';
 
-export default interface IEvent extends Document {
+interface IEvent {
   _id: Types.ObjectId | string;
   series?: Types.ObjectId | IEventSeries;
 
-  type: 'company' | 'personal';
+  ownerType: 'company' | 'collaborator';
+  owner: Types.ObjectId | ICollaborator | ICompany;
 
-  // If type is personal
-  user?: Types.ObjectId | ICRMUser;
-  // If type is company
-  order?: Types.ObjectId | IOrder;
+  // If owner type is company
+  order?: Types.ObjectId | IHomeCareOrder;
 
   title: string;
   description: string;
@@ -22,3 +21,7 @@ export default interface IEvent extends Document {
   textColor: string;
   allDay?: boolean;
 }
+
+type IEventModel = IEvent & Document;
+
+export { IEvent, IEventModel };

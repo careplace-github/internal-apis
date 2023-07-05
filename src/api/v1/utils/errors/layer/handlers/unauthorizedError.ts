@@ -1,4 +1,4 @@
-import LayerError from '../layerError';
+import LayerError from '../layer-error';
 
 /**
  * ``UNAUTHORIZED`` is a ``LayerError`` that is thrown when a user is not authorized.

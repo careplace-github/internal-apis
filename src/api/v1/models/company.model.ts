@@ -1,9 +1,9 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICompany } from '../interfaces';
+import { ICompanyModel } from '../interfaces';
 
-const companySchema: Schema<ICompany> = new Schema<ICompany>(
+const CompanySchema: Schema<ICompanyModel> = new Schema<ICompanyModel>(
   {
     _id: Schema.Types.ObjectId,
 
@@ -110,8 +110,6 @@ const companySchema: Schema<ICompany> = new Schema<ICompany>(
   }
 );
 
-const CompanyModel: Model<ICompany> = mongoose.model<ICompany>('Company', companySchema);
+const CompanyModel: Model<ICompanyModel> = mongoose.model<ICompanyModel>('Company', CompanySchema);
 
-export default CompanyModel;
-
-export { companySchema };
+export { CompanySchema, CompanyModel };

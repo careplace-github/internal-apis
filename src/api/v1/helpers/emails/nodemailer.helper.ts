@@ -1,3 +1,5 @@
+import { SES } from 'aws-sdk';
+
 import { readFileSync, promises as fsPromises } from 'fs';
 import fs from 'fs';
 
@@ -15,13 +17,13 @@ import nodemailer from 'nodemailer';
  * Class to manage the Nodemailer
  */
 export default class NodemailerHelper {
-  ses: any;
+  SES: SES;
   /**
    * Constructor
    */
 
-  constructor(SES) {
-    this.ses = SES;
+  constructor(SES: SES) {
+    this.SES = SES;
   }
 
   /**
@@ -48,7 +50,7 @@ export default class NodemailerHelper {
     bccEmails
   ) {
     const transporter = nodemailer.createTransport({
-      SES: this.ses,
+      SES: this.SES,
     });
 
     const mailOptions = {

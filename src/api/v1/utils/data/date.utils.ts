@@ -8,7 +8,7 @@ import logger from '../../../../logs/logger';
  * Class with utility functions for dates.
  */
 export default class DateUtils {
-  async getWeekDayNumber(weekDay) {
+  static async getWeekDayNumber(weekDay) {
     switch (weekDay) {
       case 'Monday':
         return 1;
@@ -30,7 +30,7 @@ export default class DateUtils {
   }
 
   // Helper function to get the next recurrent date based on the recurrency type
-  async getNextRecurrentDate(date, recurrencyType) {
+  static async getNextRecurrentDate(date, recurrencyType) {
     const newDate = new Date(date);
     switch (recurrencyType) {
       case 1:
@@ -48,14 +48,14 @@ export default class DateUtils {
   }
 
   // Helper function to get the date from the week date and the week day number
-  async getDateFromWeekDateAndWeekDayNumber(weekDate, weekDayNumber) {
+  static async getDateFromWeekDateAndWeekDayNumber(weekDate, weekDayNumber) {
     const newDate = new Date(weekDate);
     newDate.setDate(newDate.getDate() + ((weekDayNumber + 7 - newDate.getDay()) % 7));
     return newDate;
   }
 
   // Helper function to get the next Monday date from a date
-  async getNextMondayDate(date) {
+  static async getNextMondayDate(date) {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + ((1 + 7 - newDate.getDay()) % 7));
     return newDate;
@@ -63,7 +63,7 @@ export default class DateUtils {
 
   // Helper function to get the next Monday date from a date in 2 weeks
   // Example: if the provided date is 2022-12-15T00:00:00.000Z the next Monday date in 2 weeks is 2022-12-26T00:00:00.000Z
-  async getNextMondayDateIn2Weeks(date) {
+  static async getNextMondayDateIn2Weeks(date) {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + ((1 + 7 - newDate.getDay()) % 7) + 7);
     return newDate;
@@ -93,7 +93,7 @@ export default class DateUtils {
    *
    * response = `Segundas-feiras: 08:00 - 12:00; Quartas-feiras: 08:00 - 12:00; Sextas-feiras: 08:00 - 12:00`;
    */
-  async getScheduleRecurrencyText(schedule) {
+  static async getScheduleRecurrencyText(schedule) {
     console.log(`SCHEDULE: ${JSON.stringify(schedule)}`);
 
     let response = '';
@@ -137,7 +137,7 @@ export default class DateUtils {
    *
    * @see https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
    */
-  async getDateFromUnixTimestamp(unixTimestamp) {
+  static async getDateFromUnixTimestamp(unixTimestamp) {
     const date = new Date(unixTimestamp * 1000);
 
     const months = [
@@ -168,7 +168,7 @@ export default class DateUtils {
    * -> 21/01/2023
    *
    */
-  async convertDateToReadableString(date) {
+  static async convertDateToReadableString(date) {
     date = new Date(date);
 
     const day = date.getDate();
@@ -178,7 +178,7 @@ export default class DateUtils {
     return `${day}/${month}/${year}`;
   }
 
-  async convertDateToReadableString2(date) {
+  static async convertDateToReadableString2(date) {
     date = new Date(date);
 
     const months = [
@@ -207,7 +207,7 @@ export default class DateUtils {
    * input: "2023-01-21T08:30:00.000Z"
    * output: "08:30"
    */
-  async getTimeFromDate(date) {
+  static async getTimeFromDate(date) {
     date = new Date(date);
 
     /**

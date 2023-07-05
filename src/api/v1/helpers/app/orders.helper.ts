@@ -1,18 +1,51 @@
 import { Document, Types } from 'mongoose';
-import { IEventSeries, IEvent, ICaregiver } from '@api/v1/interfaces';
-import { OrdersDAO } from '@api/v1/db';
+import { IEventSeries, IEvent, ICaregiver, IEventModel } from '@api/v1/interfaces';
+import { HomeCareOrdersDAO } from '@api/v1/db';
 import logger from 'src/logs/logger';
 
-import { IOrder } from '@api/v1/interfaces';
+import { IHomeCareOrder } from '@api/v1/interfaces';
+import { EventModel } from '../../models';
 
+interface Amounts {
+  order_total: number;
+  discount_order_total: number | null;
+
+  application_fee: number;
+  stripe_processing_fees: {
+    payments: {
+      fixed_fee: number;
+      percentage_fee: number;
+      total_fee: number;
+      total_fee_percentage: number;
+    };
+    total_fees: number;
+    total_fees_percentage: number;
+  };
+  discount: Discount | null;
+  connected_account_net: number;
+  connected_account_earnings: number;
+  connected_account_earnings_percentage: number;
+  payment_method: {
+    type: string;
+    country: string;
+  };
+  careplace_net: number;
+  careplace_earnings: number;
+  careplace_earnings_percentage: number;
+}
+
+interface Discount {
+  coupon: string;
+  amount_off?: number;
+}
 export default class OrdersHelper {
-  static OrdersDAO = new OrdersDAO();
+  static HomeCareOrdersDAO = new HomeCareOrdersDAO();
 
   static async generateEventsFromSeries(eventSeries: IEventSeries) {
     try {
       logger.info('Event Series 3: ' + eventSeries);
 
-      let events: Partial<IEvent>[] = [];
+      let events: IEventModel[] = [];
 
       if (!eventSeries.order) {
         throw new Error('Order not found');
@@ -21,25 +54,20 @@ export default class OrdersHelper {
       const orderId = eventSeries?.order?._id as string;
 
       // Get the order
-      const order = (await this.OrdersDAO.retrieve(orderId, {
+      const order = await this.HomeCareOrdersDAO.retrieve(orderId, {
         path: 'caregiver',
         model: 'Caregiver',
         select: 'name profile_picture',
-      }))
+      });
 
-      const orderData =
-       {
+      const orderData = {
         _id: order._id,
         caregiver: {
           _id: order?.caregiver?._id,
           name: (order?.caregiver as ICaregiver)?.name,
           profile_picture: (order?.caregiver as ICaregiver)?.profile_picture,
-        }
-       }
-
-
-
-
+        },
+      };
 
       // Get the start date of the series
       const seriesStartDate = new Date(eventSeries.start_date);
@@ -96,14 +124,15 @@ export default class OrdersHelper {
           }
 
           // Create a new event
-          let event: Partial<IEvent> = {
+          let event: IEvent = {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
             _id: new Types.ObjectId(),
             series: eventSeries._id as Types.ObjectId,
-            type: 'company',
-            order: orderData as IOrder,
+            ownerType: 'company',
+            owner: eventSeries.owner,
+            order: orderData as IHomeCareOrder,
             title: eventSeries.title,
-            description: eventSeries.description,
+            description: eventSeries?.description || '',
             start: startDate,
             end: endDate,
             allDay: eventSeries.allDay,
@@ -111,8 +140,10 @@ export default class OrdersHelper {
             textColor: eventSeries.textColor,
           };
 
+          let eventModel = new EventModel(event);
+
           // Add the event to the list of events
-          events.push(event);
+          events.push(eventModel);
         }
       }
       // ---------------------------------------------------
@@ -157,5 +188,184 @@ export default class OrdersHelper {
     const incrementMillis: number = increment * 24 * 60 * 60 * 1000; // Convert increment to milliseconds
 
     return incrementMillis;
+  }
+
+  static async calculateAmounts(
+    orderTotal: number,
+    paymentMethod: {
+      type: string;
+      country: string;
+    },
+    discount?: Discount
+  ): Promise<Amounts | { error: { message: string; discount: Discount } }> {
+    console.log(
+      `calculateAmounts: orderTotal: ${orderTotal}, paymentMethod: ${paymentMethod}, discount: ${JSON.stringify(
+        discount,
+        null,
+        2
+      )}`
+    );
+
+    if (paymentMethod.type !== 'card') {
+      throw new Error('Payment method currently not supported.');
+    }
+
+    /**
+     * Stripe has different fees for EU and non-EU cards.
+     *
+     * Right now we only support card from Portugal (PT) to avoid currency conversion fees.
+     *
+     */
+    if (
+      paymentMethod.country !== 'PT' &&
+      /**
+       * @todo REMOVE THIS WHEN GOING LIVE
+       */
+      paymentMethod.country !== 'US'
+    ) {
+      throw new Error('Card country currently not supported.');
+    }
+
+    const BASE_APPLICATION_FEE = 15.0; // 15% base application fee
+    const MIN_CAREPLACE_EARNINGS_PERCENTAGE = 5.0; // 5% minimum careplace earnings percentage
+
+    let processingFeesPercentage = 0;
+
+    /**
+     * EU Fees:
+     * fixed fee: 0.25€
+     * percentage fee: 1.5
+     *
+     * Premium EU Fees:
+     * fixed fee: 0.25€
+     * percentage fee: 1.9
+     *
+     * There's no way to know if a card is EU or Premium EU.
+     * Because of THAT we'll assume Premium EU fees for all EU cards.
+     *
+     * @see https://stripe.com/en-pt/pricing
+     */
+    const stripePercentageFee: number = 1.9; // 1.5% processing fee
+    const stripeFixedFee: number = 0.25; // 0.25€ fixed fee
+
+    processingFeesPercentage = stripePercentageFee;
+
+    let applicationFee = BASE_APPLICATION_FEE;
+
+    let stripeProcessingFees = orderTotal * (processingFeesPercentage / 100) + stripeFixedFee;
+
+    let stripeTotalFeePercentage = Number(((stripePercentageFee / orderTotal) * 100).toFixed(2));
+
+    let connectedAccountPercentage = 100 - applicationFee;
+    let connectedAccountNet = orderTotal * (connectedAccountPercentage / 100);
+    let connectedAccountEarnings = connectedAccountNet;
+    let connectedAccountEarningsPercentage = Number(
+      ((connectedAccountEarnings / orderTotal) * 100).toFixed(2)
+    );
+
+    let careplaceNet = Number(((orderTotal * applicationFee) / 100).toFixed(2));
+    let careplaceEarnings = Number((careplaceNet - processingFeesPercentage).toFixed(2));
+    let careplaceEarningsPercentage = Number(((careplaceEarnings / orderTotal) * 100).toFixed(2));
+
+    let newApplicationFee = applicationFee;
+
+    let discountOrderTotal = 0;
+
+    if (discount && discount?.amount_off) {
+      discountOrderTotal = orderTotal - discount.amount_off;
+
+      const companyPercentage = Number(
+        (
+          ((orderTotal * ((100 - applicationFee) / 100)) / (orderTotal - discount.amount_off)) *
+          100
+        ).toFixed(2)
+      );
+      console.log('NEW APPLICATION FEE: ' + applicationFee);
+
+      console.log('COMPANY PERCENTAGE: ' + companyPercentage);
+
+      stripeProcessingFees = Number(
+        (discountOrderTotal * (stripePercentageFee / 100) + stripeFixedFee).toFixed(2)
+      );
+
+      stripeTotalFeePercentage = Number(
+        ((stripeProcessingFees / discountOrderTotal) * 100).toFixed(2)
+      );
+
+      newApplicationFee = Number((100 - companyPercentage).toFixed(2));
+
+      careplaceEarningsPercentage = Number(
+        (newApplicationFee - stripeTotalFeePercentage).toFixed(2)
+      );
+
+      careplaceNet = Number((discountOrderTotal * (newApplicationFee / 100)).toFixed(2));
+
+      careplaceEarnings = Number(
+        (discountOrderTotal * (careplaceEarningsPercentage / 100)).toFixed(2)
+      );
+
+      applicationFee = newApplicationFee;
+
+      console.log('NEW APPLICATION FEE: ' + applicationFee);
+
+      if (
+        careplaceEarningsPercentage < MIN_CAREPLACE_EARNINGS_PERCENTAGE ||
+        companyPercentage <= 0
+      ) {
+        /**
+         * Change the application fee to reflect the discount for the client and still maintain the 85% minimum earnings for the connected account
+         * It should take into account the stripe processing fees
+         */
+
+        const application_fee = MIN_CAREPLACE_EARNINGS_PERCENTAGE + stripeTotalFeePercentage;
+
+        const amount_off = discount.amount_off;
+
+        console.log('NEW APPLICATION FEE: ' + application_fee);
+
+        const min_order_total = Number(
+          (
+            (amount_off - amount_off * (application_fee / 100)) /
+            ((BASE_APPLICATION_FEE - application_fee) / 100)
+          ).toFixed(2)
+        );
+
+        logger.info('x: ' + min_order_total);
+
+        return {
+          error: {
+            message: `Can't apply coupon. The order must be a minimum of ${min_order_total} €.`,
+            discount: discount || null,
+          },
+        };
+      }
+    }
+
+    return {
+      order_total: orderTotal,
+      discount_order_total: discountOrderTotal || null,
+      application_fee: applicationFee,
+      payment_method: paymentMethod,
+      stripe_processing_fees: {
+        payments: {
+          fixed_fee: stripeFixedFee,
+          percentage_fee: stripePercentageFee,
+          total_fee: stripeProcessingFees,
+          total_fee_percentage: stripeTotalFeePercentage,
+        },
+        total_fees: stripeProcessingFees,
+        total_fees_percentage: stripeTotalFeePercentage,
+      },
+
+      discount: discount || null,
+
+      connected_account_net: connectedAccountNet,
+      connected_account_earnings: connectedAccountEarnings,
+      connected_account_earnings_percentage: connectedAccountEarningsPercentage,
+
+      careplace_net: careplaceNet,
+      careplace_earnings: careplaceEarnings,
+      careplace_earnings_percentage: careplaceEarningsPercentage,
+    };
   }
 }

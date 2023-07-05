@@ -1,7 +1,7 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 
-export default interface IService extends Document {
+interface IService {
   _id: Types.ObjectId;
   type: string;
   name: string;
@@ -10,3 +10,7 @@ export default interface IService extends Document {
   image?: string;
   icon?: string;
 }
+
+type IServiceModel = IService & Document;
+
+export { IService, IServiceModel };

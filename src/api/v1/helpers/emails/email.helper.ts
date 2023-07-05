@@ -11,25 +11,16 @@ import aws from 'aws-sdk/clients/ses';
 
 import SES_Service from '../../services/ses.service';
 
-// Gender id's
-const male = 0;
-const female = 1;
-
 /**
  * Class with helper and utility functions for the SES email service.
  */
 export default class EmailHelper {
   /**
-   * Constructor
-   */
-  constructor() {}
-
-  /**
    * @description - Reads the contents of a file and returns it as a string.
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<String>} - The email template as a string.
    */
-  async getEmailTemplate(emailTemplate) {
+  static async getEmailTemplate(emailTemplate) {
     let filename = `./src/assets/emails/${emailTemplate}`;
 
     // Check if file has the correct extension
@@ -53,7 +44,7 @@ export default class EmailHelper {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @param {JSON} data - The data to be inserted in the email template.
    */
-  async getEmailTemplateWithData(emailTemplate, data) {
+  static async getEmailTemplateWithData(emailTemplate, data) {
     // Check if the email template is provided
     if (emailTemplate == null) {
       return { error: 'Need to provide an email template.' };
@@ -99,7 +90,7 @@ export default class EmailHelper {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<Array>} - An array containing the variables in the email template.
    */
-  async getEmailVariables(emailTemplate: string): Promise<string[]> {
+  static async getEmailVariables(emailTemplate: string): Promise<string[]> {
     // Get the email template
     const template = await this.getEmailTemplate(emailTemplate);
 
@@ -123,16 +114,16 @@ export default class EmailHelper {
    * @param {String} emailTemplate - The name of to the file containing the email template.
    * @returns {Promise<String>} - The subject of the email template.
    */
-  async getEmailSubject(emailTemplate: string): Promise<string> {
+  static async getEmailSubject(emailTemplate: string): Promise<string> {
     // Get the email template
     const template = await this.getEmailTemplate(emailTemplate);
-  
+
     // Get the subject
     const subject = template.match(/<title>(.*?)<\/title>/)?.[1] ?? '';
-  
+
     return subject;
   }
-  
+
   /**
    * @description - Gets the names of the email templates.
    * @returns {Promise<Array>} - An array containing the names of the email templates.
@@ -141,7 +132,7 @@ export default class EmailHelper {
    * @throws {Error} - If the email templates folder contains files that are not html.
    * @throws {Error} - If the email templates folder contains files that do not have the .html extension.
    */
-  async getEmailTemplatesNames() {
+  static async getEmailTemplatesNames() {
     // Get the email templates folder
     const emailTemplatesFolder = './src/emails';
 
@@ -189,7 +180,7 @@ export default class EmailHelper {
    * @throws {Error} - If the email templates folder is empty.
    * @throws {Error} - If the email templates folder contains files that are not html.
    */
-  async getEmailTemplates() {
+  static async getEmailTemplates() {
     // Get the names of the email templates
     const emailTemplatesNames = await this.getEmailTemplatesNames();
 
@@ -233,7 +224,7 @@ export default class EmailHelper {
    * @see https://nodemailer.com/transports/ses/
    * @see https://github.com/andris9/nodemailer-html-to-text
    */
-  async sendEmailWithAttachment(
+  static async sendEmailWithAttachment(
     receiverEmail,
     subject,
     htmlBody,
@@ -242,7 +233,7 @@ export default class EmailHelper {
     ccEmails,
     bccEmails
   ) {
-    let SES = new SES_Service();
+    let SES = SES_Service;
     let ses = await SES.getSES();
     const transporter = nodemailer.createTransport({
       SES: { ses, aws },

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../../../../logs/logger';
-import HTTP_Error from '../../utils/errors/http/httpError';
-import LayerError from '../../utils/errors/layer/layerError';
+import HTTP_Error from '../../utils/errors/http/http-error';
+import LayerError from '../../utils/errors/layer/layer-error';
 import { MulterError } from 'multer';
 
 import { IAPIResponse } from '../../interfaces';
@@ -12,11 +12,16 @@ export default function ErrorHandler(
   res: Response,
   next: NextFunction
 ) {
-  logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(err, null, 2)} \n`);
+  let error = {
+    ...err,
+    stack: err.stack,
+  };
+
+  logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(error, null, 2)} \n`);
 
   if (err instanceof HTTP_Error && err.isOperational) {
     // Handle operational HTTP_Error
-    logger.info(`Operational HTTP_Error: ${err.stack}`);
+    logger.error(`HTTP_Error: ${err.stack}`);
     const response: IAPIResponse = {
       data: {
         error: {
@@ -36,7 +41,7 @@ export default function ErrorHandler(
 
   if (err instanceof LayerError && err.isOperational) {
     // Handle operational LayerError
-    logger.info(`Operational LayerError: ${err.stack}`);
+    logger.error(`LayerError: ${err.stack}`);
     const response: IAPIResponse = {
       data: {
         error: {
@@ -78,6 +83,7 @@ export default function ErrorHandler(
     };
     return next(response);
   }
+
   if (err instanceof Error) {
     const response: IAPIResponse = {
       data: {
@@ -96,6 +102,8 @@ export default function ErrorHandler(
    * In this case, we will return the response as is.
    */
   let response = err;
+
+  logger.info(`Error Handler Middleware Response: No error found, returning response as is. \n`);
 
   next(response);
 }
