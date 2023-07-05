@@ -37,7 +37,7 @@ export default function validateRole(
       try {
         let response: RequestUtilsResponse = {};
 
-        const AuthHelper = new authHelper();
+        const AuthHelper = authHelper;
 
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
           const token = req.headers.authorization.split(' ')[1];

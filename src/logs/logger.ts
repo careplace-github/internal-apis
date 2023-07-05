@@ -1,10 +1,13 @@
-import { info } from 'console';
 import { createLogger, transports, format } from 'winston';
+import httpContext from 'express-http-context';
 
 const customFormat = format.combine(
   format.timestamp(),
   format.printf((info) => {
-    return `${info.timestamp} | [${info.level.toUpperCase().padEnd(7)}]: ${info.message}`;
+    const requestId = httpContext.get('requestId') || 'N/A';
+    return `${info.timestamp} | [${info.level
+      .toUpperCase()
+      .padEnd(7)}] | [Request ID: ${requestId}]: ${info.message}`;
   })
 );
 
@@ -14,10 +17,9 @@ const logger = createLogger({
     new transports.Console(),
     new transports.File({
       filename: './src/logs/server.log',
-      level: 'info',
+      level: 'debug',
     }),
   ],
 });
 
-// Export the logger
 export default logger;

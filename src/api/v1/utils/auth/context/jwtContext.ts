@@ -1,6 +1,6 @@
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import logger from '../../../../../logs/logger';
-import { HTTPError } from '@api/v1/utils/errors/http';
+import { HTTPError } from '@api/v1/utils';
 
 /**
  * Class with utility functions for JWT authentication context.

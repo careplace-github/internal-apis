@@ -1,0 +1,142 @@
+// express
+import { Request, Response, NextFunction } from 'express';
+// mongoose
+import mongoose, { FilterQuery, startSession } from 'mongoose';
+// fs
+import fs, { createReadStream } from 'fs';
+
+// @api
+import { CompaniesDAO, HomeCareOrdersDAO, CompanyReviewsDAO } from '@api/v1/db';
+import { AuthHelper } from '@api/v1/helpers';
+import {
+  IAPIResponse,
+  ICompanyReview,
+  IHomeCareOrder,
+  ICompany,
+  IQueryListResponse,
+} from '@api/v1/interfaces';
+import { CognitoService, StripeService, BucketService } from '@api/v1/services';
+import { HTTPError } from '@api/v1/utils';
+// @logger
+import logger from '@logger';
+
+/**
+ * Files Controller Class to manage the ``/files`` endpoints of the API.
+ */
+export default class FilesController {
+  // services
+
+  static BucketService = BucketService;
+
+  /**
+   * Creates a new file in the S3 bucket.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: 102, // request received
+        data: {},
+      };
+
+      const file = req.file;
+
+      if (!file) {
+        throw new HTTPError._400('Missing required file.');
+      }
+
+      const filePath = file.path;
+
+      let fileUpload = await this.BucketService.uploadFile(filePath);
+
+      response.statusCode = 201;
+      response.data = {
+        key: fileUpload.Key,
+        url: fileUpload.Location,
+      };
+
+      // Pass to the next middleware to handle the response
+      next(response);
+
+      /**
+       * Delete the file from the "uploads" folder
+       */
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          logger.warn(
+            'Internal Server Error.',
+            `Error removing file from uploads folder. \n ${err.stack} \n`
+          );
+        }
+      });
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  /**
+   * Retrieves a file from the S3 bucket by its key.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: 102, // request received
+        data: {},
+      };
+
+      const key = req.params.key;
+
+      if (!key) {
+        next(new HTTPError._400('Missing required key.'));
+      }
+
+      const file = await this.BucketService.getFile(key);
+
+      response.statusCode = 200;
+      response.data = file;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+  /**
+   * Deletes a file from the S3 bucket by its key.
+   *
+   * @param {*} req - Request object.
+   * @param {*} res - Response object.
+   * @param {*} next - Next middleware function.
+   */
+  static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: 102,
+        data: {},
+      };
+
+      const bucketService = new BucketService();
+      const key = req.params.key;
+
+      const deletedFile = await this.BucketService.deleteFile(key);
+
+      response.statusCode = 200;
+      response.data = deletedFile;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+}

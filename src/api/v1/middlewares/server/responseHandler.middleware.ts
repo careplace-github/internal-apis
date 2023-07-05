@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../../../../logs/logger';
+import httpContext from 'express-http-context';
 
 interface HttpRequest {
+  id: string;
   type: string;
   url: string;
   ipv6: string;
@@ -28,14 +30,19 @@ export default function responseHandler(
   next: NextFunction
 ) {
   async function handleRequest() {
+    const startTime = httpContext.get('startTime');
+    const elapsed = process.hrtime(startTime);
+    const elapsedMs = (elapsed[0] * 1000 + elapsed[1] / 1e6).toFixed(2);
+
     const request: HttpRequest = {
+      id: httpContext.get('requestId'),
       type: req.method,
       url: req.originalUrl,
       ipv6: req.ip,
       ipv4: req.ips,
       contentLength: req.headers['content-length'] as string,
       contentType: req.headers['content-type'] as string,
-      responseTime: req.headers['response-time'] as string,
+      responseTime: elapsedMs,
       proxy: req.headers['x-forwarded-for'] as string | undefined,
       headers: req.headers,
       params: req.params,
@@ -45,7 +52,11 @@ export default function responseHandler(
 
     let logResponse = {
       request: request,
-      response: response,
+      response: {
+        headers: res.getHeaders(),
+        body: response.data,
+        statusCode: response.statusCode,
+      },
     };
 
     if (!response.data || response.statusCode === undefined || response.statusCode === null) {
@@ -58,12 +69,7 @@ export default function responseHandler(
 
     // Add Access Token to the response headers
     if (response.data?.accessToken) {
-      // res.setHeader('x-access-token', response.data.accessToken as string);
       res.setHeader('Authorization', `Bearer ${response.data.accessToken}`);
-    }
-
-    if (response.data?.refreshToken) {
-      res.setHeader('x-refresh-token', response.data.refreshToken as string);
     }
 
     res.status(statusCode).json(response.data);

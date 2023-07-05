@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import logger from '../../../../logs/logger';
 import authUtils from '../../utils/auth/auth.utils';
-import { HTTPError } from '@api/v1/utils/errors/http';
-
+import { HTTPError } from '@api/v1/utils';
 /**
  * @description Middleware to validate if a user is authenticated through the JWT accessToken.
  * JWT accessToken is passed in the header of the request
@@ -19,7 +18,7 @@ import { HTTPError } from '@api/v1/utils/errors/http';
 export default function validateAuth(req: Request, res: Response, next: NextFunction): void {
   async function handleRequest() {
     try {
-      let AuthUtils = new authUtils();
+      let AuthUtils = authUtils;
 
       let accessToken: string;
       let decodedToken: string;

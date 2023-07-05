@@ -1,12 +1,12 @@
 // Import logger
 import logger from '../../../../logs/logger';
 // Import errors helper
-import * as LayerError from '../../utils/errors/layer/index';
+import { LayerError } from '@api/v1/utils';
 // Authentication Provider
 
 import CognitoService from '../../services/cognito.service';
 
-import authUtils from '../../utils/auth/auth.utils';
+import AuthUtils from '../../utils/auth/auth.utils';
 
 import { ICognitoUser } from '../../interfaces';
 
@@ -17,26 +17,19 @@ import {
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
 } from '../../../../config/constants/index';
 
-import marketplaceUsersDao from '../../db/marketplaceUsers.dao';
-import crmUsersDao from '../../db/crmUsers.dao';
-
-
-let AuthUtils = new authUtils();
+import CustomersDao from '../../db/customers.dao';
+import CollaboratorsDAO from '../../db/collaborators.dao';
 
 /**
  * Class with utility functions for authentication.
  * AWS Cognito Context.
  */
 export default class AuthHelper {
-  AuthUtils: authUtils;
-  /**
-   * Constructor
-   *
-   * @param {String} accessToken - JWT token.
-   */
-  constructor() {
-    this.AuthUtils = AuthUtils;
-  }
+  //db
+  static CollaboratorsDAO = new CollaboratorsDAO();
+  static CustomersDAO = new CustomersDao();
+  // utils
+  static AuthUtils = AuthUtils;
 
   /**
    * Retrieves the Cognito id from the JWT token.
@@ -44,7 +37,7 @@ export default class AuthHelper {
    * @param {String} accessToken - JWT token.
    * @returns {Promise<String>} Cognito id.
    */
-  async getAuthUser(accessToken: string) {
+  static async getAuthUser(accessToken: string): Promise<ICognitoUser> {
     try {
       logger.info(`Authentication Helper GET_AUTH_USER Request: \n ${accessToken}`);
 
@@ -68,7 +61,7 @@ export default class AuthHelper {
     }
   }
 
-  async getUserAttributes(accessToken: string) {
+  static async getUserAttributes(accessToken: string) {
     try {
       logger.info(`Authentication Helper GET_USER_ATTRIBUTES Request: \n ${accessToken}`);
 
@@ -80,7 +73,7 @@ export default class AuthHelper {
 
       let Cognito = new CognitoService(clientId);
 
-      const user = await Cognito.adminGetUser(username) as ICognitoUser;
+      const user = (await Cognito.adminGetUser(username)) as ICognitoUser;
 
       let userAttributes = user.UserAttributes;
 
@@ -98,8 +91,7 @@ export default class AuthHelper {
     }
   }
 
-
-  async getAuthId(accessToken: string) {
+  static async getAuthId(accessToken: string) {
     try {
       logger.info(`Authentication Helper GET_AUTH_ID Request: \n ${accessToken}`);
 
@@ -115,7 +107,7 @@ export default class AuthHelper {
     }
   }
 
-  async getClientId(accessToken: string) {
+  static async getClientId(accessToken: string) {
     try {
       logger.info(`Authentication Helper GET_APP Request: \n ${accessToken}`);
 
@@ -131,7 +123,7 @@ export default class AuthHelper {
     }
   }
 
-  async getUserFromDB(accessToken: string) {
+  static async getUserFromDB(accessToken: string) {
     try {
       logger.info(`Authentication Helper GET_USER_FROM_DB Request: \n ${accessToken}`);
 
@@ -144,8 +136,7 @@ export default class AuthHelper {
       let user;
 
       if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
-        let CrmUsersDao = new crmUsersDao();
-        user = await CrmUsersDao.queryOne(
+        user = await this.CollaboratorsDAO.queryOne(
           {
             cognito_id: { $eq: username },
           },
@@ -156,9 +147,7 @@ export default class AuthHelper {
           }
         );
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
-        let MarketplaceUsersDao = new marketplaceUsersDao();
-
-        user = await MarketplaceUsersDao.queryOne({
+        user = await this.CustomersDAO.queryOne({
           cognito_id: { $eq: username },
         });
       }

@@ -1,7 +1,7 @@
-import {reviewSchema} from '../models';
+import { CompanyReviewSchema } from '../models';
 import { createModelValidator } from './model.validator';
 
-const reviewValidator = createModelValidator(reviewSchema);
+const reviewValidator = createModelValidator(CompanyReviewSchema);
 
 // Use the generated validation middleware functions
 export const AddReviewValidator = reviewValidator;

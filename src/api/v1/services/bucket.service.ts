@@ -2,28 +2,25 @@
 import AWS, { S3 } from 'aws-sdk';
 // fs
 import fs from 'fs';
-// utils
-import { HTTPError } from '@api/v1/utils/errors/http';
-// logger
-import logger from '../../../logs/logger';
-// constants
+
+// @api
+import { LayerError } from '@api/v1/utils';
+
+// @logger
+import logger from '@logger';
+// @constants
 import {
   AWS_S3_BUCKET_NAME,
   AWS_S3_REGION,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
-} from '../../../config/constants/index';
+} from '@constants';
 
 /**
  * Creates a new S3 instance
  *
  * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
  */
-const s3 = new AWS.S3({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACESS_KEY,
-  region: AWS_S3_REGION,
-});
 
 /**
  * Class to manage the AWS S3 Service
@@ -31,14 +28,11 @@ const s3 = new AWS.S3({
  * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
  */
 export default class S3Manager {
-  s3: S3;
-
-  /**
-   * Constructor
-   */
-  constructor() {
-    this.s3 = s3;
-  }
+  static S3 = new AWS.S3({
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACESS_KEY,
+    region: AWS_S3_REGION,
+  });
 
   /**
    * Uploads a file to the S3 bucket
@@ -49,9 +43,9 @@ export default class S3Manager {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#upload-property
    */
-  async uploadFile(file: fs.PathLike, ACL?: string): Promise<AWS.S3.ManagedUpload.SendData> {
+  static async uploadFile(file: fs.PathLike, ACL?: string): Promise<AWS.S3.ManagedUpload.SendData> {
     if (!file) {
-      throw new HTTPError._400('No file found.');
+      throw new LayerError.NOT_FOUND('No file found.');
     }
 
     // Read content from the file
@@ -69,7 +63,7 @@ export default class S3Manager {
     };
 
     try {
-      const response = await this.s3.upload(params).promise();
+      const response = await this.S3.upload(params).promise();
       logger.info('File uploaded successfully to S3');
       return response;
     } catch (error: any) {
@@ -86,13 +80,13 @@ export default class S3Manager {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getObject-property
    */
-  async getFile(key: string): Promise<AWS.S3.GetObjectOutput> {
+  static async getFile(key: string): Promise<AWS.S3.GetObjectOutput> {
     const params: AWS.S3.GetObjectRequest = {
       Bucket: AWS_S3_BUCKET_NAME,
       Key: key,
     };
     try {
-      const response = await this.s3.getObject(params).promise();
+      const response = await this.S3.getObject(params).promise();
       logger.info('File retrieved successfully from S3');
       return response;
     } catch (error: any) {
@@ -109,13 +103,13 @@ export default class S3Manager {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#deleteObject-property
    */
-  async deleteFile(key: string): Promise<AWS.S3.DeleteObjectOutput> {
+  static async deleteFile(key: string): Promise<AWS.S3.DeleteObjectOutput> {
     const params: AWS.S3.DeleteObjectRequest = {
       Bucket: AWS_S3_BUCKET_NAME,
       Key: key,
     };
     try {
-      const response = await this.s3.deleteObject(params).promise();
+      const response = await this.S3.deleteObject(params).promise();
       logger.info('File deleted successfully from S3');
       return response;
     } catch (error: any) {
@@ -131,12 +125,12 @@ export default class S3Manager {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
    */
-  async getFiles(): Promise<AWS.S3.ListObjectsV2Output> {
+  static async getFiles(): Promise<AWS.S3.ListObjectsV2Output> {
     const params: AWS.S3.ListObjectsV2Request = {
       Bucket: AWS_S3_BUCKET_NAME,
     };
     try {
-      const response = await this.s3.listObjectsV2(params).promise();
+      const response = await this.S3.listObjectsV2(params).promise();
       logger.info('Files retrieved successfully from S3');
       return response;
     } catch (error: any) {
@@ -153,13 +147,13 @@ export default class S3Manager {
    *
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
    */
-  async getFilesByQuery(query: string): Promise<AWS.S3.ListObjectsV2Output> {
+  static async getFilesByQuery(query: string): Promise<AWS.S3.ListObjectsV2Output> {
     const params: AWS.S3.ListObjectsV2Request = {
       Bucket: AWS_S3_BUCKET_NAME,
       Prefix: query,
     };
     try {
-      const response = await this.s3.listObjectsV2(params).promise();
+      const response = await this.S3.listObjectsV2(params).promise();
       logger.info('Files retrieved successfully from S3 using query');
       return response;
     } catch (error: any) {

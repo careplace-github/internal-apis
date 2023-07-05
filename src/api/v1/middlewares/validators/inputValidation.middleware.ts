@@ -1,6 +1,6 @@
 //import registerUserValitation from "./validators/users.validator"
 import { validationResult } from 'express-validator';
-import { HTTPError } from '@api/v1/utils/errors/http';
+import { HTTPError } from '@api/v1/utils';
 import logger from 'src/logs/logger';
 import { Request, Response, NextFunction } from 'express';
 

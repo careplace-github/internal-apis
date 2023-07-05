@@ -1,5 +1,4 @@
 import { check } from 'express-validator';
-import eventSchema from '../models/event.model';
 
 // -------------------------------------------------------------------------------------------- //
 //                                       ADD EVENT VALIDATOR                                    //

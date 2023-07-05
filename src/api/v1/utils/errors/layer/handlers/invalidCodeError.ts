@@ -1,4 +1,4 @@
-import LayerError from '../layerError';
+import LayerError from '../layer-error';
 
 /**
  * ``INVALID_CODE`` is a ``LayerError`` that is thrown when a code is invalid.

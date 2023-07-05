@@ -1,9 +1,9 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICaregiver } from '../interfaces';
+import { ICaregiverModel } from '../interfaces';
 
-const caregiverSchema: Schema<ICaregiver> = new Schema<ICaregiver>(
+const CaregiverSchema: Schema<ICaregiverModel> = new Schema<ICaregiverModel>(
   {
     _id: Types.ObjectId,
 
@@ -57,8 +57,9 @@ const caregiverSchema: Schema<ICaregiver> = new Schema<ICaregiver>(
   }
 );
 
-const CaregiverModel: Model<ICaregiver> = mongoose.model<ICaregiver>('Caregiver', caregiverSchema);
+const CaregiverModel: Model<ICaregiverModel> = mongoose.model<ICaregiverModel>(
+  'Caregiver',
+  CaregiverSchema
+);
 
-export default CaregiverModel;
-
-export { caregiverSchema };
+export { CaregiverSchema, CaregiverModel };
