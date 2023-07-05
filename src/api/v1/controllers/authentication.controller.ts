@@ -5,9 +5,9 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 
 // @api
 import {
-  CompaniesDAO,
+  HealthUnitsDAO,
   HomeCareOrdersDAO,
-  CompanyReviewsDAO,
+  HealthUnitReviewsDAO,
   CollaboratorsDAO,
   CustomersDAO,
 } from '@api/v1/db';
@@ -16,9 +16,9 @@ import {
   IAPIResponse,
   ICollaborator,
   ICustomer,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
   ICustomerModel,
   ICollaboratorModel,
@@ -36,7 +36,7 @@ export default class AuthenticationController {
   // db
   static CollaboratorsDAO = new CollaboratorsDAO();
   static CustomersDAO = new CustomersDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   // services
   static StripeService = StripeService;
   // helpers
@@ -614,8 +614,8 @@ export default class AuthenticationController {
             },
             [
               {
-                path: 'company',
-                model: 'Company',
+                path: 'health_unit',
+                model: 'HealthUnit',
                 populate: [
                   {
                     path: 'services',
@@ -625,7 +625,7 @@ export default class AuthenticationController {
                   {
                     path: 'team',
                     model: 'crm_user',
-                    select: '-__v -createdAt -updatedAt -cognito_id -settings -company',
+                    select: '-__v -createdAt -updatedAt -cognito_id -settings',
                   },
                 ],
                 select: '-__v -createdAt -updatedAt',
@@ -654,11 +654,11 @@ export default class AuthenticationController {
       let Stripe = new StripeService();
       let connectedAccountId: string;
       let externalAccounts: any;
-      if (app === 'crm' && userJSON.company.stripe_information.account_id) {
-        connectedAccountId = userJSON.company.stripe_information.account_id;
+      if (app === 'crm' && userJSON.health_unit.stripe_information.account_id) {
+        connectedAccountId = userJSON.health_unit.stripe_information.account_id;
 
         externalAccounts = await this.StripeService.listExternalAccounts(connectedAccountId);
-        userJSON.company.stripe_information.external_accounts = externalAccounts.data;
+        userJSON.health_unit.stripe_information.external_accounts = externalAccounts.data;
       }
 
       let customerId;

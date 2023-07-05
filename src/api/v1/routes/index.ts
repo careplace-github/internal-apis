@@ -1,7 +1,7 @@
 // App
 export { default as CalendarRoute } from './app/calendar.route';
 export { default as CollaboratorsRoute } from './app/collaborators.route';
-export { default as CompaniesRoute } from './app/companies.route';
+export { default as HealthUnitsRoute } from './app/health-units.route';
 export { default as CustomersRoute } from './app/customers.route';
 export { default as FilesRoute } from './app/files.route';
 export { default as OrdersRoute } from './app/orders.route';

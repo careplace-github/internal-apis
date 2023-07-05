@@ -5,9 +5,9 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 
 // @api
 import {
-  CompaniesDAO,
+  HealthUnitsDAO,
   HomeCareOrdersDAO,
-  CompanyReviewsDAO,
+  HealthUnitReviewsDAO,
   CollaboratorsDAO,
   CustomersDAO,
   EventsDAO,
@@ -18,9 +18,9 @@ import {
   IAPIResponse,
   ICollaborator,
   ICustomer,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
   IEvent,
 } from '@api/v1/interfaces';
@@ -33,7 +33,7 @@ export default class CalendarController {
   // db
   static CollaboratorsDAO = new CollaboratorsDAO();
   static CustomersDAO = new CustomersDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static EventsDAO = new EventsDAO();
   static EventsSeriesDAO = new EventSeriesDAO();
   // services
@@ -146,7 +146,7 @@ export default class CalendarController {
     /**
      * Get the events from the database.
      *
-     * If user.permissions.includes("calendar_edit") then also return every eventSeries with company = user.company
+     * If user.permissions.includes("calendar_edit") then also return every eventSeries with health-unit = user.health-unit
      */
     try {
       const response: IAPIResponse = {
@@ -178,7 +178,7 @@ export default class CalendarController {
 
       if (user.permissions.includes('calendar_view')) {
         eventsSeries = await this.EventsSeriesDAO.queryList(
-          { company: user.company._id },
+          { health_unit: user.health_unit._id },
           undefined,
           undefined,
           undefined,

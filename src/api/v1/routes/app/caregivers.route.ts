@@ -11,14 +11,14 @@ import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
 const router = express.Router();
 
 router
-  .route('/companies/caregivers')
-  .get(AuthenticationGuard, AccessGuard('crm'), CaregiversController.listCompanyCaregivers)
-  .post(AuthenticationGuard, AccessGuard('crm'), CaregiversController.createCompanyCaregiver);
+  .route('health-units/caregivers')
+  .get(AuthenticationGuard, AccessGuard('crm'), CaregiversController.listHealthUnitCaregivers)
+  .post(AuthenticationGuard, AccessGuard('crm'), CaregiversController.createHealthUnitCaregiver);
 
 router
-  .route('/companies/caregivers/:id')
-  .get(AuthenticationGuard, AccessGuard('crm'), CaregiversController.retrieveCompanyCaregiver)
-  .put(AuthenticationGuard, AccessGuard('crm'), CaregiversController.updateCompanyCaregiver)
-  .delete(AuthenticationGuard, AccessGuard('crm'), CaregiversController.deleteCompanyCaregiver);
+  .route('health-units/caregivers/:id')
+  .get(AuthenticationGuard, AccessGuard('crm'), CaregiversController.retrieveHealthUnitCaregiver)
+  .put(AuthenticationGuard, AccessGuard('crm'), CaregiversController.updateHealthUnitCaregiver)
+  .delete(AuthenticationGuard, AccessGuard('crm'), CaregiversController.deleteHealthUnitCaregiver);
 
 export default router;

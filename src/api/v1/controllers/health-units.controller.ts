@@ -5,9 +5,9 @@ import mongoose, { FilterQuery, QueryOptions, startSession } from 'mongoose';
 
 // @api
 import {
-  CompaniesDAO,
+  HealthUnitsDAO,
   HomeCareOrdersDAO,
-  CompanyReviewsDAO,
+  HealthUnitReviewsDAO,
   CustomersDAO,
   CollaboratorsDAO,
   CaregiversDAO,
@@ -15,9 +15,9 @@ import {
 import { AuthHelper, EmailHelper, StripeHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
 } from '@api/v1/interfaces';
 import { SESService } from '@api/v1/services';
@@ -25,13 +25,13 @@ import { HTTPError } from '@api/v1/utils';
 // @logger
 import logger from '@logger';
 
-export default class CompaniesController {
+export default class HealthUnitsController {
   // db
-  static CompanyReviewsDAO = new CompanyReviewsDAO();
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
   static CustomersDAO = new CustomersDAO();
   static CollaboratorsDAO = new CollaboratorsDAO();
   static CaregiversDAO = new CaregiversDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   // helpers
   static AuthHelper = AuthHelper;
@@ -51,23 +51,23 @@ export default class CompaniesController {
 
       let user = await this.AuthHelper.getUserFromDB(accessToken);
 
-      let companyId = user.company._id;
+      let healthUnitId = user.health_unit._id;
 
-      if (companyId === null || companyId === undefined) {
+      if (healthUnitId === null || healthUnitId === undefined) {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let company = await this.CompaniesDAO.retrieve(companyId);
+      let healthUnit = await this.HealthUnitsDAO.retrieve(healthUnitId);
 
-      if (!company || !company.stripe_information) {
-        next(new HTTPError._500('Failed to retrieve company information.'));
+      if (!healthUnit || !healthUnit.stripe_information) {
+        next(new HTTPError._500('Failed to retrieve healthUnit information.'));
         return;
       }
 
-      let accountId = company.stripe_information.account_id;
+      let accountId = healthUnit.stripe_information.account_id;
 
       let pendingOrders = await this.HomeCareOrdersDAO.queryList({
-        company: companyId,
+        health_unit: healthUnitId,
         status: 'new',
       }).then((orders) => {
         return orders.data.length;
@@ -112,15 +112,15 @@ export default class CompaniesController {
 
   static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {}
 
-  static async searchCompanies(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async searchHealthUnits(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       let response: IAPIResponse = {
         statusCode: 102, // request received
         data: {},
       };
 
-      let filters: FilterQuery<ICompany> = {};
-      let options: QueryOptions<ICompany> = {};
+      let filters: FilterQuery<IHealthUnit> = {};
+      let options: QueryOptions<IHealthUnit> = {};
 
       const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
       const documentsPerPage =
@@ -129,27 +129,27 @@ export default class CompaniesController {
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
       if (req.query.sortBy) {
         if (req.query.sortBy === 'rating') {
-          // sort by company.rating.average
+          // sort by healthUnit.rating.average
           options.sort = {
             'rating.average': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
           };
         }
         if (req.query.sortBy === 'price') {
-          // sort by company.business_profile.average_hourly_rate
+          // sort by healthUnit.business_profile.average_hourly_rate
           options.sort = {
             'pricing.minimum_hourly_rate': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
           };
         }
 
         if (req.query.sortBy === 'name') {
-          // sort by company.business_profile.name
+          // sort by healthUnit.business_profile.name
           options.sort = {
             'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
           };
         }
 
         if (req.query.sortBy === 'relevance') {
-          // sort by company.business_profile.name
+          // sort by healthUnit.business_profile.name
           options.sort = {
             'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
           };
@@ -249,7 +249,7 @@ export default class CompaniesController {
         };
       }
 
-      let companies = await this.CompaniesDAO.queryList(
+      let healthUnits = await this.HealthUnitsDAO.queryList(
         filters,
         options,
         page,
@@ -259,7 +259,7 @@ export default class CompaniesController {
       );
 
       response.statusCode = 200;
-      response.data = companies;
+      response.data = healthUnits;
 
       // Pass to the next middleware to handle the response
       next(response);

@@ -1,17 +1,17 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, ICustomer, ICompany, ICollaborator, IHomeCareOrder } from '..';
+import { IAddress, ICustomer, IHealthUnit, ICollaborator, IHomeCareOrder } from '..';
 // types
 import { OrderRecurrency } from '../types';
 
 interface IEventSeries {
   _id: Types.ObjectId | string;
 
-  ownerType: 'company' | 'collaborator';
-  owner: Types.ObjectId | ICollaborator | ICompany;
+  ownerType: 'health_unit' | 'collaborator';
+  owner: Types.ObjectId | ICollaborator | IHealthUnit;
 
-  // If owner type is company
+  // If owner type is health-unit
   order?: Types.ObjectId | IHomeCareOrder;
 
   start_date: Date;

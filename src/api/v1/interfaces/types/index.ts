@@ -23,12 +23,12 @@ export { FileModelType } from './misc/file.type';
  * Types
  */
 export * from './caregiver.type';
-export * from './company.type';
+export * from './health-unit.type';
 export * from './collaborator.type';
 export * from './event.type';
 export * from './event-series.type';
 export * from './customer.type';
 export * from './home-care-order.type';
 export * from './patient.type';
-export * from './company-review.type';
+export * from './health-unit-review.type';
 export * from './service.type';

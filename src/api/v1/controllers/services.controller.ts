@@ -4,13 +4,13 @@ import { Request, Response, NextFunction } from 'express';
 import mongoose, { FilterQuery, startSession } from 'mongoose';
 
 // @api
-import { CompaniesDAO, HomeCareOrdersDAO, CompanyReviewsDAO, ServicesDAO } from '@api/v1/db';
+import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO, ServicesDAO } from '@api/v1/db';
 import { AuthHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
 } from '@api/v1/interfaces';
 import { HTTPError } from '@api/v1/utils';

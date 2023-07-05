@@ -6,13 +6,13 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 import fs, { createReadStream } from 'fs';
 
 // @api
-import { CompaniesDAO, HomeCareOrdersDAO, CompanyReviewsDAO } from '@api/v1/db';
+import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO } from '@api/v1/db';
 import { AuthHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
 } from '@api/v1/interfaces';
 import { CognitoService, StripeService, BucketService } from '@api/v1/services';

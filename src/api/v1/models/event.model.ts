@@ -7,7 +7,7 @@ const EventSchema: Schema<IEventModel> = new Schema<IEventModel>(
   {
     _id: Schema.Types.ObjectId,
 
-    ownerType: { type: String, required: true, enum: ['company', 'collaborator'] },
+    ownerType: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
     owner: { type: Schema.Types.ObjectId, required: true },
 
     title: { type: String, required: true },

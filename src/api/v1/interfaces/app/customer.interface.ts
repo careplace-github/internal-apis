@@ -1,13 +1,13 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, ICompany, ISettings } from '..';
+import { IAddress, IHealthUnit, ISettings } from '..';
 // types
 import { Gender } from '../types';
 
 interface ICustomer {
   _id: Types.ObjectId | string;
-  company?: Types.ObjectId | ICompany;
+
   cognito_id: string;
   name: string;
   email: string;
