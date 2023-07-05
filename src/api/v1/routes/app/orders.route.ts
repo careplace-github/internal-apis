@@ -30,7 +30,7 @@ router
   );
 
 router
-  .route('/companies/:company/orders/home-care')
+  .route('health-units/:health-unit/orders/home-care')
   .post(
     AuthenticationGuard,
     AccessGuard('marketplace'),
@@ -42,25 +42,25 @@ router
  */
 
 router
-  .route('/companies/orders/home-care')
-  .get(AuthenticationGuard, AccessGuard('crm'), OrdersController.listCompanyHomeCareOrders)
-  .post(AuthenticationGuard, AccessGuard('crm'), OrdersController.companyCreateHomeCareOrder);
+  .route('health-units/orders/home-care')
+  .get(AuthenticationGuard, AccessGuard('crm'), OrdersController.listHealthUnitHomeCareOrders)
+  .post(AuthenticationGuard, AccessGuard('crm'), OrdersController.healthUnitCreateHomeCareOrder);
 
 router
-  .route('/companies/orders/home-care/:id')
-  .get(AuthenticationGuard, AccessGuard('crm'), OrdersController.companyRetrieveHomeCareOrder)
-  .put(AuthenticationGuard, AccessGuard('crm'), OrdersController.companyUpdateHomeCareOrder);
+  .route('health-units/orders/home-care/:id')
+  .get(AuthenticationGuard, AccessGuard('crm'), OrdersController.healthUnitRetrieveHomeCareOrder)
+  .put(AuthenticationGuard, AccessGuard('crm'), OrdersController.healthUnitUpdateHomeCareOrder);
 
 router
-  .route('/companies/orders/home-care/:id/accept')
+  .route('health-units/orders/home-care/:id/accept')
   .post(AuthenticationGuard, AccessGuard('crm'), OrdersController.acceptHomeCareOrder);
 
 router
-  .route('/companies/orders/home-care/:id/decline')
+  .route('health-units/orders/home-care/:id/decline')
   .post(AuthenticationGuard, AccessGuard('crm'), OrdersController.declineHomeCareOrder);
 
 router
-  .route('/companies/orders/home-care/:id/send-quote')
+  .route('health-units/orders/home-care/:id/send-quote')
   .post(AuthenticationGuard, AccessGuard('crm'), OrdersController.sendHomeCareOrderQuote);
 
 export default router;

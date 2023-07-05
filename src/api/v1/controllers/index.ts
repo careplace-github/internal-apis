@@ -2,7 +2,7 @@ export { default as AuthenticationController } from './authentication.controller
 export { default as CalendarController } from './calendar.controller';
 export { default as CaregiversController } from './caregivers.controller';
 export { default as CollaboratorsController } from './collaborators.controller';
-export { default as CompaniesController } from './companies.controller';
+export { default as HealthUnitsController } from './health-units.controller';
 // export { default as CustomersController } from './customers.controller';
 export { default as FilesController } from './files.controller';
 export { default as OrdersController } from './orders.controller';

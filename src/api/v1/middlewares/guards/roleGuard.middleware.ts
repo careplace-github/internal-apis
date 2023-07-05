@@ -24,8 +24,8 @@ interface RequestUtilsResponse {
  * @returns {void} - Returns nothing.
  *
  * @example
- * // This middleware will only allow a user to access the resource if the user has the role "admin" or "company_owner" or "company_board_member"
- * router.get("/users/:id", validateAccess(["admin", "company_owner", "company_board_member"]), async (req, res) => {
+ * // This middleware will only allow a user to access the resource if the user has the role "admin" or "healthUnit_owner" or "healthUnit_board_member"
+ * router.get("/users/:id", validateAccess(["admin", "healthUnit_owner", "healthUnit_board_member"]), async (req, res) => {
  *  [...]
  * });
  */

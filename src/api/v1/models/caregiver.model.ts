@@ -17,7 +17,7 @@ const CaregiverSchema: Schema<ICaregiverModel> = new Schema<ICaregiverModel>(
 
     gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
 
-    company: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
 
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
 

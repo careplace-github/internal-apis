@@ -13,7 +13,7 @@ const CollaboratorSchema: Schema<ICollaboratorModel> = new Schema<ICollaboratorM
     phone: { type: String, required: true, unique: true },
     birthdate: { type: Date, required: true },
     gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
-    company: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'healthUnit', required: true },
     address: {
       street: { type: String, required: false },
       postal_code: { type: String, required: false },
@@ -37,7 +37,7 @@ const CollaboratorSchema: Schema<ICollaboratorModel> = new Schema<ICollaboratorM
       enum: [
         'app_user',
         'admin_edit_users_permissions',
-        'admin_edit_company',
+        'admin_edit_healthUnit',
         'dashboard_view',
         'calendar_view',
         'calendar_edit',

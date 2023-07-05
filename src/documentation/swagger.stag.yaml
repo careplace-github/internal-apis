@@ -19,8 +19,8 @@ tags:
     description: Authentication operations
   - name: Users
     description: Users operations
-  - name: Companies
-    description: Companies operations
+  - name: Health Units
+    description: Health Units operations
   - name: Orders
     description: Orders operations
   - name: Checkout
@@ -645,7 +645,7 @@ paths:
                   gender:
                     type: string
                     example: male
-                  company:
+                  healthUnit
                     type: object
                     properties:
                       _id:
@@ -842,7 +842,7 @@ paths:
                     _id:
                       type: string
                       example: 5f9f1b0b0b9b0b0b0b0b0b0b
-                    company:
+                    healthUnit
                       type: object
                       properties:
                         _id:
@@ -921,7 +921,7 @@ paths:
                         profile_picture:
                           type: string
                           example: "https://careplace.com/caregiver1.png"
-                        company:
+                        healthUnit
                           type: string
                           example: 5f9f1b0b0b9b0b0b0b0b0b0b
                         services:
@@ -1123,7 +1123,7 @@ paths:
                   _id:
                     type: string
                     example: 5f9f1b0b0b9b0b0b0b0b0b0b
-                  company:
+                  healthUnit
                     type: object
                     properties:
                       _id:
@@ -1202,7 +1202,7 @@ paths:
                       profile_picture:
                         type: string
                         example: "https://careplace.com/caregiver1.png"
-                      company:
+                      healthUnit
                         type: string
                         example: 5f9f1b0b0b9b0b0b0b0b0b0b
                       services:
@@ -1404,7 +1404,7 @@ paths:
                   _id:
                     type: string
                     example: 5f9f1b0b0b9b0b0b0b0b0b0b
-                  company:
+                  healthUnit
                     type: object
                     properties:
                       _id:
@@ -1483,7 +1483,7 @@ paths:
                       profile_picture:
                         type: string
                         example: "https://careplace.com/caregiver1.png"
-                      company:
+                      healthUnit
                         type: string
                         example: 5f9f1b0b0b9b0b0b0b0b0b0b
                       services:
@@ -2252,13 +2252,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/search:
+  health-units/search:
     get:
       tags:
-        - Companies
-      summary: Search companies
-      description: Search companies by name.
-      operationId: searchCompanies
+        - Health Units
+      summary: Search Health Units
+      description: Search Health Units by name.
+      operationId: searchHealth Units
       parameters:
         - name: services
           in: query
@@ -2310,7 +2310,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  companies:
+                  Health Units:
                     type: array
                     items:
                       type: object
@@ -2323,7 +2323,7 @@ paths:
                           properties:
                             name:
                               type: string
-                              example: Company name
+                              example: healthUnit name
                             email:
                               type: string
                               example: null
@@ -2410,17 +2410,17 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/{companyId}":
+  "health-units/{healthUnitId}":
     get:
       tags:
-        - Companies
-      summary: Get company
-      description: Get company by id.
-      operationId: getCompany
+        - Health Units
+      summary: Get healthUnit
+      description: Get healthUnit by id.
+      operationId: gethealthUnit
       parameters:
-        - name: companyId
+        - name: healthUnitId
           in: path
-          description: Company id
+          description: healthUnit id
           required: true
           schema:
             type: string
@@ -2440,7 +2440,7 @@ paths:
                     properties:
                       name:
                         type: string
-                        example: Company name
+                        example: healthUnit name
                       email:
                         type: string
                         example: null
@@ -2518,13 +2518,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/dashboard:
+  health-units/dashboard:
     get:
       tags:
-        - Companies
-      summary: Get company dashboard
-      description: Get company dashboard.
-      operationId: getCompanyDashboard
+        - Health Units
+      summary: Get healthUnit dashboard
+      description: Get healthUnit dashboard.
+      operationId: gethealthUnitDashboard
       security:
         - jwt_context:
             - write
@@ -2605,13 +2605,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/orders:
+  health-units/orders:
     get:
       tags:
-        - Companies
-      summary: Get company orders
-      description: Get company orders.
-      operationId: getCompanyOrders
+        - Health Units
+      summary: Get healthUnit orders
+      description: Get healthUnit orders.
+      operationId: gethealthUnitOrders
       security:
         - jwt_context:
             - write
@@ -2629,7 +2629,7 @@ paths:
                     _id:
                       type: string
                       example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                    company:
+                    healthUnit
                       type: string
                       example: 5f7f9f9f9f9f9f9f9f9f9f9f
                     caregiver:
@@ -2657,7 +2657,7 @@ paths:
                         profile_picture:
                           type: string
                           example: "https://www.google.com"
-                        company:
+                        healthUnit
                           type: string
                           example: 5f7f9f9f9f9f9f9f9f9f9f9f
                         services:
@@ -2887,10 +2887,10 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company order
-      description: Create company order.
-      operationId: createCompanyOrder
+        - Health Units
+      summary: Create healthUnit order
+      description: Create healthUnit order.
+      operationId: createhealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -3016,7 +3016,7 @@ paths:
                   _id:
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   caregiver:
@@ -3044,7 +3044,7 @@ paths:
                       profile_picture:
                         type: string
                         example: "https://www.google.com"
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       services:
@@ -3309,13 +3309,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}":
+  "health-units/orders/{orderId}":
     get:
       tags:
-        - Companies
-      summary: Get company order
-      description: Get company order by id.
-      operationId: getCompanyOrder
+        - Health Units
+      summary: Get healthUnit order
+      description: Get healthUnit order by id.
+      operationId: gethealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -3339,7 +3339,7 @@ paths:
                   _id:
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   caregiver:
@@ -3367,7 +3367,7 @@ paths:
                       profile_picture:
                         type: string
                         example: "https://www.google.com"
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       services:
@@ -3597,10 +3597,10 @@ paths:
                     example: INVALID_REQUEST
     put:
       tags:
-        - Companies
-      summary: Update company order
-      description: Update company order by id.
-      operationId: updateCompanyOrder
+        - Health Units
+      summary: Update healthUnit order
+      description: Update healthUnit order by id.
+      operationId: updatehealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -3635,7 +3635,7 @@ paths:
                   _id:
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   caregiver:
@@ -3663,7 +3663,7 @@ paths:
                       profile_picture:
                         type: string
                         example: "https://www.google.com"
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       services:
@@ -3893,14 +3893,14 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company order
+        - Health Units
+      summary: Delete healthUnit order
       description: >-
-        Delete company order by id. This only works for orders that were created
-        by the company. Orders that were created by the user (from the
+        Delete healthUnit order by id. This only works for orders that were created
+        by the healthUnit. Orders that were created by the user (from the
         Marketplace) can only be declined by using the
-        '/companies/orders/{orderId}/decline' endpoint.
-      operationId: deleteCompanyOrder
+        'health-units/orders/{orderId}/decline' endpoint.
+      operationId: deletehealthUnitOrder
       security:
         - jwt_context:
             - write
@@ -3930,7 +3930,7 @@ paths:
                       _id:
                         type: string
                         example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       caregiver:
@@ -3958,7 +3958,7 @@ paths:
                           profile_picture:
                             type: string
                             example: "https://www.google.com"
-                          company:
+                          healthUnit
                             type: string
                             example: 5f7f9f9f9f9f9f9f9f9f9f9f
                           services:
@@ -4186,10 +4186,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/decline":
+  "health-units/orders/{orderId}/decline":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Reject order
       description: Reject order by id.
       operationId: rejectOrder
@@ -4216,7 +4216,7 @@ paths:
                   _id:
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   user:
@@ -4314,10 +4314,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/accept":
+  "health-units/orders/{orderId}/accept":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Accept order
       description: Accept order by id.
       operationId: acceptOrder
@@ -4348,7 +4348,7 @@ paths:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       user: null
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       recurrency:
@@ -4386,7 +4386,7 @@ paths:
                       _id:
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       user:
@@ -4484,10 +4484,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/send-quote":
+  "health-units/orders/{orderId}/send-quote":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Send quote
       description: Send quote by id.
       operationId: sendQuote
@@ -4514,7 +4514,7 @@ paths:
                   _id:
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   user:
@@ -4612,10 +4612,10 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/orders/{orderId}/schedule-visit":
+  "health-units/orders/{orderId}/schedule-visit":
     post:
       tags:
-        - Companies
+        - Health Units
       summary: Schedule visit
       description: Schedule visit by id.
       operationId: scheduleVisit
@@ -4661,7 +4661,7 @@ paths:
                   _id:
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   user:
@@ -4737,7 +4737,7 @@ paths:
                     type: object
                     properties:
                       user: null
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       title:
@@ -4781,13 +4781,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/users:
+  health-units/users:
     get:
       tags:
-        - Companies
-      summary: Get company users
-      description: Get company users.
-      operationId: getCompanyUsers
+        - Health Units
+      summary: Get healthUnit users
+      description: Get healthUnit users.
+      operationId: gethealthUnitUsers
       security:
         - jwt_context:
             - write
@@ -4824,7 +4824,7 @@ paths:
                       type: string
                       example: >-
                         https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
-                    company:
+                    healthUnit
                       type: string
                       example: 5e1f9b9b9b9b9b9b9b9b9b9b
                     address:
@@ -4885,10 +4885,10 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company user
-      description: Create company user.
-      operationId: createCompanyUser
+        - Health Units
+      summary: Create healthUnit user
+      description: Create healthUnit user.
+      operationId: createhealthUnitUser
       security:
         - jwt_context:
             - write
@@ -4969,7 +4969,7 @@ paths:
                     type: string
                     example: >-
                       https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
-                  company:
+                  healthUnit
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
                   address:
@@ -5028,13 +5028,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/users/{userId}":
+  "health-units/users/{userId}":
     get:
       tags:
-        - Companies
-      summary: Get company user
-      description: Get company user by id.
-      operationId: getCompanyUser
+        - Health Units
+      summary: Get healthUnit user
+      description: Get healthUnit user by id.
+      operationId: gethealthUnitUser
       security:
         - jwt_context:
             - write
@@ -5076,7 +5076,7 @@ paths:
                     type: string
                     example: >-
                       https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
-                  company:
+                  healthUnit
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
                   address:
@@ -5137,10 +5137,10 @@ paths:
                     example: INVALID_REQUEST
     put:
       tags:
-        - Companies
-      summary: Update company user
-      description: Update company user by id.
-      operationId: updateCompanyUser
+        - Health Units
+      summary: Update healthUnit user
+      description: Update healthUnit user by id.
+      operationId: updatehealthUnitUser
       security:
         - jwt_context:
             - write
@@ -5228,7 +5228,7 @@ paths:
                     type: string
                     example: >-
                       https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
-                  company:
+                  healthUnit
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
                   address:
@@ -5289,10 +5289,10 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company user
-      description: Delete company user by id.
-      operationId: deleteCompanyUser
+        - Health Units
+      summary: Delete healthUnit user
+      description: Delete healthUnit user by id.
+      operationId: deletehealthUnitUser
       security:
         - jwt_context:
             - write
@@ -5341,7 +5341,7 @@ paths:
                         type: string
                         example: >-
                           https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50
-                      company:
+                      healthUnit
                         type: string
                         example: 5e1f9b9b9b9b9b9b9b9b9b9b
                       address:
@@ -5400,13 +5400,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /companies/external-accounts:
+  health-units/external-accounts:
     get:
       tags:
-        - Companies
-      summary: Get company external accounts
-      description: Get company external accounts.
-      operationId: getCompanyExternalAccounts
+        - Health Units
+      summary: Get healthUnit external accounts
+      description: Get healthUnit external accounts.
+      operationId: gethealthUnitExternalAccounts
       security:
         - jwt_context:
             - write
@@ -5493,17 +5493,17 @@ paths:
                     example: INVALID_REQUEST
     post:
       tags:
-        - Companies
-      summary: Create company external account
+        - Health Units
+      summary: Create healthUnit external account
       description: >-
-        Create company external account. <br>  The Company to each the external
-        account is attached to is the company of the user that is extracted from
+        Create healthUnit external account. <br>  The healthUnit to each the external
+        account is attached to is the healthUnit of the user that is extracted from
         the access token. To create an external_accoount you should provide the
         ```external_account_token```. This should either be a card token or a
         bank account token. To create a card token the Client Application needs
         to use the Stripe JS library. <br>  @see
         https://stripe.com/docs/js/tokens_sources/create_token
-      operationId: createCompanyExternalAccount
+      operationId: createhealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -5595,13 +5595,13 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  "/companies/external-accounts/{externalAccountId}":
+  "health-units/external-accounts/{externalAccountId}":
     get:
       tags:
-        - Companies
-      summary: Get company external account
-      description: Get company External Account by External Account Token ID.
-      operationId: getCompanyExternalAccount
+        - Health Units
+      summary: Get healthUnit external account
+      description: Get healthUnit External Account by External Account Token ID.
+      operationId: gethealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -5694,10 +5694,10 @@ paths:
                     example: INVALID_REQUEST
     delete:
       tags:
-        - Companies
-      summary: Delete company external account
-      description: Delete company external account by id.
-      operationId: deleteCompanyExternalAccount
+        - Health Units
+      summary: Delete healthUnit external account
+      description: Delete healthUnit external account by id.
+      operationId: deletehealthUnitExternalAccount
       security:
         - jwt_context:
             - write
@@ -5764,7 +5764,7 @@ paths:
                   _id:
                     type: string
                     example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   caregiver:
@@ -5939,7 +5939,7 @@ paths:
                       _id:
                         type: string
                         example: 5e1f9b9b9b9b9b9b9b9b9b9b
-                      company:
+                      healthUnit
                         type: string
                         example: 5f7f9f9f9f9f9f9f9f9f9f9f
                       caregiver:
@@ -6046,8 +6046,8 @@ paths:
         The same error will be returned if provided an non-existent/invalid
         ObjectId for any field (valid for ObjectId fied types). <br> The order
         will be created with the status ```new```. The order status will change
-        to ```accepted``` when the company accepts the order or ```declined```if
-        the company declines it. The order status will change to ```active```
+        to ```accepted``` when the healthUnit accepts the order or ```declined```if
+        the healthUnit declines it. The order status will change to ```active```
         when the payment intent is processed successfully. If the payment intent
         is not processed successfully the order status will change to
         ```payment_failed```.
@@ -6063,7 +6063,7 @@ paths:
             schema:
               type: object
               properties:
-                company:
+                healthUnit
                   type: string
                   example: 63a204a3973d8aadd5a664b0
                 relative:
@@ -6127,7 +6127,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  company:
+                  healthUnit
                     type: string
                     example: 5f7f9f9f9f9f9f9f9f9f9f9f
                   user:
@@ -7291,40 +7291,40 @@ paths:
                   type:
                     type: string
                     example: INVALID_REQUEST
-  /admin/companies:
+  /adminhealth-units:
     post:
       tags:
         - Admin
-      summary: Create Company
+      summary: Create healthUnit
       description: >-
-        Create a Company. <br> Right now you should use the Stripe Dashboard to
-        create a company (Dashboard > Connect > Companies > Create Custom
+        Create a healthUnit. <br> Right now you should use the Stripe Dashboard to
+        create a healthUnit (Dashboard > Connect > Health Units > Create Custom
         Account > Create Account Link (type: account_onboarding)). <br> Then use
-        the Stripe Dashboard to create a Customer with the Company Information
+        the Stripe Dashboard to create a Customer with the healthUnit Information
         (Dashboard > Customer > Add Customer). <br> Finally you should create a
-        company object in the database and add the account id and customer id to
-        the company object (company > stripe_information > account_id &&
+        healthUnit object in the database and add the account id and customer id to
+        the healthUnit object (healthUnit > stripe_information > account_id &&
         customer_id).
-      operationId: createCompany
-  "/admin/companies/{companyId}/payment-method":
+      operationId: createhealthUnit
+  "/adminhealth-units/{healthUnitId}/payment-method":
     post:
       tags:
         - Admin
-      summary: Create Company Payment Method
+      summary: Create healthUnit Payment Method
       description: >-
-        Create a Company Payment Method. <br> Right now you should use the
-        Stripe Dashboard to create a company payment method (Dashboard >
+        Create a healthUnit Payment Method. <br> Right now you should use the
+        Stripe Dashboard to create a healthUnit payment method (Dashboard >
         Customers > Payment Methods > Add Payment Method). <br>
-      operationId: createCompanyPaymentMethod
+      operationId: createhealthUnitPaymentMethod
     delete:
       tags:
         - Admin
-      summary: Delete Company Payment Method
+      summary: Delete healthUnit Payment Method
       description: >-
-        Delete a Company Payment Method. <br> Right now you should use the
-        Stripe Dashboard to delete a company payment method (Dashboard >
+        Delete a healthUnit Payment Method. <br> Right now you should use the
+        Stripe Dashboard to delete a healthUnit payment method (Dashboard >
         Customers > Payment Methods > Delete Payment Method). <br>
-      operationId: deleteCompanyPaymentMethod
+      operationId: deletehealthUnitPaymentMethod
 components:
   schemas:
     CRM_User:
@@ -7358,8 +7358,8 @@ components:
         profile_picture:
           type: string
           example: "https://s3.amazonaws.com/uifaces/faces/twitter/calebogden/128.jpg"
-        company:
-          $ref: "#/components/schemas/Company"
+        healthUnit
+          $ref: "#/components/schemas/healthUnit"
         address:
           type: object
           properties:
@@ -7553,8 +7553,8 @@ components:
             - male
             - female
             - other
-        company:
-          $ref: "#/components/schemas/Company"
+        healthUnit
+          $ref: "#/components/schemas/healthUnit"
         services:
           type: array
           items:
@@ -7691,7 +7691,7 @@ components:
                 longitude:
                   type: number
                   example: -9.142685
-    Company:
+    healthUnit:
       type: object
       properties:
         _id:
@@ -7705,13 +7705,13 @@ components:
               example: Careplace
             email:
               type: string
-              example: geral@company.pt
+              example: geral@healthUnit.pt
             phone:
               type: string
               example: 9CareplaceDemo-123!78
             website:
               type: string
-              example: www.company.pt
+              example: www.healthUnit.pt
             logo:
               type: string
               example: >-
@@ -7891,8 +7891,8 @@ components:
         _id:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
-        company:
-          $ref: "#/components/schemas/Company"
+        healthUnit
+          $ref: "#/components/schemas/healthUnit"
         caregiver:
           $ref: "#/components/schemas/CRM_User"
         user:

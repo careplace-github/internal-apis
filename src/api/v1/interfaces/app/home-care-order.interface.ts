@@ -1,13 +1,13 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, ICaregiver, ICompany, IEvent, ICustomer, IPatient, IService } from '..';
+import { IAddress, ICaregiver, IHealthUnit, IEvent, ICustomer, IPatient, IService } from '..';
 // types
 import { OrderRecurrency, OrderStatus, WeekDay, OrderScreeningVisitStatus } from '../types';
 
 interface IHomeCareOrder {
   _id: Types.ObjectId | string;
-  company: ICompany;
+  health_unit: IHealthUnit;
   caregiver?: Types.ObjectId | ICaregiver;
   customer: Types.ObjectId | ICustomer;
   patient: Types.ObjectId | IPatient;

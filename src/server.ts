@@ -53,7 +53,7 @@ import {
   FilesRoute,
   AuthRoute,
   CustomersRoute,
-  CompaniesRoute,
+  HealthUnitsRoute,
   ServicesRoute,
   OrdersRoute,
   CalendarRoute,
@@ -68,7 +68,7 @@ import { HTTPError } from '@api/v1/utils';
 import { body } from 'express-validator';
 
 const main = async () => {
-  let app: express.Application;
+  let app: express.Application = express();
   const MAX_RECONNECT_ATTEMPTS = 10;
   let currentReconnectAttempts = 0;
 
@@ -111,8 +111,12 @@ const main = async () => {
 
     logger.info(`Connecting to MongoDB Database '${MONGODB_DB_ACTIVE_NS}'...`);
 
+    mongoose.set('strictQuery', true);
+
+
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
+
 
     /**
      *  Handle connection errors
@@ -412,7 +416,7 @@ const main = async () => {
       app.use(API_ROUTE, ReviewsRoute);
       app.use(API_ROUTE, AuthRoute);
       app.use(API_ROUTE, CustomersRoute);
-      app.use(API_ROUTE, CompaniesRoute);
+      app.use(API_ROUTE, HealthUnitsRoute);
       app.use(API_ROUTE, PatientsRoute);
 
       app.use(API_ROUTE, OrdersRoute);
@@ -446,7 +450,7 @@ const main = async () => {
       });
     } catch (error) {
       console.log(`Unable to start Express Application: ${error}`);
-      throw new HTTPError._500(`Unable to start Express Application: ${error}`);
+      // throw new HTTPError._500(`Unable to start Express Application: ${error}`);
     }
 
     try {
@@ -466,7 +470,7 @@ const main = async () => {
 
       logger.info('Fetched all the necessary assets successfully!');
     } catch (error) {
-      throw new HTTPError._503(`Service Unavailable: ${error}`);
+      // throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
 
     try {
@@ -488,14 +492,17 @@ const main = async () => {
         logger.info(`Server started successfully! 🚀`);
       });
 
-      app.listen(443, () => {});
+      app.on('error', (error: any) => {
+        console.log(`Unable to start the HTTP Server: ${error}`);
+        // throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
+      });
     } catch (error) {
       console.log(`Unable to start the HTTP Server: ${error}`);
-      throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
+      // throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
     }
   } catch (error) {
     console.log(`Internal Error: ${error}`);
-    throw new HTTPError._500(`Internal Error: ${error}`);
+    // throw new HTTPError._500(`Internal Error: ${error}`);
   }
 };
 

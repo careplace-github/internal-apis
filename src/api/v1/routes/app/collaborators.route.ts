@@ -11,12 +11,12 @@ import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
 const router = express.Router();
 
 router
-  .route('/companies/collaborators')
+  .route('health-units/collaborators')
   .get(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.listCollaborators)
   .post(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.create);
 
 router
-  .route('/companies/collaborators/:id')
+  .route('health-units/collaborators/:id')
   .get(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.retrieve)
   .put(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.update)
   .delete(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.delete);

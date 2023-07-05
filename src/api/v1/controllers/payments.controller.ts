@@ -7,8 +7,8 @@ import mongoose, { FilterQuery, QueryOptions, Types, startSession } from 'mongoo
 import {
   CaregiversDAO,
   CustomersDAO,
-  CompaniesDAO,
-  CompanyReviewsDAO,
+  HealthUnitsDAO,
+  HealthUnitReviewsDAO,
   HomeCareOrdersDAO,
   PatientsDAO,
   CollaboratorsDAO,
@@ -19,8 +19,8 @@ import {
   IAPIResponse,
   ICaregiver,
   ICaregiverModel,
-  ICompany,
-  ICompanyModel,
+  IHealthUnit,
+  IHealthUnitModel,
   ICustomer,
   IEventSeries,
   IHomeCareOrder,
@@ -45,10 +45,10 @@ import logger from '@logger';
 import { services } from '@assets';
 
 export default class PaymentsController {
-  static CompanyReviewsDAO = new CompanyReviewsDAO();
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
   static CustomersDAO = new CustomersDAO();
   static CaregiversDAO = new CaregiversDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static CollaboratorsDAO = new CollaboratorsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   static EventSeriesDAO = new EventSeriesDAO();
@@ -305,8 +305,8 @@ export default class PaymentsController {
 
         [
           {
-            path: 'company',
-            model: 'Company',
+            path: 'health_unit',
+            model: 'HealthUnit',
           },
           {
             path: 'user',
@@ -333,7 +333,7 @@ export default class PaymentsController {
         }
       }
 
-      let accountId = order.company.stripe_information.account_id;
+      let accountId = order.health_unit.stripe_information.account_id;
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 

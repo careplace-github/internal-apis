@@ -8,8 +8,8 @@ import password from 'secure-random-password';
 // @api
 import {
   CustomersDAO,
-  CompaniesDAO,
-  CompanyReviewsDAO,
+  HealthUnitsDAO,
+  HealthUnitReviewsDAO,
   CollaboratorsDAO,
   HomeCareOrdersDAO,
 } from '@api/v1/db';
@@ -18,8 +18,8 @@ import {
   IAPIResponse,
   ICollaborator,
   ICollaboratorModel,
-  ICompany,
-  ICompanyModel,
+  IHealthUnit,
+  IHealthUnitModel,
 } from '@api/v1/interfaces';
 import { CognitoService, SESService } from '@api/v1/services';
 import { HTTPError, AuthUtils } from '@api/v1/utils';
@@ -31,10 +31,10 @@ import { CollaboratorModel } from '../models';
 
 export default class CollaboratorsController {
   // db
-  static CompanyReviewsDAO = new CompanyReviewsDAO();
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
   static CustomersDAO = new CustomersDAO();
   static CollaboratorsDAO = new CollaboratorsDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   // helpers
   static AuthHelper = AuthHelper;
@@ -58,21 +58,21 @@ export default class CollaboratorsController {
 
       const reqCollaborator = req.body as ICollaborator;
 
-      const companyId = reqCollaborator.company!.toString(); // Convert to string if it's an ObjectId
+      const healthUnitId = reqCollaborator.health_unit!.toString(); // Convert to string if it's an ObjectId
 
-      let company: ICompanyModel;
+      let healthUnit: IHealthUnitModel;
 
       let newcollaborator: ICollaboratorModel;
       let temporaryPassword: string | undefined;
       let cognitocollaborator: any;
 
       try {
-        // Get the company from MongoDB.
-        company = await this.CompaniesDAO.retrieve(companyId);
+        // Get the healthUnit from MongoDB.
+        healthUnit = await this.HealthUnitsDAO.retrieve(healthUnitId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
-            return next(new HTTPError._404('Company not found.'));
+            return next(new HTTPError._404('Health Unit not found.'));
           }
         }
       }
@@ -150,7 +150,7 @@ export default class CollaboratorsController {
         const emailData = {
           name: reqCollaborator.name,
           email: reqCollaborator.email,
-          company: company!.business_profile!.name!,
+          healthUnit: healthUnit!.business_profile!.name!,
           password: temporaryPassword,
         };
 
@@ -343,7 +343,7 @@ export default class CollaboratorsController {
 
       let collaborators: ICollaboratorModel[];
 
-      let companyId: string;
+      let healthUnitId: string;
 
       let accessToken: string;
 
@@ -358,12 +358,12 @@ export default class CollaboratorsController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      companyId = user.company._id;
+      healthUnitId = user.health_unit._id;
 
       try {
         collaborators = (
           await this.CollaboratorsDAO.queryList({
-            company: companyId,
+            health_unit: healthUnitId,
           })
         ).data;
       } catch (error: any) {

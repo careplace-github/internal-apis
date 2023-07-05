@@ -128,7 +128,7 @@ export default class OrdersHelper {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
             _id: new Types.ObjectId(),
             series: eventSeries._id as Types.ObjectId,
-            ownerType: 'company',
+            ownerType: 'health_unit',
             owner: eventSeries.owner,
             order: orderData as IHomeCareOrder,
             title: eventSeries.title,
@@ -274,7 +274,7 @@ export default class OrdersHelper {
     if (discount && discount?.amount_off) {
       discountOrderTotal = orderTotal - discount.amount_off;
 
-      const companyPercentage = Number(
+      const healthUnitPercentage = Number(
         (
           ((orderTotal * ((100 - applicationFee) / 100)) / (orderTotal - discount.amount_off)) *
           100
@@ -282,7 +282,6 @@ export default class OrdersHelper {
       );
       console.log('NEW APPLICATION FEE: ' + applicationFee);
 
-      console.log('COMPANY PERCENTAGE: ' + companyPercentage);
 
       stripeProcessingFees = Number(
         (discountOrderTotal * (stripePercentageFee / 100) + stripeFixedFee).toFixed(2)
@@ -292,7 +291,7 @@ export default class OrdersHelper {
         ((stripeProcessingFees / discountOrderTotal) * 100).toFixed(2)
       );
 
-      newApplicationFee = Number((100 - companyPercentage).toFixed(2));
+      newApplicationFee = Number((100 - healthUnitPercentage).toFixed(2));
 
       careplaceEarningsPercentage = Number(
         (newApplicationFee - stripeTotalFeePercentage).toFixed(2)
@@ -310,7 +309,7 @@ export default class OrdersHelper {
 
       if (
         careplaceEarningsPercentage < MIN_CAREPLACE_EARNINGS_PERCENTAGE ||
-        companyPercentage <= 0
+        healthUnitPercentage <= 0
       ) {
         /**
          * Change the application fee to reflect the discount for the client and still maintain the 85% minimum earnings for the connected account

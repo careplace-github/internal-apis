@@ -1,11 +1,18 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICompanyModel } from '../interfaces';
+import { IHealthUnitModel } from '../interfaces';
 
-const CompanySchema: Schema<ICompanyModel> = new Schema<ICompanyModel>(
+const HealthUnitSchema: Schema<IHealthUnitModel> = new Schema<IHealthUnitModel>(
   {
     _id: Schema.Types.ObjectId,
+
+    type: {
+      type: String,
+      enum: ['agency', 'retirement_home', 'senior_residence'],
+      required: true,
+    },
+
 
     business_profile: {
       name: { type: String, required: true, unique: true },
@@ -110,6 +117,9 @@ const CompanySchema: Schema<ICompanyModel> = new Schema<ICompanyModel>(
   }
 );
 
-const CompanyModel: Model<ICompanyModel> = mongoose.model<ICompanyModel>('Company', CompanySchema);
+const HealthUnitModel: Model<IHealthUnitModel> = mongoose.model<IHealthUnitModel>(
+  'HealthUnit',
+  HealthUnitSchema
+);
 
-export { CompanySchema, CompanyModel };
+export { HealthUnitSchema, HealthUnitModel };

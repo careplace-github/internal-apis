@@ -7,7 +7,7 @@ const PatientSchema: Schema<IPatientModel> = new Schema<IPatientModel>(
   {
     _id: Schema.Types.ObjectId,
     customer: { type: Schema.Types.ObjectId, ref: 'customer', required: false },
-    company: { type: Schema.Types.ObjectId, ref: 'company', required: false },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
 
     kinship: {
       type: String,

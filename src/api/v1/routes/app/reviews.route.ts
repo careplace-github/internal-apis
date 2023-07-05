@@ -7,21 +7,21 @@ import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
 const router = express.Router();
 
 router
-  .route('/companies/reviews/:id')
-  .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.retrieveCompanyReview)
-  .put(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.updateCompanyReview);
+  .route('/health-units/reviews/:id')
+  .get(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.retrieveHealthUnitReview)
+  .put(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.updateHealthUnitReview);
 
 router
-  .route('/companies/:company/reviews')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.createCompanyReview)
-  .get(ReviewsController.getCompanyReviews);
+  .route('/health-units/:health-unit/reviews')
+  .post(AuthenticationGuard, AccessGuard('marketplace'), ReviewsController.createHealthUnitReview)
+  .get(ReviewsController.getHealthUnitReviews);
 
 router
-  .route('/companies/:company/reviews/eligibility')
+  .route('/health-units/:health-unit/reviews/eligibility')
   .get(
     AuthenticationGuard,
     AccessGuard('marketplace'),
-    ReviewsController.checkCompanyReviewEligibility
+    ReviewsController.checkHealthUnitReviewEligibility
   );
 
 export default router;

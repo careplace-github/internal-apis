@@ -7,10 +7,10 @@ const EventSeriesSchema: Schema<IEventSeriesModel> = new Schema<IEventSeriesMode
   {
     _id: Schema.Types.ObjectId,
 
-    ownerType: { type: String, required: true, enum: ['company', 'collaborator'] },
+    ownerType: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
     owner: { type: Schema.Types.ObjectId, required: true },
 
-    // If ownerType is company
+    // If ownerType is health-unit
     order: { type: Schema.Types.ObjectId, ref: 'orders', required: false },
 
     start_date: { type: Date, required: true },

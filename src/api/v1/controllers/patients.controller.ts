@@ -6,13 +6,13 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 import { omit } from 'lodash';
 
 // @api
-import { CompaniesDAO, HomeCareOrdersDAO, CompanyReviewsDAO, PatientsDAO } from '@api/v1/db';
+import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO, PatientsDAO } from '@api/v1/db';
 import { AuthHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
-  ICompanyReview,
+  IHealthUnitReview,
   IHomeCareOrder,
-  ICompany,
+  IHealthUnit,
   IQueryListResponse,
   IPatient,
 } from '@api/v1/interfaces';
@@ -23,8 +23,8 @@ import { PatientModel } from '../models';
 
 export default class PatientsController {
   // db
-  static CompanyReviewsDAO = new CompanyReviewsDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   static PatientsDAO = new PatientsDAO();
   // helpers

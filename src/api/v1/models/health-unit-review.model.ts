@@ -1,14 +1,14 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICompanyReviewModel } from '../interfaces';
+import { IHealthUnitReviewModel } from '../interfaces';
 import logger from '../../../logs/logger';
 
-const CompanyReviewSchema: Schema<ICompanyReviewModel> = new Schema<ICompanyReviewModel>(
+const HealthUnitReviewSchema: Schema<IHealthUnitReviewModel> = new Schema<IHealthUnitReviewModel>(
   {
     _id: Schema.Types.ObjectId,
 
-    company: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
 
     customer: { type: Schema.Types.ObjectId, ref: 'customer', required: true },
 
@@ -37,9 +37,9 @@ const CompanyReviewSchema: Schema<ICompanyReviewModel> = new Schema<ICompanyRevi
   }
 );
 
-const CompanyReviewModel: Model<ICompanyReviewModel> = mongoose.model<ICompanyReviewModel>(
-  'CompanyReview',
-  CompanyReviewSchema
+const HealthUnitReviewModel: Model<IHealthUnitReviewModel> = mongoose.model<IHealthUnitReviewModel>(
+  'HealthUnitReview',
+  HealthUnitReviewSchema
 );
 
-export { CompanyReviewSchema, CompanyReviewModel };
+export { HealthUnitReviewSchema, HealthUnitReviewModel };

@@ -7,8 +7,8 @@ import mongoose, { FilterQuery, QueryOptions, Types, startSession } from 'mongoo
 import {
   CaregiversDAO,
   CustomersDAO,
-  CompaniesDAO,
-  CompanyReviewsDAO,
+  HealthUnitsDAO,
+  HealthUnitReviewsDAO,
   HomeCareOrdersDAO,
   PatientsDAO,
   CollaboratorsDAO,
@@ -19,8 +19,8 @@ import {
   IAPIResponse,
   ICaregiver,
   ICaregiverModel,
-  ICompany,
-  ICompanyModel,
+  IHealthUnit,
+  IHealthUnitModel,
   ICustomer,
   IEventSeries,
   IHomeCareOrder,
@@ -41,10 +41,10 @@ import { services } from '@assets';
 
 export default class OrdersController {
   // db
-  static CompanyReviewsDAO = new CompanyReviewsDAO();
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
   static CustomersDAO = new CustomersDAO();
   static CaregiversDAO = new CaregiversDAO();
-  static CompaniesDAO = new CompaniesDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
   static CollaboratorsDAO = new CollaboratorsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   static EventSeriesDAO = new EventSeriesDAO();
@@ -109,13 +109,13 @@ export default class OrdersController {
         }
       }
 
-      let company: ICompanyModel;
+      let healthUnit: IHealthUnitModel;
       try {
-        company = await this.CompaniesDAO.queryOne({ _id: order.company });
+        healthUnit = await this.HealthUnitsDAO.queryOne({ _id: order.health_unit });
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
-            return next(new HTTPError._400('Company not found'));
+            return next(new HTTPError._400('Health Unit not found'));
           }
           default: {
             return next(new HTTPError._500(error.message));
@@ -177,7 +177,7 @@ export default class OrdersController {
 
       let userEmailPayload = {
         name: user.name,
-        company: company?.business_profile?.name,
+        healthUnit: healthUnit?.business_profile?.name,
         orderStart: orderStart,
         orderSchedule: schedule,
         orderServices: servicesNames,
@@ -213,7 +213,7 @@ export default class OrdersController {
 
       let collaborators = (
         await this.CollaboratorsDAO.queryList({
-          company: { $eq: orderCreated.company },
+          health_unit: { $eq: orderCreated.health_unit },
         })
       ).data;
 
@@ -227,9 +227,9 @@ export default class OrdersController {
       });
 
       for (let i = 0; i < collaboratorsEmails.length; i++) {
-        let companyEmailPayload = {
+        let healthUnitEmailPayload = {
           name: collaborators[i].name,
-          company: company!.business_profile!.name,
+          healthUnit: healthUnit!.business_profile!.name,
 
           /**
            * @todo Change this link to the correct one
@@ -239,7 +239,7 @@ export default class OrdersController {
 
         let crmNewOrderEmail = await this.EmailHelper.getEmailTemplateWithData(
           'crm_new_order',
-          companyEmailPayload
+          healthUnitEmailPayload
         );
 
         if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
@@ -301,7 +301,7 @@ export default class OrdersController {
               path: 'services',
             },
             {
-              path: 'company',
+              path: 'health_unit',
             },
             {
               path: 'user',
@@ -381,7 +381,7 @@ export default class OrdersController {
                 path: 'services',
               },
               {
-                path: 'company',
+                path: 'health_unit',
               },
             ]
           )
@@ -405,13 +405,13 @@ export default class OrdersController {
   }
 
   // -------------------------------------------------- //
-  //                     COMPANY                       //
+  //                     HEALTH UNIT                    //
   // -------------------------------------------------- //
 
   /**
    * @todo
    */
-  static async companyCreateHomeCareOrder(
+  static async healthUnitCreateHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
@@ -433,7 +433,7 @@ export default class OrdersController {
   /**
    * @todo
    */
-  static async companyRetrieveHomeCareOrder(
+  static async healthUnitRetrieveHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
@@ -455,7 +455,7 @@ export default class OrdersController {
   /**
    * @todo
    */
-  static async companyUpdateHomeCareOrder(
+  static async healthUnitUpdateHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
@@ -474,7 +474,7 @@ export default class OrdersController {
     }
   }
 
-  static async listCompanyHomeCareOrders(
+  static async listHealthUnitHomeCareOrders(
     req: Request,
     res: Response,
     next: NextFunction
@@ -484,7 +484,7 @@ export default class OrdersController {
         statusCode: 102, // request received
         data: {},
       };
-      let companyId: string;
+      let healthUnitId: string;
       let homeCareOrders: IHomeCareOrderModel[] = [];
 
       let Cognito = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
@@ -502,7 +502,7 @@ export default class OrdersController {
 
       try {
         let user = await AuthHelper.getUserFromDB(accessToken);
-        companyId = user.company;
+        healthUnitId = user.health_unit;
       } catch (error: any) {
         switch (error.type) {
           default:
@@ -514,7 +514,7 @@ export default class OrdersController {
         homeCareOrders = (
           await this.HomeCareOrdersDAO.queryList(
             {
-              company: { $eq: companyId },
+              health_unit: { $eq: healthUnitId },
             },
 
             undefined,
@@ -599,8 +599,8 @@ export default class OrdersController {
         }
       }
 
-      let companyId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
-        return user.company._id;
+      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        return user.health_unit._id;
       });
 
       let order: IHomeCareOrderModel;
@@ -615,7 +615,7 @@ export default class OrdersController {
         }
       }
 
-      if (companyId.toString() !== order?.company?.toString()) {
+      if (healthUnitId.toString() !== order?.health_unit?.toString()) {
         return next(new HTTPError._403('You are not authorized to accept this order.'));
       }
 
@@ -643,15 +643,15 @@ export default class OrdersController {
 
       // From the users.patients array, get the patient that matches the patient id in the order
       let patient = await this.PatientsDAO.queryOne({ _id: order.patient });
-      let company = await this.CompaniesDAO.queryOne({ _id: order.company });
+      let healthUnit = await this.HealthUnitsDAO.queryOne({ _id: order.health_unit });
       let customer = await this.CustomersDAO.queryOne({ _id: order.customer });
 
       if (order?.schedule_information?.recurrency !== 0) {
         let eventSeries: IEventSeries = {
           _id: new Types.ObjectId(),
 
-          ownerType: 'company',
-          owner: order.company,
+          ownerType: 'health_unit',
+          owner: order.health_unit,
 
           order: order._id,
 
@@ -695,7 +695,7 @@ export default class OrdersController {
 
       let collaborators = (
         await this.CollaboratorsDAO.queryList({
-          company: { $eq: order.company },
+          health_unit: { $eq: order.health_unit },
         })
       ).data;
 
@@ -720,7 +720,7 @@ export default class OrdersController {
 
       let userEmailPayload = {
         name: customer.name,
-        company: company.business_profile.name,
+        healthUnit: healthUnit.business_profile.name,
 
         orderStart: orderStart,
         orderSchedule: schedule,
@@ -760,9 +760,9 @@ export default class OrdersController {
         for (let i = 0; i < collaboratorsEmails.length; i++) {
           const collaboratorEmail = collaboratorsEmails[i];
           if (collaboratorEmail) {
-            let companyEmailPayload = {
+            let healthUnitEmailPayload = {
               name: collaborators[i].name,
-              company: company.business_profile.name,
+              healthUnit: healthUnit.business_profile.name,
 
               userName: customer.name,
               userPhone: customer.phone,
@@ -786,7 +786,7 @@ export default class OrdersController {
 
             let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
               'crm_order_accepted',
-              companyEmailPayload
+              healthUnitEmailPayload
             );
 
             if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
@@ -859,7 +859,7 @@ export default class OrdersController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      let companyId = user.company._id;
+      let healthUnitId = user.health_unit._id;
 
       let order: IHomeCareOrderModel;
 
@@ -870,8 +870,8 @@ export default class OrdersController {
             model: 'patient',
           },
           {
-            path: 'company',
-            model: 'Company',
+            path: 'health_unit',
+            model: 'HealthUnit',
           },
           {
             path: 'services',
@@ -895,7 +895,7 @@ export default class OrdersController {
       }
 
       if (
-        companyId.toString() !== order.company._id.toString() ||
+        healthUnitId.toString() !== order.health_unit._id.toString() ||
         !user?.permissions?.includes('orders_edit')
       ) {
         throw new HTTPError._403('You are not authorized to send a quote for this order.');
@@ -950,7 +950,7 @@ export default class OrdersController {
       );
       let collaborators = (
         await this.CollaboratorsDAO.queryList({
-          company: { $eq: order.company },
+          health_unit: { $eq: order.health_unit },
         })
       ).data;
 
@@ -967,7 +967,7 @@ export default class OrdersController {
 
       let userEmailPayload = {
         name: (order.customer as ICustomer).name,
-        company: order.company.business_profile.name,
+        healthUnit: order.health_unit.business_profile.name,
 
         link: `https://www.careplace.pt/checkout/orders/${order._id}`,
 
@@ -1013,9 +1013,9 @@ export default class OrdersController {
         for (let i = 0; i < collaboratorsEmails.length; i++) {
           const collaboratorEmail = collaboratorsEmails[i];
           if (collaboratorEmail) {
-            let companyEmailPayload = {
+            let healthUnitEmailPayload = {
               name: collaborators[i].name,
-              company: order.company.business_profile.name,
+              healthUnit: order.health_unit.business_profile.name,
 
               link: `https://www.sales.careplace.pt/orders/${order._id}`,
 
@@ -1042,7 +1042,7 @@ export default class OrdersController {
 
             let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
               'crm_quote_sent',
-              companyEmailPayload
+              healthUnitEmailPayload
             );
 
             if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
