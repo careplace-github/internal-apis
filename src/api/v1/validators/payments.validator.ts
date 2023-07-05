@@ -1,5 +1,5 @@
 import { check, validationResult } from 'express-validator';
-import { HTTPError } from '../utils/errors/http';
+import { LayerError } from '@api/v1/utils';
 import logger from 'src/logs/logger';
 
 // -------------------------------------------------------------------------------------------- //

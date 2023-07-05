@@ -1,4 +1,4 @@
-export interface IPopulateOption {
+interface IPopulateOption {
   path: string;
   select?: string;
   match?: Record<string, any>;
@@ -8,10 +8,12 @@ export interface IPopulateOption {
   };
 }
 
-export interface IQueryListResponse<T> {
+interface IQueryListResponse<T> {
   data: T[];
   page: number;
   documentsPerPage: number;
   totalPages: number;
   totalDocuments: number;
 }
+
+export { IPopulateOption, IQueryListResponse };

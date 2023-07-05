@@ -1,11 +1,11 @@
 export { default as CaregiversDAO } from './caregivers.dao';
 export { default as CompaniesDAO } from './companies.dao';
-export { default as CrmUsersDAO } from './crmUsers.dao';
+export { default as CollaboratorsDAO } from './collaborators.dao';
 export { default as EventsDAO } from './events.dao';
-export { default as EventsSeriesDAO } from './eventsSeries.dao';
+export { default as EventSeriesDAO } from './event-series.dao';
 export { default as FilesDAO } from './files.dao';
-export { default as MarketplaceUsersDAO } from './marketplaceUsers.dao';
-export { default as OrdersDAO } from './orders.dao';
-export { default as RelativesDAO } from './relatives.dao';
-export { default as ReviewsDAO } from './reviews.dao';
+export { default as CustomersDAO } from './customers.dao';
+export { default as HomeCareOrdersDAO } from './orders.dao';
+export { default as PatientsDAO } from './patients.dao';
+export { default as CompanyReviewsDAO } from './company-reviews.dao';
 export { default as ServicesDAO } from './services.dao';

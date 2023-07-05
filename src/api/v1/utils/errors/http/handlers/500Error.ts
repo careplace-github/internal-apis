@@ -1,5 +1,5 @@
-import httpStatusCodes from '../httpStatusCodes';
-import HTTP_Error from '../httpError';
+import httpStatusCodes from '../http-status-codes';
+import HTTP_Error from '../http-error';
 
 export default class API500Error extends HTTP_Error {
   constructor(

@@ -1,11 +1,11 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // Interfaces
-import { IAddress, ICaregiver, ICRMUser, IService } from '../';
+import { IAddress, ICaregiver, ICollaborator, IService } from '../';
 // Types
-import { Coordinates } from '../../types';
+import { Coordinates } from '../types';
 
-export default interface ICompany extends Document {
+interface ICompany {
   _id: Types.ObjectId | string;
   business_profile: {
     name: string;
@@ -46,7 +46,7 @@ export default interface ICompany extends Document {
     average_hourly_rate?: number;
     minimum_hourly_rate: number;
   };
-  team: Types.ObjectId[] | (ICaregiver | ICRMUser)[];
+  team: Types.ObjectId[] | (ICaregiver | ICollaborator)[];
   legal_information: {
     name: string;
     director: {
@@ -65,3 +65,7 @@ export default interface ICompany extends Document {
   };
   is_active: boolean;
 }
+
+type ICompanyModel = ICompany & Document;
+
+export { ICompany, ICompanyModel };

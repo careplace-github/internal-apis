@@ -16,6 +16,10 @@ import hpp from 'hpp';
 import mongoose from 'mongoose';
 // xss-clean
 import xss from 'xss-clean';
+// express-http-context
+import httpContext from 'express-http-context';
+// express-sanitizer
+import expressSanitizer from 'express-sanitizer';
 
 // config
 import {
@@ -45,24 +49,23 @@ import {
 } from '@api/v1/middlewares';
 // routes
 import {
-  configRoute,
-  filesRoute,
-  authRoute,
-  usersRoute,
-  companiesRoute,
-  servicesRoute,
-  ordersRoute,
-  calendarRoute,
-  webHooksRoute,
-  checkoutRoute,
-  paymentMethodsRoute,
-  relativesRoute,
-  paymentsRoute,
-  adminRoute,
-  reviewsRoute,
+  ConfigRoute,
+  FilesRoute,
+  AuthRoute,
+  CustomersRoute,
+  CompaniesRoute,
+  ServicesRoute,
+  OrdersRoute,
+  CalendarRoute,
+  WebHooksRoute,
+  PatientsRoute,
+  PaymentsRoute,
+  AdminRoute,
+  ReviewsRoute,
 } from '@api/v1/routes';
 // utils
-import { HTTPError } from '@api/v1/utils/errors/http';
+import { HTTPError } from '@api/v1/utils';
+import { body } from 'express-validator';
 
 const main = async () => {
   let app: express.Application;
@@ -72,9 +75,9 @@ const main = async () => {
   try {
     logger.info(`
      // -------------------------------------------------------------------------------------------- //
-     //                                                                                              // 
-     //                                      CAREPLACE REST API                                      //         
-     //                                                                                              //                            
+     //                                                                                              //
+     //                                      CAREPLACE REST API                                      //
+     //                                                                                              //
      // -------------------------------------------------------------------------------------------- //
      \n`);
 
@@ -205,6 +208,16 @@ const main = async () => {
        * Prevents Cross-Origin Resource Sharing (CORS) attacks
        */
       app.use(cors());
+
+      app.use(
+        body()
+          .trim() // Trim all request body inputs (eg: name: '  John  ' => name: 'John')
+          .escape() // Escape all request body inputs (eg: name: '<script>John</script>' => name: '&lt;script&gt;John&lt;/script&gt;')
+          .customSanitizer((value) => {
+            // Apply additional custom sanitization logic here if needed
+            return value;
+          })
+      );
 
       /**
        * Prevents Denial of Service (DoS) attacks
@@ -386,27 +399,28 @@ const main = async () => {
         }
       });
 
+      // Middleware that is responsible for initializing the context for each request.
+      app.use(httpContext.middleware);
+
       // Middleware to log all the HTTP requests
       app.use(RequestHandlerMiddleware);
 
       // Routes middlewares
 
-      app.use(configRoute);
-      app.use(API_ROUTE, filesRoute);
-      app.use(API_ROUTE, reviewsRoute);
-      app.use(API_ROUTE, authRoute);
-      app.use(API_ROUTE, usersRoute);
-      app.use(API_ROUTE, companiesRoute);
-      app.use(API_ROUTE, relativesRoute);
+      app.use(ConfigRoute);
+      app.use(API_ROUTE, FilesRoute);
+      app.use(API_ROUTE, ReviewsRoute);
+      app.use(API_ROUTE, AuthRoute);
+      app.use(API_ROUTE, CustomersRoute);
+      app.use(API_ROUTE, CompaniesRoute);
+      app.use(API_ROUTE, PatientsRoute);
 
-      app.use(API_ROUTE, ordersRoute);
-      app.use(API_ROUTE, servicesRoute);
-      app.use(API_ROUTE, calendarRoute);
-      app.use(API_ROUTE, paymentMethodsRoute);
-      app.use(API_ROUTE, checkoutRoute);
-      app.use(API_ROUTE, paymentsRoute);
-      app.use(API_ROUTE, webHooksRoute);
-      app.use(API_ROUTE, adminRoute);
+      app.use(API_ROUTE, OrdersRoute);
+      app.use(API_ROUTE, ServicesRoute);
+      app.use(API_ROUTE, CalendarRoute);
+      app.use(API_ROUTE, PaymentsRoute);
+      app.use(API_ROUTE, WebHooksRoute);
+      app.use(API_ROUTE, AdminRoute);
 
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);

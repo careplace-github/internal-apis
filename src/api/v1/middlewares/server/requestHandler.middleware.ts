@@ -1,22 +1,34 @@
 import logger from '../../../../logs/logger';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import httpContext from 'express-http-context';
 
-export default function RequestUtils(req: Request, res: Response, next: NextFunction) {
+export default function RequestHandlerMiddleware(req: Request, res: Response, next: NextFunction) {
+  const requestId = uuidv4();
+  const startTime = process.hrtime();
+
   function handleRequest() {
+    httpContext.set('requestId', requestId);
+    httpContext.set('startTime', startTime);
+
+    // 102 Processing (WebDAV; RFC 2518)
+    res.status(102);
+
     const request = {
+      id: requestId,
       type: req.method,
       url: req.originalUrl,
       ipv6: req.ip,
       ipv4: req.ips,
       contentLength: req.headers['content-length'],
       contentType: req.headers['content-type'],
-      responseTime: req.headers['response-time'],
+      responseTime: startTime,
       proxy: req.headers['x-forwarded-for'],
       headers: req.headers,
       params: req.params,
       query: req.query,
       body: req.body,
-      statusCode: 100,
+      statusCode: res.statusCode,
     };
 
     /**

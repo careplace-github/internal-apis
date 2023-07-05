@@ -1,17 +1,15 @@
+// @api
+import { HTTPError } from '@api/v1/utils';
+// @logger
+import logger from '@logger';
+//
 import jwtContext from './context/jwtContext';
-import logger from '../../../../logs/logger';
-import { HTTPError } from '@api/v1/utils/errors/http';
 
 /**
  * Class with utility functions for authentication with different authentication contexts.
  */
 export default class AuthUtils {
-  /**
-   * Constructor
-   */
-  constructor() {}
-
-  async decodeJwtToken(accessToken) {
+  static async decodeJwtToken(accessToken: string) {
     logger.info(`Authentication Utils DECODE_JWT_TOKEN Request: \n ${accessToken}`);
 
     if (!accessToken) {
@@ -27,7 +25,7 @@ export default class AuthUtils {
     return decodedToken;
   }
 
-  async isValidJwtToken(accessToken) {
+  static async isValidJwtToken(accessToken: string) {
     logger.info(`Authentication Utils IS_VALID_JWT_TOKEN Request: \n ${accessToken}`);
 
     if (!accessToken) {

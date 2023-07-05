@@ -1,4 +1,4 @@
-import LayerError from '../layerError';
+import LayerError from '../layer-error';
 
 /**
  * ``NOT_FOUND`` is a ``LayerError`` that is thrown when a resource is not found.

@@ -1,4 +1,4 @@
-import LayerError from '../layerError';
+import LayerError from '../layer-error';
 
 /**
  * ``ATTEMPT_LIMIT`` is a ``LayerError`` that is thrown when a limit of attempts is reached.

@@ -1,6 +1,6 @@
-import { Coordinates, Country, Theme } from '../../types';
+import { Coordinates, Country, Theme } from '../types';
 
-export default interface ISettings {
+interface ISettings {
   theme: Theme;
   notifications: {
     email: boolean;
@@ -9,3 +9,5 @@ export default interface ISettings {
   };
   language?: Country;
 }
+
+export { ISettings };

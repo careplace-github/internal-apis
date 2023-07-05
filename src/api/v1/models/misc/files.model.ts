@@ -1,9 +1,9 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IFile } from '../../interfaces';
+import { IFileModel } from '../../interfaces';
 
-const fileSchema: Schema<IFile> = new Schema<IFile>(
+const FileSchema: Schema<IFileModel> = new Schema<IFileModel>(
   {
     _id: Types.ObjectId,
 
@@ -22,8 +22,6 @@ const fileSchema: Schema<IFile> = new Schema<IFile>(
   }
 );
 
-const FileModel: Model<IFile> = mongoose.model<IFile>('File', fileSchema);
+const FileModel: Model<IFileModel> = mongoose.model<IFileModel>('File', FileSchema);
 
-export default FileModel;
-
-export { fileSchema };
+export { FileSchema, FileModel };

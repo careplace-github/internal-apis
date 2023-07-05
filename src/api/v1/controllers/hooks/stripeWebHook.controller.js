@@ -3,7 +3,7 @@
 // Import Services
 import stripe from '../../services/stripe.service';
 
-import * as Error from '../../utils/errors/http/httpError';
+import * as Error from '../../utils/errors/http/http-error';
 
 import { buffer } from 'micro';
 
@@ -17,10 +17,10 @@ import stripeHelper from '../../helpers/services/stripe.helper';
 import emailHelper from '../../helpers/emails/email.helper';
 import dateUtils from '../../utils/data/date.utils';
 
-import OrdersDAO from '../../db/orders.dao';
+import HomeCareOrdersDAO from '../../db/orders.dao';
 
 import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../../config/constants/index';
-import ordersDAO from '../../db/orders.dao';
+import HomeCareOrdersDAO from '../../db/orders.dao';
 
 /**
  * Controller for Stripe Webhooks
@@ -52,7 +52,7 @@ export default class StripeWebhooksController {
     let EmailHelper = new emailHelper();
     let DateUtils = new dateUtils();
     let StripeHelper = new stripeHelper();
-    let OrdersDAO = new ordersDAO();
+    let HomeCareOrdersDAO = new HomeCareOrdersDAO();
 
     if (req.headers) {
       if (req.headers['stripe-signature']) {
@@ -193,13 +193,13 @@ export default class StripeWebhooksController {
         let order;
 
         while (order === null || order === undefined) {
-          order = await OrdersDAO.queryOne(
+          order = await HomeCareOrdersDAO.queryOne(
             {
               stripe_subscription_id: subscriptionId,
             },
             [
               {
-                path: 'relative',
+                path: 'patient',
                 model: 'Relative',
               },
               {
@@ -237,7 +237,7 @@ export default class StripeWebhooksController {
           })
           .join(', ');
 
-        let birthdate = await DateUtils.convertDateToReadableString(order.relative.birthdate);
+        let birthdate = await DateUtils.convertDateToReadableString(order.patient.birthdate);
 
         let orderStart = await DateUtils.convertDateToReadableString2(
           order.schedule_information.start_date
@@ -275,18 +275,18 @@ export default class StripeWebhooksController {
               ? paymentMethod.card.brand.toUpperCase()
               : 'SEPA Direct Debit',
 
-          relativeName: order.relative.name,
+          relativeName: order.patient.name,
           relativeBirthdate: birthdate,
           relativeMedicalInformation:
-            order.relative.medical_information !== undefined &&
-            order.relative.medical_information !== null
-              ? relative.medical_information
+            order.patient.medical_information !== undefined &&
+            order.patient.medical_information !== null
+              ? patient.medical_information
               : 'n/a',
 
-          relativeStreet: order.relative.address.street,
-          relativeCity: order.relative.address.city,
-          relativePostalCode: order.relative.address.postal_code,
-          relativeCountry: order.relative.address.country,
+          relativeStreet: order.patient.address.street,
+          relativeCity: order.patient.address.city,
+          relativePostalCode: order.patient.address.postal_code,
+          relativeCountry: order.patient.address.country,
         };
 
         let marketplaceOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
@@ -319,18 +319,18 @@ export default class StripeWebhooksController {
           orderSchedule: schedule,
           orderServices: orderServices,
 
-          relativeName: order.relative.name,
+          relativeName: order.patient.name,
           relativeBirthdate: birthdate,
           relativeMedicalInformation:
-            order.relative.medical_information !== undefined &&
-            order.relative.medical_information !== null
-              ? relative.medical_information
+            order.patient.medical_information !== undefined &&
+            order.patient.medical_information !== null
+              ? patient.medical_information
               : 'n/a',
 
-          relativeStreet: order.relative.address.street,
-          relativeCity: order.relative.address.city,
-          relativePostalCode: order.relative.address.postal_code,
-          relativeCountry: order.relative.address.country,
+          relativeStreet: order.patient.address.street,
+          relativeCity: order.patient.address.city,
+          relativePostalCode: order.patient.address.postal_code,
+          relativeCountry: order.patient.address.country,
 
           userName: order.user.name,
           userPhone: order.user.phone,

@@ -1,15 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IEvent } from '../interfaces';
+import { IEventModel } from '../interfaces';
 
-const eventSchema: Schema<IEvent> = new Schema<IEvent>(
+const EventSchema: Schema<IEventModel> = new Schema<IEventModel>(
   {
     _id: Schema.Types.ObjectId,
 
-    type: { type: String, required: true, enum: ['company', 'personal'] },
+    ownerType: { type: String, required: true, enum: ['company', 'collaborator'] },
+    owner: { type: Schema.Types.ObjectId, required: true },
 
-    user: { type: Schema.Types.ObjectId, ref: 'crmUser', required: true },
     title: { type: String, required: true },
     description: { type: String, required: false },
     start: { type: Date, required: true },
@@ -34,8 +34,6 @@ const eventSchema: Schema<IEvent> = new Schema<IEvent>(
   }
 );
 
-const EventModel: Model<IEvent> = mongoose.model<IEvent>('Event', eventSchema);
+const EventModel: Model<IEventModel> = mongoose.model<IEventModel>('Event', EventSchema);
 
-export default EventModel;
-
-export { eventSchema};
+export { EventSchema, EventModel };

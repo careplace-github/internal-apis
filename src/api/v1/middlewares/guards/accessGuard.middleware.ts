@@ -9,12 +9,11 @@ import {
 
 import authUtils from '../../utils/auth/auth.utils';
 
-import { HTTPError } from '@api/v1/utils/errors/http';
-
+import { HTTPError } from '@api/v1/utils';
 export default function accessGuard(app: string) {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
-      let AuthUtils = new authUtils();
+      let AuthUtils = authUtils;
 
       if (app === 'crm') {
         app = AWS_COGNITO_CRM_CLIENT_ID || '';

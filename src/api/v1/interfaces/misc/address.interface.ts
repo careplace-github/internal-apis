@@ -1,6 +1,6 @@
-import { Coordinates, Country } from '../../types';
+import { Coordinates, Country } from '../types';
 
-export default interface IAddress {
+interface IAddress {
   street: string;
   postal_code: string;
   city: string;
@@ -8,3 +8,5 @@ export default interface IAddress {
   country: Country;
   coordinates: Coordinates;
 }
+
+export { IAddress };

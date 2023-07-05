@@ -1,4 +1,3 @@
-import logger from '../../../logs/logger';
 import mongoose, {
   Document,
   Model,
@@ -7,9 +6,11 @@ import mongoose, {
   FilterQuery,
   HydratedDocument,
   UnpackedIntersection,
+  Types,
 } from 'mongoose';
-import * as LayerError from '../utils/errors/layer/index';
-import { IQueryListResponse } from '../interfaces';
+import { LayerError } from '@api/v1/utils';
+import { IQueryListResponse } from '@api/v1/interfaces';
+import logger from '@logger';
 
 export default abstract class DAO<T extends Document> {
   private readonly Model: Model<T>;
@@ -22,23 +23,18 @@ export default abstract class DAO<T extends Document> {
     this.Type = documentCollection.charAt(0).toUpperCase() + documentCollection.slice(1, -1);
   }
 
-  async create(document: Partial<T>, session?: mongoose.ClientSession): Promise<Partial<T>> {
+  async create(document: T, session?: mongoose.ClientSession): Promise<T> {
     logger.info(
       `${this.Collection}DAO CREATE Request: \n ${JSON.stringify(document, null, 2)} \n}`
     );
+
+    let createdDocument: T;
     try {
       document._id = new mongoose.Types.ObjectId();
 
       const newDocument = new this.Model(document);
 
-      const insertedDocument = await newDocument.save({ session });
-      const response = insertedDocument;
-
-      logger.info(
-        `${this.Collection}DAO CREATE Response: \n ${JSON.stringify(response, null, 2)} \n`
-      );
-
-      return response as Partial<T>;
+      createdDocument = await newDocument.save({ session });
     } catch (err: any) {
       if (session) {
         await session.abortTransaction();
@@ -60,111 +56,96 @@ export default abstract class DAO<T extends Document> {
       }
       throw new LayerError.INTERNAL_ERROR(err.message);
     }
+    logger.info(
+      `${this.Collection}DAO CREATE Response: \n ${JSON.stringify(createdDocument, null, 2)} \n`
+    );
+
+    return createdDocument;
   }
 
   async retrieve(
     documentId: string,
     populate?: PopulateOptions | PopulateOptions[],
     session?: mongoose.ClientSession
-  ): Promise<Partial<T>> {
+  ): Promise<T> {
     logger.info(`${this.Collection}DAO RETRIEVE Request: \n { \n _id: ${documentId} \n} \n`);
 
+    let query = this.Model.findById(documentId) as mongoose.Query<T | null, T, {}>;
+
+    if (populate) {
+      query = query.populate(populate) as mongoose.Query<T | null, T, {}>;
+    }
+    if (session) {
+      query = query.session(session); // Set the session for the query
+    }
+
+    let document: T | null;
     try {
-      let query: mongoose.Query<
-        UnpackedIntersection<T, T> | null,
-        UnpackedIntersection<T, T>,
-        {},
-        UnpackedIntersection<T, T>
-      >;
-
-      query = this.Model.findById(documentId) as mongoose.Query<
-        UnpackedIntersection<T, T> | null,
-        UnpackedIntersection<T, T>,
-        {},
-        UnpackedIntersection<T, T>
-      >;
-      if (populate) {
-        query = query.populate(populate) as mongoose.Query<
-          UnpackedIntersection<T, T> | null,
-          UnpackedIntersection<T, T>,
-          {},
-          UnpackedIntersection<T, T>
-        >;
-      }
-      if (session) {
-        query = query.session(session); // Set the session for the query
-      }
-
-      const document = await query.exec();
+      document = await query.exec();
 
       if (!document) {
-        throw new LayerError.NOT_FOUND(`No ${this.Type} found with id ${documentId}`);
+        throw new LayerError.NOT_FOUND(`${this.Type} not found.`);
       }
-
-      const response = document;
-
-      logger.info(
-        `${this.Collection}DAO RETRIEVE Response: \n ${JSON.stringify(response, null, 2)}\n`
-      );
-
-      return response as Partial<T>;
     } catch (err: any) {
-      logger.error(`${this.Collection}DAO RETRIEVE Error: \n ${JSON.stringify(err, null, 2)} \n`);
-
       if (session) {
         await session.abortTransaction();
         session.endSession();
       }
 
       switch (err.name) {
-        case 'CastError':
-          throw new LayerError.NOT_FOUND(err.message);
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
       }
-      throw new LayerError.INTERNAL_ERROR(err.message);
     }
+
+    logger.info(
+      `${this.Collection}DAO RETRIEVE Response: \n ${JSON.stringify(document, null, 2)}\n`
+    );
+
+    return document;
   }
 
-  async update(document: Partial<T>, session?: mongoose.ClientSession): Promise<Partial<T>> {
+  async update(document: T, session?: mongoose.ClientSession): Promise<T> {
     logger.info(
       `${this.Collection}DAO UPDATE Request: \n ${JSON.stringify(document, null, 2)} \n}`
     );
 
+    const documentToUpdate = new this.Model(document);
+
+    let rawUpdatedDocument: T;
+    let updatedDocument: T;
+
     try {
-      const documentToBeUpdated = await this.Model.findByIdAndUpdate(
+      rawUpdatedDocument = (await this.Model.findByIdAndUpdate(
         document._id,
-        document,
-        { new: true, session } // Pass the session to the findByIdAndUpdate query
-      );
-
-      if (!documentToBeUpdated) {
-        throw new LayerError.NOT_FOUND(`No`);
-      }
-
-      const response = documentToBeUpdated;
-
-      logger.info(
-        `${this.Collection}DAO UPDATE Response: \n ${JSON.stringify(response, null, 2)}\n`
-      );
-
-      return response as Partial<T>;
+        documentToUpdate.toObject(),
+        { new: true, session }
+      )) as T;
     } catch (err: any) {
-      logger.error(`${this.Collection}DAO UPDATE Error: \n ${JSON.stringify(err, null, 2)} \n`);
-
       if (session) {
         await session.abortTransaction();
         session.endSession();
       }
 
       switch (err.name) {
-        case 'CastError':
-          throw new LayerError.NOT_FOUND(err.message);
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
       }
-      throw new LayerError.INTERNAL_ERROR(err.message);
     }
+
+    updatedDocument = rawUpdatedDocument;
+
+    logger.info(
+      `${this.Collection}DAO UPDATE Response: \n ${JSON.stringify(updatedDocument, null, 2)}\n`
+    );
+
+    return updatedDocument;
   }
 
-  async delete(documentId: string, session?: mongoose.ClientSession): Promise<Partial<T>> {
+  async delete(documentId: string | Types.ObjectId, session?: mongoose.ClientSession): Promise<T> {
     logger.info(`${this.Collection}DAO DELETE Request: \n { \n _id: ${documentId} \n}`);
+
+    let deletedDocument: T | null;
 
     try {
       let query = this.Model.findByIdAndDelete(documentId);
@@ -173,20 +154,11 @@ export default abstract class DAO<T extends Document> {
         query = query.session(session);
       }
 
-      const documentToDelete = await query;
+      deletedDocument = await query.exec();
 
-      if (!documentToDelete) {
-        throw new LayerError.NOT_FOUND(`No`);
+      if (!deletedDocument) {
+        throw new LayerError.NOT_FOUND(`${this.Type} not found.`);
       }
-
-      const response = documentToDelete.toObject();
-      delete response.__v;
-
-      logger.info(
-        `${this.Collection}DAO DELETE Response: \n ${JSON.stringify(response, null, 2)}\n`
-      );
-
-      return response as Partial<T>;
     } catch (err: any) {
       logger.error(`${this.Collection}DAO DELETE Error: \n ${JSON.stringify(err, null, 2)} \n`);
 
@@ -196,11 +168,16 @@ export default abstract class DAO<T extends Document> {
       }
 
       switch (err.name) {
-        case 'CastError':
-          throw new LayerError.NOT_FOUND(err.message);
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
       }
-      throw new LayerError.INTERNAL_ERROR(err.message);
     }
+
+    logger.info(
+      `${this.Collection}DAO DELETE Response: \n ${JSON.stringify(deletedDocument, null, 2)}\n`
+    );
+
+    return deletedDocument;
   }
 
   async queryList(
@@ -219,6 +196,8 @@ export default abstract class DAO<T extends Document> {
         2
       )} \n}`
     );
+
+    let response: IQueryListResponse<T>;
 
     const sort = options?.sort || '-createdAt';
 
@@ -244,19 +223,13 @@ export default abstract class DAO<T extends Document> {
 
       const totalPages = Math.ceil(totalDocuments / documentsPerPage);
 
-      const response: IQueryListResponse<T> = {
+      response = {
         data,
         page: page > 0 ? page : 1,
         documentsPerPage: documentsPerPage > 0 ? documentsPerPage : totalDocuments,
         totalPages: totalPages > 0 ? totalPages : 1,
         totalDocuments: totalDocuments >= 0 ? totalDocuments : 1,
       };
-
-      logger.info(
-        `${this.Collection}DAO QUERY_LIST Response: \n ${JSON.stringify(response, null, 2)} \n}`
-      );
-
-      return response;
     } catch (err: any) {
       logger.error(`${this.Collection}DAO QUERY_LIST Error: \n ${JSON.stringify(err, null, 2)} \n`);
 
@@ -265,15 +238,24 @@ export default abstract class DAO<T extends Document> {
         session.endSession();
       }
 
-      throw new LayerError.INTERNAL_ERROR(err.message);
+      switch (err.name) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
+      }
     }
+
+    logger.info(
+      `${this.Collection}DAO QUERY_LIST Response: \n ${JSON.stringify(response, null, 2)} \n}`
+    );
+
+    return response;
   }
 
   async queryOne(
     filters: FilterQuery<T>,
     populate?: PopulateOptions | PopulateOptions[],
     session?: mongoose.ClientSession
-  ): Promise<HydratedDocument<T>> {
+  ): Promise<T> {
     logger.info(
       `${this.Collection}DAO QUERY_ONE Request: \n ${JSON.stringify(
         { filters, populate },
@@ -282,10 +264,10 @@ export default abstract class DAO<T extends Document> {
       )} \n}`
     );
 
+    let document: T | null;
+
     try {
       let query = this.Model.findOne(filters);
-
-      logger.info(`QUERY : ` + query);
 
       if (populate) {
         query = query.populate(populate) as Query<
@@ -300,19 +282,13 @@ export default abstract class DAO<T extends Document> {
         query = query.session(session);
       }
 
-      const document = await query.exec();
+      document = (await query.exec()) as T;
 
       logger.info(`DOCUMENT : ${document}`);
 
       if (!document) {
         throw new LayerError.NOT_FOUND(`No ${this.Collection} found.`);
       }
-
-      logger.info(
-        `${this.Collection}DAO QUERY_ONE Response: \n ${JSON.stringify(document, null, 2)} \n}`
-      );
-
-      return document;
     } catch (err: any) {
       logger.error(`${this.Collection}DAO QUERY_ONE Error: ` + err.stack);
 
@@ -324,8 +300,15 @@ export default abstract class DAO<T extends Document> {
       switch (err.name) {
         case 'CastError':
           throw new LayerError.INVALID_PARAMETER(err.message);
+        default:
+          throw new LayerError.INTERNAL_ERROR(err.message);
       }
-      throw new LayerError.INTERNAL_ERROR(err.message);
     }
+
+    logger.info(
+      `${this.Collection}DAO QUERY_ONE Response: \n ${JSON.stringify(document, null, 2)} \n}`
+    );
+
+    return document;
   }
 }
