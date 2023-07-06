@@ -29,7 +29,7 @@ import { HTTPError } from '@api/v1/utils';
 // @logger
 import logger from '@logger';
 // @constants
-import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_CRM_CLIENT_ID } from '@constants';
+import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_BUSINESS_CLIENT_ID } from '@constants';
 import Stripe from 'stripe';
 
 export default class AuthenticationController {
@@ -275,9 +275,9 @@ export default class AuthenticationController {
 
       const { email, password } = req.body as { email: string; password: string };
 
-      if (req.url === `/auth/crm/login`) {
-        clientId = AWS_COGNITO_CRM_CLIENT_ID;
-        app = 'crm';
+      if (req.url === `/auth/business/login`) {
+        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
+        app = 'business';
       } else if (req.url === `/auth/marketplace/login`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
         app = 'marketplace';
@@ -399,15 +399,6 @@ export default class AuthenticationController {
       let clientId: string;
       let app: string;
 
-      if (req.url === `/auth/crm/logout`) {
-        clientId = AWS_COGNITO_CRM_CLIENT_ID;
-        app = 'crm';
-      } else if (req.url === `/auth/marketplace/logout`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-        app = 'marketplace';
-      } else {
-        return next(new HTTPError._400('Invalid logout request.'));
-      }
 
       const Cognito = new CognitoService(clientId);
 
@@ -465,8 +456,8 @@ export default class AuthenticationController {
 
       const { email } = req.body as { email: string };
 
-      if (req.url === `/auth/crm/send/forgot-password-code`) {
-        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      if (req.url === `/auth/business/send/forgot-password-code`) {
+        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
       } else if (req.url === `/auth/marketplace/send/forgot-password-code`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
       } else {
@@ -519,8 +510,8 @@ export default class AuthenticationController {
       let clientId: string;
       let Cognito: CognitoService;
 
-      if (req.url === `/auth/crm/verify/forgot-password-code`) {
-        clientId = AWS_COGNITO_CRM_CLIENT_ID;
+      if (req.url === `/auth/business/verify/forgot-password-code`) {
+        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
       } else if (req.url === `/auth/marketplace/verify/forgot-password-code`) {
         clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
       } else {
@@ -598,8 +589,8 @@ export default class AuthenticationController {
         (attribute) => attribute.Name === 'email_verified'
       )?.Value;
 
-      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
-        app = 'crm';
+      if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
+        app = 'business';
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
         app = 'marketplace';
       }
@@ -607,7 +598,7 @@ export default class AuthenticationController {
       let user: ICustomerModel | ICollaboratorModel | null = null;
 
       try {
-        if (app === 'crm') {
+        if (app === 'business') {
           user = await this.CollaboratorsDAO.queryOne(
             {
               cognito_id: '39425f3b-a637-4e6a-9db4-97fd2132a416',
@@ -624,7 +615,7 @@ export default class AuthenticationController {
                   },
                   {
                     path: 'team',
-                    model: 'crm_user',
+                    model: 'business_user',
                     select: '-__v -createdAt -updatedAt -cognito_id -settings',
                   },
                 ],
@@ -654,7 +645,7 @@ export default class AuthenticationController {
       let Stripe = new StripeService();
       let connectedAccountId: string;
       let externalAccounts: any;
-      if (app === 'crm' && userJSON.health_unit.stripe_information.account_id) {
+      if (app === 'business' && userJSON.health_unit.stripe_information.account_id) {
         connectedAccountId = userJSON.health_unit.stripe_information.account_id;
 
         externalAccounts = await this.StripeService.listExternalAccounts(connectedAccountId);

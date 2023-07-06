@@ -12,13 +12,13 @@ const router = express.Router();
 
 router
   .route('health-units/collaborators')
-  .get(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.listCollaborators)
-  .post(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.create);
+  .get(AuthenticationGuard, AccessGuard('business'), CollaboratorsController.listCollaborators)
+  .post(AuthenticationGuard, AccessGuard('business'), CollaboratorsController.create);
 
 router
   .route('health-units/collaborators/:id')
-  .get(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.retrieve)
-  .put(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.update)
-  .delete(AuthenticationGuard, AccessGuard('crm'), CollaboratorsController.delete);
+  .get(AuthenticationGuard, AccessGuard('business'), CollaboratorsController.retrieve)
+  .put(AuthenticationGuard, AccessGuard('business'), CollaboratorsController.update)
+  .delete(AuthenticationGuard, AccessGuard('business'), CollaboratorsController.delete);
 
 export default router;

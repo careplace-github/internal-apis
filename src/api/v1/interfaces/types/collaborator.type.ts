@@ -1,2 +1,2 @@
 import { CollaboratorModel } from '../../models';
-export type CrmUserModelType = typeof CollaboratorModel;
+export type CollaboratorModelType = typeof CollaboratorModel;

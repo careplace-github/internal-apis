@@ -4,33 +4,31 @@ import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.mi
 
 const router = express.Router();
 
-router.route('/account').get(AuthenticationGuard, AuthenticationController.account);
-
-router.route('/auth/account').get(AuthenticationGuard, AuthenticationController.account);
-
 // -------------------------------------------------------------------------------------------- //
 //                                      GENERAL AUTHENTICATION                                  //
 // -------------------------------------------------------------------------------------------- //
 
-router.route('/auth/crm/logout').post(AuthenticationGuard, AuthenticationController.logout);
-router.route('/auth/marketplace/logout').post(AuthenticationGuard, AuthenticationController.logout);
+
+router.route('/auth/account').get(AuthenticationGuard, AuthenticationController.account);
+
+router.route('/auth/logout').post(AuthenticationGuard, AuthenticationController.logout);
 
 router
   .route('/auth/change-password')
   .post(AuthenticationGuard, AuthenticationController.changePassword);
 
 // -------------------------------------------------------------------------------------------- //
-//                                      CRM AUTHENTICATION                                      //
+//                                      BUSINESS AUTHENTICATION                                 //
 // -------------------------------------------------------------------------------------------- //
 
-router.route('/auth/crm/login').post(AuthenticationController.login);
+router.route('/auth/business/login').post(AuthenticationController.login);
 
 router
-  .route('/auth/crm/send/forgot-password-code')
+  .route('/auth/business/send/forgot-password-code')
   .post(AuthenticationController.sendForgotPasswordCode);
 
 router
-  .route('/auth/crm/verify/forgot-password-code')
+  .route('/auth/business/verify/forgot-password-code')
   .post(AuthenticationController.verifyForgotPasswordCode);
 
 // -------------------------------------------------------------------------------------------- //

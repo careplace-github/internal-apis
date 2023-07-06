@@ -62,8 +62,8 @@ export const AWS_USER = process.env.AWS_USER as string;
 export const AWS_ARN = process.env.AWS_ARN as string;
 
 // AWS Cognito Credentials
-export const AWS_COGNITO_CRM_USER_POOL_ID = process.env.AWS_COGNITO_CRM_USER_POOL_ID as string;
-export const AWS_COGNITO_CRM_CLIENT_ID = process.env.AWS_COGNITO_CRM_CLIENT_ID as string;
+export const AWS_COGNITO_BUSINESS_USER_POOL_ID = process.env.AWS_COGNITO_BUSINESS_USER_POOL_ID as string;
+export const AWS_COGNITO_BUSINESS_CLIENT_ID = process.env.AWS_COGNITO_BUSINESS_CLIENT_ID as string;
 export const AWS_COGNITO_MARKETPLACE_USER_POOL_ID = process.env
   .AWS_COGNITO_MARKETPLACE_USER_POOL_ID as string;
 export const AWS_COGNITO_MARKETPLACE_CLIENT_ID = process.env
@@ -71,7 +71,7 @@ export const AWS_COGNITO_MARKETPLACE_CLIENT_ID = process.env
 export const AWS_COGNITO_REGION =
   process.env.AWS_COGNITO_REGION || (process.env.AWS_REGION as string);
 export const AWS_COGNITO_IDENTITY_POOL_ID = process.env.AWS_COGNITO_IDENTITY_POOL_ID as string;
-export const AWS_COGNITO_CRM_GROUPS = process.env.AWS_COGNITO_CRM_ROLES as string;
+export const AWS_COGNITO_BUSINESS_GROUPS = process.env.AWS_COGNITO_BUSINESS_ROLES as string;
 export const AWS_COGNITO_MARKETPLACE_GROUPS = process.env.AWS_COGNITO_MARKETPLACE_ROLES as string;
 
 // AWS S3 Credentials

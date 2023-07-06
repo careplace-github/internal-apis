@@ -24,6 +24,6 @@ router.route('/health-units/agencies/:id').get(healthUnitsController.retrieve);
 
 router
   .route('/health-units/agencies/dashboard')
-  .get(AuthenticationGuard, AccessGuard('crm'), healthUnitsController.getDashboard);
+  .get(AuthenticationGuard, AccessGuard('business'), healthUnitsController.getDashboard);
 
 export default router;
