@@ -24,7 +24,7 @@ import {
 import { CognitoService, SESService } from '@api/v1/services';
 import { HTTPError, AuthUtils } from '@api/v1/utils';
 // @constants
-import { AWS_COGNITO_CRM_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
+import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
 import { CollaboratorModel } from '../models';
@@ -41,7 +41,7 @@ export default class CollaboratorsController {
   static EmailHelper = EmailHelper;
   // services
   static SES = SESService;
-  static CognitoService = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
+  static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
   // utils
   static AuthUtils = AuthUtils;
 
@@ -155,7 +155,7 @@ export default class CollaboratorsController {
         };
 
         // Insert variables into email template
-        let email = await EmailHelper.getEmailTemplateWithData('crm_new_collaborator', emailData);
+        let email = await EmailHelper.getEmailTemplateWithData('business_new_collaborator', emailData);
 
         if (!email || !email.htmlBody || !email.subject) {
           return next(new HTTPError._500('Error getting email template'));

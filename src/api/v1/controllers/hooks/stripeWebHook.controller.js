@@ -209,7 +209,7 @@ export default class StripeWebhooksController {
                   path: 'legal_information',
                   populate: {
                     path: 'director',
-                    model: 'crm_user',
+                    model: 'business_user',
                   },
                 },
               },
@@ -336,15 +336,15 @@ export default class StripeWebhooksController {
           userPhone: order.user.phone,
         };
 
-        let crmOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
-          'crm_order_payed',
+        let businessOrderPayedEmail = await EmailHelper.getEmailTemplateWithData(
+          'business_order_payed',
           healthUnitEmailPayload
         );
 
         await EmailHelper.sendEmailWithAttachment(
           paymentMethod.billing_details.email,
-          crmOrderPayedEmail.subject,
-          crmOrderPayedEmail.htmlBody,
+          businessOrderPayedEmail.subject,
+          businessOrderPayedEmail.htmlBody,
           null,
           [receipt],
           null,

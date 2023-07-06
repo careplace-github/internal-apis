@@ -96,11 +96,11 @@ paths:
                     type: string
                     example: Missing or invalid token
 
-  /auth/crm/login:
+  /auth/business/login:
     post:
       tags:
         - Authentication
-      summary: CRM Login
+      summary: BUSINESS Login
       description: >-
         Returns the Authentication Information in a ```JWT Context```. <br> This
         endpoint only returns the ```access_token```, the
@@ -109,9 +109,9 @@ paths:
         the ```/users/account``` endpoint. <br> It is considered that a user is
         logged in if the ```access_token_expiration``` is greater than the
         current time.
-      operationId: crmLogin
+      operationId: businessLogin
       requestBody:
-        description: Login user to the CRM
+        description: Login user to the BUSINESS
         content:
           application/json:
             schema:
@@ -209,15 +209,15 @@ paths:
                   message:
                     type: string
                     example: Missing or invalid token
-  /auth/crm/send/forgot-password-code:
+  /auth/business/send/forgot-password-code:
     post:
       tags:
         - Authentication
-      summary: CRM Forgot Password
-      description: Sends a forgot password code to the CRM user email.
-      operationId: crmForgotPassword
+      summary: BUSINESS Forgot Password
+      description: Sends a forgot password code to the BUSINESS user email.
+      operationId: businessForgotPassword
       requestBody:
-        description: Send forgot password code to the CRM user email
+        description: Send forgot password code to the BUSINESS user email
         content:
           application/json:
             schema:
@@ -275,18 +275,18 @@ paths:
                   message:
                     type: string
                     example: Forgot password code sent successfully
-  /auth/crm/verify/forgot-password-code:
+  /auth/business/verify/forgot-password-code:
     post:
       tags:
         - Authentication
-      summary: CRM Verify Forgot Password
+      summary: BUSINESS Verify Forgot Password
       description: >-
-        Verifies the forgot password code sent to the CRM user email and changes
+        Verifies the forgot password code sent to the BUSINESS user email and changes
         the password.
-      operationId: crmForgotPassword
+      operationId: businessForgotPassword
       requestBody:
         description: >-
-          Verify forgot password code sent to the CRM user email and change the
+          Verify forgot password code sent to the BUSINESS user email and change the
           password.
         content:
           application/json:
@@ -339,7 +339,7 @@ paths:
       description: >-
         Verifies the forgot password code sent to the Marketplace user email and
         changes the password.
-      operationId: crmForgotPassword
+      operationId: businessForgotPassword
       requestBody:
         description: >-
           Verify forgot password code sent to the Marketplace user email and
@@ -7327,7 +7327,7 @@ paths:
       operationId: deletehealthUnitPaymentMethod
 components:
   schemas:
-    CRM_User:
+    BUSINESS_User:
       type: object
       properties:
         _id:
@@ -7438,7 +7438,7 @@ components:
                   type: boolean
                   example: true
       xml:
-        name: CRM_User
+        name: BUSINESS_User
     Marketplace_User:
       type: object
       properties:
@@ -7738,7 +7738,7 @@ components:
         team:
           type: array
           items:
-            $ref: "#/components/schemas/CRM_User"
+            $ref: "#/components/schemas/BUSINESS_User"
         legal_information:
           type: object
           properties:
@@ -7746,7 +7746,7 @@ components:
               type: string
               example: "CAREPLACE, LDA."
             director:
-              $ref: "#/components/schemas/CRM_User"
+              $ref: "#/components/schemas/BUSINESS_User"
             tax_id:
               type: string
               example: 123456789
@@ -7798,7 +7798,7 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         series:
           $ref: "#/components/schemas/Event_Series"
         title:
@@ -7829,7 +7829,7 @@ components:
           type: string
           example: 5e1f9b9b9b9b9b9b9b9b9b9b
         user:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         recurrency:
           type: integer
           example: 1
@@ -7894,7 +7894,7 @@ components:
         healthUnit
           $ref: "#/components/schemas/healthUnit"
         caregiver:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         user:
           $ref: "#/components/schemas/Marketplace_User"
         relative:

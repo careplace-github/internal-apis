@@ -34,7 +34,7 @@ import { CognitoService, SESService, StripeService } from '@api/v1/services';
 import { HTTPError, AuthUtils, DateUtils } from '@api/v1/utils';
 // @constants
 import {
-  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
   STRIPE_APPLICATION_FEE,
   STRIPE_PRODUCT_ID,
@@ -61,7 +61,7 @@ export default class PaymentsController {
   // services
   static SES = SESService;
   static StripeService = StripeService;
-  static CognitoService = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
+  static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
   // utils
   static AuthUtils = AuthUtils;
   static DateUtils = DateUtils;

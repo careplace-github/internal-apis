@@ -35,15 +35,15 @@ tags:
   - name: Admin
     description: Admin operations
 paths:
-  /auth/crm/login:
+  /auth/business/login:
     post:
       tags:
         - Authentication
-      summary: CRM Login
-      description: Logs in a user to the CRM
-      operationId: crmLogin
+      summary: BUSINESS Login
+      description: Logs in a user to the BUSINESS
+      operationId: businessLogin
       requestBody:
-        description: Login user to the CRM
+        description: Login user to the BUSINESS
         content:
           application/json:
             schema:
@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CRM_User"
+                $ref: "#/components/schemas/BUSINESS_User"
         "401":
           description: Unauthorized
           content:
@@ -119,15 +119,15 @@ paths:
                   message:
                     type: string
                     example: Missing or invalid token
-  /auth/crm/send/forgot-password-code:
+  /auth/business/send/forgot-password-code:
     post:
       tags:
         - Authentication
-      summary: CRM Forgot Password
-      description: Sends a forgot password code to the CRM user email.
-      operationId: crmForgotPassword
+      summary: BUSINESS Forgot Password
+      description: Sends a forgot password code to the BUSINESS user email.
+      operationId: businessForgotPassword
       requestBody:
-        description: Send forgot password code to the CRM user email
+        description: Send forgot password code to the BUSINESS user email
         content:
           application/json:
             schema:
@@ -185,16 +185,16 @@ paths:
                   message:
                     type: string
                     example: Forgot password code sent successfully
-  /auth/crm/verify/forgot-password-code:
+  /auth/business/verify/forgot-password-code:
     post:
       tags:
         - Authentication
-      summary: CRM Verify Forgot Password
-      description: Verifies the forgot password code sent to the CRM user email and
+      summary: BUSINESS Verify Forgot Password
+      description: Verifies the forgot password code sent to the BUSINESS user email and
         changes the password.
-      operationId: crmForgotPassword
+      operationId: businessForgotPassword
       requestBody:
-        description: Verify forgot password code sent to the CRM user email and change
+        description: Verify forgot password code sent to the BUSINESS user email and change
           the password.
         content:
           application/json:
@@ -246,7 +246,7 @@ paths:
       summary: Marketplace Verify Forgot Password
       description: Verifies the forgot password code sent to the Marketplace user
         email and changes the password.
-      operationId: crmForgotPassword
+      operationId: businessForgotPassword
       requestBody:
         description: Verify forgot password code sent to the Marketplace user email and
           change the password.
@@ -526,7 +526,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: "#/components/schemas/CRM_User"
+                    $ref: "#/components/schemas/BUSINESS_User"
         "400":
           description: Bad Request
           content:
@@ -1694,7 +1694,7 @@ paths:
                   users:
                     type: array
                     items:
-                      $ref: "#/components/schemas/CRM_User"
+                      $ref: "#/components/schemas/BUSINESS_User"
         "400":
           description: Bad Request
           content:
@@ -1767,7 +1767,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: "#/components/schemas/CRM_User"
+                    $ref: "#/components/schemas/BUSINESS_User"
         "400":
           description: Bad Request
           content:
@@ -1832,7 +1832,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: "#/components/schemas/CRM_User"
+                    $ref: "#/components/schemas/BUSINESS_User"
         "400":
           description: Bad Request
           content:
@@ -1886,7 +1886,7 @@ paths:
                 type: object
                 properties:
                   user:
-                    $ref: "#/components/schemas/CRM_User"
+                    $ref: "#/components/schemas/BUSINESS_User"
         "400":
           description: Bad Request
           content:
@@ -3097,7 +3097,7 @@ paths:
                     example: INVALID_REQUEST
 components:
   schemas:
-    CRM_User:
+    BUSINESS_User:
       type: object
       properties:
         _id:
@@ -3187,7 +3187,7 @@ components:
             type: timestamp
             example: 2019-03-27T12:00:00.000Z
       xml:
-        name: CRM_User
+        name: BUSINESS_User
     Marketplace_User:
       type: object
       properties:
@@ -3287,7 +3287,7 @@ components:
       type: object
       properties:
         user:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         services:
           type: array
           items:
@@ -3408,7 +3408,7 @@ components:
         team:
           type: array
           items:
-            $ref: "#/components/schemas/CRM_User"
+            $ref: "#/components/schemas/BUSINESS_User"
         legal_information:
           type: object
           properties:
@@ -3416,7 +3416,7 @@ components:
               type: string
               example: CAREPLACE, LDA.
             director:
-              $ref: "#/components/schemas/CRM_User"
+              $ref: "#/components/schemas/BUSINESS_User"
             tax_id:
               type: string
               example: 123456789
@@ -3474,7 +3474,7 @@ components:
           type: string
           example: 63cad0df068be823de4ad559
         user:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         series:
           $ref: "#/components/schemas/Event_Series"
         title:
@@ -3511,7 +3511,7 @@ components:
           type: string
           example: 63cad0df068be823de4ad559
         user:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         recurrency:
           type: integer
           example: 1
@@ -3582,7 +3582,7 @@ components:
         healthUnit:
           $ref: "#/components/schemas/healthUnit"
         caregiver:
-          $ref: "#/components/schemas/CRM_User"
+          $ref: "#/components/schemas/BUSINESS_User"
         user:
           $ref: "#/components/schemas/Marketplace_User"
         relative:
