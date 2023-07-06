@@ -76,7 +76,7 @@ const HealthUnitSchema: Schema<IHealthUnitModel> = new Schema<IHealthUnitModel>(
       minimum_hourly_rate: { type: Number, required: true, default: 0 },
     },
 
-    team: [{ type: Schema.Types.ObjectId, ref: 'crm_users', required: false }],
+    team: [{ type: Schema.Types.ObjectId, ref: 'business_users', required: false }],
 
     stripe_information: {
       account_id: { type: String, required: true, unique: true },

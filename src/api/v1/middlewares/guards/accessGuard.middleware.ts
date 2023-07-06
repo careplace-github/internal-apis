@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import logger from '../../../../logs/logger';
 
 import {
-  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
 } from '../../../../config/constants/index';
 
@@ -15,8 +15,8 @@ export default function accessGuard(app: string) {
     try {
       let AuthUtils = authUtils;
 
-      if (app === 'crm') {
-        app = AWS_COGNITO_CRM_CLIENT_ID || '';
+      if (app === 'business') {
+        app = AWS_COGNITO_BUSINESS_CLIENT_ID || '';
       } else if (app === 'marketplace') {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
       }

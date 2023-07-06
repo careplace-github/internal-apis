@@ -11,9 +11,9 @@ import AuthUtils from '../../utils/auth/auth.utils';
 import { ICognitoUser } from '../../interfaces';
 
 import {
-  AWS_COGNITO_CRM_GROUPS,
+  AWS_COGNITO_BUSINESS_GROUPS,
   AWS_COGNITO_MARKETPLACE_GROUPS,
-  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
 } from '../../../../config/constants/index';
 
@@ -135,7 +135,7 @@ export default class AuthHelper {
 
       let user;
 
-      if (clientId === AWS_COGNITO_CRM_CLIENT_ID) {
+      if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
         user = await this.CollaboratorsDAO.queryOne(
           {
             cognito_id: { $eq: username },

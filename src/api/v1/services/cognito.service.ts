@@ -7,8 +7,8 @@ import { LayerError } from '@api/v1/utils';
 
 // @constants
 import {
-  AWS_COGNITO_CRM_USER_POOL_ID,
-  AWS_COGNITO_CRM_CLIENT_ID,
+  AWS_COGNITO_BUSINESS_USER_POOL_ID,
+  AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
   AWS_COGNITO_REGION,
@@ -54,8 +54,8 @@ export default class CognitoService {
     this.cognito = CognitoClient;
     this.clientId = clientId;
     this.userPoolId =
-      this.clientId === AWS_COGNITO_CRM_CLIENT_ID
-        ? AWS_COGNITO_CRM_USER_POOL_ID
+      this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+        ? AWS_COGNITO_BUSINESS_USER_POOL_ID
         : AWS_COGNITO_MARKETPLACE_USER_POOL_ID;
   }
 
@@ -127,7 +127,7 @@ export default class CognitoService {
   }
 
   /**
-   * @description Send a confirmation code to the user. For the CRM users the code is sent to the user email and for the Marketplace users the code is sent to the user phone number.
+   * @description Send a confirmation code to the user. For the BUSINESS users the code is sent to the user email and for the Marketplace users the code is sent to the user phone number.
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
    * @throws {LayerError.INVALID_PARAMETER} - If the user does not exist in the Cognito service.
@@ -321,7 +321,7 @@ export default class CognitoService {
   /**
    * Sends a "forgot password" code to the user.
    * For the Marketplace users it sends the code to the user phone number.
-   * For the CRM users it sends the code to the user email.
+   * For the BUSINESS users it sends the code to the user email.
    * This is also used to resend the code.
    *
    * @param {String} email - User email.
@@ -777,7 +777,7 @@ export default class CognitoService {
   /**
    * Adds a user to a group
    *
-   * @param {String} app - Application name (crm, marketplace)
+   * @param {String} app - Application name (business, marketplace)
    * @param {*} username - Username
    * @param {*} groupName - Group name
    * @returns {Promise<JSON>} - AWS Cognito response.
@@ -794,7 +794,7 @@ export default class CognitoService {
     );
 
     // Verify if the group exists in the following enum
-    let groups = ['admin', 'crm-user', 'marketplace-user'];
+    let groups = ['admin', 'business-user', 'marketplace-user'];
 
     let response;
 
@@ -874,7 +874,7 @@ export default class CognitoService {
 
   async getUserCustomAttribute(username, attributeName) {
     const params = {
-      UserPoolId: AWS_COGNITO_CRM_USER_POOL_ID,
+      UserPoolId: AWS_COGNITO_BUSINESS_USER_POOL_ID,
       Username: username,
     };
 

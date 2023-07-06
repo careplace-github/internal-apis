@@ -24,7 +24,7 @@ import {
 import { CognitoService, SESService } from '@api/v1/services';
 import { HTTPError, AuthUtils } from '@api/v1/utils';
 // @constants
-import { AWS_COGNITO_CRM_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
+import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
 import { CaregiverModel } from '../models';
@@ -41,7 +41,7 @@ export default class CaregiversController {
   static EmailHelper = EmailHelper;
   // services
   static SES = SESService;
-  static CognitoService = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
+  static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
   // utils
   static AuthUtils = AuthUtils;
 
@@ -86,7 +86,7 @@ export default class CaregiversController {
       // Remove any whitespace from the phone number.
       caregiver.phone = caregiver.phone!.replace(/\s/g, '');
 
-      // If the permission app_caregiver is included, create a new caregiver in the CRM Cognito caregiver Pool to allow them to login.
+      // If the permission app_caregiver is included, create a new caregiver in the BUSINESS Cognito caregiver Pool to allow them to login.
       if (caregiver?.permissions?.includes('app_user')) {
         // Generate a random password of 8 characters.
         temporaryPassword = String(
@@ -96,7 +96,7 @@ export default class CaregiversController {
           })
         );
 
-        // Create a new caregiver in the CRM Cognito caregiver Pool.
+        // Create a new caregiver in the BUSINESS Cognito caregiver Pool.
         try {
           cognitocaregiver = await this.CognitoService.addUser(
             caregiver.email,
@@ -160,7 +160,7 @@ export default class CaregiversController {
         };
 
         // Insert variables into email template
-        let email = await EmailHelper.getEmailTemplateWithData('crm_new_caregiver', emailData);
+        let email = await EmailHelper.getEmailTemplateWithData('business_new_caregiver', emailData);
 
         if (!email || !email.htmlBody || !email.subject) {
           throw new HTTPError._500('Error getting email template');
@@ -326,7 +326,7 @@ export default class CaregiversController {
         }
       }
 
-      // If the caregiver has access to the CRM, delete the caregiver from Cognito
+      // If the caregiver has access to the BUSINESS, delete the caregiver from Cognito
       if (caregiver?.cognito_id) {
         try {
           await this.CognitoService.adminDeleteUser(caregiver.cognito_id);

@@ -33,7 +33,7 @@ import { EventSeriesModel, HomeCareOrderModel, ServiceModel } from '@api/v1/mode
 import { CognitoService, SESService } from '@api/v1/services';
 import { HTTPError, AuthUtils, DateUtils } from '@api/v1/utils';
 // @constants
-import { AWS_COGNITO_CRM_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
+import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
 // @data
@@ -54,7 +54,7 @@ export default class OrdersController {
   static EmailHelper = EmailHelper;
   // services
   static SES = SESService;
-  static CognitoService = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
+  static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
   // utils
   static AuthUtils = AuthUtils;
   static DateUtils = DateUtils;
@@ -217,7 +217,7 @@ export default class OrdersController {
         })
       ).data;
 
-      // Only send email to crm users that have the 'orders_emails' permission
+      // Only send email to business users that have the 'orders_emails' permission
       collaborators = collaborators.filter((user) => {
         return user?.permissions?.includes('orders_emails');
       });
@@ -237,19 +237,19 @@ export default class OrdersController {
           link: `https://www.sales.careplace.pt/orders/${orderCreated._id}`,
         };
 
-        let crmNewOrderEmail = await this.EmailHelper.getEmailTemplateWithData(
-          'crm_new_order',
+        let businessNewOrderEmail = await this.EmailHelper.getEmailTemplateWithData(
+          'business_new_order',
           healthUnitEmailPayload
         );
 
-        if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
+        if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
           return next(new HTTPError._500('Error getting email template'));
         }
 
         await this.SES.sendEmail(
           collaboratorsEmails,
-          crmNewOrderEmail.subject,
-          crmNewOrderEmail.htmlBody
+          businessNewOrderEmail.subject,
+          businessNewOrderEmail.htmlBody
         );
       }
     } catch (error: any) {
@@ -487,7 +487,7 @@ export default class OrdersController {
       let healthUnitId: string;
       let homeCareOrders: IHomeCareOrderModel[] = [];
 
-      let Cognito = new CognitoService(AWS_COGNITO_CRM_CLIENT_ID);
+      let Cognito = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
 
       let accessToken: string;
 
@@ -699,7 +699,7 @@ export default class OrdersController {
         })
       ).data;
 
-      // Only send email to crm users that have the 'orders_emails' permission
+      // Only send email to business users that have the 'orders_emails' permission
       collaborators = collaborators.filter((user) => {
         return user?.permissions?.includes('orders_emails');
       });
@@ -784,19 +784,19 @@ export default class OrdersController {
               link: `http://localhost:4000/app/orders/${order._id}/view`,
             };
 
-            let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-              'crm_order_accepted',
+            let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+              'business_order_accepted',
               healthUnitEmailPayload
             );
 
-            if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
+            if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
             await this.SES.sendEmail(
               [collaboratorEmail],
-              crmNewOrderEmail.subject,
-              crmNewOrderEmail.htmlBody
+              businessNewOrderEmail.subject,
+              businessNewOrderEmail.htmlBody
             );
           }
         }
@@ -954,7 +954,7 @@ export default class OrdersController {
         })
       ).data;
 
-      // Only send email to crm users that have the 'orders_emails' permission
+      // Only send email to business users that have the 'orders_emails' permission
       collaborators = collaborators.filter((user) => {
         return user?.permissions?.includes('orders_emails');
       });
@@ -1040,19 +1040,19 @@ export default class OrdersController {
               userPhone: (order.customer as ICustomer).phone,
             };
 
-            let crmNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-              'crm_quote_sent',
+            let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+              'business_quote_sent',
               healthUnitEmailPayload
             );
 
-            if (!crmNewOrderEmail || !crmNewOrderEmail.htmlBody || !crmNewOrderEmail.subject) {
+            if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
             await this.SES.sendEmail(
               [collaboratorEmail],
-              crmNewOrderEmail.subject,
-              crmNewOrderEmail.htmlBody
+              businessNewOrderEmail.subject,
+              businessNewOrderEmail.htmlBody
             );
           }
         }

@@ -16,13 +16,13 @@ router
   .route('/calendar/collaborator/events')
   .get(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    AccessGuard('business'),
 
     CalendarController.listCollaboratorEvents
   )
   .post(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    AccessGuard('business'),
     InputValidation,
     AddEventValidator,
     InputValidation,
@@ -33,13 +33,13 @@ router
   .route('/calendar/collaborator/events/:id')
   .get(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    AccessGuard('business'),
     InputValidation,
     CalendarController.retrieveCollaboratorEvent
   )
   .put(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    AccessGuard('business'),
     InputValidation,
     UpdateEventValidator,
     InputValidation,
@@ -47,7 +47,7 @@ router
   )
   .delete(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    AccessGuard('business'),
     InputValidation,
     CalendarController.deleteCollaboratorEvent
   );
