@@ -544,6 +544,71 @@ export default class CognitoService {
     try {
       response = await this.cognito.initiateAuth(params).promise();
     } catch (error: any) {
+      console.log(error);
+      logger.error(
+        'Cognito Service AUTHENTICATE_USER Error: ' + JSON.stringify(error, null, 2) + '\n'
+      );
+
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case 'NotAuthorizedException':
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'UserNotConfirmedException':
+          throw new LayerError.UNAUTHORIZED(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      'COGNITO SERVICE AUTHENTICATE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+    );
+
+    return response;
+  }
+
+  async adminAuthenticateUser(
+    authflow: CognitoIdentityServiceProvider.AuthFlowType,
+    payload: {
+      username: string;
+      password: string;
+      refreshToken?: string;
+    }
+  ): Promise<CognitoIdentityServiceProvider.AdminInitiateAuthResponse> {
+    logger.info(
+      'Cognito Service AUTHENTICATE_USER Request: ' + JSON.stringify(payload, null, 2) + '\n'
+    );
+
+    const secretHash = this.calculateSecretHash(payload.username);
+
+    const params: CognitoIdentityServiceProvider.AdminInitiateAuthRequest = {
+      AuthFlow: 'ADMIN_USER_PASSWORD_AUTH',
+      UserPoolId: this.userPoolId,
+
+      AuthParameters: {
+        SECRET_HASH: secretHash,
+
+        USERNAME: payload.username,
+        PASSWORD: payload.password,
+        ...(payload.refreshToken && { REFRESH_TOKEN: payload.refreshToken }),
+      },
+
+      ClientId: this.clientId,
+    };
+
+    let response: CognitoIdentityServiceProvider.AdminInitiateAuthResponse;
+
+    try {
+      response = await this.cognito.adminInitiateAuth(params).promise();
+    } catch (error: any) {
+      console.log(error);
       logger.error(
         'Cognito Service AUTHENTICATE_USER Error: ' + JSON.stringify(error, null, 2) + '\n'
       );
