@@ -1,13 +1,17 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICollaboratorModel } from '../interfaces'; // Assuming you have the interface defined
+import { ICollaboratorDocument } from '../interfaces'; // Assuming you have the interface defined
 
-const CollaboratorSchema: Schema<ICollaboratorModel> = new Schema<ICollaboratorModel>(
+const CollaboratorSchema: Schema<ICollaboratorDocument> = new Schema<ICollaboratorDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
 
-    cognito_id: { type: String, required: true, unique: true },
+    cognito_id: { type: String, required: false, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true, unique: true },
@@ -71,7 +75,7 @@ const CollaboratorSchema: Schema<ICollaboratorModel> = new Schema<ICollaboratorM
   }
 );
 
-const CollaboratorModel: Model<ICollaboratorModel> = mongoose.model<ICollaboratorModel>(
+const CollaboratorModel: Model<ICollaboratorDocument> = mongoose.model<ICollaboratorDocument>(
   'Collaborator',
   CollaboratorSchema
 );

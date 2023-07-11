@@ -2,6 +2,11 @@
  * @see https://www.npmjs.com/package/dotenv
  */
 import dotenv from 'dotenv';
+import { JWK, RSA } from 'jwk-to-pem';
+
+
+import publicKey from '../.env/cognitoPublicKey.json';
+const publicKeyJwk = publicKey; // Use the JWK directly
 
 // Loads environment settings
 export const ENV = process.env.NODE_ENV || ('staging' as string);
@@ -43,16 +48,17 @@ export const MONGODB_COLLECTION_CUSTOMERS_NS = process.env
 export const MONGODB_COLLECTION_HEALTH_UNITS_NS = process.env
   .MONGODB_COLLECTION_HEALTH_UNITS_NS as string;
 export const MONGODB_COLLECTION_SERVICES_NS = process.env.MONGODB_COLLECTION_SERVICES_NS as string;
-export const MONGODB_COLLECTION_HOME_CARE_ORDERS_NS = process.env.MONGODB_COLLECTION_HOME_CARE_ORDERS_NS as string;
+export const MONGODB_COLLECTION_HOME_CARE_ORDERS_NS = process.env
+  .MONGODB_COLLECTION_HOME_CARE_ORDERS_NS as string;
 export const MONGODB_COLLECTION_FILES_NS = process.env.MONGODB_COLLECTION_FILES_NS as string;
 export const MONGODB_COLLECTION_CAREGIVERS_NS = process.env
   .MONGODB_COLLECTION_CAREGIVERS_NS as string;
 export const MONGODB_COLLECTION_EVENTS_NS = process.env.MONGODB_COLLECTION_EVENTS_NS as string;
 export const MONGODB_COLLECTION_EVENT_SERIES_NS = process.env
   .MONGODB_COLLECTION_EVENT_SERIES_NS as string;
-export const MONGODB_COLLECTION_PATIENTS_NS = process.env
-  .MONGODB_COLLECTION_PATIENTS_NS as string;
-export const MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS = process.env.MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS as string;
+export const MONGODB_COLLECTION_PATIENTS_NS = process.env.MONGODB_COLLECTION_PATIENTS_NS as string;
+export const MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS = process.env
+  .MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS as string;
 
 // AWS Credentials
 export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID as string;
@@ -62,7 +68,10 @@ export const AWS_USER = process.env.AWS_USER as string;
 export const AWS_ARN = process.env.AWS_ARN as string;
 
 // AWS Cognito Credentials
-export const AWS_COGNITO_BUSINESS_USER_POOL_ID = process.env.AWS_COGNITO_BUSINESS_USER_POOL_ID as string;
+export const AWS_COGNITO_BUSINESS_USER_POOL_ID = process.env
+  .AWS_COGNITO_BUSINESS_USER_POOL_ID as string;
+export const AWS_COGNITO_ISSUER = process.env.AWS_COGNITO_ISSUER as string;
+export const AWS_COGNITO_PUBLIC_KEY = publicKey.keys[1] as RSA; // Access a specific key in the JWK
 export const AWS_COGNITO_BUSINESS_CLIENT_ID = process.env.AWS_COGNITO_BUSINESS_CLIENT_ID as string;
 export const AWS_COGNITO_MARKETPLACE_USER_POOL_ID = process.env
   .AWS_COGNITO_MARKETPLACE_USER_POOL_ID as string;

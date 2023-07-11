@@ -5,8 +5,14 @@
       "*": [
         "*"
       ],
-      "@api/*": [
-        "src/api/*"
+      "@api/v1/*": [
+        "src/api/v1/*"
+      ],
+      "@api/common/*": [
+        "src/api/common/*"
+      ],
+      "@api/admin/*": [
+        "src/api/admin/*"
       ],
       "@assets": [
         "src/assets"
@@ -14,6 +20,10 @@
       "@config/*": [
         "src/config/*"
       ],
+      "@utils": [
+        "src/utils"
+      ],
+
       "@constants": [
         "src/config/constants"
       ],
@@ -42,12 +52,10 @@
   },
   "include": [
     "src/**/*",
-    "test.d.ts"
   ],
   "exclude": [
     "node_modules/**/*",
     "**/*.spec.ts",
-    "src/api/v1/services/ts/*"
   ],
   "ts-node": {
     "esm": true,

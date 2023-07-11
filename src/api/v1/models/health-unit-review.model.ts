@@ -1,16 +1,20 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IHealthUnitReviewModel } from '../interfaces';
+import { IHealthUnitReviewDocument } from '../interfaces';
 import logger from '../../../logs/logger';
 
-const HealthUnitReviewSchema: Schema<IHealthUnitReviewModel> = new Schema<IHealthUnitReviewModel>(
+const HealthUnitReviewSchema: Schema<IHealthUnitReviewDocument> = new Schema<IHealthUnitReviewDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
 
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
 
-    customer: { type: Schema.Types.ObjectId, ref: 'customer', required: true },
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
 
     rating: {
       type: Number,
@@ -37,7 +41,7 @@ const HealthUnitReviewSchema: Schema<IHealthUnitReviewModel> = new Schema<IHealt
   }
 );
 
-const HealthUnitReviewModel: Model<IHealthUnitReviewModel> = mongoose.model<IHealthUnitReviewModel>(
+const HealthUnitReviewModel: Model<IHealthUnitReviewDocument> = mongoose.model<IHealthUnitReviewDocument>(
   'HealthUnitReview',
   HealthUnitReviewSchema
 );

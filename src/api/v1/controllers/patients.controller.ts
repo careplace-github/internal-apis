@@ -5,7 +5,7 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 // lodash
 import { omit } from 'lodash';
 
-// @api
+// @api/v1
 import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO, PatientsDAO } from '@api/v1/db';
 import { AuthHelper } from '@api/v1/helpers';
 import {
@@ -15,8 +15,10 @@ import {
   IHealthUnit,
   IQueryListResponse,
   IPatient,
-} from '@api/v1/interfaces';
-import { HTTPError } from '@api/v1/utils';
+  IPatientDocument,
+} from 'src/api/v1/interfaces';
+// @api/common
+import { HTTPError } from 'src/utils';
 // @logger
 import logger from '@logger';
 import { PatientModel } from '../models';
@@ -30,31 +32,48 @@ export default class PatientsController {
   // helpers
   static AuthHelper = AuthHelper;
 
+  // -------------------------------------------------- //
+  //                     CUSTOMERS                      //
+  // -------------------------------------------------- //
+
   static async createCustomerPatient(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      logger.info('Creating a new patient');
-
       const response: IAPIResponse = {
         statusCode: res.statusCode,
 
         data: {},
       };
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
 
       const reqPatient = req.body as IPatient;
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
-
-      const user = await this.AuthHelper.getUserFromDB(accessToken);
+      const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
 
       reqPatient.customer = user._id;
 
       const patient = new PatientModel(reqPatient);
 
-      const patientCreated = await this.PatientsDAO.create(patient);
+      // validate the patient
+      const error = patient.validateSync();
+
+      if (error) {
+        return next(new HTTPError._400(error.message));
+      }
+
+      const patientCreated = await PatientsController.PatientsDAO.create(patient);
 
       response.statusCode = 201;
       response.data = patientCreated;
@@ -79,12 +98,33 @@ export default class PatientsController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
       const patientID = req.params.id as string;
-      const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      const user = await this.AuthHelper.getUserFromDB(accessToken);
+      const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
 
-      const patient = await this.PatientsDAO.retrieve(patientID);
+      let patient: IPatient;
+
+      try {
+        patient = await PatientsController.PatientsDAO.retrieve(patientID);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Patient not found'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (patient?.customer?.toString() !== user._id.toString()) {
         next(new HTTPError._403('You are not allowed to access this resource'));
@@ -113,30 +153,46 @@ export default class PatientsController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
       const patientID = req.params.id;
-      const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      const user = await this.AuthHelper.getUserFromDB(accessToken);
+      const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
 
-      let patient = await this.PatientsDAO.retrieve(patientID);
+      let patient = await PatientsController.PatientsDAO.retrieve(patientID);
 
       let reqPatient = req.body as IPatient;
 
       // Do not allow updating the user or the _id
       const sanitizedReqPatient = omit(reqPatient, ['customer', '_id']);
 
+      logger.info(JSON.stringify(patient, null, 2));
+
+      logger.info(JSON.stringify(sanitizedReqPatient, null, 2));
+
       const newPatient = {
-        ...patient,
+        ...patient.toJSON(),
         ...sanitizedReqPatient,
       };
 
-      const updatePation = new PatientModel(newPatient);
+      logger.info(JSON.stringify(newPatient, null, 2));
 
       if (patient?.customer?.toString() !== user._id.toString()) {
         next(new HTTPError._403('You are not allowed to access this resource'));
       }
 
-      const patientUpdated = await this.PatientsDAO.update(updatePation);
+      const updatePatient = new PatientModel(newPatient);
+
+      const patientUpdated = await PatientsController.PatientsDAO.update(updatePatient);
 
       response.statusCode = 200;
       response.data = patientUpdated;
@@ -158,26 +214,50 @@ export default class PatientsController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
       const patientID = req.params.id;
-      const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      const user = await this.AuthHelper.getUserFromDB(accessToken);
+      const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
 
-      const patient = await this.PatientsDAO.retrieve(patientID);
+      let patient: IPatientDocument;
+
+      try {
+        patient = await PatientsController.PatientsDAO.retrieve(patientID);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Patient not found'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (patient?.customer?.toString() !== user._id.toString()) {
-        throw new HTTPError._403('You are not allowed to access this resource');
+        return next(new HTTPError._403('You are not allowed to access this resource'));
       }
 
-      const patientOrders = (await this.HomeCareOrdersDAO.queryList({ patient: patientID })).data;
+      const patientOrders = (
+        await PatientsController.HomeCareOrdersDAO.queryList({ patient: patientID })
+      ).data;
 
       if (patientOrders.length > 0) {
-        next(new HTTPError._403('You cannot delete a patient with associated orders'));
+        return next(new HTTPError._409('You cannot delete a patient with associated orders'));
       }
 
-      const patientDeleted = await this.PatientsDAO.delete(patientID);
+      const patientDeleted = await PatientsController.PatientsDAO.delete(patientID);
 
       response.data = patientDeleted;
+      response.statusCode = 200;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -187,7 +267,7 @@ export default class PatientsController {
     }
   }
 
-  static async listPatientsByCustomer(
+  static async listCustomerPatients(
     req: Request,
     res: Response,
     next: NextFunction
@@ -198,16 +278,25 @@ export default class PatientsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      let accessToken: string;
 
-      const user = await this.AuthHelper.getUserFromDB(accessToken);
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
 
-      const patients = await this.PatientsDAO.queryList({
+      const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
+
+      const patients = await PatientsController.PatientsDAO.queryList({
         customer: user._id,
       });
 
       response.data = patients;
-      response.statusCode = 200;
+      response.statusCode = patients.data.length > 0 ? 200 : 204;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -216,4 +305,43 @@ export default class PatientsController {
       return next(new HTTPError._500(error.message));
     }
   }
+
+  // -------------------------------------------------- //
+  //                     HEALTH UNITS                   //
+  // -------------------------------------------------- //
+
+  // TODO createHealthUnitPatient
+  static async createHealthUnitPatient(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {}
+
+  // TODO retrieveHealthUnitPatient
+  static async retrieveHealthUnitPatient(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {}
+
+  // TODO updateHealthUnitPatient
+  static async updateHealthUnitPatient(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {}
+
+  // TODO deleteHealthUnitPatient
+  static async deleteHealthUnitPatient(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {}
+
+  // TODO listHealthUnitPatient
+  static async listHealthUnitPatient(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {}
 }

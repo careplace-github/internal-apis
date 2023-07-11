@@ -1,9 +1,10 @@
 // mongoose
+// mongoose
 import { Types, Document } from 'mongoose';
 // interfaces
-import { IAddress, IHealthUnit, IService } from '../';
+import { IAddress, IHealthUnit, IService, ISettings } from 'src/api/v1/interfaces';
 // types
-import { Gender, Permission, Role } from '../types';
+import { TGender, TCaregiverPermission, TBusinessRole } from 'src/api/v1/interfaces/types';
 
 interface ICaregiver {
   _id: Types.ObjectId | string;
@@ -12,15 +13,17 @@ interface ICaregiver {
   email: string;
   phone: string;
   birthdate: Date;
-  gender: Gender;
+  gender: TGender;
   health_unit: Types.ObjectId | IHealthUnit;
-  services: Types.ObjectId[] | IService[];
   address: IAddress;
-  role: Exclude<Role, 'technical_direction' | 'social_worker' | 'hr'>;
-  permissions: Permission[];
+  role: Exclude<TBusinessRole, 'technical_direction' | 'social_worker' | 'hr'>;
+  permissions: TCaregiverPermission[];
+  settings: ISettings;
   profile_picture?: string;
+  services: Types.ObjectId[] | IService[];
 }
+type ICaregiverDocument = ICaregiver & Document;
 
-type ICaregiverModel = ICaregiver & Document;
+export { ICaregiver, ICaregiverDocument };
 
-export { ICaregiver, ICaregiverModel };
+

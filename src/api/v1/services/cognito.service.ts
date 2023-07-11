@@ -1,9 +1,8 @@
 // aws
 import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { PromiseResult } from 'aws-sdk/lib/request';
 
 // @api
-import { LayerError } from '@api/v1/utils';
+import { LayerError } from 'src/utils';
 
 // @constants
 import {
@@ -15,9 +14,18 @@ import {
   AWS_COGNITO_IDENTITY_POOL_ID,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
+  AWS_COGNITO_ISSUER,
 } from '@constants';
+// @types
+import { TClientID } from 'src/api/v1/interfaces/types';
 // @logger
 import logger from '@logger';
+
+
+// FIXME Use custom LayerError error handling
+// FIXME Check the Stripe Error Api Response and update the error handling accordingly
+// TODO Add request logging
+// TODO Add response logging
 
 /**
  * Creates a new Cognito instance
@@ -32,13 +40,6 @@ const CognitoClient: CognitoIdentityServiceProvider = new AWS.CognitoIdentitySer
 
 // ------------------------------------------------------------------------ //
 
-interface CognitoParams {
-  ClientId: string;
-  Username: string;
-}
-
-// ------------------------------------------------------------------------ //
-
 /**
  * Class to manage the AWS Cognito Service.
  */
@@ -46,17 +47,19 @@ export default class CognitoService {
   private cognito: CognitoIdentityServiceProvider;
   private clientId: string;
   private userPoolId: string;
+  private issuer: string;
 
   /**
    * Constructor
    */
-  constructor(clientId: string) {
+  constructor(clientId: TClientID) {
     this.cognito = CognitoClient;
     this.clientId = clientId;
     this.userPoolId =
       this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
         ? AWS_COGNITO_BUSINESS_USER_POOL_ID
         : AWS_COGNITO_MARKETPLACE_USER_POOL_ID;
+    this.issuer = AWS_COGNITO_ISSUER;
   }
 
   /**
@@ -106,7 +109,7 @@ export default class CognitoService {
 
       switch (error.code) {
         case 'UsernameExistsException':
-          throw new LayerError.INVALID_PARAMETER(error.message);
+          throw new LayerError.DUPLICATE_KEY(error.message);
 
         case 'InvalidParameterException':
           throw new LayerError.INVALID_PARAMETER(error.message);
@@ -132,15 +135,17 @@ export default class CognitoService {
    * @returns {Promise<JSON>} - AWS Cognito response.
    * @throws {LayerError.INVALID_PARAMETER} - If the user does not exist in the Cognito service.
    */
-  async sendConfirmationCode(email: string): Promise<any> {
+  async sendConfirmationCode(
+    email: string
+  ): Promise<CognitoIdentityServiceProvider.ResendConfirmationCodeResponse> {
     logger.info(`Cognito Service SEND_CONFIRMATION_CODE Request: \n email: ${email} \n`);
 
-    const params: CognitoParams = {
+    const params: CognitoIdentityServiceProvider.Types.ResendConfirmationCodeRequest = {
       ClientId: this.clientId,
       Username: email,
     };
 
-    let response = {};
+    let response: CognitoIdentityServiceProvider.ResendConfirmationCodeResponse;
 
     /**
      * Check if the user exists in the Cognito service.
@@ -180,25 +185,36 @@ export default class CognitoService {
    * @param {String} code - Confirmation code.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async confirmUser(email, code) {
+  async confirmUser(
+    email: string,
+    code: string
+  ): Promise<CognitoIdentityServiceProvider.ConfirmSignUpResponse> {
     logger.info(`Cogito Service CONFIRM_USER Request: \n email: ${email} \n code: ${code} \n`);
 
-    const params = {
+    const params: CognitoIdentityServiceProvider.Types.ConfirmSignUpRequest = {
       ClientId: this.clientId,
 
       ConfirmationCode: code,
       Username: email,
     };
-    let response;
+
+    let response: CognitoIdentityServiceProvider.ConfirmSignUpResponse;
 
     try {
       response = await this.cognito.confirmSignUp(params).promise();
     } catch (error: any) {
+      logger.error(`Cogito Service CONFIRM_USER Error: \n ${JSON.stringify(error, null, 2)} \n`);
       switch (error.code) {
         case 'UserNotFoundException':
           throw new LayerError.NOT_FOUND(error.message);
 
         case 'CodeMismatchException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'ExpiredCodeException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'NotAuthorizedException':
           throw new LayerError.INVALID_PARAMETER(error.message);
 
         default:
@@ -219,30 +235,44 @@ export default class CognitoService {
    *
    *  @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_VerifyUserAttribute.html
    */
-  async verifyUserPhoneNumber(accessToken, code) {
+  async verifyUserPhoneNumber(
+    accessToken: string,
+    code: string
+  ): Promise<CognitoIdentityServiceProvider.VerifyUserAttributeResponse> {
+    logger.info(
+      'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER Request: ' +
+        JSON.stringify({ accessToken, code }, null, 2) +
+        '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.Types.VerifyUserAttributeRequest = {
+      AccessToken: accessToken,
+      AttributeName: 'phone_number',
+      Code: code,
+    };
+
+    let response: CognitoIdentityServiceProvider.VerifyUserAttributeResponse;
+
     try {
-      const params = {
-        AccessToken: accessToken,
-        AttributeName: 'phone_number',
-        Code: code,
-      };
-
-      const response = await this.cognito.verifyUserAttribute(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER SUCESS: ' +
-          JSON.stringify(response, null, 2) +
-          '\n'
-      );
-
-      return response;
+      response = await this.cognito.verifyUserAttribute(params).promise();
     } catch (error: any) {
-      logger.error(
-        'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER ERROR: ' + JSON.stringify(error, null, 2) + '\n'
-      );
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.NOT_FOUND(error.message);
 
-      return { error: error };
+        case 'CodeMismatchException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+    );
+
+    return response;
   }
 
   /**
@@ -257,35 +287,41 @@ export default class CognitoService {
   async verifyUserEmail(
     accessToken: string,
     code: string
-  ): Promise<
-    PromiseResult<CognitoIdentityServiceProvider.VerifyUserAttributeResponse, AWS.AWSError>
-  > {
+  ): Promise<CognitoIdentityServiceProvider.VerifyUserAttributeResponse> {
+    logger.info(
+      'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER Request: ' +
+        JSON.stringify({ accessToken, code }, null, 2) +
+        '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.Types.VerifyUserAttributeRequest = {
+      AccessToken: accessToken,
+      AttributeName: 'email',
+      Code: code,
+    };
+
+    let response: CognitoIdentityServiceProvider.VerifyUserAttributeResponse;
+
     try {
-      const params = {
-        AccessToken: accessToken,
-        AttributeName: 'email',
-        Code: code,
-      };
-
-      const response = await this.cognito.verifyUserAttribute(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER SUCESS: ' +
-          JSON.stringify(response, null, 2) +
-          '\n'
-      );
-
-      return response;
+      response = await this.cognito.verifyUserAttribute(params).promise();
     } catch (error: any) {
-      logger.error(
-        'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER ERROR: ' + JSON.stringify(error, null, 2) + '\n'
-      );
-
       switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case 'CodeMismatchException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
+
+    logger.info(
+      'COGNITO SERVICE VERIFY_USER_PHONE_NUMBER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+    );
+
+    return response;
   }
 
   /**
@@ -293,29 +329,42 @@ export default class CognitoService {
    * @param {String} email - User email.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async adminConfirmUser(email) {
+  async adminConfirmUser(
+    email: string
+  ): Promise<CognitoIdentityServiceProvider.AdminConfirmSignUpResponse> {
+    logger.info(
+      'COGNITO SERVICE ADMIN_CONFIRM_USER Request: ' + JSON.stringify({ email }, null, 2)
+    );
+
+    const params: CognitoIdentityServiceProvider.Types.AdminConfirmSignUpRequest = {
+      UserPoolId: this.userPoolId,
+      Username: email,
+    };
+
+    let cognitoResponse: CognitoIdentityServiceProvider.AdminConfirmSignUpResponse;
+
     try {
-      const params = {
-        UserPoolId: this.userPoolId,
-        Username: email,
-      };
-
-      const cognitoResponse = await this.cognito.adminConfirmSignUp(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE ADMIN_CONFIRM_USER RESULT: ' +
-          JSON.stringify(cognitoResponse, null, 2) +
-          '\n'
-      );
-
-      return cognitoResponse;
+      cognitoResponse = await this.cognito.adminConfirmSignUp(params).promise();
     } catch (error: any) {
-      logger.error(
-        'COGNITO SERVICE ADMIN_CONFIRM_USER ERROR: ' + JSON.stringify(error, null, 2) + '\n'
-      );
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.NOT_FOUND(error.message);
 
-      return { error: error };
+        case 'CodeMismatchException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE ADMIN_CONFIRM_USER RESULT: ' +
+        JSON.stringify(cognitoResponse, null, 2) +
+        '\n'
+    );
+
+    return cognitoResponse;
   }
 
   /**
@@ -330,15 +379,17 @@ export default class CognitoService {
    *
    * @see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_ForgotPassword.html
    */
-  async sendForgotPasswordCode(email) {
+  async sendForgotPasswordCode(
+    email: string
+  ): Promise<CognitoIdentityServiceProvider.ForgotPasswordResponse> {
     logger.info(`Cognito Service SEND_FORGOT_PASSWORD_CODE Request: ${email}`);
 
-    const params = {
+    const params: CognitoIdentityServiceProvider.Types.ForgotPasswordRequest = {
       ClientId: this.clientId,
       Username: email,
     };
 
-    let cognitoResponse;
+    let cognitoResponse: CognitoIdentityServiceProvider.ForgotPasswordResponse;
 
     try {
       cognitoResponse = await this.cognito.forgotPassword(params).promise();
@@ -373,7 +424,11 @@ export default class CognitoService {
    * @param {String} password - New password.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async changeUserPasswordWithCode(email, code, password) {
+  async changeUserPasswordWithCode(
+    email: string,
+    code: string,
+    password: string
+  ): Promise<CognitoIdentityServiceProvider.ConfirmForgotPasswordResponse> {
     logger.info(
       `Cognito Service CHANGE_USER_PASSWORD_WITH_CODE Request: ${JSON.stringify(
         { email, code, password },
@@ -382,14 +437,14 @@ export default class CognitoService {
       )}`
     );
 
-    const params = {
+    const params: CognitoIdentityServiceProvider.Types.ConfirmForgotPasswordRequest = {
       ClientId: this.clientId,
       ConfirmationCode: code,
       Password: password,
       Username: email,
     };
 
-    let response = {};
+    let response: CognitoIdentityServiceProvider.ConfirmForgotPasswordResponse;
 
     try {
       response = await this.cognito.confirmForgotPassword(params).promise();
@@ -431,19 +486,31 @@ export default class CognitoService {
    *
    * @see https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow.html
    */
-  async authenticateUser(authflow, payload) {
-    const params = {
+  async authenticateUser(
+    authflow: CognitoIdentityServiceProvider.AuthFlowType,
+    payload: {
+      email: string;
+      password: string;
+      refreshToken?: string;
+    }
+  ): Promise<CognitoIdentityServiceProvider.InitiateAuthResponse> {
+    logger.info(
+      'Cognito Service AUTHENTICATE_USER Request: ' + JSON.stringify(payload, null, 2) + '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.InitiateAuthRequest = {
       AuthFlow: authflow != null ? authflow : 'USER_PASSWORD_AUTH',
 
       AuthParameters: {
         USERNAME: payload.email,
         PASSWORD: payload.password,
-        REFRESH_TOKEN: payload.refreshToken,
+        ...(payload.refreshToken && { REFRESH_TOKEN: payload.refreshToken }),
       },
 
       ClientId: this.clientId,
     };
-    let response;
+
+    let response: CognitoIdentityServiceProvider.InitiateAuthResponse;
 
     try {
       response = await this.cognito.initiateAuth(params).promise();
@@ -485,7 +552,11 @@ export default class CognitoService {
    * @param {String} newPassword - New password.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async changeUserPassword(accessToken, oldPassword, newPassword) {
+  async changeUserPassword(
+    accessToken: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<CognitoIdentityServiceProvider.ChangePasswordResponse> {
     logger.info(`
       Cognito Service CHANGE_USER_PASSWORD Request: ${JSON.stringify(
         { accessToken, oldPassword, newPassword },
@@ -494,17 +565,16 @@ export default class CognitoService {
       )}
     `);
 
-    let response = {};
+    let response: CognitoIdentityServiceProvider.ChangePasswordResponse;
 
-    let cognitoResponse;
-    const params = {
+    const params: CognitoIdentityServiceProvider.ChangePasswordRequest = {
       AccessToken: accessToken,
       PreviousPassword: oldPassword,
       ProposedPassword: newPassword,
     };
 
     try {
-      cognitoResponse = await this.cognito.changePassword(params).promise();
+      response = await this.cognito.changePassword(params).promise();
     } catch (error: any) {
       logger.info(`
         Cognito Service CHANGE_USER_PASSWORD Error: ${JSON.stringify(error, null, 2)}
@@ -529,7 +599,7 @@ export default class CognitoService {
     }
 
     logger.info(`
-      Cognito Service CHANGE_USER_PASSWORD Response: ${JSON.stringify(cognitoResponse, null, 2)}
+      Cognito Service CHANGE_USER_PASSWORD Response: ${JSON.stringify(response, null, 2)}
     `);
 
     return response;
@@ -540,34 +610,41 @@ export default class CognitoService {
    * @param {String} refreshToken - User refresh token.
    * @returns {Promise<JSON>} - JWT token.
    */
-  async refreshUserToken(refreshToken) {
+  async refreshUserToken(
+    refreshToken: string
+  ): Promise<CognitoIdentityServiceProvider.InitiateAuthResponse> {
+    logger.info(
+      'Cognito Service REFRESH_USER_TOKEN Request: ' + JSON.stringify(refreshToken, null, 2) + '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.InitiateAuthRequest = {
+      AuthFlow: 'REFRESH_TOKEN_AUTH',
+      ClientId: this.clientId,
+      AuthParameters: {
+        REFRESH_TOKEN: refreshToken,
+      },
+    };
+
+    let response: CognitoIdentityServiceProvider.InitiateAuthResponse;
+
     try {
-      const params = {
-        AuthFlow: 'REFRESH_TOKEN_AUTH',
-        ClientId: this.clientId,
-        UserPoolId: this.userPoolId,
-        AuthParameters: {
-          REFRESH_TOKEN: refreshToken,
-        },
-      };
-
-      let response: any = {};
-
-      response.cognitoResponse = this.cognito.initiateAuth(params).promise();
-      response.message = 'Cognito user token refreshed successfully';
-
-      logger.info(
-        'COGNITO SERVICE REFRESH_USER_TOKEN SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
-      );
-
-      return response;
+      response = await this.cognito.initiateAuth(params).promise();
     } catch (error: any) {
       logger.error(
-        'COGNITO SERVICE REFRESH_USER_TOKEN ERROR: ' + JSON.stringify(error, null, 2) + '\n'
+        'Cognito Service REFRESH_USER_TOKEN Error: ' + JSON.stringify(error, null, 2) + '\n'
       );
 
-      return { error: error };
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE REFRESH_USER_TOKEN SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+    );
+
+    return response;
   }
 
   /**
@@ -575,15 +652,17 @@ export default class CognitoService {
    * @param {String} accessToken - User access token.
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async logoutUser(accessToken) {
+  async logoutUser(
+    accessToken: string
+  ): Promise<CognitoIdentityServiceProvider.GlobalSignOutResponse> {
     logger.info(`
         Cognito Service LOGOUT_USER Request: \n ${JSON.stringify(accessToken, null, 2)}`);
 
-    const params = {
+    const params: CognitoIdentityServiceProvider.GlobalSignOutRequest = {
       AccessToken: accessToken,
     };
 
-    let response;
+    let response: CognitoIdentityServiceProvider.GlobalSignOutResponse;
 
     try {
       response = await this.cognito.globalSignOut(params).promise();
@@ -615,15 +694,17 @@ export default class CognitoService {
    * @param {String} username - Username of the user.
    * @returns {Promise<ICognitoUser>} - Cognito user details.
    */
-  async adminGetUser(username) {
+  async adminGetUser(
+    username: string
+  ): Promise<CognitoIdentityServiceProvider.AdminGetUserResponse> {
     logger.info(`Cognito Service ADMIN_GET_USER Request: \n ${JSON.stringify(username, null, 2)}`);
 
-    const params = {
+    const params: CognitoIdentityServiceProvider.AdminGetUserRequest = {
       UserPoolId: this.userPoolId,
       Username: username,
     };
 
-    let response;
+    let response: CognitoIdentityServiceProvider.AdminGetUserResponse;
     try {
       response = await this.cognito.adminGetUser(params).promise();
     } catch (error: any) {
@@ -647,144 +728,243 @@ export default class CognitoService {
   }
 
   /**
-   * @description Updates the user attributes in the Cognito service.
-   * @param {String} accessToken - User access token.
-   * @param {String} attributes - Cognito user attributes.
-   * @returns {Promise<JSON>} - AWS Cognito response.
-   */
-  async updateUser(accessToken, attributes) {
-    try {
-      const params = {
-        AccessToken: accessToken,
-        UserAttributes: attributes,
-      };
-
-      let response: any = {};
-
-      response.cognitoResponse = await this.cognito.updateUserAttributes(params).promise();
-      response.message = 'Cognito user updated successfully';
-
-      logger.info(
-        'COGNITO SERVICE UPDATE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
-      );
-    } catch (error: any) {
-      logger.error('COGNITO SERVICE UPDATE_USER ERROR: ' + JSON.stringify(error, null, 2) + '\n');
-
-      return { error: error };
-    }
-  }
-
-  /**
    * @description Deletes the user in the Cognito service.
    * @param
    * @returns {Promise<JSON>} - AWS Cognito response.
    */
-  async adminDeleteUser(username) {
+  async adminDeleteUser(username: string): Promise<{ $response: AWS.Response<{}, AWS.AWSError> }> {
+    logger.info(
+      'Cognito Service ADMIN_DELETE_USER Request: ' + JSON.stringify(username, null, 2) + '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.AdminDeleteUserRequest = {
+      UserPoolId: this.userPoolId,
+      Username: username,
+    };
+
+    let response: { $response: AWS.Response<{}, AWS.AWSError> };
+
     try {
-      const params = {
-        UserPoolId: this.userPoolId,
-        Username: username,
-      };
-
-      const response = await this.cognito.adminDeleteUser(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE ADMIN_DELETE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
-      );
-
-      return response;
+      response = await this.cognito.adminDeleteUser(params).promise();
     } catch (error: any) {
       logger.error(
-        'COGNITO SERVICE ADMIN_DELETE_USER ERROR: ' + JSON.stringify(error, null, 2) + '\n'
+        'Cognito Service ADMIN_DELETE_USER Error: ' + JSON.stringify(error, null, 2) + '\n'
       );
 
-      return { error: error };
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE ADMIN_DELETE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+    );
+
+    return response;
   }
 
-  async respondToAuthChallenge(challengeName, session, challengePayload) {
+  async respondToAuthChallenge(
+    challengeName: CognitoIdentityServiceProvider.ChallengeNameType,
+    session: CognitoIdentityServiceProvider.SessionType,
+    challengePayload: CognitoIdentityServiceProvider.ChallengeResponsesType
+  ): Promise<CognitoIdentityServiceProvider.RespondToAuthChallengeResponse> {
+    logger.info(
+      'Cognito Service RESPOND_TO_AUTH_CHALLENGE Request: ' +
+        JSON.stringify(challengeName, null, 2) +
+        '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.RespondToAuthChallengeRequest = {
+      ChallengeName: challengeName,
+      ClientId: this.clientId,
+      Session: session,
+      ChallengeResponses: challengePayload,
+    };
+
+    let response: CognitoIdentityServiceProvider.RespondToAuthChallengeResponse;
+
     try {
-      const params = {
-        ChallengeName: challengeName,
-        ClientId: this.clientId,
-        Session: session,
-        ChallengeResponses: challengePayload,
-      };
-
-      let response: any = {};
-
-      response.cognitoResponse = await this.cognito.respondToAuthChallenge(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE RESPOND_TO_AUTH_CHALLENGE RESULT: ' +
-          JSON.stringify(response, null, 2) +
-          '\n'
-      );
-
-      return response;
+      response = await this.cognito.respondToAuthChallenge(params).promise();
     } catch (error: any) {
       logger.error(
         'COGNITO SERVICE RESPOND_TO_AUTH_CHALLENGE ERROR: ' + JSON.stringify(error, null, 2) + '\n'
       );
 
-      return { error: error };
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE RESPOND_TO_AUTH_CHALLENGE RESULT: ' +
+        JSON.stringify(response, null, 2) +
+        '\n'
+    );
+
+    return response;
   }
 
-  async getSession(accessToken) {
+  async getSession(accessToken: string): Promise<CognitoIdentityServiceProvider.GetUserResponse> {
+    logger.info(
+      'Cognito Service GET_SESSION Request: ' + JSON.stringify(accessToken, null, 2) + '\n'
+    );
+
+    const params: CognitoIdentityServiceProvider.GetUserRequest = {
+      AccessToken: accessToken,
+    };
+
+    let cognitoResponse: CognitoIdentityServiceProvider.GetUserResponse;
+
     try {
-      const params = {
-        AccessToken: accessToken,
-      };
-
-      const cognitoResponse = await this.cognito.getUser(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE GET_SESSION SUCESS: ' + JSON.stringify(cognitoResponse, null, 2) + '\n'
-      );
-
-      return cognitoResponse;
+      cognitoResponse = await this.cognito.getUser(params).promise();
     } catch (error: any) {
       logger.error('COGNITO SERVICE GET_SESSION ERROR: ' + JSON.stringify(error, null, 2) + '\n');
 
-      return { error: error };
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE GET_SESSION SUCESS: ' + JSON.stringify(cognitoResponse, null, 2) + '\n'
+    );
+
+    return cognitoResponse;
   }
 
-  async getUserRoles(username) {
+  // -------------------------------------------------------------------------------------------- //
+  //                                                                                              //
+  //                                           DEPRECATED                                         //
+  //                                                                                              //
+  // -------------------------------------------------------------------------------------------- //
+
+  /**
+   * @deprecated
+   *
+   * @example
+   *
+   * const Cognito = new CognitoService();
+   * const verifyEmail = await cognitoService.adminUpdateUserAttribute("username", "email_verified", "true");
+   * const verifyPhone = await cognitoService.adminUpdateUserAttribute("username", "phone_number_verified", "true");
+   */
+  async adminUpdateUserAttribute(
+    username: string,
+    attributeName: 'email_verified' | 'phone_number_verified',
+    attributeValue: string
+  ): Promise<CognitoIdentityServiceProvider.AdminUpdateUserAttributesResponse> {
+    const params: CognitoIdentityServiceProvider.AdminUpdateUserAttributesRequest = {
+      UserAttributes: [
+        {
+          Name: attributeName,
+          Value: attributeValue,
+        },
+      ],
+      UserPoolId: this.userPoolId,
+      Username: username,
+    };
+
+    let response: CognitoIdentityServiceProvider.AdminUpdateUserAttributesResponse;
+
     try {
-      const params = {
-        UserPoolId: this.userPoolId,
-        Username: username,
-      };
-
-      const cognitoResponse = await this.cognito.adminListGroupsForUser(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE GET_USER_ROLES SUCESS: ' + JSON.stringify(cognitoResponse, null, 2) + '\n'
+      response = await this.cognito.adminUpdateUserAttributes(params).promise();
+    } catch (error: any) {
+      logger.error(
+        'COGNITO SERVICE ADMIN_UPDATE_USER_ATTRIBUTE ERROR: ' +
+          JSON.stringify(error, null, 2) +
+          '\n'
       );
 
-      return cognitoResponse;
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.NOT_FOUND(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      'COGNITO SERVICE ADMIN_UPDATE_USER_ATTRIBUTE SUCESS: ' +
+        JSON.stringify(response, null, 2) +
+        '\n'
+    );
+
+    return response;
+  }
+
+  /**
+   * @deprecated
+   */
+  async updateUser(
+    accessToken: string,
+    attributes: CognitoIdentityServiceProvider.AttributeType[]
+  ): Promise<CognitoIdentityServiceProvider.UpdateUserAttributesResponse> {
+    const params: CognitoIdentityServiceProvider.UpdateUserAttributesRequest = {
+      AccessToken: accessToken,
+      UserAttributes: attributes,
+    };
+
+    let response: CognitoIdentityServiceProvider.UpdateUserAttributesResponse;
+
+    try {
+      response = await this.cognito.updateUserAttributes(params).promise();
+    } catch (error: any) {
+      logger.error('Cognito Service UPDATE_USER Error: ' + JSON.stringify(error, null, 2) + '\n');
+
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('COGNITO SERVICE UPDATE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n');
+
+    return response;
+  }
+
+  /**
+   * @deprecated
+   */
+  async getUserRoles(
+    username: string
+  ): Promise<CognitoIdentityServiceProvider.AdminListGroupsForUserResponse> {
+    const params: CognitoIdentityServiceProvider.AdminListGroupsForUserRequest = {
+      UserPoolId: this.userPoolId,
+      Username: username,
+    };
+
+    let cognitoResponse: CognitoIdentityServiceProvider.AdminListGroupsForUserResponse;
+
+    try {
+      cognitoResponse = await this.cognito.adminListGroupsForUser(params).promise();
     } catch (error: any) {
       logger.error(
         'COGNITO SERVICE GET_USER_ROLES ERROR: ' + JSON.stringify(error, null, 2) + '\n'
       );
 
-      return { error: error };
+      switch (error.code) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
     }
+
+    logger.info(
+      'COGNITO SERVICE GET_USER_ROLES SUCESS: ' + JSON.stringify(cognitoResponse, null, 2) + '\n'
+    );
+
+    return cognitoResponse;
   }
 
   /**
-   * Adds a user to a group
-   *
-   * @param {String} app - Application name (business, marketplace)
-   * @param {*} username - Username
-   * @param {*} groupName - Group name
-   * @returns {Promise<JSON>} - AWS Cognito response.
-   *
-   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#adminAddUserToGroup-property
+   * @deprecated
    */
-  async addUserToGroup(username, groupName) {
+  async addUserToGroup(username: string, groupName: string) {
     logger.info(
       `Cognito Service ADD_USER_TO_GROUP Request: \n ${JSON.stringify(
         { username, groupName },
@@ -833,6 +1013,9 @@ export default class CognitoService {
     return response;
   }
 
+  /**
+   * @deprecated
+   */
   async addUserCustomAttribute(username, attributeName, attributeValue) {
     try {
       const params = {
@@ -872,6 +1055,9 @@ export default class CognitoService {
     }
   }
 
+  /**
+   * @deprecated
+   */
   async getUserCustomAttribute(username, attributeName) {
     const params = {
       UserPoolId: AWS_COGNITO_BUSINESS_USER_POOL_ID,
@@ -909,53 +1095,5 @@ export default class CognitoService {
     );
 
     return customAttribute[0].Value;
-  }
-
-  /**
-   *
-   * @param {*} username
-   * @param {*} attributeName
-   * @param {*} attributeValue
-   * @returns
-   *
-   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html#adminUpdateUserAttributes-property
-   *
-   * @example
-   *
-   * const Cognito = new CognitoService();
-   * const verifyEmail = await cognitoService.adminUpdateUserAttribute("username", "email_verified", "true");
-   * const verifyPhone = await cognitoService.adminUpdateUserAttribute("username", "phone_number_verified", "true");
-   */
-  async adminUpdateUserAttribute(username, attributeName, attributeValue) {
-    try {
-      const params = {
-        UserAttributes: [
-          {
-            Name: attributeName,
-            Value: attributeValue,
-          },
-        ],
-        UserPoolId: this.userPoolId,
-        Username: username,
-      };
-
-      const response = await this.cognito.adminUpdateUserAttributes(params).promise();
-
-      logger.info(
-        'COGNITO SERVICE ADMIN_UPDATE_USER_ATTRIBUTE SUCESS: ' +
-          JSON.stringify(response, null, 2) +
-          '\n'
-      );
-
-      return response;
-    } catch (error: any) {
-      logger.error(
-        'COGNITO SERVICE ADMIN_UPDATE_USER_ATTRIBUTE ERROR: ' +
-          JSON.stringify(error, null, 2) +
-          '\n'
-      );
-
-      return { error: error };
-    }
   }
 }

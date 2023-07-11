@@ -12,8 +12,8 @@ import {
   IHomeCareOrder,
   IHealthUnit,
   IQueryListResponse,
-} from '@api/v1/interfaces';
-import { HTTPError } from '@api/v1/utils';
+} from 'src/api/v1/interfaces';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 
@@ -24,10 +24,10 @@ export default class ServicesController {
   static async listServices(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
-      const services = await this.ServicesDAO.queryList({});
+      const services = await ServicesController.ServicesDAO.queryList({});
 
       response.statusCode = 200;
       response.data = services;

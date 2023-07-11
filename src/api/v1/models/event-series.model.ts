@@ -1,11 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IEventSeriesModel } from '../interfaces';
+import { IEventSeriesDocument } from '../interfaces';
 
-const EventSeriesSchema: Schema<IEventSeriesModel> = new Schema<IEventSeriesModel>(
+const EventSeriesSchema: Schema<IEventSeriesDocument> = new Schema<IEventSeriesDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
 
     ownerType: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
     owner: { type: Schema.Types.ObjectId, required: true },
@@ -45,7 +49,7 @@ const EventSeriesSchema: Schema<IEventSeriesModel> = new Schema<IEventSeriesMode
   }
 );
 
-const EventSeriesModel: Model<IEventSeriesModel> = mongoose.model<IEventSeriesModel>(
+const EventSeriesModel: Model<IEventSeriesDocument> = mongoose.model<IEventSeriesDocument>(
   'EventSeries',
   EventSeriesSchema
 );

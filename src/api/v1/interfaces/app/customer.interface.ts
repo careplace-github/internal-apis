@@ -1,9 +1,9 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, IHealthUnit, ISettings } from '..';
+import { IAddress, IHealthUnit, ISettings } from 'src/api/v1/interfaces';
 // types
-import { Gender } from '../types';
+import { TGender, TCustomerPermission } from 'src/api/v1/interfaces/types';
 
 interface ICustomer {
   _id: Types.ObjectId | string;
@@ -13,17 +13,18 @@ interface ICustomer {
   email: string;
   phone: string;
   birthdate?: Date;
-  gender?: Gender;
+  gender?: TGender;
   address?: IAddress;
   stripe_information: {
     customer_id: string;
   };
 
+  permissions: TCustomerPermission[];
   settings: ISettings;
 
   profile_picture?: string;
 }
 
-type ICustomerModel = ICustomer & Document;
+type ICustomerDocument = ICustomer & Document;
 
-export { ICustomer, ICustomerModel };
+export { ICustomer, ICustomerDocument };

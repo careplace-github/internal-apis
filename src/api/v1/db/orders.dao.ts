@@ -1,13 +1,13 @@
-import DAO from './DAO';
+import DAO from '../../common/db/DAO';
 import { HomeCareOrderModel } from '../models';
-import { IHomeCareOrderModel } from '../interfaces';
+import { IHomeCareOrderDocument } from '../interfaces';
 
 import { MONGODB_COLLECTION_HOME_CARE_ORDERS_NS } from '../../../config/constants/index';
 
 /**
  * Class to manage the `Home Care Orders` collection.
  */
-export default class HomeCareOrdersDAO extends DAO<IHomeCareOrderModel> {
+export default class HomeCareOrdersDAO extends DAO<IHomeCareOrderDocument> {
   constructor() {
     super(HomeCareOrderModel, MONGODB_COLLECTION_HOME_CARE_ORDERS_NS);
   }

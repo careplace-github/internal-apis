@@ -6,19 +6,19 @@ import express from 'express';
 import { CaregiversController } from '../../controllers';
 
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 
 const router = express.Router();
 
 router
-  .route('health-units/caregivers')
-  .get(AuthenticationGuard, AccessGuard('business'), CaregiversController.listHealthUnitCaregivers)
-  .post(AuthenticationGuard, AccessGuard('business'), CaregiversController.createHealthUnitCaregiver);
+  .route('/health-units/caregivers')
+  .get(AuthenticationGuard, ClientGuard('business'), CaregiversController.listCaregivers)
+  .post(AuthenticationGuard, ClientGuard('business'), CaregiversController.createCaregiver);
 
 router
-  .route('health-units/caregivers/:id')
-  .get(AuthenticationGuard, AccessGuard('business'), CaregiversController.retrieveHealthUnitCaregiver)
-  .put(AuthenticationGuard, AccessGuard('business'), CaregiversController.updateHealthUnitCaregiver)
-  .delete(AuthenticationGuard, AccessGuard('business'), CaregiversController.deleteHealthUnitCaregiver);
+  .route('/health-units/caregivers/:id')
+  .get(AuthenticationGuard, ClientGuard('business'), CaregiversController.retrieveCaregiver)
+  .put(AuthenticationGuard, ClientGuard('business'), CaregiversController.updateCaregiver)
+  .delete(AuthenticationGuard, ClientGuard('business'), CaregiversController.deleteCaregiver);
 
 export default router;

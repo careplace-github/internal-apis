@@ -11,15 +11,21 @@ const customFormat = format.combine(
   })
 );
 
+const loggerTransports = [
+  new transports.Console(),
+  ...(process.env.NODE_ENV !== 'development'
+    ? [
+        new transports.File({
+          filename: './src/logs/server.log',
+          level: 'debug',
+        }),
+      ]
+    : []),
+];
+
 const logger = createLogger({
   format: customFormat,
-  transports: [
-    new transports.Console(),
-    new transports.File({
-      filename: './src/logs/server.log',
-      level: 'debug',
-    }),
-  ],
+  transports: loggerTransports,
 });
 
 export default logger;

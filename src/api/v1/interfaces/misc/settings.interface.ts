@@ -1,13 +1,13 @@
-import { Coordinates, Country, Theme } from '../types';
+import { TCountry, TTheme } from 'src/api/v1/interfaces/types';
 
 interface ISettings {
-  theme: Theme;
+  theme: TTheme;
   notifications: {
     email: boolean;
     push: boolean;
     sms: boolean;
   };
-  language?: Country;
+  language?: TCountry;
 }
 
 export { ISettings };

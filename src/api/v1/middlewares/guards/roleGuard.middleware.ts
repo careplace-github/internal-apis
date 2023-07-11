@@ -1,15 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import authHelper from '../../helpers/auth/auth.helper';
 import logger from '../../../../logs/logger';
-
-interface User {
-  role: string;
-}
-
-interface RequestUtilsResponse {
-  data?: any;
-  statusCode?: number;
-}
+import { IAPIResponse } from 'src/api/v1/interfaces';
+import { HTTPError } from '@utils';
 
 /**
  * @description Role Based Guard Middleware.
@@ -35,15 +28,23 @@ export default function validateRole(
   return function (req: Request, res: Response, next: NextFunction): void {
     async function handleRequest() {
       try {
-        let response: RequestUtilsResponse = {};
-
+        const response: IAPIResponse = {
+          statusCode: res.statusCode,
+          data: {},
+        };
         const AuthHelper = authHelper;
 
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
           const token = req.headers.authorization.split(' ')[1];
 
           if (token) {
-            const user: User = await AuthHelper.getUserFromDB(token);
+            const user = await AuthHelper.getUserFromDB(token);
+
+            if (!('role' in user)) {
+              return next(
+                new HTTPError._403('You do not have permission to access this resource.')
+              );
+            }
 
             const userRole = user.role;
 

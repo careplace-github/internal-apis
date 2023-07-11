@@ -1,52 +1,71 @@
 import express from 'express';
 
 // Import Controller
-import StripeController from '../../controllers/payments.controller';
+import PaymentsController from '../../controllers/payments.controller';
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 import InputValidation from '../../middlewares/validators/inputValidation.middleware';
-import { CheckoutValidator } from '../../validators/payments.validator';
+import { CheckoutValidator } from '../../validations/payments.validator';
 
 const router = express.Router();
 
+// Promotion Codes
+
 router
   .route('/payments/promotion-code/eligibility')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), StripeController.validatePromotionCode);
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.validatePromotionCode);
+
+// Payment Methods
 
 router
-  .route('/payments/customers/payment-methods')
+  .route('/payments/payment-methods')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.createPaymentMethod)
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.listPaymentMethods);
+
+router
+  .route('/payments/payment-methods/:paymentMethod')
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.retrievePaymentMethod)
+  .delete(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.deletePaymentMethod);
+
+// Subscriptions
+
+router
+  .route('/payments/orders/:order/subscription')
   .post(
     AuthenticationGuard,
-    AccessGuard('marketplace'),
-    StripeController.createCustomerPaymentMethod
-  )
-  .get(
-    AuthenticationGuard,
-    AccessGuard('marketplace'),
-    StripeController.listCustomerPaymentMethods
-  );
-
-router
-  .route('/payments/customers/payment-methods/:id')
-  .get(
-    AuthenticationGuard,
-    AccessGuard('marketplace'),
-    StripeController.retrieveCustomerPaymentMethod
-  )
-  .delete(
-    AuthenticationGuard,
-    AccessGuard('marketplace'),
-    StripeController.deleteCustomerPaymentMethod
-  );
-
-router
-  .route('/payments/orders/:id/checkout')
-  .post(
-    AuthenticationGuard,
-    AccessGuard('marketplace'),
+    ClientGuard('marketplace'),
     CheckoutValidator,
     InputValidation,
-    StripeController.createSubscriptionWithPaymentMethod
+    PaymentsController.createSubscriptionWithPaymentMethod
   );
+
+router
+  .route('/payments/orders/:order/subscription/coupon')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    PaymentsController.addSubscriptionCoupon
+  );
+
+router
+  .route('/payments/orders/:order/subscription/payment-method')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    PaymentsController.updateSubscriptionPaymentMethod
+  );
+
+router
+  .route('/payments/orders/:order/subscription/charge')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    PaymentsController.chargeSubscriptionOpenInvoice
+  );
+
+// Tokens
+router
+  .route('/payments/tokens/card')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.createCardToken);
 
 export default router;
