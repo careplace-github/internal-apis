@@ -314,7 +314,7 @@ export default class AuthenticationController {
       const payload = { username: username, password: password };
 
       try {
-        cognitoResponse = await Cognito.authenticateUser('USER_PASSWORD_AUTH', payload);
+        cognitoResponse = await Cognito.adminAuthenticateUser('USER_PASSWORD_AUTH', payload);
       } catch (error: any) {
         logger.error(`Authentication Controller LOGIN Error: \n ${JSON.stringify(error, null, 2)}`);
         switch (error.type) {
