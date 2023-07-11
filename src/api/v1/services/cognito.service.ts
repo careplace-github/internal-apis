@@ -514,7 +514,7 @@ export default class CognitoService {
   async authenticateUser(
     authflow: CognitoIdentityServiceProvider.AuthFlowType,
     payload: {
-      email: string;
+      username: string;
       password: string;
       refreshToken?: string;
     }
@@ -523,13 +523,15 @@ export default class CognitoService {
       'Cognito Service AUTHENTICATE_USER Request: ' + JSON.stringify(payload, null, 2) + '\n'
     );
 
+    const secretHash = this.calculateSecretHash(payload.username);
+
     const params: CognitoIdentityServiceProvider.InitiateAuthRequest = {
       AuthFlow: authflow != null ? authflow : 'USER_PASSWORD_AUTH',
 
       AuthParameters: {
-        SecretHash: this.calculateSecretHash(payload.email),
+        SECRET_HASH: secretHash,
 
-        USERNAME: payload.email,
+        USERNAME: payload.username,
         PASSWORD: payload.password,
         ...(payload.refreshToken && { REFRESH_TOKEN: payload.refreshToken }),
       },

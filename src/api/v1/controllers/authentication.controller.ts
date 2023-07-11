@@ -60,7 +60,7 @@ export default class AuthenticationController {
         return next(new HTTPError._400('Invalid client id.'));
       }
 
-      logger.info("Client ID: " + clientId);
+      logger.info('Client ID: ' + clientId);
 
       Cognito = new CognitoService(clientId);
 
@@ -284,9 +284,13 @@ export default class AuthenticationController {
 
       let cognitoResponse: any = {};
 
-      const { email, password } = req.body as { email: string; password: string };
+      const { email, phone, password } = req.body as {
+        email: string;
+        phone: string;
+        password: string;
+      };
 
-      if (!email || !password) {
+      if ( (!email  && !phone) || !password) {
         return next(new HTTPError._400('Missing required parameters.'));
       }
 
@@ -305,7 +309,9 @@ export default class AuthenticationController {
 
       const Cognito = new CognitoService(clientId);
 
-      const payload = { email: email, password: password };
+      const username = email ? email : phone;
+
+      const payload = { username: username, password: password };
 
       try {
         cognitoResponse = await Cognito.authenticateUser('USER_PASSWORD_AUTH', payload);
@@ -612,7 +618,7 @@ export default class AuthenticationController {
         AuthenticationController.AuthHelper.getAuthId(accessToken),
       ]);
 
-      logger.info("CLIENT ID: " + clientId)
+      logger.info('CLIENT ID: ' + clientId);
 
       let userAttributes: CognitoIdentityServiceProvider.AttributeListType | undefined;
 
@@ -634,17 +640,14 @@ export default class AuthenticationController {
           userAttributes.find((attribute) => attribute.Name === 'email_verified')?.Value === 'true';
       }
 
-
-
       if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
         app = 'business';
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
         app = 'marketplace';
       }
 
-      logger.debug("APP: " + app)
-      logger.info("APP: "+ app)
-
+      logger.debug('APP: ' + app);
+      logger.info('APP: ' + app);
 
       let user: ICustomerDocument | ICollaboratorDocument | null = null;
 
