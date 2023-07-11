@@ -157,7 +157,11 @@ export default class OrdersController {
       const newOrder = new HomeCareOrderModel(order);
 
       // validate the order
-      const validationError = newOrder.validateSync();
+      const validationError = newOrder.validateSync(
+        {
+          pathsToSkip: ['billing_details'],
+        }
+      );
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
