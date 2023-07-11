@@ -9,7 +9,7 @@ import publicKey from '../.env/cognitoPublicKey.json';
 const publicKeyJwk = publicKey; // Use the JWK directly
 
 // Loads environment settings
-export const ENV = process.env.NODE_ENV || ('staging' as string);
+export const ENV = process.env.NODE_ENV || ('development' as string);
 
 // Loads environment variables
 dotenv.config({ path: `./src/config/.env/.env.${ENV}` });
@@ -68,6 +68,10 @@ export const AWS_USER = process.env.AWS_USER as string;
 export const AWS_ARN = process.env.AWS_ARN as string;
 
 // AWS Cognito Credentials
+export const AWS_COGNITO_MARKETPLACE_CLIENT_SECRET = process.env
+  .AWS_COGNITO_MARKETPLACE_CLIENT_SECRET as string;
+export const AWS_COGNITO_BUSINESS_CLIENT_SECRET = process.env
+  .AWS_COGNITO_BUSINESS_CLIENT_SECRET as string;
 export const AWS_COGNITO_BUSINESS_USER_POOL_ID = process.env
   .AWS_COGNITO_BUSINESS_USER_POOL_ID as string;
 export const AWS_COGNITO_ISSUER = process.env.AWS_COGNITO_ISSUER as string;

@@ -1,6 +1,8 @@
 // aws
 import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk';
 
+import crypto from 'crypto';
+
 // @api
 import { LayerError } from 'src/utils';
 
@@ -15,12 +17,13 @@ import {
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACESS_KEY,
   AWS_COGNITO_ISSUER,
+  AWS_COGNITO_MARKETPLACE_CLIENT_SECRET,
+  AWS_COGNITO_BUSINESS_CLIENT_SECRET,
 } from '@constants';
 // @types
 import { TClientID } from 'src/api/v1/interfaces/types';
 // @logger
 import logger from '@logger';
-
 
 // FIXME Use custom LayerError error handling
 // FIXME Check the Stripe Error Api Response and update the error handling accordingly
@@ -48,6 +51,7 @@ export default class CognitoService {
   private clientId: string;
   private userPoolId: string;
   private issuer: string;
+  private clientSecret: string;
 
   /**
    * Constructor
@@ -60,6 +64,17 @@ export default class CognitoService {
         ? AWS_COGNITO_BUSINESS_USER_POOL_ID
         : AWS_COGNITO_MARKETPLACE_USER_POOL_ID;
     this.issuer = AWS_COGNITO_ISSUER;
+    this.clientSecret =
+      this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+        ? AWS_COGNITO_BUSINESS_CLIENT_SECRET
+        : AWS_COGNITO_MARKETPLACE_CLIENT_SECRET;
+  }
+
+  calculateSecretHash(username: string) {
+    const message = username + this.clientId;
+    const hmac = crypto.createHmac('sha256', this.clientSecret);
+    hmac.update(message);
+    return hmac.digest('base64');
   }
 
   /**
@@ -85,6 +100,7 @@ export default class CognitoService {
       ClientId: this.clientId,
       Password: password,
       Username: email,
+      SecretHash: this.calculateSecretHash(email),
 
       UserAttributes: [
         {
@@ -143,6 +159,7 @@ export default class CognitoService {
     const params: CognitoIdentityServiceProvider.Types.ResendConfirmationCodeRequest = {
       ClientId: this.clientId,
       Username: email,
+      SecretHash: this.calculateSecretHash(email),
     };
 
     let response: CognitoIdentityServiceProvider.ResendConfirmationCodeResponse;
@@ -193,6 +210,7 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.Types.ConfirmSignUpRequest = {
       ClientId: this.clientId,
+      SecretHash: this.calculateSecretHash(email),
 
       ConfirmationCode: code,
       Username: email,
@@ -247,6 +265,7 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.Types.VerifyUserAttributeRequest = {
       AccessToken: accessToken,
+
       AttributeName: 'phone_number',
       Code: code,
     };
@@ -296,6 +315,7 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.Types.VerifyUserAttributeRequest = {
       AccessToken: accessToken,
+
       AttributeName: 'email',
       Code: code,
     };
@@ -338,6 +358,7 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.Types.AdminConfirmSignUpRequest = {
       UserPoolId: this.userPoolId,
+
       Username: email,
     };
 
@@ -386,6 +407,8 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.Types.ForgotPasswordRequest = {
       ClientId: this.clientId,
+      SecretHash: this.calculateSecretHash(email),
+
       Username: email,
     };
 
@@ -440,6 +463,8 @@ export default class CognitoService {
     const params: CognitoIdentityServiceProvider.Types.ConfirmForgotPasswordRequest = {
       ClientId: this.clientId,
       ConfirmationCode: code,
+      SecretHash: this.calculateSecretHash(email),
+
       Password: password,
       Username: email,
     };
@@ -502,6 +527,8 @@ export default class CognitoService {
       AuthFlow: authflow != null ? authflow : 'USER_PASSWORD_AUTH',
 
       AuthParameters: {
+        SecretHash: this.calculateSecretHash(payload.email),
+
         USERNAME: payload.email,
         PASSWORD: payload.password,
         ...(payload.refreshToken && { REFRESH_TOKEN: payload.refreshToken }),
@@ -619,7 +646,9 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.InitiateAuthRequest = {
       AuthFlow: 'REFRESH_TOKEN_AUTH',
+
       ClientId: this.clientId,
+
       AuthParameters: {
         REFRESH_TOKEN: refreshToken,
       },
@@ -701,6 +730,7 @@ export default class CognitoService {
 
     const params: CognitoIdentityServiceProvider.AdminGetUserRequest = {
       UserPoolId: this.userPoolId,
+
       Username: username,
     };
 
@@ -986,6 +1016,7 @@ export default class CognitoService {
       GroupName: groupName,
       UserPoolId: this.userPoolId,
       Username: username,
+      SecretHash: this.calculateSecretHash(username),
     };
 
     try {
@@ -1025,6 +1056,8 @@ export default class CognitoService {
             Value: attributeValue,
           },
         ],
+        SecretHash: this.calculateSecretHash(username),
+
         UserPoolId: this.userPoolId,
         Username: username,
       };
@@ -1062,6 +1095,7 @@ export default class CognitoService {
     const params = {
       UserPoolId: AWS_COGNITO_BUSINESS_USER_POOL_ID,
       Username: username,
+      SecretHash: this.calculateSecretHash(username),
     };
 
     /**
