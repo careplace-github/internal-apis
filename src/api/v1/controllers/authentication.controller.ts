@@ -60,6 +60,8 @@ export default class AuthenticationController {
         return next(new HTTPError._400('Invalid client id.'));
       }
 
+      logger.info("Client ID: " + clientId);
+
       Cognito = new CognitoService(clientId);
 
       const { password, customer: reqCustomer } = req.body as {
