@@ -32,6 +32,7 @@ import {
   IServiceDocument,
   ICollaboratorDocument,
   ICustomerDocument,
+  IQueryListResponse,
 } from 'src/api/v1/interfaces';
 
 import {
@@ -157,17 +158,23 @@ export default class OrdersController {
       const newOrder = new HomeCareOrderModel(order);
 
       // validate the order
-      const validationError = newOrder.validateSync(
-        {
-          pathsToSkip: ['billing_details'],
-        }
-      );
+      const validationError = newOrder.validateSync({
+        pathsToSkip: ['billing_details'],
+      });
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
       }
-
-      let orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
+      let orderCreated: IHomeCareOrderDocument;
+      try {
+        orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
 
       response.statusCode = 200;
       response.data = orderCreated;
@@ -427,7 +434,7 @@ export default class OrdersController {
         data: {},
       };
 
-      let homeCareOrders: IHomeCareOrderDocument[] = [];
+      let homeCareOrders: IQueryListResponse<IHomeCareOrderDocument> | undefined;
 
       let accessToken: string;
 
@@ -453,35 +460,33 @@ export default class OrdersController {
       }
 
       try {
-        homeCareOrders = (
-          await OrdersController.HomeCareOrdersDAO.queryList(
+        homeCareOrders = await OrdersController.HomeCareOrdersDAO.queryList(
+          {
+            customer: user._id,
+          },
+          undefined,
+          undefined,
+          undefined,
+          // Populate the fields patient and caregiver
+          [
             {
-              customer: user._id,
+              path: 'patient',
+              model: 'Patient',
             },
-            undefined,
-            undefined,
-            undefined,
-            // Populate the fields patient and caregiver
-            [
-              {
-                path: 'patient',
-                model: 'Patient',
-              },
-              {
-                path: 'caregiver',
-                model: 'Caregiver',
-              },
-              {
-                path: 'services',
-                model: 'Service',
-              },
-              {
-                path: 'health_unit',
-                model: 'HealthUnit',
-              },
-            ]
-          )
-        ).data;
+            {
+              path: 'caregiver',
+              model: 'Caregiver',
+            },
+            {
+              path: 'services',
+              model: 'Service',
+            },
+            {
+              path: 'health_unit',
+              model: 'HealthUnit',
+            },
+          ]
+        );
       } catch (error: any) {
         switch (error.type) {
           default:
@@ -489,8 +494,8 @@ export default class OrdersController {
         }
       }
 
-      response.statusCode = 200;
-      response.data = homeCareOrders;
+      response.statusCode = homeCareOrders?.data ? 200 : 204;
+      response.data = homeCareOrders || {};
 
       // Pass to the next middleware to handle the response
       next(response);
