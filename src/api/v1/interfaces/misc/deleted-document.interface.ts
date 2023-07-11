@@ -10,6 +10,6 @@ interface IDeletedDocument {
   updated_at: Date;
 }
 
-type IDeletedDocumentModel = IDeletedDocument & Document;
+type IDeletedDocumentDocument = IDeletedDocument & Document;
 
-export { IDeletedDocument, IDeletedDocumentModel };
+export { IDeletedDocument, IDeletedDocumentDocument };

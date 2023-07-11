@@ -4,7 +4,7 @@ import AWS, { S3 } from 'aws-sdk';
 import fs from 'fs';
 
 // @api
-import { LayerError } from '@api/v1/utils';
+import { LayerError } from '@utils';
 
 // @logger
 import logger from '@logger';
@@ -27,6 +27,11 @@ import {
  *
  * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html
  */
+
+// FIXME Use custom LayerError error handling
+// FIXME Check the Stripe Error Api Response and update the error handling accordingly
+// TODO Add request logging
+// TODO Add response logging
 export default class S3Manager {
   static S3 = new AWS.S3({
     accessKeyId: AWS_ACCESS_KEY_ID,
@@ -51,10 +56,23 @@ export default class S3Manager {
     // Read content from the file
     const fileStream = fs.createReadStream(file);
 
+    const pattern = /png|jpeg|jpg|gif/gi;
+
+    // Remove every white space from the file path and replace it with an underscore
+    // Remove the "uploads/" part of the file path
+    // Remove special characters from the file path
+    // Remove file extension from the file path
+    const fileKey = file
+      .toString()
+      .split('uploads/')[1]
+      .replace(/\s/g, '_')
+      .replace(/[^a-zA-Z0-9_]/g, '')
+      .replace(pattern, '');
+
     const params: AWS.S3.PutObjectRequest = {
       Bucket: AWS_S3_BUCKET_NAME,
       Body: fileStream,
-      Key: file.toString(),
+      Key: fileKey,
 
       /**
        * ACL stands for Access Control List and is a list of permissions
@@ -90,8 +108,14 @@ export default class S3Manager {
       logger.info('File retrieved successfully from S3');
       return response;
     } catch (error: any) {
-      logger.error(`Failed to retrieve file from S3: ${error.message}`);
-      throw error;
+      throw new LayerError.NOT_FOUND('File not found.');
+      /**
+       *  throw error;
+             return;
+      console.log(error);
+      logger.error(`Failed to retrieve file from S3: ${error}`);
+       *  */
+
     }
   }
 

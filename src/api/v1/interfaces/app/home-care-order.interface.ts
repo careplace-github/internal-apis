@@ -1,9 +1,9 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, ICaregiver, IHealthUnit, IEvent, ICustomer, IPatient, IService } from '..';
+import { IAddress, ICaregiver, IHealthUnit, IEvent, ICustomer, IPatient, IService } from 'src/api/v1/interfaces';
 // types
-import { OrderRecurrency, OrderStatus, WeekDay, OrderScreeningVisitStatus } from '../types';
+import { THomeCareOrderRecurrency, THomeCareOrderStatus, TWeekDay, THomeCareOrderScreeningVisitStatus } from 'src/api/v1/interfaces/types';
 
 interface IHomeCareOrder {
   _id: Types.ObjectId | string;
@@ -16,18 +16,18 @@ interface IHomeCareOrder {
     start_date: Date;
     end_date?: Date;
     // recurrency should be an enum [0,1,2,4]
-    recurrency: OrderRecurrency;
+    recurrency: THomeCareOrderRecurrency;
     schedule: {
-      week_day: WeekDay;
+      week_day: TWeekDay;
       start: Date;
       end: Date;
     }[];
   };
-  status: OrderStatus;
+  status: THomeCareOrderStatus;
   decline_reason?: string;
   order_total: number;
   screening_visit?: IEvent;
-  screening_visit_status?: Types.ObjectId | OrderScreeningVisitStatus;
+  screening_visit_status?: THomeCareOrderScreeningVisitStatus;
   observations?: string;
   stripe_information: {
     subscription_id?: string;
@@ -40,6 +40,6 @@ interface IHomeCareOrder {
   };
 }
 
-type IHomeCareOrderModel = IHomeCareOrder & Document;
+type IHomeCareOrderDocument = IHomeCareOrder & Document;
 
-export { IHomeCareOrder, IHomeCareOrderModel };
+export { IHomeCareOrder, IHomeCareOrderDocument };

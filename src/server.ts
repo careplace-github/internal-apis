@@ -54,17 +54,18 @@ import {
   AuthRoute,
   CustomersRoute,
   HealthUnitsRoute,
+  CollaboratorsRoute,
   ServicesRoute,
   OrdersRoute,
   CalendarRoute,
   WebHooksRoute,
   PatientsRoute,
   PaymentsRoute,
-  AdminRoute,
   ReviewsRoute,
+  NotificationsRoute,
 } from '@api/v1/routes';
 // utils
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from 'src/utils';
 import { body } from 'express-validator';
 
 const main = async () => {
@@ -113,10 +114,8 @@ const main = async () => {
 
     mongoose.set('strictQuery', true);
 
-
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
-
 
     /**
      *  Handle connection errors
@@ -215,10 +214,50 @@ const main = async () => {
 
       app.use(
         body()
-          .trim() // Trim all request body inputs (eg: name: '  John  ' => name: 'John')
-          .escape() // Escape all request body inputs (eg: name: '<script>John</script>' => name: '&lt;script&gt;John&lt;/script&gt;')
+          // Trim all request body inputs (eg: name: '  John  ' => name: 'John')
+          .trim()
+          // Escape all request body inputs (eg: name: '<script>John</script>' => name: '&lt;script&gt;John&lt;/script&gt;')
+          .escape()
+          // Apply additional custom sanitization logic here if needed
           .customSanitizer((value) => {
-            // Apply additional custom sanitization logic here if needed
+            // If the value is an array
+            if (Array.isArray(value)) {
+              // trim and escape all of its elements
+              value = value.map((element) => {
+                return element.trim().escape();
+              });
+
+              // delete unwanted elements
+              delete value.__v;
+              delete value._id;
+              delete value.createdAt;
+              delete value.updatedAt;
+            }
+
+            // If the value is an object
+            else if (typeof value === 'object') {
+              //  trim and escape all of its properties
+              for (const key in value) {
+                if (Object.prototype.hasOwnProperty.call(value, key)) {
+                  value[key] = value[key].trim().escape();
+                }
+              }
+
+              // delete unwanted properties
+              delete value._id;
+              delete value.__v;
+              delete value._id;
+              delete value.createdAt;
+              delete value.updatedAt;
+            }
+
+            // If the value is a string
+            else if (typeof value === 'string') {
+              // TODO escape string
+              // trim and escape it
+              value = value.trim();
+            }
+
             return value;
           })
       );
@@ -421,10 +460,12 @@ const main = async () => {
 
       app.use(API_ROUTE, OrdersRoute);
       app.use(API_ROUTE, ServicesRoute);
+      app.use(API_ROUTE, CollaboratorsRoute);
       app.use(API_ROUTE, CalendarRoute);
-      app.use(API_ROUTE, PaymentsRoute);
       app.use(API_ROUTE, WebHooksRoute);
-      app.use(API_ROUTE, AdminRoute);
+      app.use(API_ROUTE, NotificationsRoute);
+      app.use(API_ROUTE, PaymentsRoute);
+
 
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);

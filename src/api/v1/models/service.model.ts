@@ -1,9 +1,9 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IServiceModel } from '../interfaces';
+import { IServiceDocument } from '../interfaces';
 
-const ServiceSchema: Schema<IServiceModel> = new Schema<IServiceModel>(
+const ServiceSchema: Schema<IServiceDocument> = new Schema<IServiceDocument>(
   {
     _id: Types.ObjectId,
     name: { type: String, required: true, unique: true },
@@ -21,6 +21,6 @@ const ServiceSchema: Schema<IServiceModel> = new Schema<IServiceModel>(
   }
 );
 
-const ServiceModel: Model<IServiceModel> = mongoose.model<IServiceModel>('Service', ServiceSchema);
+const ServiceModel: Model<IServiceDocument> = mongoose.model<IServiceDocument>('Service', ServiceSchema);
 
 export { ServiceSchema, ServiceModel };

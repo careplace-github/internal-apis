@@ -11,6 +11,6 @@ interface IService {
   icon?: string;
 }
 
-type IServiceModel = IService & Document;
+type IServiceDocument = IService & Document;
 
-export { IService, IServiceModel };
+export { IService, IServiceDocument };

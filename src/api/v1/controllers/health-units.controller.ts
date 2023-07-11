@@ -19,11 +19,13 @@ import {
   IHomeCareOrder,
   IHealthUnit,
   IQueryListResponse,
-} from '@api/v1/interfaces';
+  IHealthUnitDocument,
+} from 'src/api/v1/interfaces';
 import { SESService } from '@api/v1/services';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
+import { CaregiverModel, CollaboratorModel } from '../models';
 
 export default class HealthUnitsController {
   // db
@@ -38,26 +40,30 @@ export default class HealthUnitsController {
   static EmailHelper = EmailHelper;
   static StripeHelper = StripeHelper;
   // services
-  static SES = new SESService();
+  static SES = SESService;
 
   static async getDashboard(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      let user = await this.AuthHelper.getUserFromDB(accessToken);
+      let user = await HealthUnitsController.AuthHelper.getUserFromDB(accessToken);
 
-      let healthUnitId = user.health_unit._id;
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to access this resource.'));
+      }
+
+      let healthUnitId = user.health_unit._id.toString();
 
       if (healthUnitId === null || healthUnitId === undefined) {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let healthUnit = await this.HealthUnitsDAO.retrieve(healthUnitId);
+      let healthUnit = await HealthUnitsController.HealthUnitsDAO.retrieve(healthUnitId);
 
       if (!healthUnit || !healthUnit.stripe_information) {
         next(new HTTPError._500('Failed to retrieve healthUnit information.'));
@@ -66,7 +72,7 @@ export default class HealthUnitsController {
 
       let accountId = healthUnit.stripe_information.account_id;
 
-      let pendingOrders = await this.HomeCareOrdersDAO.queryList({
+      let pendingOrders = await HealthUnitsController.HomeCareOrdersDAO.queryList({
         health_unit: healthUnitId,
         status: 'new',
       }).then((orders) => {
@@ -77,16 +83,16 @@ export default class HealthUnitsController {
       let MRR;
       let annualRevenue;
 
-      numberOfActiveClients = await this.StripeHelper.getConnectedAccountActiveClients(accountId);
+      numberOfActiveClients = await HealthUnitsController.StripeHelper.getConnectedAccountActiveClients(accountId);
 
       try {
-        MRR = await this.StripeHelper.getConnectedAccountCurrentMRR(accountId);
+        MRR = await HealthUnitsController.StripeHelper.getConnectedAccountCurrentMRR(accountId);
       } catch (error: any) {
         return next(new HTTPError._500(error.message));
       }
 
       try {
-        annualRevenue = await this.StripeHelper.getConnectAccountTotalRevenueByMonth(accountId);
+        annualRevenue = await HealthUnitsController.StripeHelper.getConnectAccountTotalRevenueByMonth(accountId);
       } catch (error: any) {
         return next(new HTTPError._500(error.message));
       }
@@ -110,12 +116,43 @@ export default class HealthUnitsController {
     }
   }
 
-  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {}
-
-  static async searchHealthUnits(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async retrieveHealthUnit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const healthUnitId = req.params.id;
+
+      let healthUnit: IHealthUnitDocument;
+
+      try {
+        healthUnit = await HealthUnitsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Health unit not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = healthUnit;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  static async searchAgencies(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -249,7 +286,7 @@ export default class HealthUnitsController {
         };
       }
 
-      let healthUnits = await this.HealthUnitsDAO.queryList(
+      let healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
         filters,
         options,
         page,

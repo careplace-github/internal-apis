@@ -17,17 +17,20 @@ import { AuthHelper, EmailHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
   ICollaborator,
-  ICollaboratorModel,
+  ICollaboratorDocument,
   IHealthUnit,
-  IHealthUnitModel,
-} from '@api/v1/interfaces';
+  IHealthUnitDocument,
+} from 'src/api/v1/interfaces';
 import { CognitoService, SESService } from '@api/v1/services';
-import { HTTPError, AuthUtils } from '@api/v1/utils';
+import { HTTPError } from 'src/utils';
+import { AuthUtils } from '@api/v1/utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
-import { CollaboratorModel } from '../models';
+import { CaregiverModel, CollaboratorModel } from '../models';
+import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import { omit } from 'lodash';
 
 export default class CollaboratorsController {
   // db
@@ -51,37 +54,116 @@ export default class CollaboratorsController {
    */
   static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
       const reqCollaborator = req.body as ICollaborator;
+      const sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
 
-      const healthUnitId = reqCollaborator.health_unit!.toString(); // Convert to string if it's an ObjectId
+      const user = await CollaboratorsController.AuthHelper.getUserFromDB(accessToken);
 
-      let healthUnit: IHealthUnitModel;
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to perform this action.'));
+      }
 
-      let newcollaborator: ICollaboratorModel;
+      const healthUnitId = user.health_unit._id.toString();
+
+      if (!user.permissions.includes('users_edit')) {
+        throw new HTTPError._403('You are not authorized to perform this action.');
+      }
+
+      let healthUnit: IHealthUnitDocument;
+
+      let newcollaborator: ICollaboratorDocument;
       let temporaryPassword: string | undefined;
-      let cognitocollaborator: any;
+      let cognitocollaborator: CognitoIdentityServiceProvider.SignUpResponse | undefined;
 
       try {
         // Get the healthUnit from MongoDB.
-        healthUnit = await this.HealthUnitsDAO.retrieve(healthUnitId);
+        healthUnit = await CollaboratorsController.HealthUnitsDAO.retrieve(healthUnitId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
             return next(new HTTPError._404('Health Unit not found.'));
           }
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
         }
       }
 
-      // Remove any whitespace from the phone number.
-      reqCollaborator.phone = reqCollaborator.phone!.replace(/\s/g, '');
+      sanitizedReqCollaborator.health_unit = healthUnit._id;
 
-      // If the permission app_collaborator is included, create a new collaborator in the CRM Cognito collaborator Pool to allow them to login.
-      if (reqCollaborator?.permissions?.includes('app_user')) {
+      // Remove any whitespace from the phone number.
+      sanitizedReqCollaborator.phone = sanitizedReqCollaborator.phone!.replace(/\s/g, '');
+
+      const collaborator = new CollaboratorModel(sanitizedReqCollaborator);
+
+      // Validate the collaborator data.
+      const validationError = collaborator.validateSync({ pathsToSkip: ['cognito_id'] });
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let existingcollaborator: ICollaboratorDocument | undefined;
+      // Check if the healthUnit already has a collaborator with the same email.
+      try {
+        existingcollaborator = await CollaboratorsController.CollaboratorsDAO.queryOne({
+          email: sanitizedReqCollaborator.email,
+          health_unit: healthUnit._id,
+        });
+      } catch (error: any) {
+        // Do nothing.
+      }
+
+      if (existingcollaborator) {
+        return next(
+          new HTTPError._409(
+            `Health unit already has a collaborator with the email: ${sanitizedReqCollaborator.email}.`
+          )
+        );
+      }
+
+      // If the permission app_collaborator is included, create a new collaborator in the BUSINESS Cognito collaborator Pool to allow them to login.
+      if (sanitizedReqCollaborator?.permissions?.includes('app_user')) {
+        /**
+         * The user is trying to create a collaborator with the app_user permission.
+         * This means that the user is trying to create a collaborator that can login to the app.
+         * This means that we need to create a new user in the BUSINESS Cognito collaborator Pool.
+         * The email is a unique identifier.
+         * To prevent a user creating a collaborator that is from another health unit (if this happened another health unit couldn't create a collaborator with the same email),
+         * one is onnly allowed to create a collaborator with the email that has the same domain as the health unit.
+         */
+
+        // Get the domain from the health unit email.
+        const healthUnitEmailDomain = healthUnit.business_profile.email.split('@')[1];
+
+        // Get the domain from the collaborator email.
+        const collaboratorEmailDomain = sanitizedReqCollaborator.email.split('@')[1];
+
+        // Check if the domains are the same.
+        if (healthUnitEmailDomain !== collaboratorEmailDomain) {
+          return next(
+            new HTTPError._400(
+              'The collaborator email domain is not the same as the health unit email domain.'
+            )
+          );
+        }
+
         // Generate a random password of 8 characters.
         temporaryPassword = String(
           password.randomPassword({
@@ -90,12 +172,35 @@ export default class CollaboratorsController {
           })
         );
 
-        // Create a new collaborator in the CRM Cognito collaborator Pool.
+        // Create a new collaborator in the BUSINESS Cognito collaborator Pool.
         try {
-          cognitocollaborator = await this.CognitoService.addUser(
+          cognitocollaborator = await CollaboratorsController.CognitoService.addUser(
             reqCollaborator.email,
             temporaryPassword,
             reqCollaborator.phone
+          );
+        } catch (error: any) {
+          switch (error.type) {
+            case 'DUPLICATE_KEY': {
+              if (error.message === 'An account with the given email already exists.') {
+                return next(new HTTPError._409(error.message));
+              }
+
+              return next(new HTTPError._400(error.message));
+            }
+
+            default: {
+              return next(new HTTPError._500(error.message));
+            }
+          }
+        }
+
+        reqCollaborator.cognito_id = cognitocollaborator.UserSub;
+
+        try {
+          // Confirm the collaborator in Cognito.
+          const confirmcollaborator = CollaboratorsController.CognitoService.adminConfirmUser(
+            reqCollaborator.email!
           );
         } catch (error: any) {
           switch (error.type) {
@@ -108,32 +213,16 @@ export default class CollaboratorsController {
             }
           }
         }
-
-        reqCollaborator.cognito_id = cognitocollaborator.collaboratorSub;
-
-        try {
-          // Confirm the collaborator in Cognito.
-          const confirmcollaborator = this.CognitoService.adminConfirmUser(reqCollaborator.email!);
-        } catch (error: any) {
-          switch (error.type) {
-            case 'INVALID_PARAMETER': {
-              return next(new HTTPError._400(error.message));
-            }
-
-            default: {
-              return next(new HTTPError._500(error.message));
-            }
-          }
-        }
       }
 
       try {
-        const collaborator = new CollaboratorModel(reqCollaborator);
         // Add the collaborator to the database.
-        newcollaborator = await this.CollaboratorsDAO.create(collaborator);
+        newcollaborator = await CollaboratorsController.CollaboratorsDAO.create(collaborator);
       } catch (error: any) {
         // If there was an error creating the collaborator in the database, delete the collaborator from Cognito.
-        const deletecollaborator = await this.CognitoService.adminDeleteUser(reqCollaborator.email);
+        const deletecollaborator = await CollaboratorsController.CognitoService.adminDeleteUser(
+          reqCollaborator.email
+        );
 
         switch (error.type) {
           case 'DUPLICATE_KEY': {
@@ -146,27 +235,37 @@ export default class CollaboratorsController {
         }
       }
 
-      try {
-        const emailData = {
-          name: reqCollaborator.name,
-          email: reqCollaborator.email,
-          healthUnit: healthUnit!.business_profile!.name!,
-          password: temporaryPassword,
-        };
+      // If the permission app_collaborator is included, send an email to the collaborator with their temporary password and login instructions.
+      if (cognitocollaborator) {
+        try {
+          const emailData = {
+            name: reqCollaborator.name,
+            email: reqCollaborator.email,
+            healthUnit: healthUnit!.business_profile!.name!,
+            password: temporaryPassword,
+          };
 
-        // Insert variables into email template
-        let email = await EmailHelper.getEmailTemplateWithData('business_new_collaborator', emailData);
+          // Insert variables into email template
+          let email = await EmailHelper.getEmailTemplateWithData(
+            'business_new_collaborator',
+            emailData
+          );
 
-        if (!email || !email.htmlBody || !email.subject) {
-          return next(new HTTPError._500('Error getting email template'));
-        }
+          if (!email || !email.htmlBody || !email.subject) {
+            return next(new HTTPError._500('Error getting email template'));
+          }
 
-        // Send email to collaborator
-        this.SES.sendEmail([reqCollaborator.email!], email.subject, email.htmlBody);
-      } catch (error: any) {
-        switch (error.type) {
-          default: {
-            return next(new HTTPError._500(error.message));
+          // Send email to collaborator
+          CollaboratorsController.SES.sendEmail(
+            [reqCollaborator.email!],
+            email.subject,
+            email.htmlBody
+          );
+        } catch (error: any) {
+          switch (error.type) {
+            default: {
+              return next(new HTTPError._500(error.message));
+            }
           }
         }
       }
@@ -174,6 +273,7 @@ export default class CollaboratorsController {
       response.statusCode = 201;
       response.data = newcollaborator;
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -187,23 +287,50 @@ export default class CollaboratorsController {
    */
   static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_view')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
       const collaboratorId = req.params.id;
 
-      let collaborator: ICollaboratorModel;
+      let collaborator: ICollaboratorDocument;
 
       try {
         // Get collaborator by id
-        collaborator = await this.CollaboratorsDAO.retrieve(collaboratorId);
+        collaborator = await CollaboratorsController.CollaboratorsDAO.retrieve(collaboratorId);
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Collaborator not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
+      }
+
+      if (collaborator?.health_unit?.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('Forbidden'));
       }
 
       response.statusCode = 200;
@@ -223,32 +350,80 @@ export default class CollaboratorsController {
    */
   static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       const collaboratorId = req.params.id;
       const reqCollaborator = req.body;
-      let collaboratorExists: ICollaborator | null = null;
-      let updatedcollaborator: ICollaboratorModel | null = null;
+      const sanitizedReqCollaborator = omit(reqCollaborator, [
+        '_id',
+        'cognito_id',
+        'email',
+        'phone',
+        'health_unit',
+        'settings',
+      ]);
+
+      let collaboratorExists: ICollaboratorDocument | null = null;
+      let updatedcollaborator: ICollaboratorDocument | null = null;
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_edit')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
 
       // Check if collaborator already exists by verifying the id
       try {
-        collaboratorExists = await this.CollaboratorsDAO.retrieve(collaboratorId);
+        collaboratorExists = await CollaboratorsController.CollaboratorsDAO.retrieve(
+          collaboratorId
+        );
+
+        if (collaboratorExists?.health_unit?.toString() !== user.health_unit._id.toString()) {
+          return next(new HTTPError._403('Forbidden'));
+        }
 
         // If collaborator exists, update collaborator
         if (collaboratorExists) {
           // The collaborator to be updated is the collaborator from the request body. For missing fields, use the collaborator from the database.
           const collaborator = new CollaboratorModel({
-            ...collaboratorExists,
-            ...reqCollaborator,
+            ...collaboratorExists.toJSON(),
+            ...sanitizedReqCollaborator,
           });
+
+          // Validate collaborator
+          const validationError = collaborator.validateSync();
+
+          if (validationError) {
+            return next(new HTTPError._400(validationError.message));
+          }
+
           // Update collaborator in the database
-          updatedcollaborator = await this.CollaboratorsDAO.update(collaborator!);
+          updatedcollaborator = await CollaboratorsController.CollaboratorsDAO.update(
+            collaborator!
+          );
         }
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Collaborator not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
@@ -271,8 +446,8 @@ export default class CollaboratorsController {
    */
   static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -282,23 +457,52 @@ export default class CollaboratorsController {
         return next(new HTTPError._400('Missing collaborator id'));
       }
 
-      let collaborator: ICollaboratorModel | null = null;
+      let collaborator: ICollaboratorDocument | null = null;
       let isDeleted = false;
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_edit')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
 
       try {
         // Try to retrieve collaborator from CollaboratorsDAO first
-        collaborator = await this.CollaboratorsDAO.retrieve(collaboratorId);
+        collaborator = await CollaboratorsController.CollaboratorsDAO.retrieve(collaboratorId);
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Collaborator not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
       }
 
+      if (collaborator?.health_unit?.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
       // If collaborator exists, delete collaborator from the database
       if (collaborator) {
         try {
-          const deletedCollaborator = await this.CollaboratorsDAO.delete(collaboratorId);
+          const deletedCollaborator = await CollaboratorsController.CollaboratorsDAO.delete(
+            collaboratorId
+          );
           isDeleted = !!deletedCollaborator;
         } catch (error: any) {
           switch (error.type) {
@@ -308,10 +512,10 @@ export default class CollaboratorsController {
         }
       }
 
-      // If the collaborator has access to the CRM, delete the collaborator from Cognito
+      // If the collaborator has access to the BUSINESS, delete the collaborator from Cognito
       if (collaborator?.cognito_id) {
         try {
-          await this.CognitoService.adminDeleteUser(collaborator.cognito_id);
+          await CollaboratorsController.CognitoService.adminDeleteUser(collaborator.cognito_id);
         } catch (error: any) {
           switch (error.type) {
             default:
@@ -322,6 +526,8 @@ export default class CollaboratorsController {
 
       response.statusCode = 200;
       response.data = { message: 'Collaborator deleted.' };
+
+      next(response);
 
       // Pass to the next middleware to handle the response
     } catch (error: any) {
@@ -336,12 +542,12 @@ export default class CollaboratorsController {
    */
   static async listCollaborators(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
-      let collaborators: ICollaboratorModel[];
+      let collaborators: ICollaboratorDocument[];
 
       let healthUnitId: string;
 
@@ -358,11 +564,15 @@ export default class CollaboratorsController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      healthUnitId = user.health_unit._id;
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to access this resource.'));
+      }
+
+      healthUnitId = user.health_unit._id.toString();
 
       try {
         collaborators = (
-          await this.CollaboratorsDAO.queryList({
+          await CollaboratorsController.CollaboratorsDAO.queryList({
             health_unit: healthUnitId,
           })
         ).data;
@@ -373,7 +583,7 @@ export default class CollaboratorsController {
         }
       }
 
-      response.statusCode = 200;
+      response.statusCode = collaborators.length > 0 ? 200 : 204;
       response.data = collaborators;
 
       // Pass to the next middleware to handle the response

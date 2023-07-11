@@ -1,6 +1,6 @@
 import StripeService from '../../services/stripe.service';
 
-import { LayerError } from '@api/v1/utils';
+import { LayerError } from '@utils';
 import axios from 'axios';
 import logger from '../../../../logs/logger';
 
@@ -15,9 +15,7 @@ export default class StripeHelper {
   static Stripe = StripeService;
 
   static async getSubscriptionsByConnectedAcountId(accountId: string, filters) {
-    let subscriptions = await this.Stripe.listSubscriptions(filters);
-
-    subscriptions = subscriptions;
+    let subscriptions = (await this.Stripe.listSubscriptions(filters)).data;
 
     subscriptions = subscriptions.filter((subscription) => {
       return subscription?.transfer_data?.destination === accountId;
@@ -29,9 +27,17 @@ export default class StripeHelper {
   static async getReceiptLink(subscriptionId) {
     let subscription = await this.Stripe.getSubscription(subscriptionId);
 
-    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice);
+    if (!subscription.latest_invoice) {
+      throw new LayerError.INTERNAL_ERROR('The subscription does not have an invoice');
+    }
 
-    let charge = await this.Stripe.getCharge(invoice.charge);
+    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
+
+    if (!invoice.charge) {
+      throw new LayerError.INTERNAL_ERROR('The invoice does not have a charge');
+    }
+
+    let charge = await this.Stripe.getCharge(invoice.charge as string);
 
     let receiptUrl = charge?.receipt_url?.replace('?s=ap', '') + '/pdf?s=em';
 
@@ -41,7 +47,11 @@ export default class StripeHelper {
   static async getOrderNumber(subscriptionId) {
     let subscription = await this.Stripe.getSubscription(subscriptionId);
 
-    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice);
+    if (!subscription.latest_invoice) {
+      throw new LayerError.INTERNAL_ERROR('The subscription does not have an invoice');
+    }
+
+    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
 
     let orderNumber = invoice?.receipt_number?.replace('-', '');
 
@@ -174,7 +184,7 @@ export default class StripeHelper {
     accountId: string,
     filters: Stripe.InvoiceListParams
   ) {
-    const invoices = await this.Stripe.listInvoices(filters);
+    const invoices = (await this.Stripe.listInvoices(filters)).data;
 
     const filteredInvoices = invoices.filter((invoice) => {
       return invoice.transfer_data?.destination === accountId;
@@ -377,8 +387,8 @@ export default class StripeHelper {
     }
   }
 
-  static async getPromotionCodeByName(name) {
-    let promotionCodes = await this.Stripe.listPromotionCodes();
+  static async getPromotionCodeByName(name: string) {
+    let promotionCodes = (await this.Stripe.listPromotionCodes()).data;
 
     let promotionCode = promotionCodes.find((promotionCode) => promotionCode.code === name);
 
@@ -428,10 +438,12 @@ export default class StripeHelper {
     return parseFloat(newApplicationFee);
   }
 
-  static async getPaymentMethodByChargeId(chargeId) {
+  static async getPaymentMethodByChargeId(chargeId: string) {
     let charge = await this.Stripe.getCharge(chargeId);
 
-    let paymentMethod = await this.Stripe.getPaymentMethod(charge.payment_method);
+    if (!charge || !charge.payment_method) throw new LayerError.NOT_FOUND('Charge not found');
+
+    let paymentMethod = await this.Stripe.retrievePaymentMethod(charge.payment_method);
 
     return paymentMethod;
   }

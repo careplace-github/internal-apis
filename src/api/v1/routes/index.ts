@@ -9,6 +9,7 @@ export { default as PatientsRoute } from './app/patients.route';
 export { default as PaymentsRoute } from './app/payments.route';
 export { default as ReviewsRoute } from './app/reviews.route';
 export { default as ServicesRoute } from './app/services.route';
+export { default as NotificationsRoute } from './app/notifications.route';
 
 // Auth
 export { default as AuthRoute } from './auth/authentication.route';
@@ -17,5 +18,4 @@ export { default as AuthRoute } from './auth/authentication.route';
 export { default as WebHooksRoute } from './hooks/webhooks.route';
 
 // Misc
-export { default as AdminRoute } from './misc/admin.route';
 export { default as ConfigRoute } from './misc/config.route';

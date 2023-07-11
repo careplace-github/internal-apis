@@ -4,53 +4,30 @@ import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.mi
 
 const router = express.Router();
 
-// -------------------------------------------------------------------------------------------- //
-//                                      GENERAL AUTHENTICATION                                  //
-// -------------------------------------------------------------------------------------------- //
+router.route('/auth/signup').post(AuthenticationController.signup);
+
+router.route('/auth/send/confirmation-code').post(AuthenticationController.sendConfirmationCode);
+
+router
+  .route('/auth/verify/confirmation-code')
+  .post(AuthenticationController.verifyConfirmationCode);
 
 
-router.route('/auth/account').get(AuthenticationGuard, AuthenticationController.account);
+router
+  .route('/auth/send/forgot-password-code')
+  .post(AuthenticationController.sendForgotPasswordCode);
+router
+  .route('/auth/verify/forgot-password-code')
+  .post(AuthenticationController.verifyForgotPasswordCode);
 
-router.route('/auth/logout').post(AuthenticationGuard, AuthenticationController.logout);
+router.route('/auth/signin').post(AuthenticationController.signin);
+
+router.route('/auth/account').get(AuthenticationGuard, AuthenticationController.getAccount);
 
 router
   .route('/auth/change-password')
   .post(AuthenticationGuard, AuthenticationController.changePassword);
 
-// -------------------------------------------------------------------------------------------- //
-//                                      BUSINESS AUTHENTICATION                                 //
-// -------------------------------------------------------------------------------------------- //
-
-router.route('/auth/business/login').post(AuthenticationController.login);
-
-router
-  .route('/auth/business/send/forgot-password-code')
-  .post(AuthenticationController.sendForgotPasswordCode);
-
-router
-  .route('/auth/business/verify/forgot-password-code')
-  .post(AuthenticationController.verifyForgotPasswordCode);
-
-// -------------------------------------------------------------------------------------------- //
-//                                 MARKETPLACE AUTHENTICATION                                   //
-// -------------------------------------------------------------------------------------------- //
-
-router.route('/auth/marketplace/signup').post(AuthenticationController.signup);
-
-router
-  .route('/auth/marketplace/send/confirmation-code')
-  .post(AuthenticationController.sendConfirmationCode);
-router
-  .route('/auth/marketplace/verify/confirmation-code')
-  .post(AuthenticationController.verifyConfirmationCode);
-
-router.route('/auth/marketplace/login').post(AuthenticationController.login);
-
-router
-  .route('/auth/marketplace/send/forgot-password-code')
-  .post(AuthenticationController.sendForgotPasswordCode);
-router
-  .route('/auth/marketplace/verify/forgot-password-code')
-  .post(AuthenticationController.verifyForgotPasswordCode);
+router.route('/auth/signout').post(AuthenticationGuard, AuthenticationController.signout);
 
 export default router;

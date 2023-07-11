@@ -2,6 +2,8 @@
 import { Request, Response, NextFunction } from 'express';
 // mongoose
 import mongoose, { FilterQuery, QueryOptions, Types, startSession } from 'mongoose';
+// lodash
+import { omit } from 'lodash';
 
 // @api
 import {
@@ -18,26 +20,38 @@ import { AuthHelper, EmailHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
   ICaregiver,
-  ICaregiverModel,
+  ICaregiverDocument,
   IHealthUnit,
-  IHealthUnitModel,
+  IHealthUnitDocument,
   ICustomer,
   IEventSeries,
   IHomeCareOrder,
-  IHomeCareOrderModel,
+  IHomeCareOrderDocument,
   IPatient,
   IService,
-  IServiceModel,
-} from '@api/v1/interfaces';
-import { EventSeriesModel, HomeCareOrderModel, ServiceModel } from '@api/v1/models';
-import { CognitoService, SESService } from '@api/v1/services';
-import { HTTPError, AuthUtils, DateUtils } from '@api/v1/utils';
+  IServiceDocument,
+  ICollaboratorDocument,
+  ICustomerDocument,
+} from 'src/api/v1/interfaces';
+
+import {
+  CaregiverModel,
+  CollaboratorModel,
+  EventSeriesModel,
+  HomeCareOrderModel,
+  ServiceModel,
+} from '@api/v1/models';
+import { CognitoService, SESService, StripeService } from '@api/v1/services';
+import { AuthUtils } from '@api/v1/utils';
+import { HTTPError, DateUtils } from '@utils';
+
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
 // @data
 import { services } from '@assets';
+import Stripe from 'stripe';
 
 export default class OrdersController {
   // db
@@ -55,12 +69,13 @@ export default class OrdersController {
   // services
   static SES = SESService;
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
+  static StripeService = StripeService;
   // utils
   static AuthUtils = AuthUtils;
   static DateUtils = DateUtils;
 
   // -------------------------------------------------- //
-  //                     CUSTOMER                       //
+  //                     CUSTOMERS                      //
   // -------------------------------------------------- //
 
   static async customerCreateHomeCareOrder(
@@ -69,13 +84,15 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       let order = req.body as IHomeCareOrder;
       let patient: IPatient;
+
+      const healthUnitId = req.params.healthUnit;
 
       let accessToken: string;
 
@@ -88,14 +105,24 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      let user: ICollaboratorDocument | ICustomerDocument | ICaregiverDocument;
 
       try {
-        patient = await this.PatientsDAO.queryOne(
+        user = await AuthHelper.getUserFromDB(accessToken);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      try {
+        patient = await OrdersController.PatientsDAO.queryOne(
           { user: user._id },
           {
-            path: 'user',
-            model: 'marketplace_user',
+            path: 'customer',
+            model: 'Customer',
           }
         );
       } catch (error: any) {
@@ -109,9 +136,10 @@ export default class OrdersController {
         }
       }
 
-      let healthUnit: IHealthUnitModel;
+      let healthUnit: IHealthUnitDocument;
+      logger.info(`Health Unit ID: ${healthUnitId}`);
       try {
-        healthUnit = await this.HealthUnitsDAO.queryOne({ _id: order.health_unit });
+        healthUnit = await OrdersController.HealthUnitsDAO.queryOne({ _id: healthUnitId });
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
@@ -128,7 +156,14 @@ export default class OrdersController {
 
       const newOrder = new HomeCareOrderModel(order);
 
-      let orderCreated = await this.HomeCareOrdersDAO.create(newOrder);
+      // validate the order
+      const validationError = newOrder.validateSync();
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
 
       response.statusCode = 200;
       response.data = orderCreated;
@@ -139,7 +174,7 @@ export default class OrdersController {
       /**
        * From 'services' array, get the services that are in the order
        */
-      let orderServices: IServiceModel[] = [];
+      let orderServices: IServiceDocument[] = [];
 
       for (let i = 0; i < order!.services!.length; i++) {
         let service = services.find((service) => {
@@ -165,13 +200,15 @@ export default class OrdersController {
         })
         .join(', ');
 
-      let schedule = await this.DateUtils.getScheduleRecurrencyText(
+      let schedule = await OrdersController.DateUtils.getScheduleRecurrencyText(
         order?.schedule_information?.schedule
       );
 
-      let birthdate = await this.DateUtils.convertDateToReadableString(patient.birthdate);
+      let birthdate = await OrdersController.DateUtils.convertDateToReadableString(
+        patient.birthdate
+      );
 
-      let orderStart = await this.DateUtils.convertDateToReadableString2(
+      let orderStart = await OrdersController.DateUtils.convertDateToReadableString2(
         order?.schedule_information?.start_date
       );
 
@@ -205,14 +242,14 @@ export default class OrdersController {
         return next(new HTTPError._500('Error getting email template'));
       }
 
-      await this.SES.sendEmail(
+      await OrdersController.SES.sendEmail(
         [user.email],
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
       );
 
       let collaborators = (
-        await this.CollaboratorsDAO.queryList({
+        await OrdersController.CollaboratorsDAO.queryList({
           health_unit: { $eq: orderCreated.health_unit },
         })
       ).data;
@@ -237,16 +274,20 @@ export default class OrdersController {
           link: `https://www.sales.careplace.pt/orders/${orderCreated._id}`,
         };
 
-        let businessNewOrderEmail = await this.EmailHelper.getEmailTemplateWithData(
+        let businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
           'business_new_order',
           healthUnitEmailPayload
         );
 
-        if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
+        if (
+          !businessNewOrderEmail ||
+          !businessNewOrderEmail.htmlBody ||
+          !businessNewOrderEmail.subject
+        ) {
           return next(new HTTPError._500('Error getting email template'));
         }
 
-        await this.SES.sendEmail(
+        await OrdersController.SES.sendEmail(
           collaboratorsEmails,
           businessNewOrderEmail.subject,
           businessNewOrderEmail.htmlBody
@@ -254,7 +295,7 @@ export default class OrdersController {
       }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
-      return next(new HTTPError._500(error.message));
+      next(error);
     }
   }
 
@@ -264,15 +305,13 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
-      let order: IHomeCareOrder;
+      let order: IHomeCareOrderDocument;
 
       const orderId = req.params.id;
-
-      let user;
 
       let accessToken: string;
 
@@ -285,27 +324,43 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
+      let user: ICollaboratorDocument | ICustomerDocument | ICaregiverDocument;
+
       try {
-        order = await this.HomeCareOrdersDAO.retrieve(
+        user = await AuthHelper.getUserFromDB(accessToken);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      try {
+        order = await OrdersController.HomeCareOrdersDAO.retrieve(
           orderId,
 
           // Populate the fields patient and caregiver
           [
             {
               path: 'patient',
+              model: 'Patient',
             },
             {
               path: 'caregiver',
+              model: 'Caregiver',
             },
             {
               path: 'services',
+              model: 'Service',
             },
             {
               path: 'health_unit',
+              model: 'HealthUnit',
             },
             {
-              path: 'user',
-              model: 'marketplace_user',
+              path: 'customer',
+              model: 'Customer',
               select: 'name email phone address _id',
             },
           ]
@@ -323,8 +378,31 @@ export default class OrdersController {
         return next(new HTTPError._403('You are not authorized to retrieve this order.'));
       }
 
+      let orderPaymentMethod: Stripe.PaymentMethod | string | null = null;
+
+      const subscriptionId = order.stripe_information.subscription_id;
+
+      if (subscriptionId) {
+        try {
+          const subscription = await OrdersController.StripeService.getSubscription(subscriptionId);
+
+          orderPaymentMethod = subscription.default_payment_method;
+        } catch (error: any) {
+          switch (error.type) {
+            case 'NOT_FOUND':
+              break;
+            default:
+              return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      const orderObj = order.toObject();
+
+      orderObj.stripe_information.payment_method = orderPaymentMethod || null;
+
       response.statusCode = 200;
-      response.data = order;
+      response.data = orderObj;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -340,14 +418,12 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
-      let homeCareOrders: IHomeCareOrderModel[] = [];
-
-      let user;
+      let homeCareOrders: IHomeCareOrderDocument[] = [];
 
       let accessToken: string;
 
@@ -360,11 +436,23 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
+      let user: ICollaboratorDocument | ICustomerDocument | ICaregiverDocument;
+
+      try {
+        user = await AuthHelper.getUserFromDB(accessToken);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
       try {
         homeCareOrders = (
-          await this.HomeCareOrdersDAO.queryList(
+          await OrdersController.HomeCareOrdersDAO.queryList(
             {
-              user: user._id,
+              customer: user._id,
             },
             undefined,
             undefined,
@@ -373,15 +461,19 @@ export default class OrdersController {
             [
               {
                 path: 'patient',
+                model: 'Patient',
               },
               {
                 path: 'caregiver',
+                model: 'Caregiver',
               },
               {
                 path: 'services',
+                model: 'Service',
               },
               {
                 path: 'health_unit',
+                model: 'HealthUnit',
               },
             ]
           )
@@ -405,12 +497,10 @@ export default class OrdersController {
   }
 
   // -------------------------------------------------- //
-  //                     HEALTH UNIT                    //
+  //                     HEALTH UNITS                   //
   // -------------------------------------------------- //
 
-  /**
-   * @todo
-   */
+  // TODO healthUnitCreateHomeCareOrder
   static async healthUnitCreateHomeCareOrder(
     req: Request,
     res: Response,
@@ -430,19 +520,68 @@ export default class OrdersController {
     }
   }
 
-  /**
-   * @todo
-   */
   static async healthUnitRetrieveHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      if (!user?.permissions?.includes('orders_view')) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      // Retrieve the home care order based on the provided request parameters
+      const orderId = req.params.id;
+
+      let homeCareOrder: IHomeCareOrderDocument;
+
+      try {
+        homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Home care order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        if (!('health_unit' in user)) {
+          return next(new HTTPError._403('You are not authorized to decline this order.'));
+        }
+        return user.health_unit._id.toString();
+      });
+
+      // Check if the home care order belongs to the user's health unit
+      if (homeCareOrder.health_unit.toString() !== healthUnitId) {
+        return next(new HTTPError._403('You do not have access to retrieve this home care order.'));
+      }
+
+      response.statusCode = 200;
+      response.data = homeCareOrder;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -452,19 +591,99 @@ export default class OrdersController {
     }
   }
 
-  /**
-   * @todo
-   */
+  // TODO send email to customer when the order is updated
   static async healthUnitUpdateHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+      const [app, user] = await Promise.all([
+        OrdersController.AuthHelper.getAppId(accessToken),
+        OrdersController.AuthHelper.getUserFromDB(accessToken),
+      ]);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      if (!user.permissions.includes('orders_edit')) {
+        return next(new HTTPError._403('You do not have access to update home care orders.'));
+      }
+
+      const orderId = req.params.id;
+      let orderExists: IHomeCareOrderDocument;
+
+      try {
+        orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+        const test = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Home care order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      if (
+        ('health_unit' in user &&
+          orderExists.health_unit.toString() !== user.health_unit._id.toString()) ||
+        !user.permissions.includes('orders_edit')
+      ) {
+        return next(new HTTPError._403('You do not have access to update this home care order.'));
+      }
+
+      // Get the fields to update from the request body
+      const reqOrder = req.body as IHomeCareOrder;
+
+      const sanitizedReqOrder = omit(reqOrder, [
+        '_id',
+        'health_unit',
+        'customer',
+        'patient',
+        'status',
+        'decline_reason',
+        'screening_visit',
+        'stripe_information',
+        'billing_details',
+      ]);
+
+      const newOrder = {
+        ...orderExists.toObject(),
+        ...sanitizedReqOrder,
+      };
+
+      const updateOrder = new HomeCareOrderModel(newOrder);
+
+      let updatedOrder: IHomeCareOrderDocument;
+
+      try {
+        updatedOrder = await OrdersController.HomeCareOrdersDAO.update(updateOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = updatedOrder;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -480,12 +699,11 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
-      let healthUnitId: string;
-      let homeCareOrders: IHomeCareOrderModel[] = [];
+      let homeCareOrders: IHomeCareOrderDocument[] = [];
 
       let Cognito = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
 
@@ -500,19 +718,26 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
+      let user: ICollaboratorDocument | ICaregiverDocument | ICustomerDocument;
       try {
-        let user = await AuthHelper.getUserFromDB(accessToken);
-        healthUnitId = user.health_unit;
+        user = await AuthHelper.getUserFromDB(accessToken);
       } catch (error: any) {
         switch (error.type) {
           default:
-            throw new HTTPError._500(error.message);
+            return next(new HTTPError._500(error.message));
         }
       }
 
+      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        if (!('health_unit' in user)) {
+          return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+        }
+        return user.health_unit._id.toString();
+      });
+
       try {
         homeCareOrders = (
-          await this.HomeCareOrdersDAO.queryList(
+          await OrdersController.HomeCareOrdersDAO.queryList(
             {
               health_unit: { $eq: healthUnitId },
             },
@@ -523,13 +748,13 @@ export default class OrdersController {
 
             [
               {
-                path: 'user',
-                model: 'marketplace_user',
+                path: 'customer',
+                model: 'Customer',
                 select: '-_id -stripe_information -settings -cognito_id -createdAt -updatedAt -__v',
               },
               {
                 path: 'patient',
-                model: 'patient',
+                model: 'Patient',
                 select: '-_id -createdAt -updatedAt -user -__v',
               },
               {
@@ -566,7 +791,7 @@ export default class OrdersController {
   static async acceptHomeCareOrder(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -584,12 +809,12 @@ export default class OrdersController {
       let caregiver = req.body.caregiver as string;
 
       if (!caregiver) {
-        throw new HTTPError._400('Missing caregiver.');
+        return next(new HTTPError._400('Missing caregiver.'));
       }
 
-      let caregiverExists: ICaregiverModel;
+      let caregiverExists: ICaregiverDocument;
       try {
-        caregiverExists = await this.CaregiversDAO.retrieve(caregiver);
+        caregiverExists = await OrdersController.CaregiversDAO.retrieve(caregiver);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
@@ -599,13 +824,21 @@ export default class OrdersController {
         }
       }
 
-      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
-        return user.health_unit._id;
-      });
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
-      let order: IHomeCareOrderModel;
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to accept this order.'));
+      }
+
+      if (caregiverExists.health_unit.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('Caregiver does not belong to this health unit.'));
+      }
+
+      let healthUnitId = user.health_unit._id.toString();
+
+      let order: IHomeCareOrderDocument;
       try {
-        order = await this.HomeCareOrdersDAO.retrieve(req.params.id);
+        order = await OrdersController.HomeCareOrdersDAO.retrieve(req.params.id);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
@@ -615,19 +848,21 @@ export default class OrdersController {
         }
       }
 
-      if (healthUnitId.toString() !== order?.health_unit?.toString()) {
+      if (healthUnitId !== order?.health_unit?.toString()) {
         return next(new HTTPError._403('You are not authorized to accept this order.'));
       }
 
       if (order.status !== 'new') {
-        return next(new HTTPError._400('You cannot accept this order.'));
+        return next(
+          new HTTPError._409(`Order status is ${order.status}. You cannot accept this order.`)
+        );
       }
 
       order.status = 'accepted';
       order.caregiver = caregiverExists._id as Types.ObjectId;
 
       try {
-        await this.HomeCareOrdersDAO.update(order);
+        await OrdersController.HomeCareOrdersDAO.update(order);
       } catch (error: any) {
         switch (error.type) {
           default:
@@ -642,9 +877,9 @@ export default class OrdersController {
       next(response);
 
       // From the users.patients array, get the patient that matches the patient id in the order
-      let patient = await this.PatientsDAO.queryOne({ _id: order.patient });
-      let healthUnit = await this.HealthUnitsDAO.queryOne({ _id: order.health_unit });
-      let customer = await this.CustomersDAO.queryOne({ _id: order.customer });
+      let patient = await OrdersController.PatientsDAO.queryOne({ _id: order.patient });
+      let healthUnit = await OrdersController.HealthUnitsDAO.queryOne({ _id: order.health_unit });
+      let customer = await OrdersController.CustomersDAO.queryOne({ _id: order.customer });
 
       if (order?.schedule_information?.recurrency !== 0) {
         let eventSeries: IEventSeries = {
@@ -672,7 +907,7 @@ export default class OrdersController {
 
         const newEventSeries = new EventSeriesModel(eventSeries);
 
-        let eventSeriesAdded = await this.EventSeriesDAO.create(newEventSeries);
+        let eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
       }
 
       /**
@@ -694,7 +929,7 @@ export default class OrdersController {
         .join(', ');
 
       let collaborators = (
-        await this.CollaboratorsDAO.queryList({
+        await OrdersController.CollaboratorsDAO.queryList({
           health_unit: { $eq: order.health_unit },
         })
       ).data;
@@ -749,7 +984,7 @@ export default class OrdersController {
         return next(new HTTPError._500('Error while generating email template.'));
       }
 
-      await this.SES.sendEmail(
+      await OrdersController.SES.sendEmail(
         [customer.email],
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
@@ -789,11 +1024,15 @@ export default class OrdersController {
               healthUnitEmailPayload
             );
 
-            if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
+            if (
+              !businessNewOrderEmail ||
+              !businessNewOrderEmail.htmlBody ||
+              !businessNewOrderEmail.subject
+            ) {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
-            await this.SES.sendEmail(
+            await OrdersController.SES.sendEmail(
               [collaboratorEmail],
               businessNewOrderEmail.subject,
               businessNewOrderEmail.htmlBody
@@ -807,19 +1046,78 @@ export default class OrdersController {
     }
   }
 
-  /**
-   * @todo
-   */
+  // TODO send email to Careplace Backoffice when an order is declined
   static async declineHomeCareOrder(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      let { decline_reason } = req.body as {
+        decline_reason: string;
+      };
+
+      if (!decline_reason) {
+        return next(new HTTPError._400('Missing decline reason.'));
+      }
+
+      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        if (!('health_unit' in user)) {
+          return next(new HTTPError._403('You are not authorized to decline this order.'));
+        }
+        return user.health_unit._id.toString();
+      });
+
+      let order: IHomeCareOrderDocument;
+      try {
+        order = await OrdersController.HomeCareOrdersDAO.retrieve(req.params.id);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      if (healthUnitId !== order?.health_unit?.toString()) {
+        return next(new HTTPError._403('You are not authorized to decline this order.'));
+      }
+
+      if (order.status !== 'new') {
+        return next(new HTTPError._400('You cannot decline this order.'));
+      }
+
+      order.status = 'declined';
+      order.decline_reason = decline_reason;
+
+      try {
+        await OrdersController.HomeCareOrdersDAO.update(order);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = order;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -835,8 +1133,8 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -859,12 +1157,21 @@ export default class OrdersController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      let healthUnitId = user.health_unit._id;
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
 
-      let order: IHomeCareOrderModel;
+      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+        if (!('health_unit' in user)) {
+          return next(new HTTPError._403('You are not authorized to decline this order.'));
+        }
+        return user.health_unit._id.toString();
+      });
+
+      let order: IHomeCareOrderDocument;
 
       try {
-        order = await this.HomeCareOrdersDAO.queryOne({ _id: req.params.id }, [
+        order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: req.params.id }, [
           {
             path: 'patient',
             model: 'patient',
@@ -878,8 +1185,8 @@ export default class OrdersController {
             model: 'Service',
           },
           {
-            path: 'user',
-            model: 'marketplace_user',
+            path: 'customer',
+            model: 'Customer',
           },
         ]);
       } catch (error: any) {
@@ -895,10 +1202,10 @@ export default class OrdersController {
       }
 
       if (
-        healthUnitId.toString() !== order.health_unit._id.toString() ||
+        healthUnitId !== order.health_unit._id.toString() ||
         !user?.permissions?.includes('orders_edit')
       ) {
-        throw new HTTPError._403('You are not authorized to send a quote for this order.');
+        return next(new HTTPError._403('You are not authorized to send a quote for this order.'));
       }
 
       if (
@@ -906,17 +1213,15 @@ export default class OrdersController {
         order.status === 'cancelled' ||
         order.status === 'completed'
       ) {
-        throw new HTTPError._403('You are not authorized to send a quote for this order.');
+        return next(new HTTPError._403('You are not authorized to send a quote for this order.'));
       }
 
       order.order_total = order_total;
 
-      await this.HomeCareOrdersDAO.update(order);
+      await OrdersController.HomeCareOrdersDAO.update(order);
 
-      response = {
-        statusCode: 200,
-        data: order,
-      };
+      response.statusCode = 200;
+      response.data = order;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -949,7 +1254,7 @@ export default class OrdersController {
         order.schedule_information.start_date
       );
       let collaborators = (
-        await this.CollaboratorsDAO.queryList({
+        await OrdersController.CollaboratorsDAO.queryList({
           health_unit: { $eq: order.health_unit },
         })
       ).data;
@@ -999,10 +1304,10 @@ export default class OrdersController {
         !marketplaceNewOrderEmail.htmlBody ||
         !marketplaceNewOrderEmail.subject
       ) {
-        throw new HTTPError._500('Error while getting the email template.');
+        return next(new HTTPError._500('Error while getting the email template.'));
       }
 
-      await this.SES.sendEmail(
+      await OrdersController.SES.sendEmail(
         [(order.customer as ICustomer).email],
         marketplaceNewOrderEmail.subject,
         marketplaceNewOrderEmail.htmlBody
@@ -1045,11 +1350,15 @@ export default class OrdersController {
               healthUnitEmailPayload
             );
 
-            if (!businessNewOrderEmail || !businessNewOrderEmail.htmlBody || !businessNewOrderEmail.subject) {
+            if (
+              !businessNewOrderEmail ||
+              !businessNewOrderEmail.htmlBody ||
+              !businessNewOrderEmail.subject
+            ) {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
-            await this.SES.sendEmail(
+            await OrdersController.SES.sendEmail(
               [collaboratorEmail],
               businessNewOrderEmail.subject,
               businessNewOrderEmail.htmlBody

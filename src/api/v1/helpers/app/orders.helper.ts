@@ -1,10 +1,10 @@
 import { Document, Types } from 'mongoose';
-import { IEventSeries, IEvent, ICaregiver, IEventModel } from '@api/v1/interfaces';
+import { IEventSeries, IEvent, ICaregiver, IEventDocument } from 'src/api/v1/interfaces';
 import { HomeCareOrdersDAO } from '@api/v1/db';
 import logger from 'src/logs/logger';
 
-import { IHomeCareOrder } from '@api/v1/interfaces';
-import { EventModel } from '../../models';
+import { IHomeCareOrder } from 'src/api/v1/interfaces';
+import { EventModel } from '@api/v1/models';
 
 interface Amounts {
   order_total: number;
@@ -21,7 +21,7 @@ interface Amounts {
     total_fees: number;
     total_fees_percentage: number;
   };
-  discount: Discount | null;
+  discount: number | null;
   connected_account_net: number;
   connected_account_earnings: number;
   connected_account_earnings_percentage: number;
@@ -43,9 +43,7 @@ export default class OrdersHelper {
 
   static async generateEventsFromSeries(eventSeries: IEventSeries) {
     try {
-      logger.info('Event Series 3: ' + eventSeries);
-
-      let events: IEventModel[] = [];
+      let events: IEventDocument[] = [];
 
       if (!eventSeries.order) {
         throw new Error('Order not found');
@@ -127,10 +125,9 @@ export default class OrdersHelper {
           let event: IEvent = {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
             _id: new Types.ObjectId(),
-            series: eventSeries._id as Types.ObjectId,
+
             ownerType: 'health_unit',
             owner: eventSeries.owner,
-            order: orderData as IHomeCareOrder,
             title: eventSeries.title,
             description: eventSeries?.description || '',
             start: startDate,
@@ -142,8 +139,19 @@ export default class OrdersHelper {
 
           let eventModel = new EventModel(event);
 
+          const error = eventModel.validateSync();
+
+          if (error) {
+            throw error;
+          }
+
+          const eventObj: IEventDocument = eventModel.toObject();
+
+          eventObj.event_series = eventSeries._id as Types.ObjectId;
+          eventObj.order = orderData as IHomeCareOrder;
+
           // Add the event to the list of events
-          events.push(eventModel);
+          events.push(eventObj);
         }
       }
       // ---------------------------------------------------
@@ -196,11 +204,11 @@ export default class OrdersHelper {
       type: string;
       country: string;
     },
-    discount?: Discount
-  ): Promise<Amounts | { error: { message: string; discount: Discount } }> {
+    amountOff?: number
+  ): Promise<Amounts | { error: { message: string; amountOff: number | null } }> {
     console.log(
       `calculateAmounts: orderTotal: ${orderTotal}, paymentMethod: ${paymentMethod}, discount: ${JSON.stringify(
-        discount,
+        amountOff,
         null,
         2
       )}`
@@ -271,17 +279,15 @@ export default class OrdersHelper {
 
     let discountOrderTotal = 0;
 
-    if (discount && discount?.amount_off) {
-      discountOrderTotal = orderTotal - discount.amount_off;
+    if (amountOff) {
+      discountOrderTotal = orderTotal - amountOff;
 
       const healthUnitPercentage = Number(
-        (
-          ((orderTotal * ((100 - applicationFee) / 100)) / (orderTotal - discount.amount_off)) *
-          100
-        ).toFixed(2)
+        (((orderTotal * ((100 - applicationFee) / 100)) / (orderTotal - amountOff)) * 100).toFixed(
+          2
+        )
       );
       console.log('NEW APPLICATION FEE: ' + applicationFee);
-
 
       stripeProcessingFees = Number(
         (discountOrderTotal * (stripePercentageFee / 100) + stripeFixedFee).toFixed(2)
@@ -318,7 +324,7 @@ export default class OrdersHelper {
 
         const application_fee = MIN_CAREPLACE_EARNINGS_PERCENTAGE + stripeTotalFeePercentage;
 
-        const amount_off = discount.amount_off;
+        const amount_off = amountOff;
 
         console.log('NEW APPLICATION FEE: ' + application_fee);
 
@@ -334,7 +340,7 @@ export default class OrdersHelper {
         return {
           error: {
             message: `Can't apply coupon. The order must be a minimum of ${min_order_total} €.`,
-            discount: discount || null,
+            amountOff: amountOff || null,
           },
         };
       }
@@ -356,7 +362,7 @@ export default class OrdersHelper {
         total_fees_percentage: stripeTotalFeePercentage,
       },
 
-      discount: discount || null,
+      discount: amountOff || null,
 
       connected_account_net: connectedAccountNet,
       connected_account_earnings: connectedAccountEarnings,

@@ -1,9 +1,9 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // Interfaces
-import { IAddress, ICaregiver, ICollaborator, IService } from '..';
+import { IAddress, ICaregiver, ICollaborator, IService } from 'src/api/v1/interfaces';
 // Types
-import { Coordinates } from '../types';
+import { TCoordinates, THealthUnitType } from 'src/api/v1/interfaces/types';
 
 interface IHealthUnit {
   _id: Types.ObjectId | string;
@@ -14,7 +14,7 @@ interface IHealthUnit {
    * - Retirement Homes / Lares de Idosos
    * - Senior Residences / Residências Sénior
    */
-  type: 'agency' | 'retirement_home' | 'senior_residence';
+  type: THealthUnitType;
 
   business_profile: {
     name: string;
@@ -49,7 +49,7 @@ interface IHealthUnit {
   services: Types.ObjectId[] | IService[];
   service_area: {
     type: string;
-    coordinates: Coordinates[][][];
+    coordinates: TCoordinates[][][];
   };
   pricing: {
     average_hourly_rate?: number;
@@ -75,6 +75,6 @@ interface IHealthUnit {
   is_active: boolean;
 }
 
-type IHealthUnitModel = IHealthUnit & Document;
+type IHealthUnitDocument = IHealthUnit & Document;
 
-export { IHealthUnit, IHealthUnitModel };
+export { IHealthUnit, IHealthUnitDocument };

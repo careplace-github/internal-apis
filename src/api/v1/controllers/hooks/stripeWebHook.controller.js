@@ -3,7 +3,7 @@
 // Import Services
 import stripe from '../../services/stripe.service';
 
-import * as Error from '../../utils/errors/http/http-error';
+import * as Error from '../../../../utils/errors/http/http-error';
 
 import { buffer } from 'micro';
 
@@ -15,7 +15,7 @@ import {
 import logger from '../../../../logs/logger';
 import stripeHelper from '../../helpers/services/stripe.helper';
 import emailHelper from '../../helpers/emails/email.helper';
-import dateUtils from '../../utils/data/date.utils';
+import dateUtils from '../../../../utils/data/date.utils';
 
 import HomeCareOrdersDAO from '../../db/orders.dao';
 

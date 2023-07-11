@@ -14,11 +14,12 @@ import {
   IHomeCareOrder,
   IHealthUnit,
   IQueryListResponse,
-} from '@api/v1/interfaces';
+} from 'src/api/v1/interfaces';
 import { CognitoService, StripeService, BucketService } from '@api/v1/services';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
+import { S3 } from 'aws-sdk';
 
 /**
  * Files Controller Class to manage the ``/files`` endpoints of the API.
@@ -38,19 +39,19 @@ export default class FilesController {
   static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
       const file = req.file;
 
       if (!file) {
-        throw new HTTPError._400('Missing required file.');
+        return next(new HTTPError._400('Missing required file.'));
       }
 
       const filePath = file.path;
 
-      let fileUpload = await this.BucketService.uploadFile(filePath);
+      let fileUpload = await FilesController.BucketService.uploadFile(filePath);
 
       response.statusCode = 201;
       response.data = {
@@ -88,7 +89,7 @@ export default class FilesController {
   static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -98,10 +99,17 @@ export default class FilesController {
         next(new HTTPError._400('Missing required key.'));
       }
 
-      const file = await this.BucketService.getFile(key);
+      let file: S3.GetObjectOutput;
+      try {
+        file = await FilesController.BucketService.getFile(key);
+      } catch (error: any) {
+        return next(new HTTPError._404('File not found.'));
+      }
 
       response.statusCode = 200;
-      response.data = file;
+      response.data = {
+        url: file.Body,
+      };
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -120,14 +128,14 @@ export default class FilesController {
   static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102,
+        statusCode: res.statusCode,
         data: {},
       };
 
       const bucketService = new BucketService();
       const key = req.params.key;
 
-      const deletedFile = await this.BucketService.deleteFile(key);
+      const deletedFile = await FilesController.BucketService.deleteFile(key);
 
       response.statusCode = 200;
       response.data = deletedFile;

@@ -1,25 +1,25 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, IHealthUnit, ICustomer, ISettings } from '..';
+import { IAddress, IHealthUnit, ICustomer, ISettings } from 'src/api/v1/interfaces';
 // types
-import { Gender, Kinship, Permission, Role, Theme } from '../types';
+import { TGender, TKinship } from 'src/api/v1/interfaces/types';
 
 interface IPatient {
   _id: Types.ObjectId | string;
   customer: Types.ObjectId | ICustomer;
   health_unit?: Types.ObjectId | IHealthUnit;
 
-  kinship: Kinship;
+  kinship: TKinship;
   profile_picture?: string;
   name: string;
   birthdate: Date;
   phone?: string;
-  gender: Gender;
+  gender: TGender;
   medical_conditions?: string;
   address: IAddress;
 }
 
-type IPatientModel = IPatient & Document;
+type IPatientDocument = IPatient & Document;
 
-export { IPatient, IPatientModel };
+export { IPatient, IPatientDocument };

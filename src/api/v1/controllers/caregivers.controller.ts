@@ -7,27 +7,30 @@ import password from 'secure-random-password';
 
 // @api
 import {
-  CaregiversDAO,
   CustomersDAO,
   HealthUnitsDAO,
   HealthUnitReviewsDAO,
+  CaregiversDAO,
   HomeCareOrdersDAO,
 } from '@api/v1/db';
 import { AuthHelper, EmailHelper } from '@api/v1/helpers';
 import {
   IAPIResponse,
-  ICaregiverModel,
   ICaregiver,
+  ICaregiverDocument,
   IHealthUnit,
-  IHealthUnitModel,
-} from '@api/v1/interfaces';
+  IHealthUnitDocument,
+} from 'src/api/v1/interfaces';
 import { CognitoService, SESService } from '@api/v1/services';
-import { HTTPError, AuthUtils } from '@api/v1/utils';
+import { HTTPError } from 'src/utils';
+import { AuthUtils } from '@api/v1/utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
-import { CaregiverModel } from '../models';
+import { CaregiverModel, CollaboratorModel } from '../models';
+import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import { omit } from 'lodash';
 
 export default class CaregiversController {
   // db
@@ -49,45 +52,118 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async createHealthUnitCaregiver(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
-      const reqCregiver = req.body as ICaregiver;
+      let accessToken: string;
 
-      const caregiver = new CaregiverModel(reqCregiver);
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
 
-      const healthUnitId = caregiver.health_unit.toString();
+      const reqCaregiver = req.body as ICaregiver;
+      const sanitizedReqCaregiver = omit(reqCaregiver, ['_id', 'cognito_id', 'settings']);
 
-      let healthUnit: IHealthUnitModel | null = null;
+      const user = await CaregiversController.AuthHelper.getUserFromDB(accessToken);
 
-      let newcaregiver: ICaregiverModel | null = null;
+      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('You are not authorized to perform this action.'));
+      }
+
+      const healthUnitId = user.health_unit._id.toString();
+
+      if (!user.permissions.includes('users_edit')) {
+        throw new HTTPError._403('You are not authorized to perform this action.');
+      }
+
+      let healthUnit: IHealthUnitDocument;
+
+      let newcaregiver: ICaregiverDocument;
       let temporaryPassword: string | undefined;
-      let cognitocaregiver: any;
+      let cognitocaregiver: CognitoIdentityServiceProvider.SignUpResponse | undefined;
 
       try {
-        // Get the health_unit from MongoDB.
-        healthUnit = await this.HealthUnitsDAO.retrieve(healthUnitId);
+        // Get the healthUnit from MongoDB.
+        healthUnit = await CaregiversController.HealthUnitsDAO.retrieve(healthUnitId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
-            return next(new HTTPError._404('HealthUnit not found.'));
+            return next(new HTTPError._404('Health Unit not found.'));
+          }
+          default: {
+            return next(new HTTPError._500(error.message));
           }
         }
       }
 
+      sanitizedReqCaregiver.health_unit = healthUnit._id;
+
       // Remove any whitespace from the phone number.
-      caregiver.phone = caregiver.phone!.replace(/\s/g, '');
+      sanitizedReqCaregiver.phone = sanitizedReqCaregiver.phone!.replace(/\s/g, '');
+
+      const caregiver = new CaregiverModel(sanitizedReqCaregiver);
+
+      // Validate the caregiver data.
+      const validationError = caregiver.validateSync({ pathsToSkip: ['cognito_id'] });
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let existingcaregiver: ICaregiverDocument | undefined;
+      // Check if the healthUnit already has a caregiver with the same email.
+      try {
+        existingcaregiver = await CaregiversController.CaregiversDAO.queryOne({
+          email: sanitizedReqCaregiver.email,
+          health_unit: healthUnit._id,
+        });
+      } catch (error: any) {
+        // Do nothing.
+      }
+
+      if (existingcaregiver) {
+        return next(
+          new HTTPError._409(
+            `Health unit already has a caregiver with the email: ${sanitizedReqCaregiver.email}.`
+          )
+        );
+      }
 
       // If the permission app_caregiver is included, create a new caregiver in the BUSINESS Cognito caregiver Pool to allow them to login.
-      if (caregiver?.permissions?.includes('app_user')) {
+      if (sanitizedReqCaregiver?.permissions?.includes('app_user')) {
+        /**
+         * The user is trying to create a caregiver with the app_user permission.
+         * This means that the user is trying to create a caregiver that can login to the app.
+         * This means that we need to create a new user in the BUSINESS Cognito caregiver Pool.
+         * The email is a unique identifier.
+         * To prevent a user creating a caregiver that is from another health unit (if this happened another health unit couldn't create a caregiver with the same email),
+         * one is onnly allowed to create a caregiver with the email that has the same domain as the health unit.
+         */
+
+        // Get the domain from the health unit email.
+        const healthUnitEmailDomain = healthUnit.business_profile.email.split('@')[1];
+
+        // Get the domain from the caregiver email.
+        const caregiverEmailDomain = sanitizedReqCaregiver.email.split('@')[1];
+
+        // Check if the domains are the same.
+        if (healthUnitEmailDomain !== caregiverEmailDomain) {
+          return next(
+            new HTTPError._400(
+              'The caregiver email domain is not the same as the health unit email domain.'
+            )
+          );
+        }
+
         // Generate a random password of 8 characters.
         temporaryPassword = String(
           password.randomPassword({
@@ -98,14 +174,18 @@ export default class CaregiversController {
 
         // Create a new caregiver in the BUSINESS Cognito caregiver Pool.
         try {
-          cognitocaregiver = await this.CognitoService.addUser(
-            caregiver.email,
+          cognitocaregiver = await CaregiversController.CognitoService.addUser(
+            reqCaregiver.email,
             temporaryPassword,
-            caregiver.phone
+            reqCaregiver.phone
           );
         } catch (error: any) {
           switch (error.type) {
-            case 'INVALID_PARAMETER': {
+            case 'DUPLICATE_KEY': {
+              if (error.message === 'An account with the given email already exists.') {
+                return next(new HTTPError._409(error.message));
+              }
+
               return next(new HTTPError._400(error.message));
             }
 
@@ -115,11 +195,13 @@ export default class CaregiversController {
           }
         }
 
-        caregiver.cognito_id = cognitocaregiver.caregiverSub;
+        reqCaregiver.cognito_id = cognitocaregiver.UserSub;
 
         try {
           // Confirm the caregiver in Cognito.
-          const confirmcaregiver = this.CognitoService.adminConfirmUser(caregiver.email!);
+          const confirmcaregiver = CaregiversController.CognitoService.adminConfirmUser(
+            reqCaregiver.email!
+          );
         } catch (error: any) {
           switch (error.type) {
             case 'INVALID_PARAMETER': {
@@ -135,10 +217,12 @@ export default class CaregiversController {
 
       try {
         // Add the caregiver to the database.
-        newcaregiver = await this.CaregiversDAO.create(caregiver);
+        newcaregiver = await CaregiversController.CaregiversDAO.create(caregiver);
       } catch (error: any) {
         // If there was an error creating the caregiver in the database, delete the caregiver from Cognito.
-        const deletecaregiver = await this.CognitoService.adminDeleteUser(caregiver.email);
+        const deletecaregiver = await CaregiversController.CognitoService.adminDeleteUser(
+          reqCaregiver.email
+        );
 
         switch (error.type) {
           case 'DUPLICATE_KEY': {
@@ -151,27 +235,33 @@ export default class CaregiversController {
         }
       }
 
-      try {
-        const emailData = {
-          name: caregiver.name,
-          email: caregiver.email,
-          healthUnit: healthUnit!.business_profile!.name!,
-          password: temporaryPassword,
-        };
+      // If the permission app_caregiver is included, send an email to the caregiver with their temporary password and login instructions.
+      if (cognitocaregiver) {
+        try {
+          const emailData = {
+            name: reqCaregiver.name,
+            email: reqCaregiver.email,
+            healthUnit: healthUnit!.business_profile!.name!,
+            password: temporaryPassword,
+          };
 
-        // Insert variables into email template
-        let email = await EmailHelper.getEmailTemplateWithData('business_new_caregiver', emailData);
+          // Insert variables into email template
+          let email = await EmailHelper.getEmailTemplateWithData(
+            'business_new_caregiver',
+            emailData
+          );
 
-        if (!email || !email.htmlBody || !email.subject) {
-          throw new HTTPError._500('Error getting email template');
-        }
+          if (!email || !email.htmlBody || !email.subject) {
+            return next(new HTTPError._500('Error getting email template'));
+          }
 
-        // Send email to caregiver
-        this.SES.sendEmail([caregiver.email!], email.subject, email.htmlBody);
-      } catch (error: any) {
-        switch (error.type) {
-          default: {
-            return next(new HTTPError._500(error.message));
+          // Send email to caregiver
+          CaregiversController.SES.sendEmail([reqCaregiver.email!], email.subject, email.htmlBody);
+        } catch (error: any) {
+          switch (error.type) {
+            default: {
+              return next(new HTTPError._500(error.message));
+            }
           }
         }
       }
@@ -179,6 +269,7 @@ export default class CaregiversController {
       response.statusCode = 201;
       response.data = newcaregiver;
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -188,38 +279,60 @@ export default class CaregiversController {
 
   /**
    * @debug
-   * @description
+   * @description Returns the caregiver information from the caregiver id in the request params
    */
-  static async retrieveHealthUnitCaregiver(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_view')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
       const caregiverId = req.params.id;
 
-      let caregiver: ICaregiverModel | null = null;
+      let caregiver: ICaregiverDocument;
 
       try {
         // Get caregiver by id
-        caregiver = await this.CaregiversDAO.retrieve(caregiverId);
+        caregiver = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
+      }
+
+      if (caregiver?.health_unit?.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('Forbidden'));
       }
 
       response.statusCode = 200;
       response.data = caregiver;
 
       // Pass to the next middleware to handle the response
-
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -231,38 +344,78 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async updateHealthUnitCaregiver(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       const caregiverId = req.params.id;
-      const caregiver = req.body as ICaregiver;
-      let caregiverExists: ICaregiver | null = null;
-      let updatedcaregiver: ICaregiverModel | null = null;
+      const reqCaregiver = req.body;
+      const sanitizedReqCaregiver = omit(reqCaregiver, [
+        '_id',
+        'cognito_id',
+        'email',
+        'phone',
+        'health_unit',
+        'settings',
+      ]);
+
+      let caregiverExists: ICaregiverDocument | null = null;
+      let updatedcaregiver: ICaregiverDocument | null = null;
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_edit')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
 
       // Check if caregiver already exists by verifying the id
       try {
-        caregiverExists = await this.CaregiversDAO.retrieve(caregiverId);
+        caregiverExists = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
+
+        if (caregiverExists?.health_unit?.toString() !== user.health_unit._id.toString()) {
+          return next(new HTTPError._403('Forbidden'));
+        }
 
         // If caregiver exists, update caregiver
         if (caregiverExists) {
           // The caregiver to be updated is the caregiver from the request body. For missing fields, use the caregiver from the database.
-          updatedcaregiver = new CaregiverModel({
-            ...caregiverExists,
-            ...caregiver,
+          const caregiver = new CaregiverModel({
+            ...caregiverExists.toJSON(),
+            ...sanitizedReqCaregiver,
           });
+
+          // Validate caregiver
+          const validationError = caregiver.validateSync();
+
+          if (validationError) {
+            return next(new HTTPError._400(validationError.message));
+          }
+
           // Update caregiver in the database
-          await this.CaregiversDAO.update(updatedcaregiver);
+          updatedcaregiver = await CaregiversController.CaregiversDAO.update(caregiver!);
         }
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
@@ -283,14 +436,10 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async deleteHealthUnitCaregiver(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -300,24 +449,51 @@ export default class CaregiversController {
         return next(new HTTPError._400('Missing caregiver id'));
       }
 
-      let caregiver: ICaregiverModel | null = null;
+      let caregiver: ICaregiverDocument | null = null;
       let isDeleted = false;
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
+      if (!user.permissions.includes('users_edit')) {
+        return next(new HTTPError._403('Forbidden'));
+      }
 
       try {
         // Try to retrieve caregiver from CaregiversDAO first
-        caregiver = await this.CaregiversDAO.retrieve(caregiverId);
+        caregiver = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
       } catch (error: any) {
         switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
       }
 
+      if (caregiver?.health_unit?.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('Forbidden'));
+      }
+
       // If caregiver exists, delete caregiver from the database
       if (caregiver) {
         try {
-          const deletedcaregiver = await this.CaregiversDAO.delete(caregiverId);
-          isDeleted = !!deletedcaregiver;
+          const deletedCaregiver = await CaregiversController.CaregiversDAO.delete(caregiverId);
+          isDeleted = !!deletedCaregiver;
         } catch (error: any) {
           switch (error.type) {
             default:
@@ -329,7 +505,7 @@ export default class CaregiversController {
       // If the caregiver has access to the BUSINESS, delete the caregiver from Cognito
       if (caregiver?.cognito_id) {
         try {
-          await this.CognitoService.adminDeleteUser(caregiver.cognito_id);
+          await CaregiversController.CognitoService.adminDeleteUser(caregiver.cognito_id);
         } catch (error: any) {
           switch (error.type) {
             default:
@@ -339,7 +515,9 @@ export default class CaregiversController {
       }
 
       response.statusCode = 200;
-      response.data = { message: 'caregiver deleted.' };
+      response.data = { message: 'Caregiver deleted.' };
+
+      next(response);
 
       // Pass to the next middleware to handle the response
     } catch (error: any) {
@@ -352,18 +530,14 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async listHealthUnitCaregivers(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  static async listCaregivers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
-      let caregivers: ICaregiverModel[];
+      let caregivers: ICaregiverDocument[];
 
       let healthUnitId: string;
 
@@ -380,11 +554,15 @@ export default class CaregiversController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      healthUnitId = user.health_unit._id;
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to access this resource.'));
+      }
+
+      healthUnitId = user.health_unit._id.toString();
 
       try {
         caregivers = (
-          await this.CaregiversDAO.queryList({
+          await CaregiversController.CaregiversDAO.queryList({
             health_unit: healthUnitId,
           })
         ).data;
@@ -395,7 +573,7 @@ export default class CaregiversController {
         }
       }
 
-      response.statusCode = 200;
+      response.statusCode = caregivers.length > 0 ? 200 : 204;
       response.data = caregivers;
 
       // Pass to the next middleware to handle the response

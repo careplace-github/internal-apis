@@ -3,7 +3,7 @@ import AWS from 'aws-sdk';
 
 // @api
 import { EmailHelper } from '@api/v1/helpers';
-import { LayerError } from '@api/v1/utils';
+import { LayerError } from '@utils';
 
 // @constants
 import {
@@ -15,6 +15,11 @@ import {
 } from '@constants';
 // @logger
 import logger from '@logger';
+
+// FIXME Use custom LayerError error handling
+// FIXME Check the Stripe Error Api Response and update the error handling accordingly
+// TODO Add request logging
+// TODO Add response logging
 
 /**
  * Class to manage the `AWS SES` Service

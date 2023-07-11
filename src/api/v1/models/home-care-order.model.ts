@@ -1,15 +1,20 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IHomeCareOrderModel } from '../interfaces';
+import { IHomeCareOrderDocument } from '../interfaces';
 
-const HomeCareOrderSchema: Schema<IHomeCareOrderModel> = new Schema<IHomeCareOrderModel>(
+const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCareOrderDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
     caregiver: { type: Schema.Types.ObjectId, ref: 'Caregiver', required: false },
     customer: { type: Schema.Types.ObjectId, ref: 'marketplace_users', required: true },
     patient: { type: Schema.Types.ObjectId, ref: 'patient', required: true },
+
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: true }],
     schedule_information: {
       start_date: { type: Date, required: true },
@@ -58,7 +63,7 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderModel> = new Schema<IHomeCareOrd
   }
 );
 
-const HomeCareOrderModel: Model<IHomeCareOrderModel> = mongoose.model<IHomeCareOrderModel>(
+const HomeCareOrderModel: Model<IHomeCareOrderDocument> = mongoose.model<IHomeCareOrderDocument>(
   'HomeCareOrder',
   HomeCareOrderSchema
 );
