@@ -1,11 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IDeletedDocumentModel } from '../../interfaces';
+import { IDeletedDocumentDocument } from '../../interfaces';
 
-const DeletedDocumentSchema: Schema<IDeletedDocumentModel> = new Schema<IDeletedDocumentModel>(
+const DeletedDocumentSchema: Schema<IDeletedDocumentDocument> = new Schema<IDeletedDocumentDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
 
     document_type: { type: String, required: true },
 
@@ -25,7 +29,7 @@ const DeletedDocumentSchema: Schema<IDeletedDocumentModel> = new Schema<IDeleted
   }
 );
 
-const DeletedDocumentModel: Model<IDeletedDocumentModel> = mongoose.model<IDeletedDocumentModel>(
+const DeletedDocumentModel: Model<IDeletedDocumentDocument> = mongoose.model<IDeletedDocumentDocument>(
   'deletedDocument',
   DeletedDocumentSchema
 );

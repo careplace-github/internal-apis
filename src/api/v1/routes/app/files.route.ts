@@ -3,7 +3,7 @@ import path from 'path';
 import multer from 'multer';
 import FilesController from '../../controllers/files.controller';
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from '@utils';
 import fs from 'fs';
 const storage = multer.diskStorage({
   destination: function (req: Request, file, cb) {
@@ -24,26 +24,59 @@ const storage = multer.diskStorage({
  *
  * @see https://www.npmjs.com/package/multer
  */
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // Maximum file size (10MB)
+  },
+});
 
 const router = express.Router();
 
 router.route('/files').post(
   AuthenticationGuard,
-  // Function to check if the directory exists, if not, create it
   (req, res, next) => {
+    // Check if the directory exists, if not, create it
     if (!fs.existsSync('src/uploads')) {
       fs.mkdirSync('src/uploads');
     }
     next();
   },
-  upload.single('file'),
+
+  (req, res, next) => {
+    upload.single('file')(req, res, (err) => {
+      if (err) {
+        // Handle Multer errors
+        if (err instanceof multer.MulterError) {
+          switch (err.code) {
+            case 'LIMIT_FILE_SIZE':
+              return next(new HTTPError._400('File size is too large. Max limit is 10MB.'));
+
+            case 'LIMIT_UNEXPECTED_FILE':
+              return next(new HTTPError._400('Unexpected field. Expected `file`.'));
+
+            case 'LIMIT_FILE_COUNT':
+              return next(new HTTPError._400('Too many files to upload.'));
+
+            default:
+              return next(new HTTPError._400('File upload failed.'));
+          }
+        } else {
+          // Handle other errors
+          return res.status(500).json({ error: 'Internal server error' });
+        }
+      } else {
+        // Proceed with further processing
+        next();
+      }
+    });
+  },
+
   FilesController.create
 );
 
 router
   .route('/files/:key')
-  .get(AuthenticationGuard, FilesController.retrieve)
   .delete(AuthenticationGuard, FilesController.delete);
 
 export default router;

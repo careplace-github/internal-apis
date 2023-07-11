@@ -1,5 +1,5 @@
 import ServicesDAO from '../../db/services.dao';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from 'src/utils';
 import fs from 'fs';
 
 /**

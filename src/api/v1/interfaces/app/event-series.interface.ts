@@ -1,9 +1,12 @@
 // mongoose
 import { Document, Types } from 'mongoose';
+
+// types
+import { THomeCareOrderRecurrency } from 'src/api/v1/interfaces/types';
+
 // interfaces
 import { IAddress, ICustomer, IHealthUnit, ICollaborator, IHomeCareOrder } from '..';
-// types
-import { OrderRecurrency } from '../types';
+
 
 interface IEventSeries {
   _id: Types.ObjectId | string;
@@ -15,7 +18,7 @@ interface IEventSeries {
   order?: Types.ObjectId | IHomeCareOrder;
 
   start_date: Date;
-  recurrency: OrderRecurrency;
+  recurrency: THomeCareOrderRecurrency;
   schedule: {
     start: Date;
     end: Date;
@@ -33,6 +36,6 @@ interface IEventSeries {
   allDay?: boolean;
 }
 
-type IEventSeriesModel = IEventSeries & Document;
+type IEventSeriesDocument = IEventSeries & Document;
 
-export { IEventSeries, IEventSeriesModel };
+export { IEventSeries, IEventSeriesDocument };

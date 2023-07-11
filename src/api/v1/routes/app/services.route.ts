@@ -3,7 +3,7 @@ import Router from 'express';
 import express from 'express';
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
 
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 
 import inputValidation from '../../middlewares/validators/inputValidation.middleware';
 // Import controllers

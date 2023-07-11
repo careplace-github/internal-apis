@@ -4,7 +4,7 @@ import express from 'express';
 
 // Import controllers
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 
 const router = express.Router();
 

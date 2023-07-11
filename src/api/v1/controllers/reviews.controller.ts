@@ -12,11 +12,11 @@ import {
   IHomeCareOrder,
   IHealthUnit,
   IQueryListResponse,
-  IHealthUnitModel,
-  IHealthUnitReviewModel,
-} from '@api/v1/interfaces';
+  IHealthUnitDocument,
+  IHealthUnitReviewDocument,
+} from 'src/api/v1/interfaces';
 import { HealthUnitReviewModel } from '@api/v1/models';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 
@@ -52,15 +52,15 @@ export default class ReviewsController {
     let session: mongoose.ClientSession | null = null;
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      const healthUnitId = req.params.id;
-      let healthUnit: IHealthUnitModel;
+      const healthUnitId = req.params.healthUnit;
+      let healthUnit: IHealthUnitDocument;
 
       try {
         healthUnit = await ReviewsController.HealthUnitsDAO.retrieve(healthUnitId);
@@ -72,7 +72,7 @@ export default class ReviewsController {
       let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
-        user: user._id,
+        customer: user._id,
         health_unit: healthUnit._id,
         status: {
           $in: ['pending_payment', 'active', 'completed'],
@@ -93,7 +93,7 @@ export default class ReviewsController {
 
         if (existingReview) {
           return next(
-            new HTTPError._403(
+            new HTTPError._409(
               'You have already created a review for this healthUnit. Please update your existing review instead.'
             )
           );
@@ -158,20 +158,20 @@ export default class ReviewsController {
   ): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      const healthUnitId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
       let orders: IQueryListResponse<IHomeCareOrder>;
       let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
-        user: user._id,
+        customer: user._id,
         health_unit: healthUnitId,
         status: {
           $in: ['pending_payment', 'active', 'completed'],
@@ -194,7 +194,7 @@ export default class ReviewsController {
       try {
         const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
           health_unit: healthUnitId,
-          user: user._id,
+          customer: user._id,
         });
 
         if (existingReview) {
@@ -223,13 +223,13 @@ export default class ReviewsController {
   ): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 102,
+        statusCode: res.statusCode,
         data: {},
       };
 
       const reviewId = req.params.id;
 
-      let review: IHealthUnitReviewModel;
+      let review: IHealthUnitReviewDocument;
 
       try {
         review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId);
@@ -264,22 +264,22 @@ export default class ReviewsController {
 
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      let review: IHealthUnitReview;
+      let review: IHealthUnitReviewDocument;
 
       try {
         review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId);
       } catch (error: any) {
-        throw new HTTPError._404('Review does not exist.');
+        return next(new HTTPError._404('Review does not exist.'));
       }
 
       const previousRating = review.rating;
 
       if (review?.customer?.toString() !== user._id.toString()) {
-        throw new HTTPError._403('You are not authorized to update this review.');
+        return next(new HTTPError._403('You are not authorized to update this review.'));
       }
 
       if (req.body.rating < 1 || req.body.rating > 5 || !Number.isInteger(req.body.rating)) {
-        throw new HTTPError._400('Rating must be a natural integer between 1 and 5');
+        return next(new HTTPError._400('Rating must be a natural integer between 1 and 5'));
       }
 
       review.comment = req.body.comment;
@@ -324,8 +324,8 @@ export default class ReviewsController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
       const filters: FilterQuery<IHealthUnitReview> = {};
@@ -334,7 +334,7 @@ export default class ReviewsController {
       const documentsPerPage =
         typeof req.query.documentsPerPage === 'string' ? parseInt(req.query.documentsPerPage) : 10;
 
-      const healthUnitId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
       filters.health_unit = healthUnitId;
 
@@ -364,8 +364,8 @@ export default class ReviewsController {
         documentsPerPage,
         [
           {
-            path: 'user',
-            model: 'marketplace_user',
+            path: 'customer',
+            model: 'Customer',
             select: 'name profile_picture',
           },
         ]
@@ -393,8 +393,8 @@ export default class ReviewsController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -405,7 +405,7 @@ export default class ReviewsController {
       const userId = user._id;
 
       const filters: FilterQuery<IHealthUnitReview> = {
-        user: userId,
+        customer: userId,
       };
 
       const reviews = await ReviewsController.HealthUnitReviewsDAO.queryList(filters);
@@ -432,14 +432,14 @@ export default class ReviewsController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 102, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      const healthUnitId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
       if (!healthUnitId) {
         throw new HTTPError._400('HealthUnit ID is required.');
@@ -450,7 +450,7 @@ export default class ReviewsController {
       const userId = user._id;
 
       const filters: FilterQuery<IHealthUnitReview> = {
-        user: userId,
+        customer: userId,
         health_unit: healthUnitId,
       };
 

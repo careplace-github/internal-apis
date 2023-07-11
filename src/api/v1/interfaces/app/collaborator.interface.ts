@@ -1,9 +1,9 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // interfaces
-import { IAddress, IHealthUnit, ISettings } from '..';
+import { IAddress, IHealthUnit, ISettings } from 'src/api/v1/interfaces';
 // types
-import { Gender, Permission, Role } from '../types';
+import { TGender, TCollaboratorPermission, TBusinessRole } from 'src/api/v1/interfaces/types';
 
 interface ICollaborator {
   _id: Types.ObjectId | string;
@@ -12,15 +12,14 @@ interface ICollaborator {
   email: string;
   phone: string;
   birthdate: Date;
-  gender: Gender;
+  gender: TGender;
   health_unit: Types.ObjectId | IHealthUnit;
   address: IAddress;
-  role: Exclude<Role, 'caregiver'>;
-  permissions: Permission[];
+  role: Exclude<TBusinessRole, 'caregiver'>;
+  permissions: TCollaboratorPermission[];
   settings: ISettings;
   profile_picture?: string;
 }
+type ICollaboratorDocument = ICollaborator & Document;
 
-type ICollaboratorModel = ICollaborator & Document;
-
-export { ICollaborator, ICollaboratorModel };
+export { ICollaborator, ICollaboratorDocument };

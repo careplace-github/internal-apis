@@ -2,22 +2,22 @@ import express from 'express';
 
 import PatientsController from '../../controllers/patients.controller';
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 
 const router = express.Router();
 
 router
   .route('/customers/patients')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), PatientsController.createCustomerPatient)
-  .get(AuthenticationGuard, AccessGuard('marketplace'), PatientsController.listPatientsByCustomer);
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.createCustomerPatient)
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.listCustomerPatients);
 
 router
   .route('/customers/patients/:id')
-  .get(AuthenticationGuard, AccessGuard('marketplace'), PatientsController.retrieveCustomerPatient)
-  .put(AuthenticationGuard, AccessGuard('marketplace'), PatientsController.updateCustomerPatient)
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.retrieveCustomerPatient)
+  .put(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.updateCustomerPatient)
   .delete(
     AuthenticationGuard,
-    AccessGuard('marketplace'),
+    ClientGuard('marketplace'),
     PatientsController.deleteCustomerPatient
   );
 

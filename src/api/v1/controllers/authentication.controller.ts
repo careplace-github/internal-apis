@@ -10,6 +10,7 @@ import {
   HealthUnitReviewsDAO,
   CollaboratorsDAO,
   CustomersDAO,
+  CaregiversDAO,
 } from '@api/v1/db';
 import { AuthHelper } from '@api/v1/helpers';
 import {
@@ -20,21 +21,23 @@ import {
   IHomeCareOrder,
   IHealthUnit,
   IQueryListResponse,
-  ICustomerModel,
-  ICollaboratorModel,
-} from '@api/v1/interfaces';
+  ICustomerDocument,
+  ICollaboratorDocument,
+} from 'src/api/v1/interfaces';
 import { CustomerModel } from '@api/v1/models';
 import { CognitoService, StripeService } from '@api/v1/services';
-import { HTTPError } from '@api/v1/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 // @constants
 import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_BUSINESS_CLIENT_ID } from '@constants';
 import Stripe from 'stripe';
+import { CognitoIdentityServiceProvider } from 'aws-sdk';
 
 export default class AuthenticationController {
   // db
   static CollaboratorsDAO = new CollaboratorsDAO();
+  static CaregiversDAO = new CaregiversDAO();
   static CustomersDAO = new CustomersDAO();
   static HealthUnitsDAO = new HealthUnitsDAO();
   // services
@@ -46,16 +49,15 @@ export default class AuthenticationController {
     try {
       let response: any = {};
 
-      let clientId: string;
+      const clientId = req.headers['x-client-id'];
       let Cognito: CognitoService;
-      let app: string;
 
-      if (req.url === `/auth/marketplace/signup`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-        app = 'marketplace';
-      } else {
-        next(new HTTPError._400('Invalid login request.'));
-        return;
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
+      }
+
+      if (clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        return next(new HTTPError._400('Invalid client id.'));
       }
 
       Cognito = new CognitoService(clientId);
@@ -67,7 +69,15 @@ export default class AuthenticationController {
 
       // create a new customer model
       let newCustomer = new CustomerModel(reqCustomer);
-      // get the password and confirm password from the request body
+
+      // validate the new customer model
+      const validationError = newCustomer.validateSync({ pathsToSkip: ['cognito_id'] });
+
+      if (validationError) {
+        next(new HTTPError._400(validationError.message));
+        return;
+      }
+
       let cognitoResponse: any;
 
       let mongodbResponse: any;
@@ -89,7 +99,7 @@ export default class AuthenticationController {
       newCustomer.cognito_id = cognitoResponse.UserSub;
 
       try {
-        mongodbResponse = await this.CustomersDAO.create(newCustomer);
+        mongodbResponse = await AuthenticationController.CustomersDAO.create(newCustomer);
         delete mongodbResponse._id;
         delete mongodbResponse.cognito_id;
       } catch (err: any) {
@@ -107,6 +117,7 @@ export default class AuthenticationController {
       response.statusCode = 200;
       response.data = mongodbResponse;
 
+      // pass the response to the next middleware
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -125,21 +136,22 @@ export default class AuthenticationController {
         data: {},
       };
 
-      let clientId: string;
+      const clientId = req.headers['x-client-id'];
       let Cognito: CognitoService;
-      let app: string;
 
-      const { email } = req.body as { email: string };
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
+      }
 
-      if (req.url === `/auth/marketplace/send/confirmation-code`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-        app = 'marketplace';
-      } else {
-        next(new HTTPError._400('Invalid request.'));
-        return;
+      if (
+        clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
+        clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
+      ) {
+        return next(new HTTPError._400('Invalid client id.'));
       }
 
       Cognito = new CognitoService(clientId);
+      const { email } = req.body as { email: string };
 
       let cognitoResponse: any;
 
@@ -166,6 +178,7 @@ export default class AuthenticationController {
         message: 'Confirmation code sent successfully.',
       };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -183,25 +196,24 @@ export default class AuthenticationController {
         data: {},
       };
 
-      let clientId: string;
-      let Cognito: any;
-      let app: string;
-      let user: any;
+      let Cognito: CognitoService;
+      let user: ICustomerDocument;
 
-      const { email, code } = req.body as { email: string; code: string };
+      const clientId = req.headers['x-client-id'];
 
-      if (req.url === `/auth/marketplace/verify/confirmation-code`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-        app = 'marketplace';
-      } else {
-        response.statusCode = 400;
-        response.data = { message: 'Invalid request.' };
-        return next(response);
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
+      }
+
+      if (clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        return next(new HTTPError._400('Invalid client id.'));
       }
 
       Cognito = new CognitoService(clientId);
 
-      let cognitoResponse: any;
+      let cognitoResponse: CognitoIdentityServiceProvider.ConfirmSignUpResponse;
+
+      const { email, code } = req.body as { email: string; code: string };
 
       try {
         cognitoResponse = await Cognito.confirmUser(email, code);
@@ -219,7 +231,7 @@ export default class AuthenticationController {
       }
 
       try {
-        user = await this.CustomersDAO.queryOne({
+        user = await AuthenticationController.CustomersDAO.queryOne({
           email: email,
         });
       } catch (error: any) {
@@ -227,21 +239,19 @@ export default class AuthenticationController {
       }
 
       const customer_id = (
-        await this.StripeService.createCustomer({
+        await AuthenticationController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
           phone: user.phone,
         })
       ).id;
 
-      console.log('STRIPE: ' + JSON.stringify(customer_id, null, 2));
-
       try {
         user.stripe_information = {
           customer_id: customer_id,
         };
 
-        await this.CustomersDAO.update(user);
+        await AuthenticationController.CustomersDAO.update(user);
       } catch (error: any) {
         return next(new HTTPError._500(error.message));
       }
@@ -251,6 +261,7 @@ export default class AuthenticationController {
         message: 'Confirmation code verified successfully. User is now active and able to login.',
       };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -258,7 +269,7 @@ export default class AuthenticationController {
     }
   }
 
-  static async login(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async signin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       logger.info(
         `Authentication Controller LOGIN Request: \n ${JSON.stringify(req.body, null, 2)}`
@@ -269,22 +280,25 @@ export default class AuthenticationController {
         data: {},
       };
 
-      let clientId: string;
-      let app: string;
       let cognitoResponse: any = {};
 
       const { email, password } = req.body as { email: string; password: string };
 
-      if (req.url === `/auth/business/login`) {
-        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
-        app = 'business';
-      } else if (req.url === `/auth/marketplace/login`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-        app = 'marketplace';
-      } else {
-        response.statusCode = 400;
-        response.data = { message: 'Invalid login request.' };
-        return next(response);
+      if (!email || !password) {
+        return next(new HTTPError._400('Missing required parameters.'));
+      }
+
+      const clientId = req.headers['x-client-id'];
+
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
+      }
+
+      if (
+        clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
+        clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
+      ) {
+        return next(new HTTPError._400('Invalid client id.'));
       }
 
       const Cognito = new CognitoService(clientId);
@@ -310,9 +324,7 @@ export default class AuthenticationController {
       if (cognitoResponse.ChallengeName != null) {
         switch (cognitoResponse.ChallengeName) {
           case 'NEW_PASSWORD_REQUIRED':
-            /**
-             * @todo
-             */
+            // FIXME handle cognito response challenges
             break;
         }
       } else {
@@ -327,6 +339,7 @@ export default class AuthenticationController {
         response.data = responseAux;
       }
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -341,11 +354,7 @@ export default class AuthenticationController {
         data: {},
       };
 
-      let cognitoResponse: any;
-
       let accessToken: string;
-
-      const { oldPassword, newPassword } = req.body as { oldPassword: string; newPassword: string };
 
       // Check if there is an authorization header
       if (req.headers.authorization) {
@@ -356,7 +365,14 @@ export default class AuthenticationController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const Cognito = new CognitoService(accessToken);
+      const { oldPassword, newPassword } = req.body as { oldPassword: string; newPassword: string };
+      let cognitoResponse: any;
+
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+        accessToken
+      );
+
+      const Cognito = new CognitoService(clientId);
 
       try {
         cognitoResponse = await Cognito.changeUserPassword(accessToken, oldPassword, newPassword);
@@ -381,6 +397,7 @@ export default class AuthenticationController {
         message: 'Password changed successfully',
       };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -388,28 +405,32 @@ export default class AuthenticationController {
     }
   }
 
-  static async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async signout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let token: string;
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
 
-      let clientId: string;
-      let app: string;
+      let accessToken: string;
 
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+        accessToken
+      );
 
       const Cognito = new CognitoService(clientId);
 
-      if (req.headers.authorization) {
-        token = req.headers.authorization.split(' ')[1];
-      } else {
-        return next(new HTTPError._400('No authorization token provided.'));
-      }
-
       try {
-        await Cognito.logoutUser(token);
+        await Cognito.logoutUser(accessToken);
       } catch (error: any) {
         logger.error(
           `Authentication Controller LOGOUT Error: \n ${JSON.stringify(error, null, 2)}`
@@ -433,6 +454,7 @@ export default class AuthenticationController {
       response.statusCode = 200;
       response.data = { message: 'User logged out successfully' };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -451,18 +473,22 @@ export default class AuthenticationController {
         data: {},
       };
 
-      let clientId: string;
       let Cognito: CognitoService;
 
-      const { email } = req.body as { email: string };
+      const clientId = req.headers['x-client-id'];
 
-      if (req.url === `/auth/business/send/forgot-password-code`) {
-        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
-      } else if (req.url === `/auth/marketplace/send/forgot-password-code`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-      } else {
-        return next(new HTTPError._400('Invalid login request.'));
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
       }
+
+      if (
+        clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
+        clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
+      ) {
+        return next(new HTTPError._400('Invalid client id.'));
+      }
+
+      const { email } = req.body as { email: string };
 
       Cognito = new CognitoService(clientId);
 
@@ -483,6 +509,7 @@ export default class AuthenticationController {
         message: 'Password reset code sent successfully',
       };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -507,15 +534,27 @@ export default class AuthenticationController {
         newPassword: string;
       };
 
-      let clientId: string;
+      if (!email || !code || !newPassword) {
+        return next(
+          new HTTPError._400(
+            'Missing required parameters. Required parameters: email, code, newPassword.'
+          )
+        );
+      }
+
       let Cognito: CognitoService;
 
-      if (req.url === `/auth/business/verify/forgot-password-code`) {
-        clientId = AWS_COGNITO_BUSINESS_CLIENT_ID;
-      } else if (req.url === `/auth/marketplace/verify/forgot-password-code`) {
-        clientId = AWS_COGNITO_MARKETPLACE_CLIENT_ID;
-      } else {
-        throw new HTTPError._400('Invalid login request.');
+      const clientId = req.headers['x-client-id'];
+
+      if (!clientId) {
+        return next(new HTTPError._400('Missing required header: x-client-id'));
+      }
+
+      if (
+        clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
+        clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
+      ) {
+        return next(new HTTPError._400('Invalid client id.'));
       }
 
       Cognito = new CognitoService(clientId);
@@ -538,6 +577,7 @@ export default class AuthenticationController {
       response.statusCode = 200;
       response.data = { message: 'Password reset successfully.' };
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -545,18 +585,14 @@ export default class AuthenticationController {
     }
   }
 
-  static async account(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
-      let responseAux: any = {};
 
-      let cognitoId: string;
       let app: string = '';
-
-      let cognitoResponse: any = {};
 
       let accessToken: string;
 
@@ -569,25 +605,34 @@ export default class AuthenticationController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let clientId = await this.AuthHelper.getClientId(accessToken);
+      const [clientId, cognitoId] = await Promise.all([
+        AuthenticationController.AuthHelper.getClientIdFromAccessToken(accessToken),
+        AuthenticationController.AuthHelper.getAuthId(accessToken),
+      ]);
 
-      let userAttributes: any;
+      logger.info("CLIENT ID: " + clientId)
+
+      let userAttributes: CognitoIdentityServiceProvider.AttributeListType | undefined;
 
       try {
-        userAttributes = await this.AuthHelper.getUserAttributes(accessToken);
+        userAttributes = await AuthenticationController.AuthHelper.getUserAttributes(accessToken);
       } catch (error: any) {
         throw new HTTPError._500(error.message);
       }
 
-      cognitoId = userAttributes.find((attribute) => attribute.Name === 'sub')?.Value;
+      let phoneVerified = false;
+      let emailVerified = false;
 
-      let phoneVerified = userAttributes.find(
-        (attribute) => attribute.Name === 'phone_number_verified'
-      )?.Value;
+      if (userAttributes) {
+        phoneVerified =
+          userAttributes.find((attribute) => attribute.Name === 'phone_number_verified')?.Value ===
+          'true';
 
-      let emailVerified = userAttributes.find(
-        (attribute) => attribute.Name === 'email_verified'
-      )?.Value;
+        emailVerified =
+          userAttributes.find((attribute) => attribute.Name === 'email_verified')?.Value === 'true';
+      }
+
+
 
       if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
         app = 'business';
@@ -595,11 +640,15 @@ export default class AuthenticationController {
         app = 'marketplace';
       }
 
-      let user: ICustomerModel | ICollaboratorModel | null = null;
+      logger.debug("APP: " + app)
+      logger.info("APP: "+ app)
+
+
+      let user: ICustomerDocument | ICollaboratorDocument | null = null;
 
       try {
         if (app === 'business') {
-          user = await this.CollaboratorsDAO.queryOne(
+          user = await AuthenticationController.CollaboratorsDAO.queryOne(
             {
               cognito_id: '39425f3b-a637-4e6a-9db4-97fd2132a416',
             },
@@ -613,18 +662,13 @@ export default class AuthenticationController {
                     model: 'Service',
                     select: '-__v -created_at -updated_at -translations',
                   },
-                  {
-                    path: 'team',
-                    model: 'business_user',
-                    select: '-__v -createdAt -updatedAt -cognito_id -settings',
-                  },
                 ],
                 select: '-__v -createdAt -updatedAt',
               },
             ]
           );
         } else if (app === 'marketplace') {
-          user = await this.CustomersDAO.queryOne({
+          user = await AuthenticationController.CustomersDAO.queryOne({
             cognito_id: { $eq: cognitoId },
           });
         }
@@ -645,10 +689,12 @@ export default class AuthenticationController {
       let Stripe = new StripeService();
       let connectedAccountId: string;
       let externalAccounts: any;
-      if (app === 'business' && userJSON.health_unit.stripe_information.account_id) {
+      if (app === 'business' && userJSON?.health_unit.stripe_information?.account_id) {
         connectedAccountId = userJSON.health_unit.stripe_information.account_id;
 
-        externalAccounts = await this.StripeService.listExternalAccounts(connectedAccountId);
+        externalAccounts = await AuthenticationController.StripeService.listExternalAccounts(
+          connectedAccountId
+        );
         userJSON.health_unit.stripe_information.external_accounts = externalAccounts.data;
       }
 
@@ -662,7 +708,7 @@ export default class AuthenticationController {
         customerId = (user as ICustomer).stripe_information?.customer_id;
 
         const default_payment_method = (
-          (await this.StripeService.getCustomer(customerId)) as Stripe.Customer
+          (await AuthenticationController.StripeService.getCustomer(customerId)) as Stripe.Customer
         ).default_source;
 
         userJSON.stripe_information.default_payment_method = default_payment_method;
@@ -680,10 +726,121 @@ export default class AuthenticationController {
       response.statusCode = 200;
       response.data = user;
 
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       return next(new HTTPError._500(error.message));
+    }
+  }
+
+  // TODO updateAccount
+  static async updateAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
+
+      const userId = user._id;
+
+      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+        accessToken
+      );
+      let app: string = '';
+
+      if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
+        app = 'business';
+      } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
+        app = 'marketplace';
+      }
+
+      const reqUser = req.body as ICustomerDocument | ICollaboratorDocument;
+      let userExists;
+      let updatedUser;
+
+      // Check if user already exists by verifying the id
+      try {
+        userExists = await AuthenticationController.CollaboratorsDAO.retrieve(userId);
+
+        // If user exists, update user
+        if (userExists) {
+          // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+          updatedUser = {
+            ...userExists,
+            ...user,
+          };
+          await AuthenticationController.CollaboratorsDAO.update(updatedUser);
+        }
+      } catch (error) {
+        try {
+          userExists = await AuthenticationController.CaregiversDAO.retrieve(userId);
+          if (userExists) {
+            // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+            updatedUser = {
+              ...userExists,
+              ...user,
+            };
+            await AuthenticationController.CaregiversDAO.update(updatedUser);
+          }
+        } catch (error) {
+          try {
+            userExists = await AuthenticationController.CustomersDAO.retrieve(userId);
+            if (userExists) {
+              // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+              updatedUser = {
+                ...userExists,
+                ...user,
+              };
+              await AuthenticationController.CustomersDAO.update(updatedUser);
+            }
+          } catch (error: any) {
+            switch (error.type) {
+              default:
+                logger.warn('Error: ' + error);
+            }
+          }
+        }
+      }
+
+      if (!userExists) {
+        response.statusCode = 400;
+        response.data = { message: 'User does not exist.' };
+
+        logger.warn(
+          'Users Controller updateUser error: ' + JSON.stringify(response, null, 2) + '\n'
+        );
+
+        next(response);
+      } else {
+        // Update user
+
+        if (updatedUser) {
+          response.statusCode = 200;
+          response.data = updatedUser;
+
+          logger.info(
+            'USERS-DAO UPDATE_USER RESULT: ' + JSON.stringify(updatedUser, null, 2) + '\n'
+          );
+
+          next(response);
+        }
+      }
+    } catch (error) {
+      next(error);
     }
   }
 }

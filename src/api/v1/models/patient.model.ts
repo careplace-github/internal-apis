@@ -1,11 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IPatientModel } from '../interfaces';
+import { IPatientDocument } from '../interfaces';
 
-const PatientSchema: Schema<IPatientModel> = new Schema<IPatientModel>(
+const PatientSchema: Schema<IPatientDocument> = new Schema<IPatientDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
     customer: { type: Schema.Types.ObjectId, ref: 'customer', required: false },
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
 
@@ -50,6 +54,6 @@ const PatientSchema: Schema<IPatientModel> = new Schema<IPatientModel>(
   }
 );
 
-const PatientModel: Model<IPatientModel> = mongoose.model<IPatientModel>('Patient', PatientSchema);
+const PatientModel: Model<IPatientDocument> = mongoose.model<IPatientDocument>('Patient', PatientSchema);
 
 export { PatientSchema, PatientModel };

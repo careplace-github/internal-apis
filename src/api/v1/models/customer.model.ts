@@ -1,11 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICustomerModel } from '../interfaces';
+import { ICustomerDocument } from '../interfaces';
 
-const CustomerSchema: Schema<ICustomerModel> = new Schema<ICustomerModel>(
+const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
   {
-    _id: Schema.Types.ObjectId,
+    _id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      auto: true,
+    },
 
     cognito_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -32,6 +36,12 @@ const CustomerSchema: Schema<ICustomerModel> = new Schema<ICustomerModel>(
     stripe_information: {
       customer_id: { type: String, required: false },
     },
+    permissions: {
+      type: [String],
+      required: true,
+      default: ['app_user'],
+      enum: [],
+    },
     settings: {
       theme: {
         type: String,
@@ -55,7 +65,7 @@ const CustomerSchema: Schema<ICustomerModel> = new Schema<ICustomerModel>(
   }
 );
 
-const CustomerModel: Model<ICustomerModel> = mongoose.model<ICustomerModel>(
+const CustomerModel: Model<ICustomerDocument> = mongoose.model<ICustomerDocument>(
   'Customer',
   CustomerSchema
 );

@@ -8,6 +8,6 @@ export default interface IFile {
   url: string;
 }
 
-type IFileModel = IFile & Document;
+type IFileDocument = IFile & Document;
 
-export { IFile, IFileModel };
+export { IFile, IFileDocument };

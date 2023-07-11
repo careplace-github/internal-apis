@@ -1,13 +1,15 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { ICaregiverModel } from '../interfaces';
+import { ICaregiverDocument } from '../interfaces';
 
-const CaregiverSchema: Schema<ICaregiverModel> = new Schema<ICaregiverModel>(
+const CaregiverSchema: Schema<ICaregiverDocument> = new Schema<ICaregiverDocument>(
   {
     _id: Types.ObjectId,
 
     name: { type: String, required: true },
+
+    cognito_id: { type: String, required: false, unique: true },
 
     email: { type: String, required: true, unique: true },
 
@@ -48,6 +50,20 @@ const CaregiverSchema: Schema<ICaregiverModel> = new Schema<ICaregiverModel>(
     },
 
     profile_picture: { type: String, required: false },
+
+    settings: {
+      theme: {
+        type: String,
+        required: true,
+        default: 'light',
+        enum: ['light', 'dark'],
+      },
+      notifications: {
+        email: { type: Boolean, required: true, default: true },
+        push: { type: Boolean, required: true, default: true },
+        sms: { type: Boolean, required: true, default: true },
+      },
+    },
   },
   {
     timestamps: true, // createdAt, updatedAt
@@ -57,7 +73,7 @@ const CaregiverSchema: Schema<ICaregiverModel> = new Schema<ICaregiverModel>(
   }
 );
 
-const CaregiverModel: Model<ICaregiverModel> = mongoose.model<ICaregiverModel>(
+const CaregiverModel: Model<ICaregiverDocument> = mongoose.model<ICaregiverDocument>(
   'Caregiver',
   CaregiverSchema
 );

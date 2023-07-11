@@ -8,7 +8,7 @@ import OrdersController from '../../controllers/orders.controller';
 import collaboratorsController from '../../controllers/collaborators.controller';
 import StripeController from '../../controllers/payments.controller';
 import AuthenticationGuard from '../../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
+import ClientGuard from '../../middlewares/guards/clientGuard.middleware';
 
 /**
  * Health Units Routes
@@ -16,14 +16,16 @@ import AccessGuard from '../../middlewares/guards/accessGuard.middleware';
  * - Agency / Empresa SAD
  * - Retirement Homes / Lares de Idosos
  * - Senior Residences / Residências Sénior
+ * - Hospitals / Hospitais
  */
 
 const router = express.Router();
-router.route('/health-units/agencies/search').get(healthUnitsController.searchHealthUnits);
-router.route('/health-units/agencies/:id').get(healthUnitsController.retrieve);
+router.route('/health-units/agencies/search').get(healthUnitsController.searchAgencies);
 
 router
-  .route('/health-units/agencies/dashboard')
-  .get(AuthenticationGuard, AccessGuard('business'), healthUnitsController.getDashboard);
+  .route('/health-units/dashboard')
+  .get(AuthenticationGuard, ClientGuard('business'), healthUnitsController.getDashboard);
+
+router.route('/health-units/:id').get(healthUnitsController.retrieveHealthUnit);
 
 export default router;

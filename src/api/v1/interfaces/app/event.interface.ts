@@ -1,11 +1,18 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // interfaces
-import { IAddress, ICaregiver, ICollaborator, IHealthUnit, IEventSeries, IHomeCareOrder } from '../';
+import {
+  IAddress,
+  ICaregiver,
+  ICollaborator,
+  IHealthUnit,
+  IEventSeries,
+  IHomeCareOrder,
+} from 'src/api/v1/interfaces';
 
 interface IEvent {
   _id: Types.ObjectId | string;
-  series?: Types.ObjectId | IEventSeries;
+  event_series?: Types.ObjectId | IEventSeries;
 
   ownerType: 'health_unit' | 'collaborator';
   owner: Types.ObjectId | ICollaborator | IHealthUnit;
@@ -22,6 +29,6 @@ interface IEvent {
   allDay?: boolean;
 }
 
-type IEventModel = IEvent & Document;
+type IEventDocument = IEvent & Document;
 
-export { IEvent, IEventModel };
+export { IEvent, IEventDocument };
