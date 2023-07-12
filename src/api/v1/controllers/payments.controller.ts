@@ -296,8 +296,9 @@ export default class PaymentsController {
         status: ['active', 'pending_payment'],
       };
 
-      let orders = (
+      const orders = (
         await PaymentsController.HomeCareOrdersDAO.queryList({
+          // queryList returns 402 if no results so we don't need error handling
           filters,
         })
       ).data;
