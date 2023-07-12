@@ -145,6 +145,45 @@ export default class CognitoService {
     return response;
   }
 
+  async updateUserAttributes(
+    Username: string,
+    userAttributes: CognitoIdentityServiceProvider.Types.AttributeListType
+  ): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+    logger.info(`Cognito Service UPDATE_USER_ATTRIBUTES Request: \n email: ${userAttributes} \n`);
+
+    let response: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse;
+
+    let params: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesRequest = {
+      UserAttributes: userAttributes,
+      UserPoolId: this.userPoolId,
+      Username,
+    };
+
+    try {
+      response = await this.cognito.adminUpdateUserAttributes(params).promise();
+    } catch (error: any) {
+      logger.error(`Cognito Service UPDATE_USER_ATTRIBUTES Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
+
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(`
+    Cognito Service UPDATE_USER_ATTRIBUTES Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
+
+    return response;
+  }
+
   /**
    * @description Send a confirmation code to the user. For the BUSINESS users the code is sent to the user email and for the Marketplace users the code is sent to the user phone number.
    * @param {String} email - User email.
@@ -192,6 +231,97 @@ export default class CognitoService {
     logger.info(
       `Cognito Service SEND_CONFIRMATION_CODE Response: \n ${JSON.stringify(response, null, 2)} \n`
     );
+
+    return response;
+  }
+
+  async sendUserAttributeVerificationCode(
+    accessToken: string,
+    attributeName: 'email' | 'phone_number'
+  ): Promise<CognitoIdentityServiceProvider.Types.GetUserAttributeVerificationCodeResponse> {
+    logger.info(
+      `Cognito Service GET_USER_ATTRIBUTE_VERIFICATION_CODE Request: \n Attribute: ${attributeName} \n`
+    );
+
+    const params: CognitoIdentityServiceProvider.Types.GetUserAttributeVerificationCodeRequest = {
+      AccessToken: accessToken,
+      AttributeName: attributeName,
+    };
+
+    let response: CognitoIdentityServiceProvider.Types.GetUserAttributeVerificationCodeResponse;
+
+    try {
+      response = await this.cognito.getUserAttributeVerificationCode(params).promise();
+    } catch (error: any) {
+      logger.error(`Cognito Service GET_USER_ATTRIBUTE_VERIFICATION_CODE Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
+
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(`
+    Cognito Service GET_USER_ATTRIBUTE_VERIFICATION_CODE Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
+
+    return response;
+  }
+
+  async verifyUserAttributeCode(
+    accessToken: string,
+    attributeName: string,
+    code: string
+  ): Promise<CognitoIdentityServiceProvider.Types.VerifyUserAttributeResponse> {
+    logger.info(
+      `Cognito Service VERIFY_USER_ATTRIBUTE_CODE Request: \n Attribute: ${attributeName} \n`
+    );
+
+    const params: CognitoIdentityServiceProvider.Types.VerifyUserAttributeRequest = {
+      AccessToken: accessToken,
+      AttributeName: attributeName,
+      Code: code,
+    };
+
+    let response: CognitoIdentityServiceProvider.Types.VerifyUserAttributeResponse;
+
+    try {
+      response = await this.cognito.verifyUserAttribute(params).promise();
+    } catch (error: any) {
+      logger.error(`Cognito Service VERIFY_USER_ATTRIBUTE_CODE Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
+
+      switch (error.code) {
+        case 'CodeMismatchException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'ExpiredCodeException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'LimitExceededException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'UserNotFoundException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(`
+    Cognito Service VERIFY_USER_ATTRIBUTE_CODE Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
 
     return response;
   }
