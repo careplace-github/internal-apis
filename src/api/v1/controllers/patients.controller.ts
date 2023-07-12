@@ -16,6 +16,7 @@ import {
   IQueryListResponse,
   IPatient,
   IPatientDocument,
+  IHomeCareOrderDocument,
 } from 'src/api/v1/interfaces';
 // @api/common
 import { HTTPError } from 'src/utils';
@@ -246,9 +247,10 @@ export default class PatientsController {
         return next(new HTTPError._403('You are not allowed to access this resource'));
       }
 
+      // If the patient has orders, do not allow deleting
       const patientOrders = (
         await PatientsController.HomeCareOrdersDAO.queryList({ patient: patientID })
-      ).data;
+      ).data; // queryList returns 402 if no results so we don't need error handling
 
       if (patientOrders.length > 0) {
         return next(new HTTPError._409('You cannot delete a patient with associated orders'));
