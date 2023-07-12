@@ -13,7 +13,7 @@ const customFormat = format.combine(
 
 const loggerTransports = [
   new transports.Console(),
-  ...(process.env.NODE_ENV !== 'development'
+  ...(process.env.NODE_ENV === 'development'
     ? [
         new transports.File({
           filename: './src/logs/server.log',
