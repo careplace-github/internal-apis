@@ -492,24 +492,21 @@ export default class StripeService {
    */
   static async constructEvent(
     payload: string | Buffer,
-    header: string | string[] | Buffer,
+    signature: string | string[] | Buffer,
     secret: string,
     tolerance?: number | undefined,
     cryptoProvider?: Stripe.CryptoProvider | undefined
   ): Promise<Stripe.Event> {
-    logger.info('StripeService.constructEvent', {
-      payload,
-      header,
-      secret,
-      tolerance,
-      cryptoProvider,
-    });
+    logger.info(
+      'StripeService.constructEvent' +
+        JSON.stringify({ payload, header: signature, secret, tolerance, cryptoProvider }, null, 2)
+    );
 
     let stripeEvent: Stripe.Event;
     try {
-      stripeEvent = await this.Stripe.webhooks.constructEvent(
+      stripeEvent = this.Stripe.webhooks.constructEvent(
         payload,
-        header,
+        signature,
         secret,
         tolerance,
         cryptoProvider
@@ -621,7 +618,7 @@ export default class StripeService {
     params?: Stripe.SubscriptionCancelParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Subscription> {
-    logger.info('StripeService.cancelSubscription'+ { subscriptionId, params, options });
+    logger.info('StripeService.cancelSubscription' + { subscriptionId, params, options });
 
     let subscription: Stripe.Subscription;
 
@@ -636,7 +633,6 @@ export default class StripeService {
 
     return subscription;
   }
-
 
   /**
    * When a subscription is created it automatically tries to charge the customer's default payment method.
