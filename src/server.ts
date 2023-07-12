@@ -435,7 +435,7 @@ const main = async () => {
       // Use JSON parser for all non-webhook routes
 
       app.use((req: Request, res: Response, next: NextFunction) => {
-        if (req.originalUrl === '/api/v1/webhooks/stripe/connect') {
+        if (req.originalUrl === '/v1/webhooks/stripe') {
           next();
         } else {
           express.json()(req, res, next);

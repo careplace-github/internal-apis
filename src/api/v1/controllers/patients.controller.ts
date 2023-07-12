@@ -19,7 +19,7 @@ import {
   IHomeCareOrderDocument,
 } from 'src/api/v1/interfaces';
 // @api/common
-import { HTTPError } from 'src/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 import { PatientModel } from '../models';
