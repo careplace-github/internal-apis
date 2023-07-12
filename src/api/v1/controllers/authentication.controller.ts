@@ -23,9 +23,8 @@ import {
   IQueryListResponse,
   ICustomerDocument,
   ICollaboratorDocument,
-  ICaregiverDocument,
 } from 'src/api/v1/interfaces';
-import { CaregiverModel, CollaboratorModel, CustomerModel } from '@api/v1/models';
+import { CustomerModel } from '@api/v1/models';
 import { CognitoService, StripeService } from '@api/v1/services';
 import { HTTPError } from '@utils';
 // @logger
@@ -34,7 +33,6 @@ import logger from '@logger';
 import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_BUSINESS_CLIENT_ID } from '@constants';
 import Stripe from 'stripe';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import { omit } from 'lodash';
 
 export default class AuthenticationController {
   // db
@@ -292,7 +290,7 @@ export default class AuthenticationController {
         password: string;
       };
 
-      if ((!email && !phone) || !password) {
+      if ( (!email  && !phone) || !password) {
         return next(new HTTPError._400('Missing required parameters.'));
       }
 
@@ -741,6 +739,7 @@ export default class AuthenticationController {
     }
   }
 
+  // TODO updateAccount
   static async updateAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
@@ -761,6 +760,8 @@ export default class AuthenticationController {
 
       const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
 
+      const userId = user._id;
+
       let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
@@ -772,504 +773,78 @@ export default class AuthenticationController {
         app = 'marketplace';
       }
 
-      const reqUser = req.body as ICustomerDocument | ICollaboratorDocument | ICaregiverDocument;
+      const reqUser = req.body as ICustomerDocument | ICollaboratorDocument;
+      let userExists;
+      let updatedUser;
 
-      const sanitizedReqUser = omit(reqUser, ['_id', 'cognito_id', 'email', 'phone']);
+      // Check if user already exists by verifying the id
+      try {
+        userExists = await AuthenticationController.CollaboratorsDAO.retrieve(userId);
 
-      const updatedUserFields = {
-        ...user.toJSON(),
-        ...sanitizedReqUser,
-      };
-
-      let updatedUser: ICustomerDocument | ICollaboratorDocument | ICaregiverDocument | undefined;
-
-      if (user instanceof CollaboratorModel) {
-        const updateUser = new CollaboratorModel(updatedUserFields);
-
-        // validate user
-        const validationError = updateUser.validateSync();
-
-        if (validationError) {
-          return next(new HTTPError._400(validationError.message));
+        // If user exists, update user
+        if (userExists) {
+          // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+          updatedUser = {
+            ...userExists,
+            ...user,
+          };
+          await AuthenticationController.CollaboratorsDAO.update(updatedUser);
         }
-
-        // Update user
+      } catch (error) {
         try {
-          updatedUser = await AuthenticationController.CollaboratorsDAO.update(updateUser);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
+          userExists = await AuthenticationController.CaregiversDAO.retrieve(userId);
+          if (userExists) {
+            // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+            updatedUser = {
+              ...userExists,
+              ...user,
+            };
+            await AuthenticationController.CaregiversDAO.update(updatedUser);
           }
-        }
-      } else if (user instanceof CaregiverModel) {
-        const updateUser = new CaregiverModel(updatedUserFields);
-
-        // validate user
-        const validationError = updateUser.validateSync();
-
-        if (validationError) {
-          return next(new HTTPError._400(validationError.message));
-        }
-
-        // Update user
-        try {
-          updatedUser = await AuthenticationController.CaregiversDAO.update(updateUser);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      } else if (user instanceof CustomerModel) {
-        const updateUser = new CustomerModel(updatedUserFields);
-
-        // validate user
-        const validationError = updateUser.validateSync();
-
-        if (validationError) {
-          return next(new HTTPError._400(validationError.message));
-        }
-
-        // Update user
-        try {
-          updatedUser = await AuthenticationController.CustomersDAO.update(updateUser);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
+        } catch (error) {
+          try {
+            userExists = await AuthenticationController.CustomersDAO.retrieve(userId);
+            if (userExists) {
+              // The user to be updated is the user from the request body. For missing fields, use the user from the database.
+              updatedUser = {
+                ...userExists,
+                ...user,
+              };
+              await AuthenticationController.CustomersDAO.update(updatedUser);
+            }
+          } catch (error: any) {
+            switch (error.type) {
+              default:
+                logger.warn('Error: ' + error);
+            }
           }
         }
       }
 
-      response.statusCode = 200;
-      response.data = updatedUser;
+      if (!userExists) {
+        response.statusCode = 400;
+        response.data = { message: 'User does not exist.' };
 
-      // Pass to the next middleware to handle the response
-      next(response);
+        logger.warn(
+          'Users Controller updateUser error: ' + JSON.stringify(response, null, 2) + '\n'
+        );
+
+        next(response);
+      } else {
+        // Update user
+
+        if (updatedUser) {
+          response.statusCode = 200;
+          response.data = updatedUser;
+
+          logger.info(
+            'USERS-DAO UPDATE_USER RESULT: ' + JSON.stringify(updatedUser, null, 2) + '\n'
+          );
+
+          next(response);
+        }
+      }
     } catch (error) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async changeEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      const { email } = req.body as { email: string };
-
-      if (!email) {
-        return next(new HTTPError._400('Email is required.'));
-      }
-
-      const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.updateUserAttributes(user.email, [
-          {
-            Name: 'email',
-            Value: email,
-          },
-        ]);
-      } catch (error: any) {
-        switch (error.code) {
-          case 'UsernameExistsException':
-            return next(new HTTPError._409('Email already exists.'));
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      // Update user in DB
-      if (user instanceof CollaboratorModel) {
-        user.email = email;
-
-        try {
-          await AuthenticationController.CollaboratorsDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      } else if (user instanceof CaregiverModel) {
-        user.email = email;
-
-        try {
-          await AuthenticationController.CaregiversDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      } else if (user instanceof CustomerModel) {
-        user.email = email;
-
-        try {
-          await AuthenticationController.CustomersDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Email updated successfully.',
-      };
-
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async changePhone(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      const { phone } = req.body as { phone: string };
-
-      if (!phone) {
-        return next(new HTTPError._400('Phone is required.'));
-      }
-
-      const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.updateUserAttributes(user.email, [
-          {
-            Name: 'phone_number',
-            Value: phone,
-          },
-        ]);
-      } catch (error: any) {
-        switch (error.type) {
-          case 'INVALID_PARAMETER':
-            return next(new HTTPError._400(error.message));
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      // Update user in DB
-      if (user instanceof CollaboratorModel) {
-        user.phone = phone;
-
-        try {
-          await AuthenticationController.CollaboratorsDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      } else if (user instanceof CaregiverModel) {
-        user.phone = phone;
-
-        try {
-          await AuthenticationController.CaregiversDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      } else if (user instanceof CustomerModel) {
-        user.phone = phone;
-
-        try {
-          await AuthenticationController.CustomersDAO.update(user);
-        } catch (error: any) {
-          switch (error.type) {
-            default:
-              return next(new HTTPError._500(error.message));
-          }
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Phone number updated successfully.',
-      };
-
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async sendConfirmEmailCode(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.sendUserAttributeVerificationCode(accessToken, 'email');
-      } catch (error: any) {
-        switch (error.code) {
-          case 'UserNotFoundException':
-            return next(new HTTPError._404('User not found.'));
-          case 'InvalidParameterException':
-            return next(new HTTPError._400('Invalid parameters.'));
-          case 'NotAuthorizedException':
-            return next(new HTTPError._401('Not authorized.'));
-
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Confirmation code sent successfully.',
-      };
-
-      // Pass to the next middleware to handle the response
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async sendConfirmPhoneCode(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.sendUserAttributeVerificationCode(accessToken, 'phone_number');
-      } catch (error: any) {
-        switch (error.code) {
-          case 'UserNotFoundException':
-            return next(new HTTPError._404('User not found.'));
-          case 'InvalidParameterException':
-            return next(new HTTPError._400('Invalid parameters.'));
-          case 'NotAuthorizedException':
-            return next(new HTTPError._401('Not authorized.'));
-
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Confirmation code sent successfully.',
-      };
-
-      // Pass to the next middleware to handle the response
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async verifyConfirmEmailCode(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      const { code } = req.body as { code: string };
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.verifyUserAttributeCode(accessToken, 'email', code);
-      } catch (error: any) {
-        switch (error.code) {
-          case 'UserNotFoundException':
-            return next(new HTTPError._404('User not found.'));
-          case 'CodeMismatchException':
-            return next(new HTTPError._400('Invalid code.'));
-          case 'ExpiredCodeException':
-            return next(new HTTPError._400('Code expired.'));
-          case 'NotAuthorizedException':
-            return next(new HTTPError._401('Not authorized.'));
-
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Email confirmed successfully.',
-      };
-
-      // Pass to the next middleware to handle the response
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
-      next(error);
-    }
-  }
-
-  static async verifyConfirmPhoneCode(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
-    try {
-      const response: IAPIResponse = {
-        statusCode: res.statusCode,
-        data: {},
-      };
-
-      let accessToken: string;
-
-      // Check if there is an authorization header
-      if (req.headers.authorization) {
-        // Get the access token from the authorization header
-        accessToken = req.headers.authorization.split(' ')[1];
-      } else {
-        // If there is no authorization header, return an error
-        return next(new HTTPError._401('Missing required access token.'));
-      }
-
-      const { code } = req.body as { code: string };
-
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
-
-      const Cognito = new CognitoService(clientId);
-
-      try {
-        await Cognito.verifyUserAttributeCode(accessToken, 'phone_number', code);
-      } catch (error: any) {
-        switch (error.type) {
-          case 'INVALID_PARAMETER':
-            return next(new HTTPError._400(error.message));
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
-      response.statusCode = 200;
-      response.data = {
-        message: 'Phone number confirmed successfully.',
-      };
-
-      // Pass to the next middleware to handle the response
-      next(response);
-    } catch (error: any) {
-      // Pass to the next middleware to handle the error
       next(error);
     }
   }
