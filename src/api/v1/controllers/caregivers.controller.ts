@@ -20,6 +20,8 @@ import {
   ICaregiverDocument,
   IHealthUnit,
   IHealthUnitDocument,
+  IHomeCareOrder,
+  IHomeCareOrderDocument,
 } from 'src/api/v1/interfaces';
 import { CognitoService, SESService } from '@api/v1/services';
 import { HTTPError } from 'src/utils';
@@ -52,7 +54,7 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async createCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -281,7 +283,7 @@ export default class CaregiversController {
    * @debug
    * @description Returns the caregiver information from the caregiver id in the request params
    */
-  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async retrieveCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -344,7 +346,7 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async updateCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -436,7 +438,7 @@ export default class CaregiversController {
    * @debug
    * @description
    */
-  static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async deleteCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -487,6 +489,22 @@ export default class CaregiversController {
 
       if (caregiver?.health_unit?.toString() !== user.health_unit._id.toString()) {
         return next(new HTTPError._403('Forbidden'));
+      }
+
+      // If the Caregiver is associated with an order do not allow deleting
+      const orders = (
+        await CaregiversController.HomeCareOrdersDAO.queryList({
+          // queryList returns 402 if no results so we don't need error handling
+          caregiver: caregiverId,
+          // Status different from new, cancelled, completed
+          status: { $nin: ['new', 'cancelled', 'completed'] },
+        })
+      ).data;
+
+      if (orders.length > 0) {
+        return next(
+          new HTTPError._400('Caregiver is associated with an order and cannot be deleted.')
+        );
       }
 
       // If caregiver exists, delete caregiver from the database
