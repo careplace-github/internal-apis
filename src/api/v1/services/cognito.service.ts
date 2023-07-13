@@ -71,6 +71,8 @@ export default class CognitoService {
   }
 
   calculateSecretHash(username: string) {
+    logger.info('CLIENT SECRET: ' + this.clientSecret);
+
     const message = username + this.clientId;
     const hmac = crypto.createHmac('sha256', this.clientSecret);
     hmac.update(message);

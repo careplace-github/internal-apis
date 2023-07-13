@@ -1,3 +1,5 @@
+// express-validator
+import { body } from 'express-validator';
 // body-parser
 import bodyParser from 'body-parser';
 // cors
@@ -21,76 +23,92 @@ import httpContext from 'express-http-context';
 // express-sanitizer
 import expressSanitizer from 'express-sanitizer';
 
-// config
-import {
-  ENV,
-  HOST,
-  API_VERSION,
-  API_ROUTE,
-  API_URL,
-  SERVER_PORT,
-  MONGODB_DB_ACTIVE_URI,
-  MONGODB_DB_DELETES_URI,
-  MONGODB_DB_ACTIVE_NS,
-  MONGODB_DB_DELETES_NS,
-} from './config/constants';
-// documentation
-import swaggerDocs from './documentation/swagger';
-// logger
-import logger from './logs/logger';
-
-// helpers
-import { getServices } from '@api/v1/helpers';
-// middlewares
-import {
-  RequestHandlerMiddleware,
-  ResponseHandlerMiddleware,
-  ErrorHandlerMiddleware,
-} from '@api/v1/middlewares';
-// routes
-import {
-  ConfigRoute,
-  FilesRoute,
-  AuthRoute,
-  CustomersRoute,
-  HealthUnitsRoute,
-  CollaboratorsRoute,
-  ServicesRoute,
-  OrdersRoute,
-  CalendarRoute,
-  WebHooksRoute,
-  PatientsRoute,
-  PaymentsRoute,
-  ReviewsRoute,
-  NotificationsRoute,
-} from '@api/v1/routes';
 // utils
-import { HTTPError } from 'src/utils';
-import { body } from 'express-validator';
+// import { HTTPError } from 'src/utils';
 
 const main = async () => {
+  // logger
+  const logger = require('./logs/logger').default;
+
   let app: express.Application = express();
   const MAX_RECONNECT_ATTEMPTS = 10;
   let currentReconnectAttempts = 0;
 
+  let MONGODB_DB_ACTIVE_URI: string;
+  let MONGODB_DB_DELETES_URI: string;
+
   try {
     logger.info(`
-     // -------------------------------------------------------------------------------------------- //
-     //                                                                                              //
-     //                                      CAREPLACE REST API                                      //
-     //                                                                                              //
-     // -------------------------------------------------------------------------------------------- //
-     \n`);
-
-    logger.info(`Server settings: `);
-    logger.info(`Running in '${ENV}' environment`);
-    logger.info(`Host: ${HOST} `);
-    logger.info(`API Version: ${API_VERSION} `);
-    logger.info(`API Route: ${API_ROUTE} `);
-    logger.info(`API URL: ${API_URL} `);
-    logger.info(`Server Port: ${SERVER_PORT} \n \n`);
+    // -------------------------------------------------------------------------------------------- //
+    //                                                                                              //
+    //                                      CAREPLACE REST API                                      //
+    //                                                                                              //
+    // -------------------------------------------------------------------------------------------- //
+    \n`);
 
     logger.info(`Initializing the server... \n \n`);
+
+    const { loadAWSSecrets } = require('@api/v1/services/secrets.service');
+    await loadAWSSecrets();
+
+    /**
+     * Load AWS Secrets
+     */
+
+    const { StripeCLILogin, StripeSetupWebhooks, CleanServerPorts } = require('@scripts');
+
+    /**
+     * Now we can import the rest of the modules
+     */
+    // helpers
+    const { getServices } = require('@api/v1/helpers');
+    // routes
+    const {
+      ConfigRoute,
+      FilesRoute,
+      AuthRoute,
+      CustomersRoute,
+      HealthUnitsRoute,
+      CollaboratorsRoute,
+      ServicesRoute,
+      OrdersRoute,
+      CalendarRoute,
+      WebHooksRoute,
+      PatientsRoute,
+      PaymentsRoute,
+      ReviewsRoute,
+      NotificationsRoute,
+    } = require('@api/v1/routes');
+
+    // config
+    // documentation
+    const swaggerDocs = require('./documentation/swagger').default;
+
+    // @scripts
+    const {
+      RequestHandlerMiddleware,
+      ResponseHandlerMiddleware,
+      ErrorHandlerMiddleware,
+    } = require('@api/v1/middlewares');
+
+    /**
+     * Login to Stripe CLI
+     * @see https://stripe.com/docs/stripe-cli
+     */
+
+    if (process.env.NODE_ENV === 'development') {
+      await CleanServerPorts(Number(process.env.PORT));
+      await StripeCLILogin(process.env.STRIPE_SECRET_KEY as string);
+      await StripeSetupWebhooks();
+    }
+
+    logger.info(`Server settings: `);
+    logger.info(`Running in '${process.env.NODE_ENV}' environment`);
+    logger.info(`Host: ${process.env.HOST} `);
+    logger.info(`API Version: ${process.env.API_VERSION} `);
+    logger.info(`API Route: ${process.env.API_ROUTE as string} `);
+    logger.info(`API URL: ${process.env.API_URL} `);
+    logger.info(`Server Port: ${process.env.PORT} \n \n`);
 
     // -------------------------------------------------------------------------------------------- //
     //                        APPLY DATABASE CONNECTION AND ERROR HANDLING                          //
@@ -110,9 +128,12 @@ const main = async () => {
       family: 4, // Use IPv4, skip trying IPv6
     };
 
-    logger.info(`Connecting to MongoDB Database '${MONGODB_DB_ACTIVE_NS}'...`);
+    logger.info(`Connecting to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}'...`);
 
     mongoose.set('strictQuery', true);
+
+    MONGODB_DB_ACTIVE_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_ACTIVE_NS}?retryWrites=true&w=majority`;
+    MONGODB_DB_DELETES_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_DELETES_NS}?retryWrites=true&w=majority`;
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
@@ -127,7 +148,10 @@ const main = async () => {
         logger.info(`Attempting to reconnect to MongoDB (Attempt ${currentReconnectAttempts})...`);
         try {
           await mongoose.disconnect();
-          db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
+          db_connection = await mongoose.connect(
+            process.env.MONGODB_DB_ACTIVE_URI as string,
+            options
+          );
           currentReconnectAttempts = 0;
         } catch (error) {
           logger.error(`Failed to reconnect to MongoDB: ${error}`);
@@ -155,7 +179,9 @@ const main = async () => {
     db_connection.connection.on('close', handleMongoDBError);
 
     // Successfuly connected to MongoDB
-    logger.info(`Connected to MongoDB Database '${MONGODB_DB_ACTIVE_NS}' Successfully!`);
+    logger.info(
+      `Connected to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}' Successfully!`
+    );
     //Store the connection in a global variable
     global.db = db_connection.connection;
 
@@ -451,21 +477,20 @@ const main = async () => {
       // Routes middlewares
 
       app.use(ConfigRoute);
-      app.use(API_ROUTE, FilesRoute);
-      app.use(API_ROUTE, ReviewsRoute);
-      app.use(API_ROUTE, AuthRoute);
-      app.use(API_ROUTE, CustomersRoute);
-      app.use(API_ROUTE, HealthUnitsRoute);
-      app.use(API_ROUTE, PatientsRoute);
+      app.use(process.env.API_ROUTE as string, FilesRoute);
+      app.use(process.env.API_ROUTE as string, ReviewsRoute);
+      app.use(process.env.API_ROUTE as string, AuthRoute);
+      app.use(process.env.API_ROUTE as string, CustomersRoute);
+      app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
+      app.use(process.env.API_ROUTE as string, PatientsRoute);
 
-      app.use(API_ROUTE, OrdersRoute);
-      app.use(API_ROUTE, ServicesRoute);
-      app.use(API_ROUTE, CollaboratorsRoute);
-      app.use(API_ROUTE, CalendarRoute);
-      app.use(API_ROUTE, WebHooksRoute);
-      app.use(API_ROUTE, NotificationsRoute);
-      app.use(API_ROUTE, PaymentsRoute);
-
+      app.use(process.env.API_ROUTE as string, OrdersRoute);
+      app.use(process.env.API_ROUTE as string, ServicesRoute);
+      app.use(process.env.API_ROUTE as string, CollaboratorsRoute);
+      app.use(process.env.API_ROUTE as string, CalendarRoute);
+      app.use(process.env.API_ROUTE as string, WebHooksRoute);
+      app.use(process.env.API_ROUTE as string, NotificationsRoute);
+      app.use(process.env.API_ROUTE as string, PaymentsRoute);
 
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);
@@ -525,10 +550,10 @@ const main = async () => {
       logger.info(`Starting to listen for HTTP requests...`);
 
       // Starts listening for HTTP requests
-      app.listen(SERVER_PORT, () => {
-        logger.info(`Successfully listening for HTTP requests on port: ${SERVER_PORT}`);
+      app.listen(process.env.PORT, () => {
+        logger.info(`Successfully listening for HTTP requests on port: ${process.env.PORT}`);
 
-        swaggerDocs(app, SERVER_PORT);
+        swaggerDocs(app, process.env.PORT);
 
         logger.info(`Server started successfully! 🚀`);
       });
