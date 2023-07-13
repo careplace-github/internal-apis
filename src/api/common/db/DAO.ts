@@ -22,50 +22,7 @@ export default abstract class DAO<T extends Document> {
     this.Model = documentModel;
     this.Collection = documentCollection;
 
-    this.Type = documentCollection.charAt(0).toUpperCase() + documentCollection.slice(1, -1);
-  }
-
-  async create2(
-    document: T,
-    session?: mongoose.ClientSession
-  ): Promise<mongoose.HydratedDocument<T, {}, unknown>> {
-    logger.info(
-      `${this.Collection}DAO CREATE Request: \n ${JSON.stringify(document, null, 2)} \n}`
-    );
-
-    let createdDocument: mongoose.HydratedDocument<T, {}, unknown>;
-    try {
-      document._id = new mongoose.Types.ObjectId();
-
-      const newDocument = new this.Model(document);
-
-      createdDocument = await newDocument.save({ session });
-    } catch (err: any) {
-      if (session) {
-        await session.abortTransaction();
-        session.endSession();
-      }
-
-      logger.error(`${this.Collection}DAO CREATE Error: \n ${JSON.stringify(err, null, 2)} \n`);
-
-      switch (err.name) {
-        case 'ValidationError':
-          throw new LayerError.INVALID_PARAMETER(err.message);
-        case 'MongoServerError':
-          switch (err.code) {
-            case 11000:
-              throw new LayerError.INVALID_PARAMETER(
-                `Duplicate key error: ${JSON.stringify(err.keyValue, null, 2)}`
-              );
-          }
-      }
-      throw new LayerError.INTERNAL_ERROR(err.message);
-    }
-    logger.info(
-      `${this.Collection}DAO CREATE Response: \n ${JSON.stringify(createdDocument, null, 2)} \n`
-    );
-
-    return createdDocument;
+    this.Type = documentCollection?.charAt(0)?.toUpperCase() + documentCollection?.slice(1, -1);
   }
 
   async create(document: T, session?: mongoose.ClientSession): Promise<T> {

@@ -23,7 +23,6 @@
       "@utils": [
         "src/utils"
       ],
-
       "@constants": [
         "src/config/constants"
       ],
@@ -33,6 +32,10 @@
       "@logger": [
         "src/logs/logger"
       ],
+      "@scripts": [
+        "src/config/scripts"
+      ]
+
     },
     "types": [
       "node"

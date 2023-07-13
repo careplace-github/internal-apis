@@ -1,7 +1,9 @@
 import DAO from '../../common/db/DAO';
 import { ServiceModel } from '../models';
 import { IServiceDocument } from '../interfaces';
-import { MONGODB_COLLECTION_SERVICES_NS } from '../../../config/constants/index';
+import { MONGODB_COLLECTION_SERVICES_NS } from '@constants';
+import logger from 'src/logs/logger';
+
 
 /**
  * Class to manage the `Services` collection.

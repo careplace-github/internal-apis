@@ -12,7 +12,6 @@ router
   .route('/auth/verify/confirmation-code')
   .post(AuthenticationController.verifyConfirmationCode);
 
-
 router
   .route('/auth/send/forgot-password-code')
   .post(AuthenticationController.sendForgotPasswordCode);
@@ -22,7 +21,34 @@ router
 
 router.route('/auth/signin').post(AuthenticationController.signin);
 
-router.route('/auth/account').get(AuthenticationGuard, AuthenticationController.getAccount);
+router
+  .route('/auth/account')
+  .get(AuthenticationGuard, AuthenticationController.getAccount)
+  .put(AuthenticationGuard, AuthenticationController.updateAccount);
+
+router
+  .route('/auth/account/change-email')
+  .post(AuthenticationGuard, AuthenticationController.changeEmail);
+
+router
+  .route('/auth/account/change-phone')
+  .post(AuthenticationGuard, AuthenticationController.changePhone);
+
+router
+  .route('/auth/send/confirm-phone-code')
+  .post(AuthenticationGuard, AuthenticationController.sendConfirmPhoneCode);
+
+router
+  .route('/auth/verify/confirm-phone-code')
+  .post(AuthenticationGuard, AuthenticationController.verifyConfirmPhoneCode);
+
+router
+  .route('/auth/send/confirm-email-code')
+  .post(AuthenticationGuard, AuthenticationController.sendConfirmEmailCode);
+
+router
+  .route('/auth/verify/confirm-email-code')
+  .post(AuthenticationGuard, AuthenticationController.verifyConfirmEmailCode);
 
 router
   .route('/auth/change-password')
