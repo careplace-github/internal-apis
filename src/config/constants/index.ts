@@ -1,18 +1,9 @@
-/**
- * @see https://www.npmjs.com/package/dotenv
- */
-import dotenv from 'dotenv';
 import { JWK, RSA } from 'jwk-to-pem';
-
-
 import publicKey from '../.env/cognitoPublicKey.json';
-const publicKeyJwk = publicKey; // Use the JWK directly
+import logger from 'src/logs/logger';
 
 // Loads environment settings
 export const ENV = process.env.NODE_ENV || ('development' as string);
-
-// Loads environment variables
-dotenv.config({ path: `./src/config/.env/.env.${ENV}` });
 
 // Application
 export const HOST = process.env.HOST as string;
@@ -26,19 +17,15 @@ export const SERVER_PORT = process.env.PORT || (process.env.PORT_BACKUP as strin
 
 // MongoDB credentials
 export const MONGODB_USER = process.env.MONGODB_USER as string;
-export const MONGODB_PASSWROD = process.env.MONGODB_PASSWORD as string;
+export const MONGODB_PASSWORD = process.env.MONGODB_PASSWORD as string;
 
 // MongoDB Cluster
 export const MONGODB_CLUSTER_URI = process.env.MONGODB_CLUSTER_URI as string;
 
 //MongoDB databases
-export const MONGODB_DB_ACTIVE_NS = process.env.MONGODB_DB_ACTIVE as string;
-export const MONGODB_DB_DELETES_NS = process.env.MONGODB_DB_DELETES as string;
+export const MONGODB_DB_ACTIVE_NS = process.env.MONGODB_DB_ACTIVE_NS as string;
+export const MONGODB_DB_DELETES_NS = process.env.MONGODB_DB_DELETES_NS as string;
 export const MONGODB_DB_ADMIN_NS = process.env.MONGODB_DB_ADMIN_NS as string;
-
-// MongoDB connection
-export const MONGODB_DB_ACTIVE_URI = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWROD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_ACTIVE_NS}?retryWrites=true&w=majority`;
-export const MONGODB_DB_DELETES_URI = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWROD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_DELETES_NS}?retryWrites=true&w=majority`;
 
 // MongoDB collections
 export const MONGODB_COLLECTION_COLLABORATORS_NS = process.env

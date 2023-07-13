@@ -2386,6 +2386,21 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
+aws-cli-js@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/aws-cli-js/-/aws-cli-js-2.2.3.tgz#09b9e296af1bbdc3b86d67e18c798665357cb8e4"
+  integrity sha512-QHnL5VXtbXbcZK9xlvIUGr+iua5cgBXqEG0wXRoJ/DCjdG7M2jq0nSn2bV5rzuR7nOFyWFMwgLmaDXiTBSl7wg==
+  dependencies:
+    nodeify-ts "1.0.6"
+
+aws-cli@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/aws-cli/-/aws-cli-0.0.2.tgz#00723c922ec809eaac27fb2ae440c5b8e807a18e"
+  integrity sha512-340A6bn3I5p/yc8MGQiWRofW3oUpmZ/k6LIZticzDOKWT4/F+TP54hki9SWmSS6XnvNIVAw4k9oPocq6ya4L1g==
+  dependencies:
+    aws-sdk "~2.0.0-rc13"
+    operetta "0.0.5"
+
 aws-jwt-verify@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/aws-jwt-verify/-/aws-jwt-verify-4.0.0.tgz#e069da942807cdd997ad3e9426980b1ff9422e68"
@@ -2406,6 +2421,14 @@ aws-sdk@^2.1174.0:
     util "^0.12.4"
     uuid "8.0.0"
     xml2js "0.4.19"
+
+aws-sdk@~2.0.0-rc13:
+  version "2.0.31"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.0.31.tgz#e72cf1fdc69015bd9fd2bdf3d3b88c16507d268e"
+  integrity sha512-rgmExM3/LjhI95PfjwDs1hks/RYrQ/V3qLybFCzBqr8Y3Hz9Qq3jp+WR1BaWhUckgoVJs/ZE4VSvMKZeNwuFoA==
+  dependencies:
+    xml2js "0.2.6"
+    xmlbuilder "0.4.2"
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -7373,6 +7396,11 @@ node-releases@^2.0.8:
   resolved "https://registry.npmjs.org/node-releases/-/node-releases-2.0.10.tgz"
   integrity sha512-5GFldHPXVG/YZmFzJvKK2zDSzPKhEp0+ZR5SVaoSag9fsL5YgHbUHDfnG5494ISANDcK4KwPXAx2xqVEydmd7w==
 
+nodeify-ts@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/nodeify-ts/-/nodeify-ts-1.0.6.tgz#ceef172c4fad1a45a1ae60a31c7e295150b5e221"
+  integrity sha512-jq+8sqVG1aLqy5maMTceL8NUJ1CvarWztlxvrYh3G0aao9BsVeoVmVedUnrUSBLetP7oLIAJrPrw4+iIo7v3GA==
+
 nodemailer-html-to-text@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npmjs.org/nodemailer-html-to-text/-/nodemailer-html-to-text-3.2.0.tgz"
@@ -7615,6 +7643,11 @@ open@^9.1.0:
     is-inside-container "^1.0.0"
     is-wsl "^2.2.0"
 
+operetta@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/operetta/-/operetta-0.0.5.tgz#14828c97eeb913e2aa85d1d1d39a8926958e5556"
+  integrity sha512-b9E0Z5nvkHf9IQ0q7VaWpDfj/nX/pRAcMBoGh4SLrGhC2gE3BD6GwLc2qp64AsZgEwBe2gqIgBc5fqu/WDL9uQ==
+
 optimist@0.2:
   version "0.2.8"
   resolved "https://registry.npmjs.org/optimist/-/optimist-0.2.8.tgz"
@@ -7646,6 +7679,11 @@ os-tmpdir@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha512-D2FR03Vir7FIu45XBY20mTb+/ZSWB00sjU9jdQXt83gDrI4Ztz5Fs7/yy74g2N5SVQY4xY1qDr4rNddwYRVX0g==
+
+os@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/os/-/os-0.1.2.tgz#f29a50c62908516ba42652de42f7038600cadbc2"
+  integrity sha512-ZoXJkvAnljwvc56MbvhtKVWmSkzV712k42Is2mA0+0KTSRakq5XXuXpjZjgAt9ctzl51ojhQWakQQpmOvXWfjQ==
 
 p-cancelable@^2.0.0:
   version "2.1.1"
@@ -8488,6 +8526,11 @@ sass@^1.29.0:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
     source-map-js ">=0.6.2 <2.0.0"
+
+sax@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/sax/-/sax-0.4.2.tgz#39f3b601733d6bec97105b242a2a40fd6978ac3c"
+  integrity sha512-6Zsl4gnHjiTQfrOzsWdc0bHJepF5KJAVuM5fcyEJrqGyszkx2c55IclWP4D692rJrl1w0tExhbvYKjKNZl5wHg==
 
 sax@1.2.1, sax@>=0.6.0:
   version "1.2.1"
@@ -9967,6 +10010,13 @@ xdg-basedir@^3.0.0:
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-3.0.0.tgz#496b2cc109eca8dbacfe2dc72b603c17c5870ad4"
   integrity sha512-1Dly4xqlulvPD3fZUQJLY+FUIeqN3N2MM3uqe4rCJftAvOjFa3jFGfctOgluGx4ahPbUCsZkmJILiP0Vi4T6lQ==
 
+xml2js@0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.2.6.tgz#d209c4e4dda1fc9c452141ef41c077f5adfdf6c4"
+  integrity sha512-h+Nzgo0eLwideldZGqSquNtrsuX5zcDREImBa1GSNw9QljlXiFcM3E1kWjLprRjJe2jRuvnVk0j3WgQo9Deoog==
+  dependencies:
+    sax "0.4.2"
+
 xml2js@0.4.19:
   version "0.4.19"
   resolved "https://registry.npmjs.org/xml2js/-/xml2js-0.4.19.tgz"
@@ -9974,6 +10024,11 @@ xml2js@0.4.19:
   dependencies:
     sax ">=0.6.0"
     xmlbuilder "~9.0.1"
+
+xmlbuilder@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-0.4.2.tgz#1776d65f3fdbad470a08d8604cdeb1c4e540ff83"
+  integrity sha512-h/+ncQQSU/iYycmI2wTN25t7RYN7O2oq9uvI+2+UObi4KcmQh/jUS4N31g5vJttQt7MODsnmBtbcll3YbNyvfw==
 
 xmlbuilder@~9.0.1:
   version "9.0.7"
