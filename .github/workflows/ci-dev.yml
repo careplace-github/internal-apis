@@ -19,6 +19,8 @@ jobs:
         run: echo running on branch '${GITHUB_REF##*/}'
       - name: Install dependencies
         run: yarn install
+      - name: Format
+        run: yarn prettier-check
       - name: Lint
         run: yarn lint
 
