@@ -10,8 +10,4 @@ project: careplace/internal-apis
 # Can be "low", "medium", "high", or "critical"
 severityThreshold: medium
 
-# Specify the base directory for scanning (optional)
-# Defaults to the project's root directory
-
-
 # Specify additional settings or configurations as needed
