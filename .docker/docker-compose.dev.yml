@@ -10,16 +10,16 @@ services:
     build:
       context: ../
       dockerfile: ./.docker/api/Dockerfile.dev
-    image: careplace/rest-api:dev
+    image: careplace/internal-apis:dev
     networks:
       - careplace-backend
     ports:
       - "8080:8080"
-    container_name: rest-api
+    container_name: internal-apis
     volumes:
       - ../:/usr/src/app
     environment:
-      - APP_NAME=rest_api-staging
+      - APP_NAME=internal-apis:dev
       - NODE_ENV=development
       - APP_ENV=docker
       - CHOKIDAR_USEPOLLING=true

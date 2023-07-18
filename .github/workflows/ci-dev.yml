@@ -90,4 +90,4 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file .docker/api/Dockerfile.build.dev --tag careplace/internal-apis:dev
       - name: Snyk Test Docker Image
-        run: npx snyk container test --image=careplace/internal-apis:dev --severity-threshold=high
+        run: npx snyk container test careplace/internal-apis:dev --file=.docker/api/Dockerfile.dev --severity-threshold=high
