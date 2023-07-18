@@ -3,13 +3,10 @@ import fs from 'fs';
 import nodemailer from 'nodemailer';
 // Import logger
 import logger from '@logger';
-
 import { AWS_SES_SENDER_EMAIL, AWS_SES_REPLY_TO_EMAIL } from '@constants';
-// let aws = require("@aws-sdk/client-ses");
-import htmlToText from 'html-to-text';
 import aws from 'aws-sdk/clients/ses';
 
-import { SESService } from '@packages/services';
+import {SESService} from '@packages/services';
 
 /**
  * Class with helper and utility functions for the SES email service.

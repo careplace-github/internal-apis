@@ -1,7 +1,5 @@
 // express-validator
 import { body } from 'express-validator';
-// body-parser
-import bodyParser from 'body-parser';
 // cors
 import cors from 'cors';
 // express
@@ -20,11 +18,10 @@ import mongoose from 'mongoose';
 import xss from 'xss-clean';
 // express-http-context
 import httpContext from 'express-http-context';
-// express-sanitizer
-import expressSanitizer from 'express-sanitizer';
 
+// swagger
 import swaggerDocs from './documentation/swagger';
-
+// @logger
 import logger from '@logger';
 
 const main = async () => {
