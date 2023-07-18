@@ -54,6 +54,9 @@ const PatientSchema: Schema<IPatientDocument> = new Schema<IPatientDocument>(
   }
 );
 
-const PatientModel: Model<IPatientDocument> = mongoose.model<IPatientDocument>('Patient', PatientSchema);
+const PatientModel: Model<IPatientDocument> = mongoose.model<IPatientDocument>(
+  'Patient',
+  PatientSchema
+);
 
 export { PatientSchema, PatientModel };

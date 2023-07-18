@@ -2,7 +2,7 @@ import express from 'express';
 
 // Import Controller
 import PaymentsController from '../controllers/payments.controller';
-import {AuthenticationGuard, ClientGuard, ValidatorMiddleware} from '@packages/middlewares';
+import { AuthenticationGuard, ClientGuard, ValidatorMiddleware } from '@packages/middlewares';
 import { CheckoutValidator } from '../validations/payments.validator';
 
 const router = express.Router();
@@ -39,11 +39,7 @@ router
 
 router
   .route('/payments/orders/:order/subscription/coupon')
-  .post(
-    AuthenticationGuard,
-    ClientGuard('marketplace'),
-    PaymentsController.addSubscriptionCoupon
-  );
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.addSubscriptionCoupon);
 
 router
   .route('/payments/orders/:order/subscription/payment-method')

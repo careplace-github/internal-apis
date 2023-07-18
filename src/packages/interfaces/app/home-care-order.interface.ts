@@ -1,9 +1,22 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IAddress, ICaregiver, IHealthUnit, IEvent, ICustomer, IPatient, IService } from 'src/packages/interfaces';
+import {
+  IAddress,
+  ICaregiver,
+  IHealthUnit,
+  IEvent,
+  ICustomer,
+  IPatient,
+  IService,
+} from 'src/packages/interfaces';
 // types
-import { THomeCareOrderRecurrency, THomeCareOrderStatus, TWeekDay, THomeCareOrderScreeningVisitStatus } from 'src/packages/interfaces/types';
+import {
+  THomeCareOrderRecurrency,
+  THomeCareOrderStatus,
+  TWeekDay,
+  THomeCareOrderScreeningVisitStatus,
+} from 'src/packages/interfaces/types';
 
 interface IHomeCareOrder {
   _id: Types.ObjectId | string;

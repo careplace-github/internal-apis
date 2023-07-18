@@ -21,6 +21,9 @@ const ServiceSchema: Schema<IServiceDocument> = new Schema<IServiceDocument>(
   }
 );
 
-const ServiceModel: Model<IServiceDocument> = mongoose.model<IServiceDocument>('Service', ServiceSchema);
+const ServiceModel: Model<IServiceDocument> = mongoose.model<IServiceDocument>(
+  'Service',
+  ServiceSchema
+);
 
 export { ServiceSchema, ServiceModel };

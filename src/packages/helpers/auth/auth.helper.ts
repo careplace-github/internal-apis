@@ -7,7 +7,7 @@ import logger from '@logger';
 import { LayerError } from '@utils';
 // Authentication Provider
 
-import {CognitoService} from '@packages/services';
+import { CognitoService } from '@packages/services';
 
 import AuthUtils from '../../utils/auth/auth.utils';
 
