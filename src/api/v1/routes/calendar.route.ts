@@ -2,13 +2,11 @@
 import express from 'express';
 
 // Import Middlewares
-import InputValidation from '../../../../packages/middlewares/validators/input-validation.middleware';
-import AuthenticationGuard from '../../../../packages/middlewares/guards/authentication-guard.middleware';
-import { AddEventValidator, UpdateEventValidator } from '../../../marketplace/v1/validations/events.validator';
+import { AuthenticationGuard, ValidatorMiddleware, ClientGuard } from '@packages/middlewares';
+import { AddEventValidator, UpdateEventValidator } from '@api/v1/validations/events.validator';
 
 // Import Controller
 import CalendarController from '../controllers/calendar.controller';
-import ClientGuard from '../../../../packages/middlewares/guards/client-guard.middleware';
 
 const router = express.Router();
 
@@ -27,9 +25,9 @@ router
   .post(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     AddEventValidator,
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.createCollaboratorEvent
   );
 
@@ -38,21 +36,21 @@ router
   .get(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.retrieveCollaboratorEvent
   )
   .put(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     UpdateEventValidator,
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.updateCollaboratorEvent
   )
   .delete(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.deleteCollaboratorEvent
   );
 
@@ -68,9 +66,9 @@ router
   .post(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     AddEventValidator,
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.createHealthUnitEvent
   );
 
@@ -79,21 +77,21 @@ router
   .get(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.retrieveHealthUnitEvent
   )
   .put(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     UpdateEventValidator,
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.updateHealthUnitEvent
   )
   .delete(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.deleteHealthUnitEvent
   );
 
@@ -109,9 +107,9 @@ router
   .put(
     AuthenticationGuard,
     ClientGuard('business'),
-    InputValidation,
+    ValidatorMiddleware,
     UpdateEventValidator,
-    InputValidation,
+    ValidatorMiddleware,
     CalendarController.updateHealthUnitEventSeries
   );
 

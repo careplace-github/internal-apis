@@ -22,7 +22,7 @@ import {
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
-import { PatientModel } from '../../../../packages/models';
+import { PatientModel } from '@packages/models';
 
 export default class PatientsController {
   // db

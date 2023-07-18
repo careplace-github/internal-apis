@@ -2,32 +2,21 @@
 import { Request, Response, NextFunction } from 'express';
 
 // Import Services
-import stripe from '../../../../../packages/services/stripe.service';
-
-import * as Error from '../../../../../utils/errors/http/http-error';
+import { StripeService } from '@packages/services';
 
 import { buffer } from 'micro';
 
-import {
-  STRIPE_ACCOUNT_ENDPOINT_SECRET,
-  STRIPE_CONNECT_ENDPOINT_SECRET,
-} from '../../../../../config/constants/index';
+import { STRIPE_ACCOUNT_ENDPOINT_SECRET, STRIPE_CONNECT_ENDPOINT_SECRET } from '@constants';
 
 import { StripeHelper, EmailHelper } from '@packages/helpers';
-import dateUtils from '../../../../../utils/data/date.utils';
+import { DateUtils } from '@packages/utils';
 
-import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../../../config/constants/index';
 import { HomeCareOrdersDAO } from 'src/packages/database';
 import { HTTPError } from '@utils';
 import Stripe from 'stripe';
 // @logger
 import logger from '@logger';
-import {
-  IAPIResponse,
-  ICustomer,
-  IHomeCareOrder,
-  IPatient,
-} from '../../../../../packages/interfaces';
+import { IAPIResponse, ICustomer, IHomeCareOrder, IPatient } from '@packages/interfaces';
 
 /**
  * Controller for Stripe Webhooks
@@ -44,9 +33,9 @@ export default class StripeWebhooksController {
   static StripeHelper = StripeHelper;
   static EmailHelper = EmailHelper;
   // services
-  static StripeService = stripe;
+  static StripeService = StripeService;
   // utils
-  static DateUtils = dateUtils;
+  static DateUtils = DateUtils;
 
   /**
    * Handles Stripe Webhooks related to connected accounts
