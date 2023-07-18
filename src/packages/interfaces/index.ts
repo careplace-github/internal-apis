@@ -1,6 +1,4 @@
-/**
- * App Interfaces
- */
+// App Interfaces
 export type { ICaregiver, ICaregiverDocument } from './app/caregiver.interface';
 export type { IHealthUnit, IHealthUnitDocument } from './app/health-unit.interface';
 export { ICollaborator, ICollaboratorDocument } from './app/collaborator.interface';
@@ -15,15 +13,15 @@ export type {
 } from './app/health-unit-review.interface';
 export type { IService, IServiceDocument } from './app/service.interface';
 
-/**
- * Misc Interfaces
- */
+// Misc Interfaces
 export type { IAddress } from './misc/address.interface';
 export type { IDeletedDocument, IDeletedDocumentDocument } from './misc/deleted-document.interface';
 export type { IFile, IFileDocument } from './misc/file.interface';
 export type { ISettings } from './misc/settings.interface';
-/**
- * Server Interfaces
- */
+
+// Server Interfaces
 export type { IAPIResponse } from './server/api-response.interface';
 export { IPopulateOption, IQueryListResponse } from './server/db.interface';
+
+// Type Aliases
+export * from './types';
