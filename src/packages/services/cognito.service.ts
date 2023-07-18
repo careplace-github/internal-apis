@@ -21,7 +21,7 @@ import {
   AWS_COGNITO_BUSINESS_CLIENT_SECRET,
 } from '@constants';
 // @types
-import { TClientID } from 'src/packages/interfaces/types';
+import { TClientID } from '@interfaces';
 // @logger
 import logger from '@logger';
 

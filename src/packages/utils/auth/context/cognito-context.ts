@@ -1,7 +1,3 @@
-import jwt_decode, { JwtPayload } from 'jwt-decode';
-import jwkToPem, { RSA } from 'jwk-to-pem';
-import jwt from 'jsonwebtoken';
-
 import { HTTPError, LayerError } from '@utils';
 import {
   AWS_COGNITO_ISSUER,
@@ -11,10 +7,8 @@ import {
   AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
   AWS_COGNITO_BUSINESS_USER_POOL_ID,
 } from '@constants';
-import logger from 'src/logs/logger';
+import logger from '@logger';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
-
-import { PromiseResult } from 'aws-sdk/lib/request';
 import { CognitoJwtPayload } from 'aws-jwt-verify/jwt-model';
 import { CognitoVerifyProperties } from 'aws-jwt-verify/cognito-verifier';
 
