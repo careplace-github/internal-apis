@@ -2,28 +2,21 @@
 import { Request, Response, NextFunction } from 'express';
 
 // Import Services
-import stripe from '../../services/stripe.service';
-
-import * as Error from '../../../../utils/errors/http/http-error';
+import { StripeService } from '@packages/services';
 
 import { buffer } from 'micro';
 
-import {
-  STRIPE_ACCOUNT_ENDPOINT_SECRET,
-  STRIPE_CONNECT_ENDPOINT_SECRET,
-} from '../../../../config/constants/index';
+import { STRIPE_ACCOUNT_ENDPOINT_SECRET, STRIPE_CONNECT_ENDPOINT_SECRET } from '@constants';
 
-import stripeHelper from '../../helpers/services/stripe.helper';
-import emailHelper from '../../helpers/emails/email.helper';
-import dateUtils from '../../../../utils/data/date.utils';
+import { StripeHelper, EmailHelper } from '@packages/helpers';
+import { DateUtils } from '@packages/utils';
 
-import { STRIPE_APPLICATION_FEE, STRIPE_PRODUCT_ID } from '../../../../config/constants/index';
-import { HomeCareOrdersDAO } from '@api/v1/db';
+import { HomeCareOrdersDAO } from 'src/packages/database';
 import { HTTPError } from '@utils';
 import Stripe from 'stripe';
 // @logger
 import logger from '@logger';
-import { IAPIResponse, ICustomer, IHomeCareOrder, IPatient } from '../../interfaces';
+import { IAPIResponse, ICustomer, IHomeCareOrder, IPatient } from '@packages/interfaces';
 
 /**
  * Controller for Stripe Webhooks
@@ -37,12 +30,12 @@ export default class StripeWebhooksController {
   // db
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   // helpers
-  static StripeHelper = stripeHelper;
-  static EmailHelper = emailHelper;
+  static StripeHelper = StripeHelper;
+  static EmailHelper = EmailHelper;
   // services
-  static StripeService = stripe;
+  static StripeService = StripeService;
   // utils
-  static DateUtils = dateUtils;
+  static DateUtils = DateUtils;
 
   /**
    * Handles Stripe Webhooks related to connected accounts
@@ -77,7 +70,6 @@ export default class StripeWebhooksController {
       }
 
       const payload = req.body;
-
 
       try {
         event = await StripeWebhooksController.StripeService.constructEvent(

@@ -4,8 +4,8 @@ import { Request, Response, NextFunction } from 'express';
 import mongoose, { FilterQuery, QueryOptions, startSession } from 'mongoose';
 
 // @api
-import { HealthUnitReviewsDAO, HomeCareOrdersDAO, HealthUnitsDAO } from '@api/v1/db';
-import { AuthHelper } from '@api/v1/helpers';
+import { HealthUnitReviewsDAO, HomeCareOrdersDAO, HealthUnitsDAO } from 'src/packages/database';
+import { AuthHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
@@ -14,8 +14,8 @@ import {
   IQueryListResponse,
   IHealthUnitDocument,
   IHealthUnitReviewDocument,
-} from 'src/api/v1/interfaces';
-import { HealthUnitReviewModel } from '@api/v1/models';
+} from 'src/packages/interfaces';
+import { HealthUnitReviewModel } from 'src/packages/models';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';

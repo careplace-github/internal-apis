@@ -11,8 +11,8 @@ import {
   CustomersDAO,
   CollaboratorsDAO,
   CaregiversDAO,
-} from '@api/v1/db';
-import { AuthHelper, EmailHelper, StripeHelper } from '@api/v1/helpers';
+} from 'src/packages/database';
+import { AuthHelper, EmailHelper, StripeHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
@@ -20,12 +20,12 @@ import {
   IHealthUnit,
   IQueryListResponse,
   IHealthUnitDocument,
-} from 'src/api/v1/interfaces';
-import { SESService } from '@api/v1/services';
+} from 'src/packages/interfaces';
+import { SESService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
-import { CaregiverModel, CollaboratorModel } from '../models';
+import { CaregiverModel, CollaboratorModel } from '@packages/models';
 
 export default class HealthUnitsController {
   // db
@@ -53,11 +53,13 @@ export default class HealthUnitsController {
 
       let user = await HealthUnitsController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      let healthUnitId = '';
+
+      if (user instanceof CollaboratorModel || user instanceof CaregiverModel) {
+        healthUnitId = user.health_unit._id.toString();
+      } else {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
-
-      let healthUnitId = user.health_unit._id.toString();
 
       if (healthUnitId === null || healthUnitId === undefined) {
         return next(new HTTPError._401('Missing required access token.'));
@@ -83,7 +85,8 @@ export default class HealthUnitsController {
       let MRR;
       let annualRevenue;
 
-      numberOfActiveClients = await HealthUnitsController.StripeHelper.getConnectedAccountActiveClients(accountId);
+      numberOfActiveClients =
+        await HealthUnitsController.StripeHelper.getConnectedAccountActiveClients(accountId);
 
       try {
         MRR = await HealthUnitsController.StripeHelper.getConnectedAccountCurrentMRR(accountId);
@@ -92,7 +95,8 @@ export default class HealthUnitsController {
       }
 
       try {
-        annualRevenue = await HealthUnitsController.StripeHelper.getConnectAccountTotalRevenueByMonth(accountId);
+        annualRevenue =
+          await HealthUnitsController.StripeHelper.getConnectAccountTotalRevenueByMonth(accountId);
       } catch (error: any) {
         return next(new HTTPError._500(error.message));
       }

@@ -14,8 +14,8 @@ import {
   CustomersDAO,
   EventsDAO,
   EventSeriesDAO,
-} from '@api/v1/db';
-import { AuthHelper, OrdersHelper } from '@api/v1/helpers';
+} from '@packages/database';
+import { AuthHelper, OrdersHelper, CalendarHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   ICollaborator,
@@ -28,10 +28,15 @@ import {
   IEventDocument,
   IEventSeriesDocument,
   IEventSeries,
-} from 'src/api/v1/interfaces';
-import { CaregiverModel, CollaboratorModel, EventModel, EventSeriesModel } from '@api/v1/models';
-import { CognitoService, StripeService } from '@api/v1/services';
-import { HTTPError } from 'src/utils';
+} from 'src/packages/interfaces';
+import {
+  CaregiverModel,
+  CollaboratorModel,
+  EventModel,
+  EventSeriesModel,
+} from 'src/packages/models';
+import { CognitoService, StripeService } from 'src/packages/services';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 export default class CalendarController {
@@ -46,6 +51,7 @@ export default class CalendarController {
   // helpers
   static AuthHelper = AuthHelper;
   static OrdersHelper = OrdersHelper;
+  static CalendarHelper = CalendarHelper;
 
   // -------------------------------------------------- //
   //                     COLLABORATORS                  //
@@ -729,7 +735,7 @@ export default class CalendarController {
         for (let i = 0; i < eventsSeries.length; i++) {
           const eventSeries = eventsSeries[i];
 
-          const eventsGenerated = await CalendarController.OrdersHelper.generateEventsFromSeries(
+          const eventsGenerated = await CalendarController.CalendarHelper.generateEventsFromSeries(
             eventSeries
           );
 

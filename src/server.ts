@@ -23,13 +23,11 @@ import httpContext from 'express-http-context';
 // express-sanitizer
 import expressSanitizer from 'express-sanitizer';
 
-// utils
-// import { HTTPError } from 'src/utils';
+import swaggerDocs from './documentation/swagger';
+
+import logger from '@logger';
 
 const main = async () => {
-  // logger
-  const logger = require('./logs/logger').default;
-
   let app: express.Application = express();
   const MAX_RECONNECT_ATTEMPTS = 10;
   let currentReconnectAttempts = 0;
@@ -48,67 +46,40 @@ const main = async () => {
 
     logger.info(`Initializing the server... \n \n`);
 
-    const { loadAWSSecrets } = require('@api/v1/services/secrets.service');
-    await loadAWSSecrets();
-
     /**
      * Load AWS Secrets
+     *
+     *  For the modules to work the environment variables must be loaded first
      */
+    const { loadAWSSecrets } = require('@packages/services/secrets.service');
+    await loadAWSSecrets();
 
-    const { StripeCLILogin, StripeSetupWebhooks, CleanServerPorts } = require('@scripts');
+    // Now that the environment variables are loaded, we can load the modules (we need to use require instead of import because import statements are hoisted)
 
-    /**
-     * Now we can import the rest of the modules
-     */
-    // helpers
-    const { getServices } = require('@api/v1/helpers');
     // routes
     const {
-      ConfigRoute,
-      FilesRoute,
       AuthRoute,
-      CustomersRoute,
       HealthUnitsRoute,
       CollaboratorsRoute,
       ServicesRoute,
       OrdersRoute,
       CalendarRoute,
-      WebHooksRoute,
+      WebhooksRoute,
       PatientsRoute,
       PaymentsRoute,
       ReviewsRoute,
-      NotificationsRoute,
     } = require('@api/v1/routes');
 
-    // config
-    // documentation
-    const swaggerDocs = require('./documentation/swagger').default;
+    const { FilesRoute } = require('@api/files/v1/routes');
 
-    // @scripts
     const {
       RequestHandlerMiddleware,
       ResponseHandlerMiddleware,
       ErrorHandlerMiddleware,
-    } = require('@api/v1/middlewares');
+    } = require('@packages/middlewares');
 
-    /**
-     * Login to Stripe CLI
-     * @see https://stripe.com/docs/stripe-cli
-     */
-
-    if (process.env.NODE_ENV === 'development') {
-      await CleanServerPorts(Number(process.env.PORT));
-      await StripeCLILogin(process.env.STRIPE_SECRET_KEY as string);
-      await StripeSetupWebhooks();
-    }
-
-    logger.info(`Server settings: `);
-    logger.info(`Running in '${process.env.NODE_ENV}' environment`);
-    logger.info(`Host: ${process.env.HOST} `);
-    logger.info(`API Version: ${process.env.API_VERSION} `);
-    logger.info(`API Route: ${process.env.API_ROUTE as string} `);
-    logger.info(`API URL: ${process.env.API_URL} `);
-    logger.info(`Server Port: ${process.env.PORT} \n \n`);
+    //helpers
+    const { getServices } = require('@packages/helpers');
 
     // -------------------------------------------------------------------------------------------- //
     //                        APPLY DATABASE CONNECTION AND ERROR HANDLING                          //
@@ -210,7 +181,7 @@ const main = async () => {
 
       logger.info(`Applying Application Security Middlewares...`);
 
-      //app.use('/api/v1/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
+      //app.use('/packages/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -456,7 +427,7 @@ const main = async () => {
       // Middleware to parse the body of the HTTP requests
 
       // Check if the request is a webhook request
-      // A request is a webhook request if the original URL is /api/v1/webhooks/ + the name of the webhook
+      // A request is a webhook request if the original URL is /packages/webhooks/ + the name of the webhook
 
       // Use JSON parser for all non-webhook routes
 
@@ -476,20 +447,16 @@ const main = async () => {
 
       // Routes middlewares
 
-      app.use(ConfigRoute);
       app.use(process.env.API_ROUTE as string, FilesRoute);
       app.use(process.env.API_ROUTE as string, ReviewsRoute);
       app.use(process.env.API_ROUTE as string, AuthRoute);
-      app.use(process.env.API_ROUTE as string, CustomersRoute);
       app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
       app.use(process.env.API_ROUTE as string, PatientsRoute);
-
       app.use(process.env.API_ROUTE as string, OrdersRoute);
       app.use(process.env.API_ROUTE as string, ServicesRoute);
       app.use(process.env.API_ROUTE as string, CollaboratorsRoute);
       app.use(process.env.API_ROUTE as string, CalendarRoute);
-      app.use(process.env.API_ROUTE as string, WebHooksRoute);
-      app.use(process.env.API_ROUTE as string, NotificationsRoute);
+      app.use(process.env.API_ROUTE as string, WebhooksRoute);
       app.use(process.env.API_ROUTE as string, PaymentsRoute);
 
       // Middleware to handle and log all the errors
@@ -534,7 +501,7 @@ const main = async () => {
        */
       await getServices();
 
-      logger.info('Fetched all the necessary assets successfully!');
+      logger.info(`Fetched all the necessary assets successfully! \n`);
     } catch (error) {
       // throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
@@ -552,6 +519,14 @@ const main = async () => {
       // Starts listening for HTTP requests
       app.listen(process.env.PORT, () => {
         logger.info(`Successfully listening for HTTP requests on port: ${process.env.PORT}`);
+
+        logger.info(`Server Settings: `);
+        logger.info(`NODE_ENV: '${process.env.NODE_ENV}'`);
+        logger.info(`HOST: ${process.env.HOST} `);
+        logger.info(`API Version: ${process.env.API_VERSION} `);
+        logger.info(`API Route: ${process.env.API_ROUTE as string} `);
+        logger.info(`API URL: ${process.env.API_URL} `);
+        logger.info(`Server Port: ${process.env.PORT} \n`);
 
         swaggerDocs(app, process.env.PORT);
 
