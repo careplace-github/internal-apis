@@ -27,12 +27,19 @@
     "lint:commit": "lint-staged",
     "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
+    "prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint:commit"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "yarn prettier",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
