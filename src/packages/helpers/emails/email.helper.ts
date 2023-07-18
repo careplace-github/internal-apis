@@ -6,7 +6,7 @@ import logger from '@logger';
 import { AWS_SES_SENDER_EMAIL, AWS_SES_REPLY_TO_EMAIL } from '@constants';
 import aws from 'aws-sdk/clients/ses';
 
-import {SESService} from '@packages/services';
+import { SESService } from '@packages/services';
 
 /**
  * Class with helper and utility functions for the SES email service.
