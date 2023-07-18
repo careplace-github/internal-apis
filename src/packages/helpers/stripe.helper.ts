@@ -145,6 +145,7 @@ export default class StripeHelper {
     return response;
   }
 
+  // TODO Move this to dashboard.helper.ts
   static async getConnectedAccountCurrentMRR(accountId: string) {
     const currentMonthStart = new Date();
     currentMonthStart.setDate(1);
@@ -235,6 +236,7 @@ export default class StripeHelper {
     }
   }
 
+  // TODO Move this to dashboard.helper.ts
   static async getConnectAccountTotalRevenueByMonth(accountId: string) {
     try {
       let charges = await this.getChargesByConnectedAccountId(accountId, {
@@ -393,49 +395,6 @@ export default class StripeHelper {
     let promotionCode = promotionCodes.find((promotionCode) => promotionCode.code === name);
 
     return promotionCode;
-  }
-
-  /**
-   * Only works with Coupons that have a fixed amount discount. It doesn't work with Coupons that have a percentage discount.
-   */
-  static async calculateApplicationFeeWithPromotionCode(
-    amount: number,
-    promotionCodeId: string
-  ): Promise<number> {
-    let promotionCode = await this.Stripe.getPromotionCode(promotionCodeId, {
-      expand: ['restrictions', 'coupon'],
-    });
-
-    let coupon: Stripe.Coupon = promotionCode.coupon;
-    let couponAmountOff =
-      coupon.amount_off !== null ? parseFloat(coupon.amount_off.toString()) / 100 : 0;
-
-    let applicationAmount = amount * (parseFloat(STRIPE_APPLICATION_FEE) / 100) - couponAmountOff;
-
-    /**
-     * A non-negative decimal between 0 and 100, with at most two decimal places. This represents the percentage of the subscription invoice subtotal that will be transferred to the application owner’s Stripe account.
-     *
-     * @see https://stripe.com/docs/api/subscriptions/object#subscription_object-application_fee_percent
-     */
-    let newApplicationFee = ((applicationAmount * 100) / (amount - couponAmountOff / 100)).toFixed(
-      2
-    );
-
-    if (
-      parseFloat(newApplicationFee) > 100 ||
-      parseFloat(newApplicationFee) < 0 ||
-      promotionCode.restrictions.minimum_amount === null
-    ) {
-      throw new LayerError.INVALID_PARAMETER(
-        `Unable to apply promotion code to this order. Minimum order value is: ${
-          promotionCode.restrictions.minimum_amount !== null
-            ? promotionCode.restrictions.minimum_amount / 100
-            : 0
-        }€`
-      );
-    }
-
-    return parseFloat(newApplicationFee);
   }
 
   static async getPaymentMethodByChargeId(chargeId: string) {

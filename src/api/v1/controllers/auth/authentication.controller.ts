@@ -302,6 +302,11 @@ export default class AuthenticationController {
         return next(new HTTPError._400('Missing required header: x-client-id'));
       }
 
+      logger.info("CLIENT ID: " + clientId)
+      logger.info("AWS_COGNITO_BUSINESS_CLIENT_ID: " + AWS_COGNITO_BUSINESS_CLIENT_ID)
+
+      logger.info("AWS_COGNITO_MARKETPLACE_CLIENT_ID: " + AWS_COGNITO_MARKETPLACE_CLIENT_ID)
+
       if (
         clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
         clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
@@ -620,7 +625,6 @@ export default class AuthenticationController {
         AuthenticationController.AuthHelper.getAuthId(accessToken),
       ]);
 
-      logger.info('CLIENT ID: ' + clientId);
 
       let userAttributes: CognitoIdentityServiceProvider.AttributeListType | undefined;
 
@@ -731,7 +735,7 @@ export default class AuthenticationController {
       delete userJSON.cognito_id;
 
       response.statusCode = 200;
-      response.data = user;
+      response.data = userJSON;
 
       // Pass to the next middleware to handle the response
       next(response);

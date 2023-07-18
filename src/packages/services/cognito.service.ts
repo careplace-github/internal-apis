@@ -4,7 +4,7 @@ import AWS, { CognitoIdentityServiceProvider } from 'aws-sdk';
 import crypto from 'crypto';
 
 // @api
-import { LayerError } from 'src/utils';
+import { LayerError } from '@utils';
 
 // @constants
 import {

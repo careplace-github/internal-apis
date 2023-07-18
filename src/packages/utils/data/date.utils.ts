@@ -2,7 +2,7 @@ import { readFileSync, promises as fsPromises } from 'fs';
 import fs from 'fs';
 
 // Import logger
-import logger from '../../logs/logger';
+import logger from '../../../logs/logger';
 
 /**
  * Class with utility functions for dates.
