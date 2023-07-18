@@ -25,5 +25,3 @@ interface ICaregiver {
 type ICaregiverDocument = ICaregiver & Document;
 
 export { ICaregiver, ICaregiverDocument };
-
-

@@ -13,5 +13,4 @@ type TKinship =
   | 'sister'
   | 'other';
 
-
 export { TKinship };

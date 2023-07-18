@@ -7,7 +7,6 @@ import { THomeCareOrderRecurrency } from 'src/packages/interfaces/types';
 // interfaces
 import { IAddress, ICustomer, IHealthUnit, ICollaborator, IHomeCareOrder } from '..';
 
-
 interface IEventSeries {
   _id: Types.ObjectId | string;
 

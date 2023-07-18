@@ -1,7 +1,6 @@
 // Auth
 export { default as AuthUtils } from './auth/auth.utils';
 
-
 // Data
 export { default as DateUtils } from './data/date.utils';
 

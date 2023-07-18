@@ -6,8 +6,7 @@ import fs from 'fs';
  * Gets all the services from the database and writes them in a file called serviceson in the ./src/assets/data folder.
  */
 export async function getServices() {
-
-  let servicesDAO = new ServicesDAO;
+  let servicesDAO = new ServicesDAO();
 
   try {
     var services = await servicesDAO.queryList({}, {}, undefined, undefined);

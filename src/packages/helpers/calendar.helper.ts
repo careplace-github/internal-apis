@@ -6,7 +6,6 @@ import logger from 'src/logs/logger';
 import { IHomeCareOrder } from 'src/packages/interfaces';
 import { EventModel } from 'src/packages/models';
 
-
 export default class CalendarHelper {
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
 

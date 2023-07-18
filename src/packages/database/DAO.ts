@@ -203,7 +203,6 @@ export default abstract class DAO<T extends Document> {
 
     let response: IQueryListResponse<T>;
 
-
     const sort = options?.sort || '-createdAt';
 
     try {
