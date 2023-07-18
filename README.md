@@ -1,4 +1,4 @@
-<h1 align="center">Careplace REST API</h1>
+<h1 align="center">Internal REST APIs</h1>
 
 <a name="readme-top"></a>
 
@@ -13,7 +13,7 @@
   <br />
 
   <p align="center">
-    Careplace REST API is a RESTful API that provides access to the Careplace platform.
+    Internal RESTful APIs for Careplace platforms.
     <br />
   </p>
 
@@ -30,6 +30,8 @@
 </p>
 
 [![CD](https://github.com/careplace-github/rest-api/actions/workflows/cd-prod.yml/badge.svg?branch=main)](https://github.com/careplace-github/rest-api/actions/workflows/cd-prod.yml)
+
+[![CD](https://github.com/careplace-github/rest-api/actions/workflows/cd-stag.yml/badge.svg?branch=staging)](https://github.com/careplace-github/rest-api/actions/workflows/cd-stag.yml)
 
 [![CI](https://github.com/careplace-github/rest-api/actions/workflows/ci-dev.yml/badge.svg?branch=develop)](https://github.com/careplace-github/rest-api/actions/workflows/ci-dev.yml)
 
