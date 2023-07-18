@@ -1,4 +1,4 @@
-import { HealthUnitReviewSchema } from '../../../../packages/models';
+import { HealthUnitReviewSchema } from '@packages/models';
 import { createModelValidator } from './model.validator';
 
 const reviewValidator = createModelValidator(HealthUnitReviewSchema);

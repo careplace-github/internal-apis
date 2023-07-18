@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../../../logs/logger';
-import HTTP_Error from '../../../utils/errors/http/http-error';
-import LayerError from '../../../utils/errors/layer/layer-error';
+import logger from '@logger';
+import HTTPError from '@packages/utils/errors/http/http-error';
+import LayerError from '@packages/utils/errors/layer/layer-error';
 import { MulterError } from 'multer';
 
 import { IAPIResponse } from '../../interfaces';
 
 export default function ErrorHandler(
-  err: HTTP_Error | LayerError | MulterError | Error | any,
+  err: typeof HTTPError | typeof LayerError | MulterError | Error | any,
   req: Request,
   res: Response,
   next: NextFunction
@@ -19,9 +19,9 @@ export default function ErrorHandler(
 
   logger.info(`Error Handler Middleware Request: \n ${JSON.stringify(error, null, 2)} \n`);
 
-  if (err instanceof HTTP_Error && err.isOperational) {
-    // Handle operational HTTP_Error
-    logger.error(`HTTP_Error: ${err.stack}`);
+  if (err instanceof HTTPError && err.isOperational) {
+    // Handle operational HTTPError
+    logger.error(`HTTPError: ${err.stack}`);
     const response: IAPIResponse = {
       data: {
         error: {
@@ -98,7 +98,7 @@ export default function ErrorHandler(
   }
 
   /**
-   * If the err is not an instance of HTTP_Error or LayerError, then it is a normal response that successfully passed through the application.
+   * If the err is not an instance of HTTPError or LayerError, then it is a normal response that successfully passed through the application.
    * In this case, we will return the response as is.
    */
   let response = err;

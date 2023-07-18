@@ -2,7 +2,7 @@ import jwt_decode, { JwtPayload } from 'jwt-decode';
 import jwkToPem, { RSA } from 'jwk-to-pem';
 import jwt from 'jsonwebtoken';
 
-import { HTTPError, LayerError } from 'src/utils';
+import { HTTPError, LayerError } from '@utils';
 import {
   AWS_COGNITO_ISSUER,
   AWS_COGNITO_PUBLIC_KEY,

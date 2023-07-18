@@ -36,7 +36,7 @@ import {
   EventSeriesModel,
 } from 'src/packages/models';
 import { CognitoService, StripeService } from 'src/packages/services';
-import { HTTPError } from 'src/utils';
+import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 export default class CalendarController {

@@ -8,7 +8,7 @@ import mongoose, {
   UnpackedIntersection,
   Types,
 } from 'mongoose';
-import { LayerError } from 'src/utils';
+import { LayerError } from '@utils';
 import { IQueryListResponse } from 'src/packages/interfaces';
 import logger from '@logger';
 

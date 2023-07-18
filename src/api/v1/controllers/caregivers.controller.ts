@@ -10,33 +10,35 @@ import {
   CustomersDAO,
   HealthUnitsDAO,
   HealthUnitReviewsDAO,
-  CollaboratorsDAO,
+  CaregiversDAO,
   HomeCareOrdersDAO,
 } from 'src/packages/database';
 import { AuthHelper, EmailHelper } from '@packages/helpers';
 import {
   IAPIResponse,
-  ICollaborator,
-  ICollaboratorDocument,
+  ICaregiver,
+  ICaregiverDocument,
   IHealthUnit,
   IHealthUnitDocument,
+  IHomeCareOrder,
+  IHomeCareOrderDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
-import { HTTPError } from 'src/utils';
+import { HTTPError } from '@utils';
 import { AuthUtils } from 'src/packages/utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
-import { CaregiverModel, CollaboratorModel } from '../../../../packages/models';
+import { CaregiverModel, CollaboratorModel } from '@packages/models';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { omit } from 'lodash';
 
-export default class CollaboratorsController {
+export default class CaregiversController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
   static CustomersDAO = new CustomersDAO();
-  static CollaboratorsDAO = new CollaboratorsDAO();
+  static CaregiversDAO = new CaregiversDAO();
   static HealthUnitsDAO = new HealthUnitsDAO();
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   // helpers
@@ -52,7 +54,7 @@ export default class CollaboratorsController {
    * @debug
    * @description
    */
-  static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async createCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -70,12 +72,12 @@ export default class CollaboratorsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const reqCollaborator = req.body as ICollaborator;
-      const sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
+      const reqCaregiver = req.body as ICaregiver;
+      const sanitizedReqCaregiver = omit(reqCaregiver, ['_id', 'cognito_id', 'settings']);
 
-      const user = await CollaboratorsController.AuthHelper.getUserFromDB(accessToken);
+      const user = await CaregiversController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
@@ -87,13 +89,13 @@ export default class CollaboratorsController {
 
       let healthUnit: IHealthUnitDocument;
 
-      let newcollaborator: ICollaboratorDocument;
+      let newcaregiver: ICaregiverDocument;
       let temporaryPassword: string | undefined;
-      let cognitocollaborator: CognitoIdentityServiceProvider.SignUpResponse | undefined;
+      let cognitocaregiver: CognitoIdentityServiceProvider.SignUpResponse | undefined;
 
       try {
         // Get the healthUnit from MongoDB.
-        healthUnit = await CollaboratorsController.HealthUnitsDAO.retrieve(healthUnitId);
+        healthUnit = await CaregiversController.HealthUnitsDAO.retrieve(healthUnitId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
@@ -105,61 +107,61 @@ export default class CollaboratorsController {
         }
       }
 
-      sanitizedReqCollaborator.health_unit = healthUnit._id;
+      sanitizedReqCaregiver.health_unit = healthUnit._id;
 
       // Remove any whitespace from the phone number.
-      sanitizedReqCollaborator.phone = sanitizedReqCollaborator.phone!.replace(/\s/g, '');
+      sanitizedReqCaregiver.phone = sanitizedReqCaregiver.phone!.replace(/\s/g, '');
 
-      const collaborator = new CollaboratorModel(sanitizedReqCollaborator);
+      const caregiver = new CaregiverModel(sanitizedReqCaregiver);
 
-      // Validate the collaborator data.
-      const validationError = collaborator.validateSync({ pathsToSkip: ['cognito_id'] });
+      // Validate the caregiver data.
+      const validationError = caregiver.validateSync({ pathsToSkip: ['cognito_id'] });
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
       }
 
-      let existingcollaborator: ICollaboratorDocument | undefined;
-      // Check if the healthUnit already has a collaborator with the same email.
+      let existingcaregiver: ICaregiverDocument | undefined;
+      // Check if the healthUnit already has a caregiver with the same email.
       try {
-        existingcollaborator = await CollaboratorsController.CollaboratorsDAO.queryOne({
-          email: sanitizedReqCollaborator.email,
+        existingcaregiver = await CaregiversController.CaregiversDAO.queryOne({
+          email: sanitizedReqCaregiver.email,
           health_unit: healthUnit._id,
         });
       } catch (error: any) {
         // Do nothing.
       }
 
-      if (existingcollaborator) {
+      if (existingcaregiver) {
         return next(
           new HTTPError._409(
-            `Health unit already has a collaborator with the email: ${sanitizedReqCollaborator.email}.`
+            `Health unit already has a caregiver with the email: ${sanitizedReqCaregiver.email}.`
           )
         );
       }
 
-      // If the permission app_collaborator is included, create a new collaborator in the BUSINESS Cognito collaborator Pool to allow them to login.
-      if (sanitizedReqCollaborator?.permissions?.includes('app_user')) {
+      // If the permission app_caregiver is included, create a new caregiver in the BUSINESS Cognito caregiver Pool to allow them to login.
+      if (sanitizedReqCaregiver?.permissions?.includes('app_user')) {
         /**
-         * The user is trying to create a collaborator with the app_user permission.
-         * This means that the user is trying to create a collaborator that can login to the app.
-         * This means that we need to create a new user in the BUSINESS Cognito collaborator Pool.
+         * The user is trying to create a caregiver with the app_user permission.
+         * This means that the user is trying to create a caregiver that can login to the app.
+         * This means that we need to create a new user in the BUSINESS Cognito caregiver Pool.
          * The email is a unique identifier.
-         * To prevent a user creating a collaborator that is from another health unit (if this happened another health unit couldn't create a collaborator with the same email),
-         * one is onnly allowed to create a collaborator with the email that has the same domain as the health unit.
+         * To prevent a user creating a caregiver that is from another health unit (if this happened another health unit couldn't create a caregiver with the same email),
+         * one is onnly allowed to create a caregiver with the email that has the same domain as the health unit.
          */
 
         // Get the domain from the health unit email.
         const healthUnitEmailDomain = healthUnit.business_profile.email.split('@')[1];
 
-        // Get the domain from the collaborator email.
-        const collaboratorEmailDomain = sanitizedReqCollaborator.email.split('@')[1];
+        // Get the domain from the caregiver email.
+        const caregiverEmailDomain = sanitizedReqCaregiver.email.split('@')[1];
 
         // Check if the domains are the same.
-        if (healthUnitEmailDomain !== collaboratorEmailDomain) {
+        if (healthUnitEmailDomain !== caregiverEmailDomain) {
           return next(
             new HTTPError._400(
-              'The collaborator email domain is not the same as the health unit email domain.'
+              'The caregiver email domain is not the same as the health unit email domain.'
             )
           );
         }
@@ -172,12 +174,12 @@ export default class CollaboratorsController {
           })
         );
 
-        // Create a new collaborator in the BUSINESS Cognito collaborator Pool.
+        // Create a new caregiver in the BUSINESS Cognito caregiver Pool.
         try {
-          cognitocollaborator = await CollaboratorsController.CognitoService.addUser(
-            reqCollaborator.email,
+          cognitocaregiver = await CaregiversController.CognitoService.addUser(
+            reqCaregiver.email,
             temporaryPassword,
-            reqCollaborator.phone
+            reqCaregiver.phone
           );
         } catch (error: any) {
           switch (error.type) {
@@ -195,12 +197,12 @@ export default class CollaboratorsController {
           }
         }
 
-        reqCollaborator.cognito_id = cognitocollaborator.UserSub;
+        reqCaregiver.cognito_id = cognitocaregiver.UserSub;
 
         try {
-          // Confirm the collaborator in Cognito.
-          const confirmcollaborator = CollaboratorsController.CognitoService.adminConfirmUser(
-            reqCollaborator.email!
+          // Confirm the caregiver in Cognito.
+          const confirmcaregiver = CaregiversController.CognitoService.adminConfirmUser(
+            reqCaregiver.email!
           );
         } catch (error: any) {
           switch (error.type) {
@@ -216,17 +218,17 @@ export default class CollaboratorsController {
       }
 
       try {
-        // Add the collaborator to the database.
-        newcollaborator = await CollaboratorsController.CollaboratorsDAO.create(collaborator);
+        // Add the caregiver to the database.
+        newcaregiver = await CaregiversController.CaregiversDAO.create(caregiver);
       } catch (error: any) {
-        // If there was an error creating the collaborator in the database, delete the collaborator from Cognito.
-        const deletecollaborator = await CollaboratorsController.CognitoService.adminDeleteUser(
-          reqCollaborator.email
+        // If there was an error creating the caregiver in the database, delete the caregiver from Cognito.
+        const deletecaregiver = await CaregiversController.CognitoService.adminDeleteUser(
+          reqCaregiver.email
         );
 
         switch (error.type) {
           case 'DUPLICATE_KEY': {
-            return next(new HTTPError._400('collaborator already exists.'));
+            return next(new HTTPError._400('caregiver already exists.'));
           }
 
           default: {
@@ -235,19 +237,19 @@ export default class CollaboratorsController {
         }
       }
 
-      // If the permission app_collaborator is included, send an email to the collaborator with their temporary password and login instructions.
-      if (cognitocollaborator) {
+      // If the permission app_caregiver is included, send an email to the caregiver with their temporary password and login instructions.
+      if (cognitocaregiver) {
         try {
           const emailData = {
-            name: reqCollaborator.name,
-            email: reqCollaborator.email,
+            name: reqCaregiver.name,
+            email: reqCaregiver.email,
             healthUnit: healthUnit!.business_profile!.name!,
             password: temporaryPassword,
           };
 
           // Insert variables into email template
           let email = await EmailHelper.getEmailTemplateWithData(
-            'business_new_collaborator',
+            'business_new_caregiver',
             emailData
           );
 
@@ -255,12 +257,8 @@ export default class CollaboratorsController {
             return next(new HTTPError._500('Error getting email template'));
           }
 
-          // Send email to collaborator
-          CollaboratorsController.SES.sendEmail(
-            [reqCollaborator.email!],
-            email.subject,
-            email.htmlBody
-          );
+          // Send email to caregiver
+          CaregiversController.SES.sendEmail([reqCaregiver.email!], email.subject, email.htmlBody);
         } catch (error: any) {
           switch (error.type) {
             default: {
@@ -271,7 +269,7 @@ export default class CollaboratorsController {
       }
 
       response.statusCode = 201;
-      response.data = newcollaborator;
+      response.data = newcaregiver;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -283,9 +281,9 @@ export default class CollaboratorsController {
 
   /**
    * @debug
-   * @description Returns the collaborator information from the collaborator id in the request params
+   * @description Returns the caregiver information from the caregiver id in the request params
    */
-  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async retrieveCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
@@ -305,7 +303,7 @@ export default class CollaboratorsController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
@@ -313,28 +311,28 @@ export default class CollaboratorsController {
         return next(new HTTPError._403('Forbidden'));
       }
 
-      const collaboratorId = req.params.id;
+      const caregiverId = req.params.id;
 
-      let collaborator: ICollaboratorDocument;
+      let caregiver: ICaregiverDocument;
 
       try {
-        // Get collaborator by id
-        collaborator = await CollaboratorsController.CollaboratorsDAO.retrieve(collaboratorId);
+        // Get caregiver by id
+        caregiver = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
-            return next(new HTTPError._404('Collaborator not found.'));
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
       }
 
-      if (collaborator?.health_unit?.toString() !== user.health_unit._id.toString()) {
+      if (caregiver?.health_unit?.toString() !== user.health_unit._id.toString()) {
         return next(new HTTPError._403('Forbidden'));
       }
 
       response.statusCode = 200;
-      response.data = collaborator;
+      response.data = caregiver;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -348,16 +346,16 @@ export default class CollaboratorsController {
    * @debug
    * @description
    */
-  static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async updateCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
 
-      const collaboratorId = req.params.id;
-      const reqCollaborator = req.body;
-      const sanitizedReqCollaborator = omit(reqCollaborator, [
+      const caregiverId = req.params.id;
+      const reqCaregiver = req.body;
+      const sanitizedReqCaregiver = omit(reqCaregiver, [
         '_id',
         'cognito_id',
         'email',
@@ -366,8 +364,8 @@ export default class CollaboratorsController {
         'settings',
       ]);
 
-      let collaboratorExists: ICollaboratorDocument | null = null;
-      let updatedcollaborator: ICollaboratorDocument | null = null;
+      let caregiverExists: ICaregiverDocument | null = null;
+      let updatedcaregiver: ICaregiverDocument | null = null;
 
       let accessToken: string;
 
@@ -382,7 +380,7 @@ export default class CollaboratorsController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
@@ -390,47 +388,43 @@ export default class CollaboratorsController {
         return next(new HTTPError._403('Forbidden'));
       }
 
-      // Check if collaborator already exists by verifying the id
+      // Check if caregiver already exists by verifying the id
       try {
-        collaboratorExists = await CollaboratorsController.CollaboratorsDAO.retrieve(
-          collaboratorId
-        );
+        caregiverExists = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
 
-        if (collaboratorExists?.health_unit?.toString() !== user.health_unit._id.toString()) {
+        if (caregiverExists?.health_unit?.toString() !== user.health_unit._id.toString()) {
           return next(new HTTPError._403('Forbidden'));
         }
 
-        // If collaborator exists, update collaborator
-        if (collaboratorExists) {
-          // The collaborator to be updated is the collaborator from the request body. For missing fields, use the collaborator from the database.
-          const collaborator = new CollaboratorModel({
-            ...collaboratorExists.toJSON(),
-            ...sanitizedReqCollaborator,
+        // If caregiver exists, update caregiver
+        if (caregiverExists) {
+          // The caregiver to be updated is the caregiver from the request body. For missing fields, use the caregiver from the database.
+          const caregiver = new CaregiverModel({
+            ...caregiverExists.toJSON(),
+            ...sanitizedReqCaregiver,
           });
 
-          // Validate collaborator
-          const validationError = collaborator.validateSync();
+          // Validate caregiver
+          const validationError = caregiver.validateSync();
 
           if (validationError) {
             return next(new HTTPError._400(validationError.message));
           }
 
-          // Update collaborator in the database
-          updatedcollaborator = await CollaboratorsController.CollaboratorsDAO.update(
-            collaborator!
-          );
+          // Update caregiver in the database
+          updatedcaregiver = await CaregiversController.CaregiversDAO.update(caregiver!);
         }
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
-            return next(new HTTPError._404('Collaborator not found.'));
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
       }
 
       response.statusCode = 200;
-      response.data = updatedcollaborator;
+      response.data = updatedcaregiver;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -444,20 +438,20 @@ export default class CollaboratorsController {
    * @debug
    * @description
    */
-  static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async deleteCaregiver(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
 
-      const collaboratorId = req.params.id;
+      const caregiverId = req.params.id;
 
-      if (!collaboratorId) {
-        return next(new HTTPError._400('Missing collaborator id'));
+      if (!caregiverId) {
+        return next(new HTTPError._400('Missing caregiver id'));
       }
 
-      let collaborator: ICollaboratorDocument | null = null;
+      let caregiver: ICaregiverDocument | null = null;
       let isDeleted = false;
 
       let accessToken: string;
@@ -473,7 +467,7 @@ export default class CollaboratorsController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
@@ -482,28 +476,42 @@ export default class CollaboratorsController {
       }
 
       try {
-        // Try to retrieve collaborator from CollaboratorsDAO first
-        collaborator = await CollaboratorsController.CollaboratorsDAO.retrieve(collaboratorId);
+        // Try to retrieve caregiver from CaregiversDAO first
+        caregiver = await CaregiversController.CaregiversDAO.retrieve(caregiverId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
-            return next(new HTTPError._404('Collaborator not found.'));
+            return next(new HTTPError._404('Caregiver not found.'));
           default:
             return next(new HTTPError._500(error.message));
         }
       }
 
-      if (collaborator?.health_unit?.toString() !== user.health_unit._id.toString()) {
+      if (caregiver?.health_unit?.toString() !== user.health_unit._id.toString()) {
         return next(new HTTPError._403('Forbidden'));
       }
 
-      // If collaborator exists, delete collaborator from the database
-      if (collaborator) {
+      // If the Caregiver is associated with an order do not allow deleting
+      const orders = (
+        await CaregiversController.HomeCareOrdersDAO.queryList({
+          // queryList returns 402 if no results so we don't need error handling
+          caregiver: caregiverId,
+          // Status different from new, cancelled, completed
+          status: { $nin: ['new', 'cancelled', 'completed'] },
+        })
+      ).data;
+
+      if (orders.length > 0) {
+        return next(
+          new HTTPError._400('Caregiver is associated with an order and cannot be deleted.')
+        );
+      }
+
+      // If caregiver exists, delete caregiver from the database
+      if (caregiver) {
         try {
-          const deletedCollaborator = await CollaboratorsController.CollaboratorsDAO.delete(
-            collaboratorId
-          );
-          isDeleted = !!deletedCollaborator;
+          const deletedCaregiver = await CaregiversController.CaregiversDAO.delete(caregiverId);
+          isDeleted = !!deletedCaregiver;
         } catch (error: any) {
           switch (error.type) {
             default:
@@ -512,10 +520,10 @@ export default class CollaboratorsController {
         }
       }
 
-      // If the collaborator has access to the BUSINESS, delete the collaborator from Cognito
-      if (collaborator?.cognito_id) {
+      // If the caregiver has access to the BUSINESS, delete the caregiver from Cognito
+      if (caregiver?.cognito_id) {
         try {
-          await CollaboratorsController.CognitoService.adminDeleteUser(collaborator.cognito_id);
+          await CaregiversController.CognitoService.adminDeleteUser(caregiver.cognito_id);
         } catch (error: any) {
           switch (error.type) {
             default:
@@ -525,7 +533,7 @@ export default class CollaboratorsController {
       }
 
       response.statusCode = 200;
-      response.data = { message: 'Collaborator deleted.' };
+      response.data = { message: 'Caregiver deleted.' };
 
       next(response);
 
@@ -540,14 +548,14 @@ export default class CollaboratorsController {
    * @debug
    * @description
    */
-  static async listCollaborators(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async listCaregivers(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
 
-      let collaborators: ICollaboratorDocument[];
+      let caregivers: ICaregiverDocument[];
 
       let healthUnitId: string;
 
@@ -564,15 +572,15 @@ export default class CollaboratorsController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
       healthUnitId = user.health_unit._id.toString();
 
       try {
-        collaborators = (
-          await CollaboratorsController.CollaboratorsDAO.queryList({
+        caregivers = (
+          await CaregiversController.CaregiversDAO.queryList({
             health_unit: healthUnitId,
           })
         ).data;
@@ -583,8 +591,8 @@ export default class CollaboratorsController {
         }
       }
 
-      response.statusCode = collaborators.length > 0 ? 200 : 204;
-      response.data = collaborators;
+      response.statusCode = caregivers.length > 0 ? 200 : 204;
+      response.data = caregivers;
 
       // Pass to the next middleware to handle the response
       next(response);

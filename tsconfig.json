@@ -24,7 +24,7 @@
         "src/config/*"
       ],
       "@utils": [
-        "src/utils"
+        "src/packages/utils"
       ],
       "@constants": [
         "src/config/constants"

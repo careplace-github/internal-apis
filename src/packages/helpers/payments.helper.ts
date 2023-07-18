@@ -1,6 +1,5 @@
 import { Document, Types } from 'mongoose';
 import { IEventSeries, IEvent, ICaregiver, IEventDocument } from 'src/packages/interfaces';
-import { HomeCareOrdersDAO } from 'src/packages/database';
 import logger from 'src/logs/logger';
 
 import { IHomeCareOrder } from 'src/packages/interfaces';
@@ -38,8 +37,7 @@ interface Discount {
   coupon: string;
   amount_off?: number;
 }
-export default class OrdersHelper {
-  static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+export default class PaymentsHelper {
 
 
 static async calculateAmounts(
