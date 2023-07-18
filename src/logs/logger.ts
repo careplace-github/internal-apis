@@ -16,7 +16,9 @@ const customFormat = combine(
   timestamp(),
   printf((info) => {
     const requestId = httpContext.get('requestId') || 'N/A';
-    return `${info.timestamp} | [${info.level.toUpperCase().padEnd(7)}] | [Request ID: ${requestId}]: ${info.message}`;
+    return `${info.timestamp} | [${info.level
+      .toUpperCase()
+      .padEnd(7)}] | [Request ID: ${requestId}]: ${info.message}`;
   })
 );
 

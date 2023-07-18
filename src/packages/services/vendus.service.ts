@@ -62,7 +62,9 @@ export default class VendusService {
 
       const response = await this.axios.post('/documents', data);
 
-      logger.info(`VendusService createInvoice Response: \n ${JSON.stringify(response, null, 2)}\n`);
+      logger.info(
+        `VendusService createInvoice Response: \n ${JSON.stringify(response, null, 2)}\n`
+      );
 
       return response;
     } catch (err: any) {
@@ -88,7 +90,9 @@ export default class VendusService {
 
       const response = await this.axios.post('/documents', data);
 
-      logger.info(`VendusService createReceipt Response: \n ${JSON.stringify(response, null, 2)}\n`);
+      logger.info(
+        `VendusService createReceipt Response: \n ${JSON.stringify(response, null, 2)}\n`
+      );
 
       return response;
     } catch (err: any) {

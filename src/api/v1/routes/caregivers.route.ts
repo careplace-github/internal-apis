@@ -5,7 +5,7 @@ import express from 'express';
 // Import controllers
 import { CaregiversController } from '../controllers';
 
-import { AuthenticationGuard, ClientGuard} from '@packages/middlewares';
+import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
 
 const router = express.Router();
 

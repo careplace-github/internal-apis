@@ -29,7 +29,12 @@ import {
   IService,
   IServiceDocument,
 } from 'src/packages/interfaces';
-import { CustomerModel, EventSeriesModel, HomeCareOrderModel, ServiceModel } from 'src/packages/models';
+import {
+  CustomerModel,
+  EventSeriesModel,
+  HomeCareOrderModel,
+  ServiceModel,
+} from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
 import { AuthUtils } from 'src/packages/utils';
 import { HTTPError, DateUtils } from '@utils';
