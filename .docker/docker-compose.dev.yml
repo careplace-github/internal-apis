@@ -1,0 +1,44 @@
+version: "1.0.0"
+networks:
+  careplace-backend:
+    driver: bridge
+
+services:
+  rest-api:
+    stdin_open: true
+    tty: true
+    build:
+      context: ../
+      dockerfile: ./.docker/api/Dockerfile.dev
+    image: careplace/rest-api:dev
+    networks:
+      - careplace-backend
+    ports:
+      - "8080:8080"
+    container_name: rest-api
+    volumes:
+      - ../:/usr/src/app
+    environment:
+      - APP_NAME=rest_api-staging
+      - NODE_ENV=development
+      - APP_ENV=docker
+      - CHOKIDAR_USEPOLLING=true
+
+  stripe-cli:
+    image: stripe/stripe-cli
+    container_name: stripe-cli
+    command: listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to localhost:8000/v1/webhooks/stripe/
+    env_file:
+      - ../.env.local
+
+  aws-cli:
+    image: amazon/aws-cli
+    container_name: aws-cli
+    entrypoint: tail -f /dev/null
+    volumes:
+      - ../:/usr/src/app
+    env_file:
+      - ../.env.local
+
+volumes:
+  mongodb_data:

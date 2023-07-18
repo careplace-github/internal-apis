@@ -24,11 +24,11 @@
 #    See the documentation for each action used below for the recommended IAM policies for this IAM user,
 #    and best practices on handling the access key credentials.
 
-name: 'Continuous Deployment (CD)'
+name: '[PRODUCTION] Continuous Deployment (CD)'
 
 on:
   push:
-    branches: ['Master']
+    branches: [Master]
 
 env:
   AWS_REGION: eu-west-3 # set this to your preferred AWS region, e.g. us-west-1
@@ -89,39 +89,38 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
   release:
-            name: Release
-            needs: deploy
-            runs-on: ubuntu-latest
-        
-            steps:
-              - name: Checkout
-                uses: actions/checkout@v3
-        
-              - name: Determine Release Version
-                id: version
-                uses: docker://conventionaltools/conventional-recommended-bump-action:v1.2.1
-        
-              - name: Generate Changelog
-                id: changelog
-                uses: docker://conventionaltools/conventional-changelog-action:v1.4.2
-                with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  preset: angular
-        
-              - name: Update Changelog
-                run: |
-                  echo "${{ steps.changelog.outputs.changelog }}" >> changelog.md
-                shell: bash
-        
-              - name: Create Release
-                id: create_release
-                uses: actions/create-release@v1
-                env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                with:
-                  tag_name: ${{ steps.version.outputs.version }}
-                  release_name: Release ${{ steps.version.outputs.version }}
-                  body: ${{ steps.changelog.outputs.changelog }}
-                  draft: false
-                  prerelease: false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate changelog
+        run: npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+
+      - name: Determine recommended version bump
+        id: bump
+        run: npx conventional-recommended-bump
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ${{ steps.bump.outputs.reason }}
+            ${{ steps.bump.outputs.releaseType }}
+          draft: false
+          prerelease: false

@@ -54,7 +54,7 @@
     "prefer-regex-literals": 2, // regex
     "import/no-named-as-default-member": 2, // import module
     "import/no-named-as-default": 2, // import module
-    "import/extensions": 2, // import module
+    "import/extensions": 0, // import module
     "arrow-body-style": 2, // use arrow function instead of function
     "no-alert": 2, // no alert function 
     "camelcase": 1, // camelcase in variable
