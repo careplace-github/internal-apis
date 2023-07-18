@@ -1,204 +1,186 @@
-# CRM
+<h1 align="center">Careplace REST API</h1>
 
-## Getting Started  
+<a name="readme-top"></a>
 
-This guide will help you on how to set up everything so that you can start working on this project. <br>
-Please make sure to add a profile image and confirm that you're username looks something like: <br>
-`carely-elonmusk` 
-<br> <br> <br>
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/careplace-github/rest-api">
+    <img src="docs/images/careplace-logo.png" alt="Logo" height="75" >
+  </a>
 
-## Setting up Git
-1) [Download and install the latest version of Git](https://git-scm.com/downloads). <br> <br>
+  <br />
+  <br />
 
-2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
+  <p align="center">
+    Careplace REST API is a RESTful API that provides access to the Careplace platform.
+    <br />
+  </p>
 
-3) Set a Git username:\
-`$ git config user.name "Mona Lisa"` <br> <br>
+  <p align="center">
+  <a href="https://www.careplace.pt"><strong>www.careplace.pt</strong></a>
 
-4) Confirm that you have set the Git username correctly:\
-`$ git config user.name`\
-`> Mona Lisa` <br> <br>
+  <p align="center">
+    <a href="CONTRIBUTING.md">Contributing Guidelines </a>
+    ·
+    <a href="https://github.com/careplace-github/rest-api/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/careplace-github/rest-api/issues">Request Feature</a>
+  </p>
+</p>
 
-5) Set a Git email:\
-`$ git config user.email "email@carely.pt"` <br> <br>
+[![CD](https://github.com/careplace-github/rest-api/actions/workflows/cd-prod.yml/badge.svg?branch=main)](https://github.com/careplace-github/rest-api/actions/workflows/cd-prod.yml)
 
-6) Confirm that you have set the Git email correctly:\
-`$ git config user.email`\
-`> email@carely.pt` <br> <br>
+[![CI](https://github.com/careplace-github/rest-api/actions/workflows/ci-dev.yml/badge.svg?branch=develop)](https://github.com/careplace-github/rest-api/actions/workflows/ci-dev.yml)
 
-<br>
+</div>
 
-## Setting up SSH Key
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#development-setup">Development Setup</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+      </ul>
+    </li>    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#changelog">Changelog</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
 
+  </ol>
+</details>
 
-1) Open Terminal.  <br> <br>
- 
-2) Paste the text below, substituting in your GitHub email address.\
-`$ ssh-keygen -t ed25519 -C "your_email@example.com"`
-\
-\
-This creates a new SSH key, using the provided email as a label.\
-`Generating public/private algorithm key pair.`
-\
-\
-When you're prompted to "Enter a file in which to save the key," press Enter. This accepts the default file location.\
-`> Enter a file in which to save the key (/c/Users/you/.ssh/id_algorithm):[Press enter]`
-\
-\
-At the prompt, type a secure passphrase. For more information, see ["Working with SSH key passphrases"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases).\
-`> Enter passphrase (empty for no passphrase): [Type a passphrase]`\
-`> Enter same passphrase again: [Type passphrase again]` <br> <br>
+<!-- ABOUT THE PROJECT -->
 
+## About The Project
 
-3) Ensure the ssh-agent is running. You can use the "Auto-launching the ssh-agent" instructions in "Working with SSH key passphrases", or start it manually:\
-`# start the ssh-agent in the background`\
-`$ eval "$(ssh-agent -s)"` \
-`> Agent pid 59566` <br> <br>
+Careplace REST API is a RESTful API that provides access to the Careplace platform.
 
-4) Add your SSH private key to the ssh-agent. If you created your key with a different name, or if you are adding an existing key that has a different name, replace id_ed25519 in the command with the name of your private key file.\
-`$ ssh-add ~/.ssh/id_ed25519` <br> <br>
+### Built With
 
-5) Add the SSH key to your account on GitHub. For more information, see ["Adding a new SSH key to your GitHub account"](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account). <br> <br>
+- [![Node][NodeJs-badge]][NodeJs-url]
+- [![Express][Express-badge]][Express-url]
+- [![MongoDB][MongoDB-badge]][MongoDB-url]
+- [![Typescript][Typescript-badge]][Typescript-url]
 
-<br>
+<br />
 
-## Setting up the Repository
+<!-- DEVELOPMENT SETUP -->
 
-1) Download Node.js [v16.16.0](https://nodejs.org/en/download/releases/)<br> <br>
+## Development Setup
 
-2) Change the current working directory to the local repository where you want to configure this repository. <br> <br>
+### Prerequisites
 
-3) Paste the text below.\
-`git clone git@github.com:CarelyPT/CRM.git` <br> <br>
+- [Node.js](https://nodejs.org/en/download/) (version 16 or higher)
+- [Yarn](https://classic.yarnpkg.com/en/docs/install) (version 1.22 or higher)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) (version 2 or higher)
+- [Stripe CLI](https://stripe.com/docs/stripe-cli#install) (version 1.8 or higher)
 
-4) Install dependencies\
-`npm install` <br> <br>
+To learn how to setup your development environment, please refer to the [Developer Guide](docs/DEVELOPER.md).
 
-5) Start the Node.js Server:\
-`nodemon server` <br> <br>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<br>
+<!-- CONTRIBUTING -->
 
+## Contributing
 
-## Branches Workflow
+We follow the [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) for our branching model.
+We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for our commit messages.
+We use [Semantic Versioning](https://semver.org/) for our versioning scheme.
+We use [Conventional Releases](
+We use [Conventional Changelog]() for our changelog generation.
+We adhere to [Airbnb's JavaScript Style Guide](https://airbnb.io/javascript/) for our code style and formatting.
 
-This workflow consists of five types of branches, each with different roles:
+For a detailed explanation of our contribution guidelines, please refer to the [Contributing Guide](CONTRIBUTING.md).
 
-- Master (aka Production branch)
-- feature branches 
-- release branch
-- hotfix branch
-- develop branch (aka Integration branch) <br>
-<br>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-![](https://backlog.com/app/themes/backlog-child/assets/img/guides/git/collaboration/branching_workflows_001.png) <br> <br> <br>
+<!-- CHANGELOG -->
 
+## Changelog
 
-### Master
-Upon making the first commit in a repository, Git will automatically create a master branch by default. Subsequent commits will go under the master branch until you decide to create and switch over to another branch.
+[Learn about the latest improvements.](CHANGELOG.md)
 
-Codebase residing in the master branch is considered to be production-ready. When it is ready for a specific release, the latest commit will be given a release tag.
-<br> <br> <br>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Features
-
-When you start working on a new feature/bug fix, you should create a feature/topic branch. A feature/topic branch is normally created off a develop/integration branch. This feature/topic branch can reside in your local machine throughout the entire development lifecycle of the feature.
-
-You will push this branch to the remote repository whenever you are ready to merge the change set with the develop branch. 
-
-When merging the change with the develop branch use `git merge --no-ff` to avoid fast forwarding so that the branch history is visible on the graph: <br>
-<br>
-![](https://i.stack.imgur.com/pPQd7.png)
-<br> <br> <br>
-
-### Release
-
-When you roll out a new release, you create a release branch. A release branch helps you to ensure that the new features are running correctly.
-
-By convention, release branch names normally start with the prefix "release-".
-
-The release branch is typically created off the develop/integration branch when it's close to being production-ready.
-
-Only bug fixes and release related issues should be addressed on this branch. Having this branch will allow other team members to continue pushing new features to the develop/integration branch without interrupting the release workflow.
-
-When you are ready to release, merge the release branch with the master branch and tag a release number to the newly created merge commit.
-
-You should also merge the release branch with the develop/integration branch so that both the master and develop/integration branches receive the latest changes/bug fixes from the release branch. <br> <br>
-
-### Hotfix
-
-When you need to add an important fix to your production codebase quickly, you can create a Hotfix branch off the master branch.
-
-By convention, hotfix branch names normally start with the prefix "hotfix-".
-
-The advantage of a hotfix branch is that it allows you to quickly issue a patch and have the change merged with the master branch without having to wait for the next release.
-
-A hotfix branch should be merged with the develop/integration branch as well. <br> <br>
-
-### Develop
-
-A develop/integration branch should be kept stable at all times. This is important because new branches are created off of this branch, and this branch could eventually go out live on production. Continuous integration tools such as Jenkins can be used to help do just that.
-
-When some changes need to be merged into the develop/integration branch, it is generally a good idea to create a feature/topic branch to work on independently. <br> <br> <br>
-
-
-## Branch Naming
-
-When creating a new feature/bug fix/hot fix branch, respecting the workflow previously explained, use grouping tokens at the beginning of your branch names followed by a small description.
-
-Choose one of the following tokens to every one of your branch names:
-- **feat**: feature I'm adding or expanding
-- **bug**: bug fix or hot fix
-- **junk**: throwaway branch created to experiment
-
-When creating a feature branch after the token use the ticket ID of the task (from GitHub Projects Cards).
-If it's a bug branch and theres an issue open use the issue tracker ID.
-
-Here are two examples: <br>
-`feat-22/authentication`\
-`bug-1/payment-information-only-shows-after-refresh` <br> <br> <br>
-
-## Copyright
-
-Every piece of software developed in this repository is intelectual property of Carely, Lda. <br>
-Please make sure to insert the following copyright notice on every file:
-<br>
-```
-/*  
- * [EN]
- *
- * Copyright (C) Carely, Lda - All Rights Reserved
- *
- * Unauthorized copying or distributing of this file via any medium is 
- * strictly prohibited.
- * This file is confidential and intellectual property of Carely, Lda.
- * For more information visit www.carely.pt or get in contact at 
- * contact@carely.pt
- * 
- * © 2022 Carely. All Rights Reserved.
- * 
- * 
- * [PT]
- * 
- * Copyright (C) Carely, Lda - Todos os direitos reservados
- *
- * A cópia ou distribuição não autorizada deste ficheiro por qualquer 
- * meio é estritamente proibida.
- * Este ficheiro é confidencial e parte da propriedade intelectual da
- * Carely, Lda.
- * Para mais informações visite www.carely.pt ou entre em contacto 
- * em contact@carely.pt 
- * 
- * © 2022 Carely. Todos os direitos reservados. 
- */
-```
-
-<br> <br> <br>
+<!-- LICENSE -->
 
 ## License
 
-Copyright © 2022 [Carely](https://www.carely.pt) - All Rights Reserved
+This project is proprietary and is not licensed for public use.
+For more information check the [License](LICENSE).
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- CONTACT -->
 
+## Contact
 
+Contact us at support@careplace.pt
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+Copyright © 2023 Careplace - All Rights Reserved
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
+[contributors-url]: https://github.com/careplace-github/rest-api/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
+[forks-url]: https://github.com/careplace-github/rest-api/network/members
+[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
+[stars-url]: https://github.com/careplace-github/rest-api/stargazers
+[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
+[issues-url]: https://github.com/careplace-github/rest-api/issues
+[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
+[license-url]: https://github.com/careplace-github/rest-api/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/linkedin_username
+[product-screenshot]: images/screenshot.png
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
+[Svelte-url]: https://svelte.dev/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
+[Bootstrap-url]: https://getbootstrap.com
+[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
+[JQuery-url]: https://jquery.com
+
+<!-- MongoDB Badge -->
+
+[MongoDB-badge]: https://img.shields.io/badge/MongoDB-4DB33D?style=for-the-badge&logo=mongodb&logoColor=white
+[MongoDB-url]: https://www.mongodb.com/
+
+<!-- Express Badge -->
+
+[Express-badge]: https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white
+[Express-url]: https://expressjs.com/
+
+<!-- Node.js Badge -->
+
+[NodeJS-badge]: https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white
+[NodeJS-url]: https://nodejs.org/
+
+<!-- TypeScript Badge -->
+
+[TypeScript-badge]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
+[TypeScript-url]: https://www.typescriptlang.org/

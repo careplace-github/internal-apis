@@ -1,21 +1,18 @@
-// App
-export { default as CalendarRoute } from './app/calendar.route';
-export { default as CollaboratorsRoute } from './app/collaborators.route';
-export { default as HealthUnitsRoute } from './app/health-units.route';
-export { default as CustomersRoute } from './app/customers.route';
-export { default as FilesRoute } from './app/files.route';
-export { default as OrdersRoute } from './app/orders.route';
-export { default as PatientsRoute } from './app/patients.route';
-export { default as PaymentsRoute } from './app/payments.route';
-export { default as ReviewsRoute } from './app/reviews.route';
-export { default as ServicesRoute } from './app/services.route';
-export { default as NotificationsRoute } from './app/notifications.route';
-
-// Auth
+//auth
 export { default as AuthRoute } from './auth/authentication.route';
 
-// Webhooks
-export { default as WebHooksRoute } from './hooks/webhooks.route';
+// webhooks
+export { default as WebhooksRoute } from './hooks/webhooks.route';
 
-// Misc
-export { default as ConfigRoute } from './misc/config.route';
+//
+export { default as CalendarRoute } from './calendar.route';
+export { default as CaregiversRoute } from './caregivers.route';
+export { default as CollaboratorsRoute } from './collaborators.route';
+export { default as HealthUnitsRoute } from './health-units.route';
+export { default as OrdersRoute } from './orders.route';
+export { default as PatientsRoute } from './patients.route';
+export { default as PaymentsRoute } from './payments.route';
+export { default as ReviewsRoute } from './reviews.route';
+export { default as ServicesRoute } from './services.route';
+
+
