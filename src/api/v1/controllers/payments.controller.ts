@@ -13,8 +13,8 @@ import {
   PatientsDAO,
   CollaboratorsDAO,
   EventSeriesDAO,
-} from '@api/v1/db';
-import { AuthHelper, EmailHelper, OrdersHelper, StripeHelper } from '@api/v1/helpers';
+} from 'src/packages/database';
+import { AuthHelper, EmailHelper, OrdersHelper, StripeHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   ICaregiver,
@@ -28,10 +28,10 @@ import {
   IPatient,
   IService,
   IServiceDocument,
-} from 'src/api/v1/interfaces';
-import { CustomerModel, EventSeriesModel, HomeCareOrderModel, ServiceModel } from '@api/v1/models';
-import { CognitoService, SESService, StripeService } from '@api/v1/services';
-import { AuthUtils } from '@api/v1/utils';
+} from 'src/packages/interfaces';
+import { CustomerModel, EventSeriesModel, HomeCareOrderModel, ServiceModel } from 'src/packages/models';
+import { CognitoService, SESService, StripeService } from 'src/packages/services';
+import { AuthUtils } from 'src/packages/utils';
 import { HTTPError, DateUtils } from '@utils';
 
 // @constants

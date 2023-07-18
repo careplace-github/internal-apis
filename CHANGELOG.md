@@ -1,4 +1,4 @@
-# [1.0.0](https://github.com/CarelyPT/crm-backend/compare/v0.3.0-alpha...v1.0.0) (2023-07-12)
+# [1.0.0](https://github.com/CarelyPT/crm-backend/compare/v0.3.0-alpha...v1.0.0) (2023-07-16)
 
 
 ### Bug Fixes

@@ -6,8 +6,8 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 import { omit } from 'lodash';
 
 // @api/v1
-import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO, PatientsDAO } from '@api/v1/db';
-import { AuthHelper } from '@api/v1/helpers';
+import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO, PatientsDAO } from 'src/packages/database';
+import { AuthHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
@@ -17,12 +17,12 @@ import {
   IPatient,
   IPatientDocument,
   IHomeCareOrderDocument,
-} from 'src/api/v1/interfaces';
+} from 'src/packages/interfaces';
 // @api/common
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
-import { PatientModel } from '../models';
+import { PatientModel } from '@packages/models';
 
 export default class PatientsController {
   // db

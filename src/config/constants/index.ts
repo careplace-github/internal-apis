@@ -1,5 +1,5 @@
 import { JWK, RSA } from 'jwk-to-pem';
-import publicKey from '../.env/cognitoPublicKey.json';
+import publicKey from './cognito-public-key.json';
 import logger from 'src/logs/logger';
 
 // Loads environment settings
@@ -92,3 +92,6 @@ export const STRIPE_CONNECT_ENDPOINT_SECRET = process.env.STRIPE_CONNECT_ENDPOIN
 export const STRIPE_PRODUCT_ID = process.env.STRIPE_PRODUCT_ID as string;
 export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID as string;
 export const STRIPE_APPLICATION_FEE = process.env.STRIPE_APPLICATION_FEE as string;
+
+// Vendus Credentials
+export const VENDUS_SECRET_KEY = process.env.VENDUS_SECRET_KEY as string;

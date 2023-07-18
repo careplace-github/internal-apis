@@ -1,14 +1,30 @@
-FROM node:16.17.0-bullseye-slim
+# Set base image
+FROM node:16.17.0-bullseye@sha256:2d8b5a419f1f98403a631f24cc9ac71a21c59399fb007ffab43654b250bd55aa
 
+
+# Create app directory
 WORKDIR /usr/src/app
 
+# Install net-tools, curl, and gnupg
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends net-tools curl gnupg lsof psmisc\
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# Copy host files to container
 COPY . .
 
+# Set environment variables
 ENV NODE_ENV="development"
 
+# Clean yarn cache
 RUN yarn cache clean --force
 
-RUN yarn --network-timeout 100000
+# Install dependencies using --production flag
+RUN yarn install 
 
-CMD [ "yarn", "dev" ]
+# Expose port 8080
+EXPOSE 8080
 
+# Run the app
+CMD ["yarn", "dev"]

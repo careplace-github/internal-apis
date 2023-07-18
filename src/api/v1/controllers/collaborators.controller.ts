@@ -12,23 +12,23 @@ import {
   HealthUnitReviewsDAO,
   CollaboratorsDAO,
   HomeCareOrdersDAO,
-} from '@api/v1/db';
-import { AuthHelper, EmailHelper } from '@api/v1/helpers';
+} from 'src/packages/database';
+import { AuthHelper, EmailHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   ICollaborator,
   ICollaboratorDocument,
   IHealthUnit,
   IHealthUnitDocument,
-} from 'src/api/v1/interfaces';
-import { CognitoService, SESService } from '@api/v1/services';
-import { HTTPError } from 'src/utils';
-import { AuthUtils } from '@api/v1/utils';
+} from 'src/packages/interfaces';
+import { CognitoService, SESService } from 'src/packages/services';
+import { HTTPError } from '@utils';
+import { AuthUtils } from 'src/packages/utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
 import logger from '@logger';
-import { CaregiverModel, CollaboratorModel } from '../models';
+import { CaregiverModel, CollaboratorModel } from '@packages/models';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { omit } from 'lodash';
 
