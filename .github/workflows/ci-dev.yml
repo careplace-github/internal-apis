@@ -59,7 +59,23 @@ jobs:
     name: Security
     runs-on: ubuntu-latest
     environment: development
-
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
+      - name: Branch name
+        run: echo running on branch '${GITHUB_REF##*/}'
+      - name: Install dependencies
+        run: yarn install
+      - name: Snyk Auth
+        run: npx snyk auth ${{ secrets.SNYK_API_TOKEN }}
+      - name: Snyk Policy
+        run: npx snyk policy
+      - name: Snyk Test 
+        run: npx snyk test -d --severity-threshold=high
+      - name: Build the Docker image
+        run: docker build . --file .docker/api/Dockerfile.build.dev --tag careplace/internal-apis:dev
+      - name: Snyk Test Docker Image
+        run: npx snyk container test -d --image=careplace/internal-apis:dev --severity-threshold=high
+      
+   
+      
