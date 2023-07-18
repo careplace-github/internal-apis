@@ -71,11 +71,11 @@ jobs:
       - name: Snyk Policy
         run: npx snyk policy
       - name: Snyk Test 
-        run: npx snyk test -d --severity-threshold=high
+        run: npx snyk test --severity-threshold=high
       - name: Build the Docker image
         run: docker build . --file .docker/api/Dockerfile.build.dev --tag careplace/internal-apis:dev
       - name: Snyk Test Docker Image
-        run: npx snyk container test -d --image=careplace/internal-apis:dev --severity-threshold=high
+        run: npx snyk container test --image=careplace/internal-apis:dev --severity-threshold=high
       
    
       
