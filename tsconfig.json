@@ -5,14 +5,17 @@
       "*": [
         "*"
       ],
-      "@api/v1/*": [
-        "src/api/v1/*"
+      "@api/*": [
+        "src/api/*"
       ],
-      "@api/common/*": [
-        "src/api/common/*"
+      "@packages/*": [
+        "src/packages/*"
       ],
-      "@api/admin/*": [
-        "src/api/admin/*"
+      "@models": [
+        "src/packages/models"
+      ],
+      "@interfaces": [
+        "src/packages/interfaces"
       ],
       "@assets": [
         "src/assets"
@@ -34,6 +37,9 @@
       ],
       "@scripts": [
         "src/config/scripts"
+      ],
+      "@axios": [
+        "src/lib/axios.ts"
       ]
 
     },

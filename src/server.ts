@@ -48,20 +48,17 @@ const main = async () => {
 
     logger.info(`Initializing the server... \n \n`);
 
-    const { loadAWSSecrets } = require('@api/v1/services/secrets.service');
-    await loadAWSSecrets();
-
     /**
      * Load AWS Secrets
      */
-
-    const { StripeCLILogin, StripeSetupWebhooks, CleanServerPorts } = require('@scripts');
+    const { loadAWSSecrets } = require('@packages/services/secrets.service');
+    await loadAWSSecrets();
 
     /**
      * Now we can import the rest of the modules
      */
     // helpers
-    const { getServices } = require('@api/v1/helpers');
+    const { getServices } = require('@packages/helpers');
     // routes
     const {
       ConfigRoute,
@@ -78,7 +75,7 @@ const main = async () => {
       PaymentsRoute,
       ReviewsRoute,
       NotificationsRoute,
-    } = require('@api/v1/routes');
+    } = require('@packages/routes');
 
     // config
     // documentation
@@ -89,26 +86,12 @@ const main = async () => {
       RequestHandlerMiddleware,
       ResponseHandlerMiddleware,
       ErrorHandlerMiddleware,
-    } = require('@api/v1/middlewares');
+    } = require('@packages/middlewares');
 
     /**
      * Login to Stripe CLI
      * @see https://stripe.com/docs/stripe-cli
      */
-
-    if (process.env.NODE_ENV === 'development') {
-      await CleanServerPorts(Number(process.env.PORT));
-      await StripeCLILogin(process.env.STRIPE_SECRET_KEY as string);
-      await StripeSetupWebhooks();
-    }
-
-    logger.info(`Server settings: `);
-    logger.info(`Running in '${process.env.NODE_ENV}' environment`);
-    logger.info(`Host: ${process.env.HOST} `);
-    logger.info(`API Version: ${process.env.API_VERSION} `);
-    logger.info(`API Route: ${process.env.API_ROUTE as string} `);
-    logger.info(`API URL: ${process.env.API_URL} `);
-    logger.info(`Server Port: ${process.env.PORT} \n \n`);
 
     // -------------------------------------------------------------------------------------------- //
     //                        APPLY DATABASE CONNECTION AND ERROR HANDLING                          //
@@ -210,7 +193,7 @@ const main = async () => {
 
       logger.info(`Applying Application Security Middlewares...`);
 
-      //app.use('/api/v1/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
+      //app.use('/packages/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -456,7 +439,7 @@ const main = async () => {
       // Middleware to parse the body of the HTTP requests
 
       // Check if the request is a webhook request
-      // A request is a webhook request if the original URL is /api/v1/webhooks/ + the name of the webhook
+      // A request is a webhook request if the original URL is /packages/webhooks/ + the name of the webhook
 
       // Use JSON parser for all non-webhook routes
 
@@ -534,7 +517,7 @@ const main = async () => {
        */
       await getServices();
 
-      logger.info('Fetched all the necessary assets successfully!');
+      logger.info(`Fetched all the necessary assets successfully! \n`);
     } catch (error) {
       // throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
@@ -552,6 +535,14 @@ const main = async () => {
       // Starts listening for HTTP requests
       app.listen(process.env.PORT, () => {
         logger.info(`Successfully listening for HTTP requests on port: ${process.env.PORT}`);
+
+        logger.info(`Server Settings: { `);
+        logger.info(`NODE_ENV '${process.env.NODE_ENV}' environment`);
+        logger.info(`HOST: ${process.env.HOST} `);
+        logger.info(`API Version: ${process.env.API_VERSION} `);
+        logger.info(`API Route: ${process.env.API_ROUTE as string} `);
+        logger.info(`API URL: ${process.env.API_URL} `);
+        logger.info(`Server Port: ${process.env.PORT} \n`);
 
         swaggerDocs(app, process.env.PORT);
 

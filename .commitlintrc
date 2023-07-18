@@ -1,0 +1,40 @@
+module.exports = {
+  extends: ['@commitlint/config-angular'],
+  rules: {
+    // Add or override rules as needed
+    'type-enum': [
+      2,
+      'always',
+      [
+        'feat', // New feature
+        'fix', // Bug fix
+        'chore', // Maintenance or tooling changes
+        'docs', // Documentation changes
+        'style', // Code style or formatting changes
+        'refactor', // Code refactoring
+        'test', // Adding or modifying tests
+      ],
+    ],
+    'scope-enum': [
+      2,
+      'always',
+      [
+        'interfaces',
+        'database',
+        'auth', 
+        'calendar', 
+        'caregivers', 
+        'collaborators', 
+        'customers',
+        'files',
+        'health-units',
+        'notifications',
+        'orders',
+        'patients',
+        'payments',
+        'reviews',
+        'services',
+      ],
+    ],
+  },
+};
