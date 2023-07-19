@@ -13,8 +13,19 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
 
     cognito_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
+    /**
+     * Health units may create customers to for the orders of "offline" customers.
+     * Different health units may have orders with the same customer.
+     * Because of this the email and phone are not unique.
+     * When searching for the health units customers the query is made by the health unit id so there is no need to make the email and phone unique.
+     *
+     * This model is also used for Marketplace Users.
+     * When a user logs in the retrieve account request is mabe by the cognito_id.
+     * So even if a health unit creates a customer with the email "example@domain.com" and then a user with the same email
+     * creates an account in the marketplace, there will be no conflicts (because the query for the health unit customers is made by the health unit id and the query for the marketplace users is made by the cognito_id).
+     */
+    email: { type: String, required: true,  },
+    phone: { type: String, required: true,  },
     birthdate: { type: Date, required: false },
     gender: {
       type: String,
