@@ -151,7 +151,13 @@ export default class CognitoService {
     Username: string,
     userAttributes: CognitoIdentityServiceProvider.Types.AttributeListType
   ): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
-    logger.info(`Cognito Service UPDATE_USER_ATTRIBUTES Request: \n email: ${userAttributes} \n`);
+    logger.info(
+      `Cognito Service UPDATE_USER_ATTRIBUTES Request: \n Username: ${Username} \n Attributes: ${JSON.stringify(
+        userAttributes,
+        null,
+        2
+      )} \n`
+    );
 
     let response: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse;
 
