@@ -13,8 +13,24 @@ const CollaboratorSchema: Schema<ICollaboratorDocument> = new Schema<ICollaborat
 
     cognito_id: { type: String, required: false, unique: true },
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true, unique: true },
+
+    /**
+     * When creating a collaborator the health unit can decide to allow or not allow the collaborator access to the app.
+     *
+     * In the case the collaborator is allowed to the app a cognito_id is created for the collaborator.
+     *
+     * When searching for the health units collaborators the query is made by the health unit id so there is no need to make the email and phone unique.
+     *
+     * When a collaborator logs in the retrieve account request is mabe by the cognito_id.
+     *
+     * In the Business app collaborators are not allowed to signup themselves, to have an account they need to be created by the health unit.
+     * The problem with this is that if the Health Unit A creates a collaborator with access to the app with the email
+     * "example@healthunitB.com" then the Health Unit B couldn't create a collaborator with the email "example@healthunitB.com" because the email in cognito is unique. This only applies when creating collaborators with access to the app.
+     *
+     * To prevent this when creating collaborators with access to the app a verification must be done to only allow health units to create collaborators with an email that has the same domain as the health unit email domain.
+     */
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
     birthdate: { type: Date, required: true },
     gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
     health_unit: { type: Schema.Types.ObjectId, ref: 'healthUnit', required: true },
