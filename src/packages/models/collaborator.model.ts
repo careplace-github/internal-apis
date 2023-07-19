@@ -28,9 +28,13 @@ const CollaboratorSchema: Schema<ICollaboratorDocument> = new Schema<ICollaborat
      * "example@healthunitB.com" then the Health Unit B couldn't create a collaborator with the email "example@healthunitB.com" because the email in cognito is unique. This only applies when creating collaborators with access to the app.
      *
      * To prevent this when creating collaborators with access to the app a verification must be done to only allow health units to create collaborators with an email that has the same domain as the health unit email domain.
+     *
+     *
+     * When a Collaborator is created with access to the app the email and phone number are managed through cognito and because of this they are not required.
+     * The email and phone number are only required when the collaborator is not allowed to the app.
      */
-    email: { type: String, required: true },
-    phone: { type: String, required: true },
+    email: { type: String },
+    phone: { type: String },
     birthdate: { type: Date, required: true },
     gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
     health_unit: { type: Schema.Types.ObjectId, ref: 'healthUnit', required: true },
