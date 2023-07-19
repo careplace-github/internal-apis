@@ -23,9 +23,13 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
      * When a user logs in the retrieve account request is mabe by the cognito_id.
      * So even if a health unit creates a customer with the email "example@domain.com" and then a user with the same email
      * creates an account in the marketplace, there will be no conflicts (because the query for the health unit customers is made by the health unit id and the query for the marketplace users is made by the cognito_id).
+     *
+     *
+     * When a Customer is created with access to the app the email and phone number are managed through cognito and because of this they are not required.
+     * The email and phone number are only required when the Customer is not allowed to the app.
      */
-    email: { type: String, required: true,  },
-    phone: { type: String, required: true,  },
+    email: { type: String },
+    phone: { type: String },
     birthdate: { type: Date, required: false },
     gender: {
       type: String,
