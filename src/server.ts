@@ -75,9 +75,6 @@ const main = async () => {
       ErrorHandlerMiddleware,
     } = require('@packages/middlewares');
 
-    //helpers
-    const { getServices } = require('@packages/helpers');
-
     // -------------------------------------------------------------------------------------------- //
     //                        APPLY DATABASE CONNECTION AND ERROR HANDLING                          //
     //                                                                                              //
@@ -496,7 +493,6 @@ const main = async () => {
       /**
        * Gets all the services from the database and stores them in the cache
        */
-      await getServices();
 
       logger.info(`Fetched all the necessary assets successfully! \n`);
     } catch (error) {

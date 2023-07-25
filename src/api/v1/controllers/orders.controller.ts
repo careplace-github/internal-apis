@@ -187,6 +187,7 @@ export default class OrdersController {
        */
       let orderServices: IServiceDocument[] = [];
 
+
       for (let i = 0; i < order!.services!.length; i++) {
         let service = services.find((service) => {
           if (order?.services && service?._id == order.services[i]?.toString()) {
@@ -200,6 +201,8 @@ export default class OrdersController {
           orderServices.push(auxService);
         }
       }
+
+
 
       // Create a string with the services names
       // Example: "Cleaning, Laundry, Shopping"
@@ -224,11 +227,12 @@ export default class OrdersController {
       );
 
       let userEmailPayload = {
-        name: user.name,
-        healthUnit: healthUnit?.business_profile?.name,
+        customerName: user.name,
+        healthUnitName: healthUnit?.business_profile?.name,
         orderStart: orderStart,
         orderSchedule: schedule,
         orderServices: servicesNames,
+        orderRecurrency: order?.schedule_information?.recurrency === 1 ? 'Semanal' : order?.schedule_information?.recurrency === 2 ? 'Quinzenal' : order?.schedule_information?.recurrency === 4 ? 'Mensal' : 'N/A',
 
         patientName: patient.name,
         patientBirthdate: birthdate,
@@ -241,7 +245,7 @@ export default class OrdersController {
       };
 
       let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'marketplace_new_order',
+        'marketplace_home_care_order_received',
         userEmailPayload
       );
 
@@ -276,8 +280,8 @@ export default class OrdersController {
 
       for (let i = 0; i < collaboratorsEmails.length; i++) {
         let healthUnitEmailPayload = {
-          name: collaborators[i].name,
-          healthUnit: healthUnit!.business_profile!.name,
+          collaboratorName: collaborators[i].name,
+          healthUnitName: healthUnit!.business_profile!.name,
 
           /**
            * @todo Change this link to the correct one
@@ -286,7 +290,7 @@ export default class OrdersController {
         };
 
         let businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
-          'business_new_order',
+          'business_new_home_care_order',
           healthUnitEmailPayload
         );
 
