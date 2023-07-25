@@ -15,6 +15,9 @@ export const API_ROUTE = process.env.API_ROUTE as string;
 
 export const SERVER_PORT = process.env.PORT || (process.env.PORT_BACKUP as string);
 
+export const MARKETPLACE_BASE_URL = process.env.MARKETPLACE_BASE_URL as string;
+export const BUSINESS_BASE_URL = process.env.BUSINESS_BASE_URL as string;
+
 // MongoDB credentials
 export const MONGODB_USER = process.env.MONGODB_USER as string;
 export const MONGODB_PASSWORD = process.env.MONGODB_PASSWORD as string;

@@ -12,7 +12,7 @@ import {
   CustomersDAO,
   CaregiversDAO,
 } from 'src/packages/database';
-import { AuthHelper } from '@packages/helpers';
+import { AuthHelper, EmailHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   ICollaborator,
@@ -26,7 +26,7 @@ import {
   ICaregiverDocument,
 } from 'src/packages/interfaces';
 import { CaregiverModel, CollaboratorModel, CustomerModel } from 'src/packages/models';
-import { CognitoService, StripeService } from 'src/packages/services';
+import { CognitoService, SESService, StripeService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
@@ -35,6 +35,7 @@ import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_BUSINESS_CLIENT_ID } fro
 import Stripe from 'stripe';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { omit } from 'lodash';
+import { PATHS } from '@packages/routes';
 
 export default class AuthenticationController {
   // db
@@ -44,8 +45,10 @@ export default class AuthenticationController {
   static HealthUnitsDAO = new HealthUnitsDAO();
   // services
   static StripeService = StripeService;
+  static SESService = SESService;
   // helpers
   static AuthHelper = AuthHelper;
+  static EmailHelper = EmailHelper;
 
   static async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -94,7 +97,25 @@ export default class AuthenticationController {
             next(new HTTPError._400(err.message));
             return;
 
+          case 'DUPLICATE_KEY':
+            logger.error(err.message);
+            /**
+             * If the user already exists we will not through an error
+             * because of OWASP best practices.
+             * We'll send a message saying ""A link to activate your account has been emailed to the address provided."
+             * but the user will not be created on the database.
+             *
+             * @see https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#account-creation
+             */
+            response.statusCode = 200;
+            response.data = {
+              message: 'A link to activate your account has been emailed to the address provided.',
+            };
+
+            return next(response);
+
           default:
+            logger.error(err);
             next(new HTTPError._500(err.message));
             return;
         }
@@ -119,7 +140,10 @@ export default class AuthenticationController {
       }
 
       response.statusCode = 200;
-      response.data = mongodbResponse;
+      // @see https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#account-creation
+      response.data = {
+        message: 'A link to activate your account has been emailed to the address provided.',
+      };
 
       // pass the response to the next middleware
       next(response);
@@ -414,6 +438,32 @@ export default class AuthenticationController {
 
       // Pass to the next middleware to handle the response
       next(response);
+
+      try {
+        const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
+
+        const changePasswordEmailPayload = {
+          name: user.name,
+          link: clientId === AWS_COGNITO_BUSINESS_CLIENT_ID ? PATHS.business.auth.login : PATHS.marketplace.auth.login,
+        };
+
+        const changePasswordEmail = await EmailHelper.getEmailTemplateWithData(
+          'auth_change_password_success',
+          changePasswordEmailPayload
+        );
+
+        if (!changePasswordEmail || !changePasswordEmail.subject || !changePasswordEmail.htmlBody) {
+          throw new HTTPError._500('Error getting email template.');
+        }
+
+        await AuthenticationController.SESService.sendEmail(
+          [user.email],
+          changePasswordEmail.subject,
+          changePasswordEmail.htmlBody
+        );
+      } catch (error: any) {
+        logger.error(`Error sending email: ${error.message}`);
+      }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       return next(new HTTPError._500(error.message));
@@ -717,11 +767,15 @@ export default class AuthenticationController {
       if (app === 'marketplace') {
         customerId = (user as ICustomer).stripe_information?.customer_id;
 
-        const default_payment_method = (
-          (await AuthenticationController.StripeService.getCustomer(customerId)) as Stripe.Customer
-        ).default_source;
+        if (customerId) {
+          const default_payment_method = (
+            (await AuthenticationController.StripeService.getCustomer(
+              customerId
+            )) as Stripe.Customer
+          ).default_source;
 
-        userJSON.stripe_information.default_payment_method = default_payment_method;
+          userJSON.stripe_information.default_payment_method = default_payment_method;
+        }
       }
 
       // Convert user to JSON
@@ -882,14 +936,21 @@ export default class AuthenticationController {
 
       const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
 
+      const authUser = await AuthenticationController.AuthHelper.getAuthUser(accessToken);
+
       let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
       const Cognito = new CognitoService(clientId);
 
+      logger.info('AUTH USER: ' + JSON.stringify(authUser, null, 2));
+
+      const userEmail = authUser?.UserAttributes?.find((attribute) => attribute.Name === 'email')
+        ?.Value as string;
+
       try {
-        await Cognito.updateUserAttributes(user.email, [
+        await Cognito.updateUserAttributes(userEmail, [
           {
             Name: 'email',
             Value: email,
@@ -984,6 +1045,7 @@ export default class AuthenticationController {
 
       const Cognito = new CognitoService(clientId);
 
+      // Update phone in Cognito
       try {
         await Cognito.updateUserAttributes(user.email, [
           {
@@ -995,6 +1057,16 @@ export default class AuthenticationController {
         switch (error.type) {
           case 'INVALID_PARAMETER':
             return next(new HTTPError._400(error.message));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Send confirmation code
+      try {
+        await Cognito.sendUserAttributeVerificationCode(accessToken, 'phone_number');
+      } catch (error: any) {
+        switch (error.type) {
           default:
             return next(new HTTPError._500(error.message));
         }
@@ -1079,13 +1151,12 @@ export default class AuthenticationController {
       try {
         await Cognito.sendUserAttributeVerificationCode(accessToken, 'email');
       } catch (error: any) {
-        switch (error.code) {
-          case 'UserNotFoundException':
-            return next(new HTTPError._404('User not found.'));
-          case 'InvalidParameterException':
-            return next(new HTTPError._400('Invalid parameters.'));
-          case 'NotAuthorizedException':
-            return next(new HTTPError._401('Not authorized.'));
+        switch (error.type) {
+          case 'INVALID_PARAMETER':
+            return next(new HTTPError._400(error.message));
+
+          case 'ATTEMPT_LIMIT':
+            return next(new HTTPError._429(error.message));
 
           default:
             return next(new HTTPError._500(error.message));
@@ -1195,15 +1266,9 @@ export default class AuthenticationController {
       try {
         await Cognito.verifyUserAttributeCode(accessToken, 'email', code);
       } catch (error: any) {
-        switch (error.code) {
-          case 'UserNotFoundException':
-            return next(new HTTPError._404('User not found.'));
-          case 'CodeMismatchException':
-            return next(new HTTPError._400('Invalid code.'));
-          case 'ExpiredCodeException':
-            return next(new HTTPError._400('Code expired.'));
-          case 'NotAuthorizedException':
-            return next(new HTTPError._401('Not authorized.'));
+        switch (error.type) {
+          case 'INVALID_PARAMETER':
+            return next(new HTTPError._400(error.message));
 
           default:
             return next(new HTTPError._500(error.message));
@@ -1217,6 +1282,33 @@ export default class AuthenticationController {
 
       // Pass to the next middleware to handle the response
       next(response);
+
+      try {
+        const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
+
+        const changeEmailEmailPayload = {
+          name: user.name,
+          email: user.email,
+          link: clientId === AWS_COGNITO_BUSINESS_CLIENT_ID ? PATHS.business.auth.login : PATHS.marketplace.auth.login,
+        };
+
+        const changeEmailEmail = await EmailHelper.getEmailTemplateWithData(
+          'auth_change_email_success',
+          changeEmailEmailPayload
+        );
+
+        if (!changeEmailEmail || !changeEmailEmail.subject || !changeEmailEmail.htmlBody) {
+          throw new HTTPError._500('Error getting email template.');
+        }
+
+        await AuthenticationController.SESService.sendEmail(
+          [user.email],
+          changeEmailEmail.subject,
+          changeEmailEmail.htmlBody
+        );
+      } catch (error: any) {
+        logger.error(`Error sending email: ${error.message}`);
+      }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       next(error);
@@ -1251,6 +1343,8 @@ export default class AuthenticationController {
         accessToken
       );
 
+      const cognitoUser = await AuthenticationController.AuthHelper.getAuthUser(accessToken);
+
       const Cognito = new CognitoService(clientId);
 
       try {
@@ -1271,6 +1365,32 @@ export default class AuthenticationController {
 
       // Pass to the next middleware to handle the response
       next(response);
+
+      try {
+        const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
+
+        const changePhoneEmailPayload = {
+          name: user.name,
+          phone: user.phone,
+        };
+
+        const changePhoneEmail = await EmailHelper.getEmailTemplateWithData(
+          'auth_change_phone_success',
+          changePhoneEmailPayload
+        );
+
+        if (!changePhoneEmail || !changePhoneEmail.subject || !changePhoneEmail.htmlBody) {
+          throw new HTTPError._500('Error getting email template.');
+        }
+
+        await AuthenticationController.SESService.sendEmail(
+          [user.email],
+          changePhoneEmail.subject,
+          changePhoneEmail.htmlBody
+        );
+      } catch (error: any) {
+        logger.error(`Error sending email: ${error.message}`);
+      }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       next(error);

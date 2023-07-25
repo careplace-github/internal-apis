@@ -271,6 +271,9 @@ export default class CognitoService {
         case 'InvalidParameterException':
           throw new LayerError.INVALID_PARAMETER(error.message);
 
+        case 'LimitExceededException':
+          throw new LayerError.ATTEMPT_LIMIT(error.message);
+
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
