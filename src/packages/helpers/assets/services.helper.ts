@@ -16,9 +16,18 @@ export async function getServices() {
 
   const servicesJSON = JSON.stringify(services.data, null, 2);
 
-  fs.writeFile('./src/assets/data/services.json', servicesJSON, (err) => {
-    if (err) {
+  // Delete the file before writing the new data
+  fs.unlink('./src/assets/data/servicesf.json', (err) => {
+    // Ignore "file not found" error (ENOENT)
+    if (err && err.code !== 'ENOENT') {
       throw new HTTPError._500(err.message);
     }
+
+    // Write the new data to the file
+    fs.writeFile('./src/assets/data/servicesf.json', servicesJSON, (err) => {
+      if (err) {
+        throw new HTTPError._500(err.message);
+      }
+    });
   });
 }

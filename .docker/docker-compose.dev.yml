@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "3.8"
 networks:
   careplace-backend:
     driver: bridge
@@ -27,7 +27,7 @@ services:
   stripe-cli:
     image: stripe/stripe-cli
     container_name: stripe-cli
-    command: listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to localhost:8000/v1/webhooks/stripe/
+    command: listen --api-key ${STRIPE_API_KEY} --device-name ${STRIPE_DEVICE_NAME} --forward-to http://localhost:8000/v1/webhooks/stripe
     env_file:
       - ../.env.local
 

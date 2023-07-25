@@ -86,10 +86,10 @@ export default class SES {
       },
 
       // ReplyTo
-      ReplyToAddresses: ['suporte@careplace.pt'],
+      ReplyToAddresses: [AWS_SES_REPLY_TO_EMAIL],
 
       // Source
-      Source: 'Careplace <noreply@careplace.pt>',
+      Source: AWS_SES_SENDER_EMAIL,
     };
 
     const emailSent = await this.SES.sendEmail(params).promise();

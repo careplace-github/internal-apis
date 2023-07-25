@@ -22,7 +22,7 @@ Follow the steps below to set up the project using Docker:
    Because this is a private repository, you will need to have SSH keys set up on your machine and have your SSH key added to your GitHub account. You can follow the instructions in the [Installation Guide](./INSTALLATION.md) for your operating system to set up SSH keys.
    Alternatively, you can download [GitHub Desktop](https://desktop.github.com/) and clone the repository through the application.
 
-3. Open the **.env.local** file and update the following environment variables:
+3. Copy the **.env.example** file and rename it to **.env.local**. Open the **.env.local** file and update the following environment variables:
 
    ```shell
      # .env.local

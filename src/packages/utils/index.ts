@@ -11,6 +11,7 @@ import { default as _402 } from './errors/http/handlers/402Error';
 import { default as _403 } from './errors/http/handlers/403Error';
 import { default as _404 } from './errors/http/handlers/404Error';
 import { default as _409 } from './errors/http/handlers/409Error';
+import { default as _429 } from './errors/http/handlers/429Error';
 import { default as _500 } from './errors/http/handlers/500Error';
 import { default as _503 } from './errors/http/handlers/503Error';
 
@@ -21,6 +22,7 @@ export const HTTPError = {
   _403,
   _404,
   _409,
+  _429,
   _500,
   _503,
 };
