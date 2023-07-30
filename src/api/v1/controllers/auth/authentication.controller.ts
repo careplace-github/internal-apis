@@ -444,7 +444,10 @@ export default class AuthenticationController {
 
         const changePasswordEmailPayload = {
           name: user.name,
-          link: clientId === AWS_COGNITO_BUSINESS_CLIENT_ID ? PATHS.business.auth.login : PATHS.marketplace.auth.login,
+          link:
+            clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+              ? PATHS.business.auth.login
+              : PATHS.marketplace.auth.login,
         };
 
         const changePasswordEmail = await EmailHelper.getEmailTemplateWithData(
@@ -685,6 +688,8 @@ export default class AuthenticationController {
 
       let phoneVerified = false;
       let emailVerified = false;
+      let email;
+      let phone;
 
       if (userAttributes) {
         phoneVerified =
@@ -693,6 +698,10 @@ export default class AuthenticationController {
 
         emailVerified =
           userAttributes.find((attribute) => attribute.Name === 'email_verified')?.Value === 'true';
+
+        email = userAttributes?.find((attribute) => attribute.Name === 'email')?.Value;
+
+        phone = userAttributes?.find((attribute) => attribute.Name === 'phone_number')?.Value;
       }
 
       if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
@@ -700,9 +709,6 @@ export default class AuthenticationController {
       } else if (clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID) {
         app = 'marketplace';
       }
-
-      logger.debug('APP: ' + app);
-      logger.info('APP: ' + app);
 
       let user: ICustomerDocument | ICollaboratorDocument | null = null;
 
@@ -782,6 +788,8 @@ export default class AuthenticationController {
 
       userJSON.phone_verified = phoneVerified;
       userJSON.email_verified = emailVerified;
+      userJSON.email = email;
+      userJSON.phone = phone;
       delete userJSON.createdAt;
       delete userJSON.updatedAt;
       delete userJSON.__v;
@@ -1289,7 +1297,10 @@ export default class AuthenticationController {
         const changeEmailEmailPayload = {
           name: user.name,
           email: user.email,
-          link: clientId === AWS_COGNITO_BUSINESS_CLIENT_ID ? PATHS.business.auth.login : PATHS.marketplace.auth.login,
+          link:
+            clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+              ? PATHS.business.auth.login
+              : PATHS.marketplace.auth.login,
         };
 
         const changeEmailEmail = await EmailHelper.getEmailTemplateWithData(
