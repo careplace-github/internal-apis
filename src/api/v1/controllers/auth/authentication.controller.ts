@@ -1047,6 +1047,8 @@ export default class AuthenticationController {
 
       const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
 
+      const cognitoUser = await AuthenticationController.AuthHelper.getAuthUser(accessToken);
+
       let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
@@ -1055,7 +1057,7 @@ export default class AuthenticationController {
 
       // Update phone in Cognito
       try {
-        await Cognito.updateUserAttributes(user.email, [
+        await Cognito.updateUserAttributes(cognitoUser.Username, [
           {
             Name: 'phone_number',
             Value: phone,
