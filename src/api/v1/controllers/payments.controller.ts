@@ -866,10 +866,6 @@ export default class PaymentsController {
         );
       }
 
-      if (subscription.status !== 'active') {
-        return next(new HTTPError._400('Subscription is not active.'));
-      }
-
       // Get the latest invoice id
       const latestInvoiceId = subscription.latest_invoice as string;
 
@@ -893,7 +889,7 @@ export default class PaymentsController {
 
       // Check if the invoice is paid
       if (latestInvoice.status === 'paid') {
-        return next(new HTTPError._400('Invoice is already paid.'));
+        return next(new HTTPError._409('Invoice is already paid.'));
       }
 
       try {
