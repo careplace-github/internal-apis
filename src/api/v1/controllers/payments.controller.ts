@@ -467,7 +467,13 @@ export default class PaymentsController {
       let user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
-        return next(new HTTPError._401('You are not authorized to perform this action.'));
+        // User is not a customer
+        return next(new HTTPError._403('You are not authorized to perform this action.'));
+      }
+
+      if (paymentMethod.customer !== user.stripe_information?.customer_id) {
+        // Payment method does not belong to the user
+        return next(new HTTPError._403('You are not authorized to perform this action'));
       }
 
       let customerId = user.stripe_information?.customer_id;
@@ -686,6 +692,12 @@ export default class PaymentsController {
       const invoice = subscription.latest_invoice as Stripe.Invoice;
 
       const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
+
+      logger.info(
+        'paymentIntent?.last_payment_error?.code' + paymentIntent?.last_payment_error?.code
+      );
+
+      logger.info('subscription.status' + subscription.status);
 
       // Check if the charge succeeded
       if (paymentIntent?.last_payment_error?.code || subscription.status === 'incomplete') {
