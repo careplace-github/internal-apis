@@ -674,6 +674,14 @@ export default class PaymentsController {
       if (!subscription) {
         return next(new HTTPError._500('Error creating subscription'));
       }
+      // Attach the stripe subscription id to the order.
+      order.stripe_information.subscription_id = subscription.id;
+
+      // Attach tbe billing details to the order.
+      order.billing_details = billingDetails;
+
+      // Update the order
+      PaymentsController.HomeCareOrdersDAO.update(order);
 
       const invoice = subscription.latest_invoice as Stripe.Invoice;
 
@@ -681,20 +689,18 @@ export default class PaymentsController {
 
       // Check if the charge succeeded
       if (paymentIntent?.last_payment_error?.code || subscription.status === 'incomplete') {
+        // Charge failed, return an error
         return next(new HTTPError._402('Payment Required.'));
       }
 
-      // Attach the stripe subscription id to the order.
-      order.stripe_information.subscription_id = subscription.id;
+      // Charge succeeded, change the order status to active
+      else {
+        // Change the order status to active
+        order.status = 'active';
 
-      // Attach tbe billing details to the order.
-      order.billing_details = billingDetails;
-
-      // Change the order status to active
-      order.status = 'active';
-
-      // Update the order
-      PaymentsController.HomeCareOrdersDAO.update(order);
+        // Update the order
+        PaymentsController.HomeCareOrdersDAO.update(order);
+      }
 
       response.statusCode = 200;
       response.data = {
