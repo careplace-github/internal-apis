@@ -53,6 +53,7 @@ import logger from '@logger';
 // @data
 import { services } from '@assets';
 import Stripe from 'stripe';
+import { access } from 'fs';
 
 export default class OrdersController {
   // db
@@ -187,7 +188,6 @@ export default class OrdersController {
        */
       let orderServices: IServiceDocument[] = [];
 
-
       for (let i = 0; i < order!.services!.length; i++) {
         let service = services.find((service) => {
           if (order?.services && service?._id == order.services[i]?.toString()) {
@@ -201,8 +201,6 @@ export default class OrdersController {
           orderServices.push(auxService);
         }
       }
-
-
 
       // Create a string with the services names
       // Example: "Cleaning, Laundry, Shopping"
@@ -232,7 +230,14 @@ export default class OrdersController {
         orderStart: orderStart,
         orderSchedule: schedule,
         orderServices: servicesNames,
-        orderRecurrency: order?.schedule_information?.recurrency === 1 ? 'Semanal' : order?.schedule_information?.recurrency === 2 ? 'Quinzenal' : order?.schedule_information?.recurrency === 4 ? 'Mensal' : 'N/A',
+        orderRecurrency:
+          order?.schedule_information?.recurrency === 1
+            ? 'Semanal'
+            : order?.schedule_information?.recurrency === 2
+            ? 'Quinzenal'
+            : order?.schedule_information?.recurrency === 4
+            ? 'Mensal'
+            : 'N/A',
 
         patientName: patient.name,
         patientBirthdate: birthdate,
@@ -509,6 +514,101 @@ export default class OrdersController {
     }
   }
 
+  static async customerUpdateHomeCareOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const orderId = req.params.order;
+
+      const order = req.body.order as IHomeCareOrder;
+
+      // remove the fields that should not be updated
+      const reqOrder = omit(order, [
+        '_id',
+        'health_unit',
+        'customer',
+        'patient',
+        'status',
+        'decline_reason',
+        'screening_visit',
+        'stripe_information',
+        'billing_details',
+      ]);
+
+      // retrieve the order from the database
+      let orderExists: IHomeCareOrderDocument;
+
+      try {
+        orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Home care order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      // check if the user is authorized to update the order
+      if (orderExists.customer.toString() !== user._id.toString()) {
+        return next(new HTTPError._403('You are not authorized to update this order.'));
+      }
+
+      // create a new order object with the updated fields
+      const updatedOrder = new HomeCareOrderModel({
+        ...orderExists,
+        ...reqOrder,
+      });
+
+      // validate the order
+      const validationError = updatedOrder.validateSync({});
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let orderUpdated: IHomeCareOrderDocument;
+      try {
+        orderUpdated = await OrdersController.HomeCareOrdersDAO.update(updatedOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = orderUpdated;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      next(error);
+    }
+  }
+
   // -------------------------------------------------- //
   //                     HEALTH UNITS                   //
   // -------------------------------------------------- //
@@ -529,6 +629,50 @@ export default class OrdersController {
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  static async customerUpdateHomeCareOrderBillingDetails(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const orderId = req.params.order;
+
+      const billingDetails = req.body.billing_details;
+
+      const order = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+
+      const orderObj = order.toObject();
+
+      orderObj.billing_details = billingDetails;
+
+      const updatedOrder = new HomeCareOrderModel(orderObj);
+
+      let orderUpdated: IHomeCareOrderDocument;
+      try {
+        orderUpdated = await OrdersController.HomeCareOrdersDAO.update(updatedOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = orderUpdated;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
       return next(new HTTPError._500(error.message));
     }
   }

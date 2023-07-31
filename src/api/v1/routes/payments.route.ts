@@ -2,6 +2,7 @@ import express from 'express';
 
 // Import Controller
 import PaymentsController from '../controllers/payments.controller';
+import { OrdersController } from '../controllers';
 import { AuthenticationGuard, ClientGuard, ValidatorMiddleware } from '@packages/middlewares';
 import { CheckoutValidator } from '../validations/payments.validator';
 
@@ -28,7 +29,7 @@ router
 // Subscriptions
 
 router
-  .route('/payments/orders/:order/subscription')
+  .route('/payments/orders/home-care/:order/subscription')
   .post(
     AuthenticationGuard,
     ClientGuard('marketplace'),
@@ -38,11 +39,11 @@ router
   );
 
 router
-  .route('/payments/orders/:order/subscription/coupon')
+  .route('/payments/orders/home-care/:order/subscription/coupon')
   .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.addSubscriptionCoupon);
 
 router
-  .route('/payments/orders/:order/subscription/payment-method')
+  .route('/payments/orders/home-care/:order/subscription/payment-method')
   .put(
     AuthenticationGuard,
     ClientGuard('marketplace'),
@@ -50,7 +51,15 @@ router
   );
 
 router
-  .route('/payments/orders/:order/subscription/charge')
+  .route('/payments/orders/home-care/:order/subscription/billing-details')
+  .put(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    OrdersController.customerUpdateHomeCareOrderBillingDetails
+  );
+
+router
+  .route('/payments/orders/home-care/:order/subscription/charge')
   .post(
     AuthenticationGuard,
     ClientGuard('marketplace'),
