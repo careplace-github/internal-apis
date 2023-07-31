@@ -675,15 +675,6 @@ export default class PaymentsController {
         return next(new HTTPError._500('Error creating subscription'));
       }
 
-      // Attach the stripe subscription id to the order.
-      order.stripe_information.subscription_id = subscription.id;
-
-      // Attach tbe billing details to the order.
-      order.billing_details = billingDetails;
-
-      // Update the order
-      PaymentsController.HomeCareOrdersDAO.update(order);
-
       const invoice = subscription.latest_invoice as Stripe.Invoice;
 
       const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
@@ -692,6 +683,18 @@ export default class PaymentsController {
       if (paymentIntent?.last_payment_error?.code || subscription.status === 'incomplete') {
         return next(new HTTPError._402('Payment Required.'));
       }
+
+      // Attach the stripe subscription id to the order.
+      order.stripe_information.subscription_id = subscription.id;
+
+      // Attach tbe billing details to the order.
+      order.billing_details = billingDetails;
+
+      // Change the order status to active
+      order.status = 'active';
+
+      // Update the order
+      PaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
@@ -738,7 +741,7 @@ export default class PaymentsController {
       const paymentMethodId = req.body.payment_method;
 
       let subscriptionId: string;
-      let order: IHomeCareOrder;
+      let order: IHomeCareOrderDocument;
       let paymentMethod: Stripe.PaymentMethod;
       let subscription: Stripe.Subscription;
 
@@ -836,7 +839,7 @@ export default class PaymentsController {
 
       const orderId = req.params.order;
 
-      let order: IHomeCareOrder;
+      let order: IHomeCareOrderDocument;
       let subscription: Stripe.Subscription;
       let invoice: Stripe.Invoice;
 
@@ -901,6 +904,12 @@ export default class PaymentsController {
             return next(new HTTPError._500(err.message));
         }
       }
+
+      // The payment was successful, change the order status to active
+      order.status = 'active';
+
+      // Update the order
+      await PaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
