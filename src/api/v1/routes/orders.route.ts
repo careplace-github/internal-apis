@@ -25,6 +25,11 @@ router
     AuthenticationGuard,
     ClientGuard('marketplace'),
     OrdersController.retrieveCustomerHomeCareOrder
+  )
+  .put(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    OrdersController.customerUpdateHomeCareOrder
   );
 
 router

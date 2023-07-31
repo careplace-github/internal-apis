@@ -415,7 +415,7 @@ export default class PaymentsController {
 
       let orderId = req.params.order as string;
 
-      let paymentMethodId = req.body.payment_method_id as string;
+      let paymentMethodId = req.body.payment_method as string;
 
       if (!paymentMethodId) {
         throw new HTTPError._400('No payment method id provided.');
