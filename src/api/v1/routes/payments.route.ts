@@ -43,7 +43,7 @@ router
 
 router
   .route('/payments/orders/:order/subscription/payment-method')
-  .post(
+  .put(
     AuthenticationGuard,
     ClientGuard('marketplace'),
     PaymentsController.updateSubscriptionPaymentMethod
