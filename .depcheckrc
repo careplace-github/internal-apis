@@ -16,6 +16,7 @@
     "@packages/models",
     "@packages/database",
     "@packages/interfaces",
+    "@packages/routes",
     "@api/v1",
     "@api/files",
     "src"

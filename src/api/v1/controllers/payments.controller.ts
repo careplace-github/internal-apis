@@ -418,7 +418,7 @@ export default class PaymentsController {
       let paymentMethodId = req.body.payment_method as string;
 
       if (!paymentMethodId) {
-        throw new HTTPError._400('No payment method id provided.');
+        return next(new HTTPError._400('No payment method id provided.'));
       }
 
       let promotionCodeName = req.body.promotion_code as string;
@@ -426,21 +426,30 @@ export default class PaymentsController {
       const billingDetails = req.body.billing_details;
 
       // Convert orderId to string
+      let order: IHomeCareOrderDocument | undefined;
+      try {
+        order = await PaymentsController.HomeCareOrdersDAO.queryOne(
+          { _id: { $eq: orderId } },
 
-      let order = await PaymentsController.HomeCareOrdersDAO.queryOne(
-        { _id: { $eq: orderId } },
-
-        [
-          {
-            path: 'health_unit',
-            model: 'HealthUnit',
-          },
-          {
-            path: 'customer',
-            model: 'Customer',
-          },
-        ]
-      );
+          [
+            {
+              path: 'health_unit',
+              model: 'HealthUnit',
+            },
+            {
+              path: 'customer',
+              model: 'Customer',
+            },
+          ]
+        );
+      } catch (err: any) {
+        switch (err.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Order not found.'));
+          default:
+            return next(new HTTPError._500(err.message));
+        }
+      }
 
       // Check if the order has an existing subscription
       if (order?.stripe_information?.subscription_id) {
@@ -467,11 +476,13 @@ export default class PaymentsController {
       let user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
+        logger.warn('User is not a customer.');
         // User is not a customer
         return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
       if (paymentMethod.customer !== user.stripe_information?.customer_id) {
+        logger.warn('Payment method does not belong to the user.');
         // Payment method does not belong to the user
         return next(new HTTPError._403('You are not authorized to perform this action'));
       }

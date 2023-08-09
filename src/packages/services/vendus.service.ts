@@ -1,6 +1,6 @@
 // @axios
 import axios from '@axios';
-
+import fs from 'fs';
 // @api
 import { LayerError } from '@utils';
 
@@ -8,6 +8,41 @@ import { LayerError } from '@utils';
 import { VENDUS_SECRET_KEY } from '@constants';
 // @logger
 import logger from '@logger';
+
+interface IFaturaReciboProps {
+  type: 'FR';
+  items: [
+    {
+      id: '148249597';
+      qty: '1';
+      gross_price: string;
+    }
+  ];
+  payments: [
+    {
+      id: '148274311';
+      amount: string;
+    }
+  ];
+
+  discount_code?: string;
+  discount_amount?: string;
+  print_discount: 'yes';
+
+  client: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    postalcode: string;
+    city: string;
+    country: string;
+    fiscal_id?: string;
+    send_email: 'no';
+  };
+
+  mode: 'tests';
+}
 
 /**
  * Class to manage the `Vendus` API.
@@ -23,84 +58,128 @@ export default class VendusService {
    *
    * @see https://www.vendus.pt/ws/#section/Authentication
    * */
-  static axios = axios(this.baseURL, VENDUS_SECRET_KEY, 'BASIC');
+  static axios = axios(this.baseURL, 'a417f9aa707756bcaea3a71011553486', 'PARAMETER');
 
-  /**
-   *
-   * @see https://www.vendus.pt/ws/#tag/Clients/paths/~1clients/post
-   */
-  static async createClient(data: any): Promise<any> {
+  static async createFaturaRecibo(
+    gross_price: string,
+    payment_amount: string,
+    billing_details: {
+      name: string;
+      email: string;
+      phone: string;
+      address: string;
+      postalcode: string;
+      city: string;
+      country: string;
+      fiscal_id?: string;
+    },
+    discount_code?: string,
+    discount_amount?: string
+  ) {
     try {
-      logger.info(`VendusService createClient Request: \n ${JSON.stringify(data, null, 2)} \n`);
+      const payload: IFaturaReciboProps = {
+        type: 'FR',
+        items: [
+          {
+            id: '148249597',
+            qty: '1',
+            gross_price,
+          },
+        ],
+        payments: [
+          {
+            id: '148274311',
+            amount: payment_amount,
+          },
+        ],
+        discount_code,
+        discount_amount,
+        print_discount: 'yes',
+        client: {
+          ...billing_details,
+          send_email: 'no',
+        },
+        mode: 'tests',
+      };
 
-      const response = await this.axios.post('/clients', data);
+      logger.info('VendusService.createFaturaRecibo params: ' + JSON.stringify(payload, null, 2));
 
-      logger.info(`VendusService createClient Response: \n ${JSON.stringify(response, null, 2)}\n`);
+      // TODO Remove tests mode
+      const response = await this.axios.post('/documents?mode=tests', payload);
 
-      return response;
-    } catch (err: any) {
-      logger.error(`VendusService createClient Error: \n ${JSON.stringify(err, null, 2)} \n`);
-
-      switch (err.name) {
+      logger.info(
+        'VendusService.createFaturaRecibo return: ' + JSON.stringify(response.data, null, 2)
+      );
+      return response.data;
+    } catch (error: any) {
+      switch (error) {
         default:
-          throw new LayerError.INTERNAL_ERROR(err.message);
+          throw new LayerError.INTERNAL_ERROR(error);
       }
     }
   }
 
-  /**
-   * Creates a new document like an invoice, a credit note, a receipt for a payment, a transportation document, and all others.
-   *
-   * Invoices
-   * The only mandatory parameter when creating an invoie is items. For each item, you must send at least its qty, along with id (or reference). If it is a new product, it will be created. Regarding client, you don't have to send this parameter if you don't have his fiscal_id, and you should NEVER send fiscal_id as 999999990. And if client does not exist, it will be added.
-   *
-   * @see https://www.vendus.pt/ws/#tag/Documents/paths/~1documents/post
-   */
-  static async createInvoice(data: any): Promise<any> {
+  static async getDocument(id: string) {
     try {
-      logger.info(`VendusService createInvoice Request: \n ${JSON.stringify(data, null, 2)} \n`);
+      logger.info('VendusService.getDocument params: ' + id);
 
-      const response = await this.axios.post('/documents', data);
+      // TODO Remove tests mode
+      const response = await this.axios.get(`/documents/${id}?mode=tests`);
 
-      logger.info(
-        `VendusService createInvoice Response: \n ${JSON.stringify(response, null, 2)}\n`
-      );
+      logger.info('VendusService.getDocument return: ' + JSON.stringify(response.data, null, 2));
 
-      return response;
-    } catch (err: any) {
-      logger.error(`VendusService createInvoice Error: \n ${JSON.stringify(err, null, 2)} \n`);
-
-      switch (err.name) {
+      return response.data;
+    } catch (error: any) {
+      switch (error) {
         default:
-          throw new LayerError.INTERNAL_ERROR(err.message);
+          throw new LayerError.INTERNAL_ERROR(error);
       }
     }
   }
 
-  /**
-   * Payments and Receipts
-   *
-   * To register a customer's payment, you create a receipt, that is, a document of type RG. Relevant parameters are payments and invoices, which should contain a list of all invoices being paid, each identified by its document_number. You should NOT send items.
-   *
-   * @see https://www.vendus.pt/ws/#tag/Receipts/paths/~1receipts/post
-   */
-  static async createReceipt(data: any): Promise<any> {
+  static async downloadDocument(id: string): Promise<{
+    filename: string;
+    path: string;
+  }> {
     try {
-      logger.info(`VendusService createReceipt Request: \n ${JSON.stringify(data, null, 2)} \n`);
+      logger.info('VendusService.downloadDocument params: ' + id);
 
-      const response = await this.axios.post('/documents', data);
+      // TODO Remove tests mode
+      const vendusDocument = await this.getDocument(id);
+
+      const response = await this.axios.get(`/documents/${id}.pdf`, {
+        responseType: 'arraybuffer',
+      });
 
       logger.info(
-        `VendusService createReceipt Response: \n ${JSON.stringify(response, null, 2)}\n`
+        'VendusService.downloadDocument response.data: ' + JSON.stringify(response.data, null, 2)
       );
 
-      return response;
-    } catch (err: any) {
-      logger.error(`VendusService createReceipt Error: \n ${JSON.stringify(err, null, 2)} \n`);
+      let documentName = `${vendusDocument.number}.pdf`;
 
-      switch (err.name) {
+      // Substitute whitespaces with underscores
+      documentName = documentName.replace(/\s/g, '_');
+      // Substitue / with _
+      documentName = documentName.replace(/\//g, '_');
+
+      // TODO Remove tests mode
+      let documentPath = `src/downloads/${documentName}`;
+
+      fs.writeFileSync(documentPath, response.data);
+
+      let document = {
+        filename: documentName,
+
+        path: documentPath,
+      };
+
+      logger.info('VendusService.downloadDocument return: ' + JSON.stringify(document, null, 2));
+
+      return document;
+    } catch (error: any) {
+      switch (error) {
         default:
-          throw new LayerError.INTERNAL_ERROR(err.message);
+          throw new LayerError.INTERNAL_ERROR(error);
       }
     }
   }

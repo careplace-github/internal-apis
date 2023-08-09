@@ -94,7 +94,7 @@ export default class OrdersController {
       let order = req.body as IHomeCareOrder;
       let patient: IPatient;
 
-      const healthUnitId = req.params.healthUnit;
+      const healthUnitId = req.body.health_unit;
 
       let accessToken: string;
 
@@ -536,9 +536,9 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const orderId = req.params.order;
+      const orderId = req.params.id;
 
-      const order = req.body.order as IHomeCareOrder;
+      const order = req.body as IHomeCareOrder;
 
       // remove the fields that should not be updated
       const reqOrder = omit(order, [
@@ -550,7 +550,6 @@ export default class OrdersController {
         'decline_reason',
         'screening_visit',
         'stripe_information',
-        'billing_details',
       ]);
 
       // retrieve the order from the database
@@ -558,6 +557,7 @@ export default class OrdersController {
 
       try {
         orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+        logger.info("ORDER EXISTS: "+ orderExists)
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
@@ -576,9 +576,12 @@ export default class OrdersController {
 
       // create a new order object with the updated fields
       const updatedOrder = new HomeCareOrderModel({
-        ...orderExists,
+        ...orderExists.toJSON(),
         ...reqOrder,
+
       });
+
+      logger.info("ORDER TO UPDATE: "+ updatedOrder)
 
       // validate the order
       const validationError = updatedOrder.validateSync({});

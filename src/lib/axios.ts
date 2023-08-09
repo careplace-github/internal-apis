@@ -18,13 +18,9 @@ const createAxiosInstance = (baseURL: string, apiKey: string, authType: AuthType
       instance.defaults.headers.common['Authorization'] = 'Bearer ' + apiKey;
       break;
     case 'PARAMETER':
-      instance.interceptors.request.use((config) => {
-        config.params = {
-          ...config.params,
-          api_key: apiKey,
-        };
-        return config;
-      });
+      instance.defaults.params = {
+        api_key: apiKey,
+      };
       break;
     default:
       throw new Error('Invalid authentication type');
