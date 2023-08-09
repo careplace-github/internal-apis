@@ -48,6 +48,7 @@ interface IHomeCareOrder {
   billing_details: {
     name: string;
     email: string;
+    phone: string;
     address: IAddress;
     tax_id?: string;
   };

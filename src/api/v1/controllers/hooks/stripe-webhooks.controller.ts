@@ -2,11 +2,15 @@
 import { Request, Response, NextFunction } from 'express';
 
 // Import Services
-import { StripeService } from '@packages/services';
+import { StripeService, VendusService } from '@packages/services';
 
 import { buffer } from 'micro';
 
-import { STRIPE_ACCOUNT_ENDPOINT_SECRET, STRIPE_CONNECT_ENDPOINT_SECRET } from '@constants';
+import {
+  STRIPE_ACCOUNT_ENDPOINT_SECRET,
+  STRIPE_APPLICATION_FEE,
+  STRIPE_CONNECT_ENDPOINT_SECRET,
+} from '@constants';
 
 import { StripeHelper, EmailHelper } from '@packages/helpers';
 import { DateUtils } from '@packages/utils';
@@ -34,6 +38,7 @@ export default class StripeWebhooksController {
   static EmailHelper = EmailHelper;
   // services
   static StripeService = StripeService;
+  static VendusService = VendusService;
   // utils
   static DateUtils = DateUtils;
 
@@ -112,6 +117,129 @@ export default class StripeWebhooksController {
          *	Occurs when a payment intent results in a successful charge. Available for all payments, including destination and direct charges
          */
         case 'payment_intent.succeeded':
+          let object = event.data.object as Stripe.PaymentIntent;
+
+          // Get invoice
+          let invoiceId = object.invoice as string;
+
+          let invoice = await StripeWebhooksController.StripeService.getInvoice(invoiceId);
+
+          let subscriptionId = invoice.subscription as string;
+
+          let paymentMethod = await StripeWebhooksController.StripeService.retrievePaymentMethod(
+            object.payment_method as string
+          );
+
+          // Get order from database
+          let order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
+            {
+              stripe_information: {
+                subscription_id: subscriptionId,
+              },
+            },
+            [
+              {
+                path: 'patient',
+                model: 'Patient',
+              },
+              {
+                path: 'health_unit',
+                model: 'HealthUnit',
+              },
+              {
+                path: 'customer',
+                model: 'Customer',
+              },
+              {
+                path: 'services',
+                model: 'Service',
+              },
+            ]
+          );
+
+          let customer = order.customer as ICustomer;
+
+          let faturaRecibo = await StripeWebhooksController.VendusService.createFaturaRecibo(
+            '500',
+            '500',
+            {
+              name: order.billing_details.name,
+              email: order.billing_details.email,
+              phone: order.billing_details.phone,
+              address: order.billing_details.address.street,
+              postalcode: order.billing_details.address.postal_code,
+              city: order.billing_details.address.city,
+              country: order.billing_details.address.country || 'PT',
+              fiscal_id: order.billing_details.tax_id,
+            },
+
+            invoice.discount?.promotion_code as string | undefined,
+            invoice.discount?.coupon?.amount_off
+              ? (invoice.discount?.coupon?.amount_off / 100).toFixed(2).toString()
+              : undefined
+          );
+
+          // download the pdf
+          let faturaReciboPDF = await StripeWebhooksController.VendusService.downloadDocument(
+            faturaRecibo.id
+          );
+
+          // get the pdf link
+
+          // If the payment was made having a discount the application fee had to be changed, so we need to change it back to the original value
+          await StripeWebhooksController.StripeService.updateSubscription(subscriptionId, {
+            application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
+          });
+
+          object;
+
+          // Prepare the email payload for the customer
+          let customerEmailPayload = {
+            customerName: customer.name,
+            healthUnitName: order.health_unit.business_profile.name,
+            subTotal: order.order_total.toFixed(2),
+            taxAmount: '0.00',
+            total: order.order_total.toFixed(2),
+            orderNumber: invoice?.number?.replace('A53F4B19-', ''),
+            patientName: (order.patient as IPatient).name,
+            receiptDate: await StripeWebhooksController.DateUtils.getDateFromUnixTimestamp(
+              invoice.created
+            ),
+            paymentMethod: paymentMethod.card?.brand + ' ' + paymentMethod.card?.last4,
+            customerStreet: order.billing_details.address.street,
+            customerCity: order.billing_details.address.city,
+            customerPostalCode: order.billing_details.address.postal_code,
+            customerCountry: order.billing_details.address.country,
+          };
+
+          // Get the email template for the customer
+          let customerEmail = await StripeWebhooksController.EmailHelper.getEmailTemplateWithData(
+            'payments_marketplace_order_payment_confirmation',
+            customerEmailPayload
+          );
+
+          // Send the email to the customer
+          try {
+            await StripeWebhooksController.EmailHelper.sendEmailWithAttachment(
+              order.billing_details.email || 'henrique.fonseca@careplace.pt',
+              customerEmail.subject,
+              customerEmail.htmlBody,
+              null,
+              [faturaReciboPDF],
+              null,
+              null
+            );
+          } catch (error) {
+            logger.error('Error sending email to customer: ' + error);
+          }
+
+          // TODO: Prepare the email payload for the health unit
+          // TODO: Get the email template for the health unit
+          // TODO: Send the email to the health unit
+          break;
+
+        case 'payment_intent.payment_failed':
+          // TODO: payment_intent.payment_failed
           break;
 
         /**
@@ -199,206 +327,6 @@ export default class StripeWebhooksController {
          * Sent when the invoice is successfully paid. You can provision access to your product when you receive this event and the subscription status is active.
          */
         case 'invoice.paid':
-          const object = event.data.object as Stripe.Invoice;
-
-          let subscriptionId = object.subscription;
-          let chargeId = object.charge as string;
-
-          let receipt = await StripeWebhooksController.StripeHelper.getReceipt(subscriptionId);
-
-          let receiptDate = await StripeWebhooksController.DateUtils.getDateFromUnixTimestamp(
-            object.created
-          );
-
-          let order: IHomeCareOrder | undefined;
-
-          /**
-           * The stripe subscription is first created and then a charge is made.
-           * Only then the order is created in the database.
-           * It might happen that the webhook is called before the order is created.
-           * So we need to wait until the order is created.
-           */
-          while (undefined) {
-            try {
-              order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
-                {
-                  stripe_subscription_id: subscriptionId,
-                },
-                [
-                  {
-                    path: 'patient',
-                    model: 'Relative',
-                  },
-                  {
-                    path: 'health_unit',
-                    model: 'HealthUnit',
-                  },
-                  {
-                    path: 'services',
-                    model: 'Service',
-                  },
-                  {
-                    path: 'user',
-                    model: 'marketplace_user',
-                  },
-                ]
-              );
-            } catch (error: any) {
-              switch (error.type) {
-                case 'NOT_FOUND':
-                  // Order hasn't been created yet
-                  break;
-                default:
-                  return next(new HTTPError._500(error.message));
-              }
-            }
-
-            // Wait 250ms before trying again to query the order
-            await new Promise((resolve) => setTimeout(resolve, 250));
-          }
-
-          let orderServices: string;
-
-          if (!order) {
-            return next(new HTTPError._500('Order not found'));
-          }
-
-          // Create a string with the services names
-          // Example: "Cleaning, Laundry, Shopping"
-          orderServices = order.services
-            .map((service) => {
-              return service.name;
-            })
-            .join(', ');
-
-          let birthdate = await StripeWebhooksController.DateUtils.convertDateToReadableString(
-            (order.patient as IPatient).birthdate
-          );
-
-          let orderStart = await StripeWebhooksController.DateUtils.convertDateToReadableString2(
-            order.schedule_information.start_date
-          );
-
-          let schedule = await StripeWebhooksController.DateUtils.getScheduleRecurrencyText(
-            order.schedule_information.schedule
-          );
-
-          let receiptLink = await StripeWebhooksController.StripeHelper.getReceiptLink(
-            subscriptionId
-          );
-
-          let paymentMethod =
-            await StripeWebhooksController.StripeHelper.getPaymentMethodByChargeId(chargeId);
-
-          let billingAddress =
-            await StripeWebhooksController.StripeHelper.getBillingAddressByChargeId(chargeId);
-
-          let userEmailPayload = {
-            name: (order.customer as ICustomer).name,
-            healthUnit: order.health_unit.business_profile.name,
-
-            link: receiptLink,
-
-            clientEmail: (order.customer as ICustomer).email,
-
-            // Make sure that the ammounts have 2 decimal places
-            subTotal:
-              object && object.total_excluding_tax !== null
-                ? (object.total_excluding_tax / 100).toFixed(2)
-                : '0.00',
-            taxAmount: object && object.tax !== null ? (object.tax / 100).toFixed(2) : '0.00',
-            total: (object.total / 100).toFixed(2),
-
-            orderNumber:
-              object && object.number !== null ? object.number.replace('A53F4B19-', '') : '',
-            receiptDate: receiptDate,
-
-            paymentMethod:
-              paymentMethod.card && paymentMethod.card.brand !== null
-                ? paymentMethod.card.brand.toUpperCase()
-                : 'SEPA Direct Debit',
-
-            relativeName: (order.patient as IPatient).name,
-            relativeBirthdate: birthdate,
-            relativeMedicalInformation:
-              (order.patient as IPatient).medical_conditions !== undefined &&
-              (order.patient as IPatient).medical_conditions !== null
-                ? (order.patient as IPatient).medical_conditions
-                : 'n/a',
-
-            relativeStreet: (order.patient as IPatient).address.street,
-            relativeCity: (order.patient as IPatient).address.city,
-            relativePostalCode: (order.patient as IPatient).address.postal_code,
-            relativeCountry: (order.patient as IPatient).address.country,
-          };
-
-          let marketplaceOrderPayedEmail =
-            await StripeWebhooksController.EmailHelper.getEmailTemplateWithData(
-              'marketplace_order_payed',
-              userEmailPayload
-            );
-
-          await StripeWebhooksController.EmailHelper.sendEmailWithAttachment(
-            paymentMethod.billing_details.email,
-            marketplaceOrderPayedEmail.subject,
-            marketplaceOrderPayedEmail.htmlBody,
-            null,
-            [receipt],
-            null,
-            'orders@staging.careplace.pt'
-          );
-
-          let healthUnitEmailPayload = {
-            name: order.health_unit.legal_information.director.name,
-            healthUnit: order.health_unit.business_profile.name,
-
-            link: `https://sales.careplace.pt/orders/${order._id}`,
-
-            // Make sure that the ammounts have 2 decimal places
-            subTotal:
-              object && object.total_excluding_tax !== null
-                ? (object.total_excluding_tax / 100).toFixed(2)
-                : '0.00',
-            taxAmount: object && object.tax !== null ? (object.tax / 100).toFixed(2) : '0.00',
-            total: (object.total / 100).toFixed(2),
-
-            orderStart: orderStart,
-            orderSchedule: schedule,
-            orderServices: orderServices,
-
-            relativeName: (order.patient as IPatient).name,
-            relativeBirthdate: birthdate,
-            relativeMedicalInformation:
-              (order.patient as IPatient).medical_conditions !== undefined &&
-              (order.patient as IPatient).medical_conditions !== null
-                ? (order.patient as IPatient).medical_conditions
-                : 'n/a',
-
-            relativeStreet: (order.patient as IPatient).address.street,
-            relativeCity: (order.patient as IPatient).address.city,
-            relativePostalCode: (order.patient as IPatient).address.postal_code,
-            relativeCountry: (order.patient as IPatient).address.country,
-
-            userName: (order.customer as ICustomer).name,
-            userPhone: (order.customer as ICustomer).phone,
-          };
-
-          let businessOrderPayedEmail =
-            await StripeWebhooksController.EmailHelper.getEmailTemplateWithData(
-              'business_order_payed',
-              healthUnitEmailPayload
-            );
-
-          await StripeWebhooksController.EmailHelper.sendEmailWithAttachment(
-            paymentMethod.billing_details.email,
-            businessOrderPayedEmail.subject,
-            businessOrderPayedEmail.htmlBody,
-            null,
-            [receipt],
-            null,
-            'orders@staging.careplace.pt'
-          );
-
           break;
 
         /**

@@ -7,6 +7,7 @@ import { AWS_SES_SENDER_EMAIL, AWS_SES_REPLY_TO_EMAIL } from '@constants';
 import aws from 'aws-sdk/clients/ses';
 
 import { SESService } from '@packages/services';
+import Mail from 'nodemailer/lib/mailer';
 
 /**
  * Class with helper and utility functions for the SES email service.
@@ -236,9 +237,26 @@ export default class EmailHelper {
       SES: { ses, aws },
     });
 
+    logger.info(
+      'EmailHelper.sendEmailWithAttachment params: ' +
+        JSON.stringify(
+          {
+            receiverEmail,
+            subject,
+            htmlBody,
+            textBody,
+            attachments,
+            ccEmails,
+            bccEmails,
+          },
+          null,
+          2
+        )
+    );
+
     // transporter.use("compile", htmlToText.htmlToText());
 
-    const mailOptions = {
+    const mailOptions: Mail.Options = {
       from: AWS_SES_SENDER_EMAIL,
       to: receiverEmail,
       cc: ccEmails,
@@ -254,6 +272,7 @@ export default class EmailHelper {
     for (let attachment of attachments) {
       var filePath = attachment.path;
 
+      // Delete the file
       fs.unlink.bind(fs, filePath);
     }
 
