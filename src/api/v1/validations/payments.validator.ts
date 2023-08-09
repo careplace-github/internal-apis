@@ -74,9 +74,9 @@ const Checkout_BillingDetailsValidation = check('billing_details').custom((value
 });
 
 // Check if the field payment_method_id exists and is a string, message should be "invalid"
-const Checkout_PaymentMethodValid = check('payment_method_id').custom((value, { req }) => {
+const Checkout_PaymentMethodValid = check('payment_method').custom((value, { req }) => {
   if (!value) {
-    throw new Error('Missing required field: payment_method_id');
+    throw new Error('Missing required field: payment_method');
   }
 
   if (typeof value !== 'string') {

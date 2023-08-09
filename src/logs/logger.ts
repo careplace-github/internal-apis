@@ -26,7 +26,7 @@ const loggerTransports = [
   new transports.Console({
     format: customFormat,
   }),
-  ...(process.env.NODE_ENV === 'development'
+  ...(process.env.NODE_ENV === 'development' || true
     ? [
         new transports.File({
           filename: './src/logs/server.log',

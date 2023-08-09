@@ -33,7 +33,7 @@ router
   );
 
 router
-  .route('/health-units/:healthUnit/orders/home-care')
+  .route('/customers/orders/home-care')
   .post(
     AuthenticationGuard,
     ClientGuard('marketplace'),

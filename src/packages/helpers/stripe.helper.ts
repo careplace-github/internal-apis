@@ -58,7 +58,7 @@ export default class StripeHelper {
     return orderNumber;
   }
 
-  static async getReceipt(subscriptionId) {
+  static async downloadReceipt(subscriptionId) {
     let receiptUrl = await this.getReceiptLink(subscriptionId);
 
     /**
