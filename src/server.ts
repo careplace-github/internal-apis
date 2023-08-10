@@ -65,6 +65,7 @@ const main = async () => {
       PatientsRoute,
       PaymentsRoute,
       ReviewsRoute,
+      LeadsRoute,
     } = require('@api/v1/routes');
 
     const { FilesRoute } = require('@api/files/v1/routes');
@@ -452,7 +453,7 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, CalendarRoute);
       app.use(process.env.API_ROUTE as string, WebhooksRoute);
       app.use(process.env.API_ROUTE as string, PaymentsRoute);
-
+      app.use(process.env.API_ROUTE as string, LeadsRoute);
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);
       // Middleware to handle and log all the HTTP responses
