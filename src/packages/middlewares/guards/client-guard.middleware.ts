@@ -21,7 +21,7 @@ export default function clientGuard(app: string) {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
       }
 
-      const reqClientId = req.headers['client-id'] as string;
+      const reqClientId = req.headers['x-client-id'] as string;
 
       logger.info(`User Client Id: ${reqClientId}`);
       logger.info(`App Client Id: ${app}`);
