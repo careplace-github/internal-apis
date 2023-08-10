@@ -21,20 +21,12 @@ export default function clientGuard(app: string) {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
       }
 
-      if (!req.headers.authorization) {
-        throw new HTTPError._401(`Missing required authorization header.`);
-      }
+      const reqClientId = req.headers['client-id'] as string;
 
-      let accessToken = req.headers.authorization.split(' ')[1];
-
-      let decodedToken = await AuthUtils.decodeJwtToken(accessToken);
-
-      let userClientId = decodedToken['client_id'] as string;
-
-      logger.info(`User Client Id: ${userClientId}`);
+      logger.info(`User Client Id: ${reqClientId}`);
       logger.info(`App Client Id: ${app}`);
 
-      if (userClientId === app) {
+      if (reqClientId === app) {
         logger.info(`User passed endpoint access guard.`);
         next();
       } else {
