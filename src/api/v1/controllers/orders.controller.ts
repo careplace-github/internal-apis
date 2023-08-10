@@ -400,9 +400,10 @@ export default class OrdersController {
       }
 
       order.status = 'cancelled';
-      order.decline_reason = req.body.decline_reason;
+      order.cancellation_reason = req.body.cancellation_reason;
+      order.cancellation_date = new Date();
 
-      if (!order.decline_reason) {
+      if (!req.body.cancellation_reason) {
         return next(new HTTPError._400('Decline reason is required.'));
       }
 
