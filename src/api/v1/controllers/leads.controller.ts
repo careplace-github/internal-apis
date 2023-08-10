@@ -41,6 +41,16 @@ export default class LeadsController {
         return next(new HTTPError._400(validationError.message));
       }
 
+      // Check if there is a lead with the same email
+      const leadExists = await LeadsController.LeadsDAO.queryOne({
+        type: 'caregiver',
+        email: email,
+      });
+
+      if (leadExists) {
+        return next(new HTTPError._400('Lead already exists'));
+      }
+
       const caregiverLeadAdded = await LeadsController.LeadsDAO.create(newCaregiverLead);
 
       response.statusCode = 201;
@@ -86,6 +96,16 @@ export default class LeadsController {
         return next(new HTTPError._400(validationError.message));
       }
 
+      // Check if there is a lead with the same email
+      const leadExists = await LeadsController.LeadsDAO.queryOne({
+        type: 'health_unit',
+        email: email,
+      });
+
+      if (leadExists) {
+        return next(new HTTPError._400('Lead already exists'));
+      }
+
       const healthUnitLeadAdded = await LeadsController.LeadsDAO.create(newHealthUnitLead);
 
       response.statusCode = 201;
@@ -123,6 +143,16 @@ export default class LeadsController {
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
+      }
+
+      // Check if there is a lead with the same email
+      const leadExists = await LeadsController.LeadsDAO.queryOne({
+        type: 'customer_newsletter',
+        email: email,
+      });
+
+      if (leadExists) {
+        return next(new HTTPError._400('Lead already exists'));
       }
 
       const customerNewsletterLeadAdded = await LeadsController.LeadsDAO.create(
@@ -164,6 +194,16 @@ export default class LeadsController {
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
+      }
+
+      // Check if there is a lead with the same email
+      const leadExists = await LeadsController.LeadsDAO.queryOne({
+        type: 'collaborator_newsletter',
+        email: email,
+      });
+
+      if (leadExists) {
+        return next(new HTTPError._400('Lead already exists'));
       }
 
       const collaboratorNewsletterLeadAdded = await LeadsController.LeadsDAO.create(
