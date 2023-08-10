@@ -6,42 +6,15 @@ import mongoose, { FilterQuery, startSession } from 'mongoose';
 import { omit, pick } from 'lodash';
 
 // @api
-import {
-  HealthUnitsDAO,
-  HomeCareOrdersDAO,
-  HealthUnitReviewsDAO,
-  CollaboratorsDAO,
-  CustomersDAO,
-  EventsDAO,
-  EventSeriesDAO,
-  LeadsDAO,
-} from '@packages/database';
+import { LeadsDAO } from '@packages/database';
 import { AuthHelper, OrdersHelper, CalendarHelper } from '@packages/helpers';
-import {
-  IAPIResponse,
-  ICollaborator,
-  ICustomer,
-  IHealthUnitReview,
-  IHomeCareOrder,
-  IHealthUnit,
-  IQueryListResponse,
-  IEvent,
-  IEventDocument,
-  IEventSeriesDocument,
-  IEventSeries,
-} from 'src/packages/interfaces';
-import {
-  CaregiverModel,
-  CollaboratorModel,
-  EventModel,
-  EventSeriesModel,
-  LeadModel,
-} from 'src/packages/models';
+import { IAPIResponse } from 'src/packages/interfaces';
+import { LeadModel } from 'src/packages/models';
 import { CognitoService, StripeService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
-export default class CalendarController {
+export default class LeadsController {
   // db
   static LeadsDAO = new LeadsDAO();
 
@@ -68,7 +41,7 @@ export default class CalendarController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      const caregiverLeadAdded = await this.LeadsDAO.create(newCaregiverLead);
+      const caregiverLeadAdded = await LeadsController.LeadsDAO.create(newCaregiverLead);
 
       response.statusCode = 201;
       response.data = caregiverLeadAdded;
@@ -113,7 +86,7 @@ export default class CalendarController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      const healthUnitLeadAdded = await this.LeadsDAO.create(newHealthUnitLead);
+      const healthUnitLeadAdded = await LeadsController.LeadsDAO.create(newHealthUnitLead);
 
       response.statusCode = 201;
       response.data = healthUnitLeadAdded;
@@ -152,7 +125,9 @@ export default class CalendarController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      const customerNewsletterLeadAdded = await this.LeadsDAO.create(newCustomerNewsletterLead);
+      const customerNewsletterLeadAdded = await LeadsController.LeadsDAO.create(
+        newCustomerNewsletterLead
+      );
 
       response.statusCode = 201;
       response.data = customerNewsletterLeadAdded;
@@ -191,7 +166,7 @@ export default class CalendarController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      const collaboratorNewsletterLeadAdded = await this.LeadsDAO.create(
+      const collaboratorNewsletterLeadAdded = await LeadsController.LeadsDAO.create(
         newCollaboratorNewsletterLead
       );
 
