@@ -155,6 +155,7 @@ export default class OrdersController {
 
       order.customer = user._id;
       order.status = 'new';
+      order.type = 'marketplace';
 
       const newOrder = new HomeCareOrderModel(order);
 
