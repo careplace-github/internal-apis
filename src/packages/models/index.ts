@@ -11,6 +11,7 @@ export { HomeCareOrderSchema } from './home-care-order.model';
 export { PatientSchema } from './patient.model';
 export { HealthUnitReviewSchema } from './health-unit-review.model';
 export { ServiceSchema } from './service.model';
+export { LeadSchema } from './lead.model';
 
 // models
 export { DeletedDocumentModel } from './misc/deletedDocument.model';
@@ -25,3 +26,4 @@ export { HomeCareOrderModel } from './home-care-order.model';
 export { PatientModel } from './patient.model';
 export { HealthUnitReviewModel } from './health-unit-review.model';
 export { ServiceModel } from './service.model';
+export { LeadModel } from './lead.model';
