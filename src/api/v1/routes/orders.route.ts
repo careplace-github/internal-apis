@@ -33,6 +33,14 @@ router
   );
 
 router
+  .route('/customers/orders/home-care/:id/cancel')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    OrdersController.customerCancelHomeCareOrder
+  );
+
+router
   .route('/customers/orders/home-care')
   .post(
     AuthenticationGuard,
