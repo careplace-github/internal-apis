@@ -9,3 +9,4 @@ export { default as HomeCareOrdersDAO } from './orders.dao';
 export { default as PatientsDAO } from './patients.dao';
 export { default as HealthUnitReviewsDAO } from './health-unit-reviews.dao';
 export { default as ServicesDAO } from './services.dao';
+export { default as LeadsDAO } from './leads.dao';
