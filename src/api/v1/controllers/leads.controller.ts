@@ -8,7 +8,7 @@ import { omit, pick } from 'lodash';
 // @api
 import { LeadsDAO } from '@packages/database';
 import { AuthHelper, OrdersHelper, CalendarHelper } from '@packages/helpers';
-import { IAPIResponse } from 'src/packages/interfaces';
+import { IAPIResponse, ILeadDocument } from 'src/packages/interfaces';
 import { LeadModel } from 'src/packages/models';
 import { CognitoService, StripeService } from 'src/packages/services';
 import { HTTPError } from '@utils';
@@ -42,10 +42,20 @@ export default class LeadsController {
       }
 
       // Check if there is a lead with the same email
-      const leadExists = await LeadsController.LeadsDAO.queryOne({
-        type: 'caregiver',
-        email: email,
-      });
+      let leadExists: ILeadDocument | null = null;
+      try {
+        leadExists = await LeadsController.LeadsDAO.queryOne({
+          type: 'caregiver',
+          email: email,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (leadExists) {
         return next(new HTTPError._400('Lead already exists'));
@@ -97,10 +107,20 @@ export default class LeadsController {
       }
 
       // Check if there is a lead with the same email
-      const leadExists = await LeadsController.LeadsDAO.queryOne({
-        type: 'health_unit',
-        email: email,
-      });
+      let leadExists: ILeadDocument | null = null;
+      try {
+        leadExists = await LeadsController.LeadsDAO.queryOne({
+          type: 'health_unit',
+          email: email,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (leadExists) {
         return next(new HTTPError._400('Lead already exists'));
@@ -146,10 +166,20 @@ export default class LeadsController {
       }
 
       // Check if there is a lead with the same email
-      const leadExists = await LeadsController.LeadsDAO.queryOne({
-        type: 'customer_newsletter',
-        email: email,
-      });
+      let leadExists: ILeadDocument | null = null;
+      try {
+        leadExists = await LeadsController.LeadsDAO.queryOne({
+          type: 'customer_newsletter',
+          email: email,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (leadExists) {
         return next(new HTTPError._400('Lead already exists'));
@@ -197,10 +227,20 @@ export default class LeadsController {
       }
 
       // Check if there is a lead with the same email
-      const leadExists = await LeadsController.LeadsDAO.queryOne({
-        type: 'collaborator_newsletter',
-        email: email,
-      });
+      let leadExists: ILeadDocument | null = null;
+      try {
+        leadExists = await LeadsController.LeadsDAO.queryOne({
+          type: 'collaborator_newsletter',
+          email: email,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
       if (leadExists) {
         return next(new HTTPError._400('Lead already exists'));
