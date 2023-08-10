@@ -38,6 +38,9 @@ interface IHomeCareOrder {
   };
   status: THomeCareOrderStatus;
   decline_reason?: string;
+  decline_date?: Date;
+  cancellation_reason?: string;
+  cancellation_date?: Date;
   order_total: number;
   screening_visit?: IEvent;
   screening_visit_status?: THomeCareOrderScreeningVisitStatus;
