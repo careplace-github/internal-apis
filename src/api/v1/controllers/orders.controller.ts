@@ -319,6 +319,122 @@ export default class OrdersController {
     }
   }
 
+  static async customerCancelHomeCareOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const orderId = req.params.id;
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      let user: ICollaboratorDocument | ICustomerDocument | ICaregiverDocument;
+
+      try {
+        user = await AuthHelper.getUserFromDB(accessToken);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      let order: IHomeCareOrderDocument;
+
+      try {
+        order = await OrdersController.HomeCareOrdersDAO.retrieve(
+          orderId,
+
+          // Populate the fields patient and caregiver
+          [
+            {
+              path: 'patient',
+              model: 'Patient',
+            },
+            {
+              path: 'caregiver',
+              model: 'Caregiver',
+            },
+            {
+              path: 'services',
+              model: 'Service',
+            },
+            {
+              path: 'health_unit',
+              model: 'HealthUnit',
+            },
+            {
+              path: 'customer',
+              model: 'Customer',
+              select: 'name email phone address _id',
+            },
+          ]
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Order not found'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      if (order!.customer!._id.toString() !== user._id.toString() || order.status === 'new') {
+        return next(new HTTPError._403('You are not authorized to cancel this order.'));
+      }
+
+      order.status = 'cancelled';
+      order.decline_reason = req.body.decline_reason;
+
+      if (!order.decline_reason) {
+        return next(new HTTPError._400('Decline reason is required.'));
+      }
+
+      // validate the order
+      const validationError = order.validateSync({});
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let orderUpdated: IHomeCareOrderDocument;
+      try {
+        orderUpdated = await OrdersController.HomeCareOrdersDAO.update(order);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = orderUpdated;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      next(error);
+    }
+  }
+
   static async retrieveCustomerHomeCareOrder(
     req: Request,
     res: Response,
@@ -545,7 +661,7 @@ export default class OrdersController {
         '_id',
         'health_unit',
         'customer',
-       // 'patient',
+        // 'patient',
         'status',
         'decline_reason',
         'screening_visit',
@@ -557,7 +673,7 @@ export default class OrdersController {
 
       try {
         orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
-        logger.info("ORDER EXISTS: "+ orderExists)
+        logger.info('ORDER EXISTS: ' + orderExists);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
@@ -578,10 +694,9 @@ export default class OrdersController {
       const updatedOrder = new HomeCareOrderModel({
         ...orderExists.toJSON(),
         ...reqOrder,
-
       });
 
-      logger.info("ORDER TO UPDATE: "+ updatedOrder)
+      logger.info('ORDER TO UPDATE: ' + updatedOrder);
 
       // validate the order
       const validationError = updatedOrder.validateSync({});
