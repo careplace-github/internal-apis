@@ -545,7 +545,7 @@ export default class OrdersController {
         '_id',
         'health_unit',
         'customer',
-        'patient',
+       // 'patient',
         'status',
         'decline_reason',
         'screening_visit',
