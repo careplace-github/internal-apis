@@ -20,6 +20,7 @@ import {
 
 interface IHomeCareOrder {
   _id: Types.ObjectId | string;
+  type: 'marketplace' | 'external';
   health_unit: IHealthUnit;
   caregiver?: Types.ObjectId | ICaregiver;
   customer: Types.ObjectId | ICustomer;
