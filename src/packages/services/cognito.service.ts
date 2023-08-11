@@ -65,14 +65,14 @@ export default class CognitoService {
     this.userPoolId =
       this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
         ? AWS_COGNITO_BUSINESS_USER_POOL_ID
-        : this.clientId === AWS_COGNITO_MARKETPLACE_USER_POOL_ID
+        : this.clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID
         ? AWS_COGNITO_MARKETPLACE_USER_POOL_ID
         : AWS_COGNITO_ADMIN_USER_POOL_ID;
     this.issuer = AWS_COGNITO_ISSUER;
     this.clientSecret =
       this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
         ? AWS_COGNITO_BUSINESS_CLIENT_SECRET
-        : this.clientId === AWS_COGNITO_MARKETPLACE_CLIENT_SECRET
+        : this.clientId === AWS_COGNITO_MARKETPLACE_CLIENT_ID
         ? AWS_COGNITO_MARKETPLACE_CLIENT_SECRET
         : AWS_COGNITO_ADMIN_CLIENT_SECRET;
   }
