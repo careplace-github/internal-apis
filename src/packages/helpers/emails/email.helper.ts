@@ -29,7 +29,7 @@ export default class EmailHelper {
 
     // Check if file exists
     if (!fs.existsSync(filename)) {
-      throw new Error('File does not exist');
+      throw new Error('Email template file does not exist');
     }
 
     let template = readFileSync(filename, 'utf-8');

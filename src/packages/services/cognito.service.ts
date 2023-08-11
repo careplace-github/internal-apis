@@ -12,6 +12,8 @@ import {
   AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+  AWS_COGNITO_ADMIN_CLIENT_ID,
+  AWS_COGNITO_ADMIN_USER_POOL_ID,
   AWS_COGNITO_REGION,
   AWS_COGNITO_IDENTITY_POOL_ID,
   AWS_ACCESS_KEY_ID,
@@ -19,6 +21,7 @@ import {
   AWS_COGNITO_ISSUER,
   AWS_COGNITO_MARKETPLACE_CLIENT_SECRET,
   AWS_COGNITO_BUSINESS_CLIENT_SECRET,
+  AWS_COGNITO_ADMIN_CLIENT_SECRET,
 } from '@constants';
 // @types
 import { TClientID } from '@interfaces';
@@ -62,12 +65,16 @@ export default class CognitoService {
     this.userPoolId =
       this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
         ? AWS_COGNITO_BUSINESS_USER_POOL_ID
-        : AWS_COGNITO_MARKETPLACE_USER_POOL_ID;
+        : this.clientId === AWS_COGNITO_MARKETPLACE_USER_POOL_ID
+        ? AWS_COGNITO_MARKETPLACE_USER_POOL_ID
+        : AWS_COGNITO_ADMIN_USER_POOL_ID;
     this.issuer = AWS_COGNITO_ISSUER;
     this.clientSecret =
       this.clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
         ? AWS_COGNITO_BUSINESS_CLIENT_SECRET
-        : AWS_COGNITO_MARKETPLACE_CLIENT_SECRET;
+        : this.clientId === AWS_COGNITO_MARKETPLACE_CLIENT_SECRET
+        ? AWS_COGNITO_MARKETPLACE_CLIENT_SECRET
+        : AWS_COGNITO_ADMIN_CLIENT_SECRET;
   }
 
   calculateSecretHash(username: string) {
@@ -1009,16 +1016,29 @@ export default class CognitoService {
   ): Promise<CognitoIdentityServiceProvider.RespondToAuthChallengeResponse> {
     logger.info(
       'Cognito Service RESPOND_TO_AUTH_CHALLENGE Request: ' +
-        JSON.stringify(challengeName, null, 2) +
+        JSON.stringify(
+          {
+            challengeName,
+            session,
+            challengePayload,
+          },
+          null,
+          2
+        ) +
         '\n'
     );
 
     const params: CognitoIdentityServiceProvider.RespondToAuthChallengeRequest = {
-      ChallengeName: challengeName,
       ClientId: this.clientId,
+      ChallengeName: challengeName,
       Session: session,
-      ChallengeResponses: challengePayload,
+      ChallengeResponses: {
+        SECRET_HASH: this.calculateSecretHash(challengePayload.USERNAME),
+        ...challengePayload,
+      },
     };
+
+    logger.info('CHALLENGE PAYLOAD: ' + JSON.stringify(params.ChallengeResponses, null, 2) + '\n');
 
     let response: CognitoIdentityServiceProvider.RespondToAuthChallengeResponse;
 

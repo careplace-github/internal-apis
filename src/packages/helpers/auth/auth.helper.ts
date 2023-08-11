@@ -18,6 +18,7 @@ import {
   AWS_COGNITO_MARKETPLACE_GROUPS,
   AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+  AWS_COGNITO_ADMIN_CLIENT_ID,
 } from '@constants';
 
 import CustomersDao from '../../database/customers.dao';
@@ -50,7 +51,8 @@ export default class AuthHelper {
 
     if (
       clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
-      clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID
+      clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID &&
+      clientId !== AWS_COGNITO_ADMIN_CLIENT_ID
     ) {
       throw new LayerError.INVALID_PARAMETER('Invalid client id');
     }
