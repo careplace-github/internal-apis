@@ -6,6 +6,8 @@ import {
   AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
   AWS_COGNITO_BUSINESS_USER_POOL_ID,
+  AWS_COGNITO_ADMIN_USER_POOL_ID,
+  AWS_COGNITO_ADMIN_CLIENT_ID,
 } from '@constants';
 import logger from '@logger';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
@@ -35,13 +37,23 @@ export default class CognitoContext {
       clientId: AWS_COGNITO_MARKETPLACE_CLIENT_ID,
     });
 
+    const adminVerifier = CognitoJwtVerifier.create({
+      userPoolId: AWS_COGNITO_ADMIN_USER_POOL_ID,
+      clientId: AWS_COGNITO_ADMIN_CLIENT_ID,
+    });
+
     const props: CognitoVerifyProperties = {
-      clientId: [AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID],
+      clientId: [
+        AWS_COGNITO_BUSINESS_CLIENT_ID,
+        AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+        AWS_COGNITO_ADMIN_CLIENT_ID,
+      ],
       tokenUse: 'access',
     };
 
     let businessDecodedToken: CognitoJwtPayload | undefined;
     let marketplaceDecodedToken: CognitoJwtPayload | undefined;
+    let adminDecodedToken: CognitoJwtPayload | undefined;
     try {
       businessDecodedToken = await businessVerifier.verify(token, props);
     } catch (err: any) {
@@ -60,7 +72,16 @@ export default class CognitoContext {
       }
     }
 
-    const decodedToken = businessDecodedToken || marketplaceDecodedToken;
+    try {
+      adminDecodedToken = await adminVerifier.verify(token, props);
+    } catch (err: any) {
+      if (err.name === 'TokenExpiredError') {
+        // Handle expired token error
+        throw new HTTPError._401('Unauthorized: Token has expired');
+      }
+    }
+
+    const decodedToken = businessDecodedToken || marketplaceDecodedToken || adminDecodedToken;
 
     if (!decodedToken) {
       throw new HTTPError._401('Unauthorized: Invalid token');

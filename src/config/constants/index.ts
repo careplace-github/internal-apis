@@ -12,6 +12,8 @@ export const AUTH_PROVIDER = process.env.AUTH_PROVIDER as string;
 
 export const API_URL = process.env.API_URL as string;
 export const API_ROUTE = process.env.API_ROUTE as string;
+export const ADMIN_API_URL = process.env.ADMIN_API_URL as string;
+export const ADMIN_API_ROUTE = process.env.ADMIN_API_ROUTE as string;
 
 export const SERVER_PORT = process.env.PORT || (process.env.PORT_BACKUP as string);
 
@@ -76,6 +78,11 @@ export const AWS_COGNITO_REGION =
 export const AWS_COGNITO_IDENTITY_POOL_ID = process.env.AWS_COGNITO_IDENTITY_POOL_ID as string;
 export const AWS_COGNITO_BUSINESS_GROUPS = process.env.AWS_COGNITO_BUSINESS_ROLES as string;
 export const AWS_COGNITO_MARKETPLACE_GROUPS = process.env.AWS_COGNITO_MARKETPLACE_ROLES as string;
+
+export const AWS_COGNITO_ADMIN_CLIENT_SECRET = process.env
+  .AWS_COGNITO_ADMIN_CLIENT_SECRET as string;
+export const AWS_COGNITO_ADMIN_USER_POOL_ID = process.env.AWS_COGNITO_ADMIN_USER_POOL_ID as string;
+export const AWS_COGNITO_ADMIN_CLIENT_ID = process.env.AWS_COGNITO_ADMIN_CLIENT_ID as string;
 
 // AWS S3 Credentials
 export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME as string;

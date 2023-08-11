@@ -68,6 +68,8 @@ const main = async () => {
       LeadsRoute,
     } = require('@api/v1/routes');
 
+    const { AdminAuthRoute, AdminHealthUnitsRoute } = require('@api/admin/v1/routes');
+
     const { FilesRoute } = require('@api/files/v1/routes');
 
     const {
@@ -440,8 +442,7 @@ const main = async () => {
       // Middleware to log all the HTTP requests
       app.use(RequestHandlerMiddleware);
 
-      // Routes middlewares
-
+      // API Routes
       app.use(process.env.API_ROUTE as string, FilesRoute);
       app.use(process.env.API_ROUTE as string, ReviewsRoute);
       app.use(process.env.API_ROUTE as string, AuthRoute);
@@ -454,6 +455,11 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, WebhooksRoute);
       app.use(process.env.API_ROUTE as string, PaymentsRoute);
       app.use(process.env.API_ROUTE as string, LeadsRoute);
+
+      // Admin API Routes
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
+
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);
       // Middleware to handle and log all the HTTP responses

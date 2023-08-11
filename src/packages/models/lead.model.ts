@@ -14,7 +14,7 @@ const LeadSchema: Schema<ILeadDocument> = new Schema<ILeadDocument>(
     },
 
     name: { type: String, required: false },
-    email: { type: String, required: false, unique: true},
+    email: { type: String, required: false, unique: true },
     phone: { type: String, required: false },
     company: { type: String, required: false },
     company_type: { type: String, required: false },
