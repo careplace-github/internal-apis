@@ -5,6 +5,7 @@ import logger from '../../../logs/logger';
 import {
   AWS_COGNITO_BUSINESS_CLIENT_ID,
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+  AWS_COGNITO_ADMIN_CLIENT_ID,
 } from '../../../config/constants/index';
 
 import authUtils from '../../utils/auth/auth.utils';
@@ -19,9 +20,15 @@ export default function clientGuard(app: string) {
         app = AWS_COGNITO_BUSINESS_CLIENT_ID || '';
       } else if (app === 'marketplace') {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
+      } else if (app === 'admin') {
+        app = AWS_COGNITO_ADMIN_CLIENT_ID || '';
       }
 
       const reqClientId = req.headers['x-client-id'] as string;
+
+      if (!reqClientId) {
+        throw new HTTPError._400(`You must provide a client id in the headers.`);
+      }
 
       logger.info(`User Client Id: ${reqClientId}`);
       logger.info(`App Client Id: ${app}`);
