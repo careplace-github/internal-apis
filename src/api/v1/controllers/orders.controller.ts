@@ -336,7 +336,7 @@ export default class OrdersController {
       let accessToken: string;
 
       if (!req.body.cancellation_reason) {
-        return next(new HTTPError._400('Decline reason is required.'));
+        return next(new HTTPError._400('`cancellation_reason` is required.'));
       }
 
       // Check if there is an authorization header
@@ -400,7 +400,7 @@ export default class OrdersController {
         }
       }
 
-      if (order!.customer!._id.toString() !== user._id.toString() || order.status !== 'new') {
+      if (order!.customer!._id.toString() !== user._id.toString() || order.status === 'new') {
         return next(new HTTPError._403('You are not authorized to cancel this order.'));
       }
 
