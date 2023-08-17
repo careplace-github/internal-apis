@@ -75,9 +75,10 @@ export default class AdminHealthUnitsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const reqCollaborator = req.body as ICollaborator;
+      let reqCollaborator = req.body as ICollaborator;
+      // reqCollaborator.profile_picture = '';
       const healthUnitId = req.params.healthUnit;
-      const sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
+      let sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
 
       let healthUnit: IHealthUnitDocument;
 
@@ -105,6 +106,8 @@ export default class AdminHealthUnitsController {
       sanitizedReqCollaborator.phone = sanitizedReqCollaborator.phone!.replace(/\s/g, '');
 
       const collaborator = new CollaboratorModel(sanitizedReqCollaborator);
+
+      logger.info('COLLABORATOR VALIDATION: ' + JSON.stringify(collaborator, null, 2));
 
       // Validate the collaborator data.
       const validationError = collaborator.validateSync({ pathsToSkip: ['cognito_id'] });
@@ -165,7 +168,7 @@ export default class AdminHealthUnitsController {
           }
         }
 
-        reqCollaborator.cognito_id = cognitocollaborator.UserSub;
+        collaborator.cognito_id = cognitocollaborator.UserSub;
 
         try {
           // Confirm the collaborator in Cognito.

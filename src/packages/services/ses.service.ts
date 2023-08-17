@@ -94,6 +94,8 @@ export default class SES {
 
     const emailSent = await this.SES.sendEmail(params).promise();
 
+    logger.info('SES Service Email Sent: ' + emailSent);
+
     return emailSent;
   }
 }

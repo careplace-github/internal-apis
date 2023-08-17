@@ -9,6 +9,7 @@ interface ICustomer {
   _id: Types.ObjectId | string;
 
   cognito_id: string;
+  health_unit?: IHealthUnit;
   name: string;
   email: string;
   phone: string;
