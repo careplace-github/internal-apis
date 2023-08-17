@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 // mongoose
 import mongoose, { FilterQuery, startSession } from 'mongoose';
+import { STRIPE_SECRET_KEY } from '@constants';
 
 // @api
 import {
@@ -659,6 +660,7 @@ export default class AuthenticationController {
         statusCode: res.statusCode,
         data: {},
       };
+      logger.info('STRIPE KEY: ' + STRIPE_SECRET_KEY);
 
       let app: string = '';
 
@@ -714,29 +716,47 @@ export default class AuthenticationController {
 
       try {
         if (app === 'business') {
-          user = await AuthenticationController.CollaboratorsDAO.queryOne(
-            {
-              cognito_id: '39425f3b-a637-4e6a-9db4-97fd2132a416',
-            },
-            [
+          try {
+            user = await AuthenticationController.CollaboratorsDAO.queryOne(
               {
-                path: 'health_unit',
-                model: 'HealthUnit',
-                populate: [
-                  {
-                    path: 'services',
-                    model: 'Service',
-                    select: '-__v -created_at -updated_at -translations',
-                  },
-                ],
-                select: '-__v -createdAt -updatedAt',
+                cognito_id: { $eq: cognitoId },
               },
-            ]
-          );
+              [
+                {
+                  path: 'health_unit',
+                  model: 'HealthUnit',
+                  populate: [
+                    {
+                      path: 'services',
+                      model: 'Service',
+                      select: '-__v -created_at -updated_at -translations',
+                    },
+                  ],
+                  select: '-__v -createdAt -updatedAt',
+                },
+              ]
+            );
+          } catch (error: any) {
+            switch (error.type) {
+              case 'NOT_FOUND':
+                return next(new HTTPError._404('User not found.'));
+              default:
+                return next(new HTTPError._500(error.message));
+            }
+          }
         } else if (app === 'marketplace') {
-          user = await AuthenticationController.CustomersDAO.queryOne({
-            cognito_id: { $eq: cognitoId },
-          });
+          try {
+            user = await AuthenticationController.CustomersDAO.queryOne({
+              cognito_id: { $eq: cognitoId },
+            });
+          } catch (error: any) {
+            switch (error.type) {
+              case 'NOT_FOUND':
+                return next(new HTTPError._404('User not found.'));
+              default:
+                return next(new HTTPError._500(error.message));
+            }
+          }
         }
       } catch (error: any) {
         switch (error.type) {
@@ -752,7 +772,6 @@ export default class AuthenticationController {
       /**
        * Get External Accounts from Stripe
        */
-      let Stripe = new StripeService();
       let connectedAccountId: string;
       let externalAccounts: any;
       if (app === 'business' && userJSON?.health_unit.stripe_information?.account_id) {
