@@ -408,8 +408,6 @@ export default class OrdersController {
       order.cancellation_reason = req.body.cancellation_reason;
       order.cancellation_date = new Date();
 
-
-
       // validate the order
       const validationError = order.validateSync({});
 
