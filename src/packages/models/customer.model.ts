@@ -12,6 +12,7 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
     },
 
     cognito_id: { type: String, required: true, unique: true },
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
     name: { type: String, required: true },
     /**
      * Health units may create customers to for the orders of "offline" customers.

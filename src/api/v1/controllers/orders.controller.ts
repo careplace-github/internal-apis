@@ -851,7 +851,7 @@ export default class OrdersController {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
-        return user.health_unit._id.toString();
+        return user?.health_unit?._id.toString();
       });
 
       // Check if the home care order belongs to the user's health unit
@@ -1011,7 +1011,7 @@ export default class OrdersController {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
         }
-        return user.health_unit._id.toString();
+        return user?.health_unit?._id.toString();
       });
 
       try {
@@ -1360,7 +1360,7 @@ export default class OrdersController {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
-        return user.health_unit._id.toString();
+        return user?.health_unit?._id.toString();
       });
 
       let order: IHomeCareOrderDocument;
@@ -1444,7 +1444,7 @@ export default class OrdersController {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
-        return user.health_unit._id.toString();
+        return user?.health_unit?._id.toString();
       });
 
       let order: IHomeCareOrderDocument;
