@@ -85,7 +85,7 @@ const CollaboratorSchema: Schema<ICollaboratorDocument> = new Schema<ICollaborat
         sms: { type: Boolean, required: true, default: true },
       },
     },
-    profile_picture: { type: String, required: false },
+    profile_picture: { type: String, required: false, default: '' },
   },
   {
     timestamps: true, // createdAt, updatedAt

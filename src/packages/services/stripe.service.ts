@@ -5,7 +5,7 @@ import Stripe from 'stripe';
 import { LayerError } from '@utils';
 
 // @constants
-import { STRIPE_SECRET_KEY, STRIPE_PUBLISHABLE_KEY } from '@constants';
+import { STRIPE_SECRET_KEY } from '@constants';
 // @logger
 import logger from '@logger';
 
