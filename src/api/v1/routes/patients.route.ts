@@ -20,4 +20,15 @@ router
     PatientsController.deleteCustomerPatient
   );
 
+router
+  .route('/health-units/patients')
+  .post(AuthenticationGuard, ClientGuard('business'), PatientsController.createHealthUnitPatient)
+  .get(AuthenticationGuard, ClientGuard('business'), PatientsController.listHealthUnitPatients);
+
+router
+  .route('/health-units/patients/:id')
+  .get(AuthenticationGuard, ClientGuard('business'), PatientsController.retrieveHealthUnitPatient)
+  .put(AuthenticationGuard, ClientGuard('business'), PatientsController.updateHealthUnitPatient)
+  .delete(AuthenticationGuard, ClientGuard('business'), PatientsController.deleteHealthUnitPatient);
+
 export default router;

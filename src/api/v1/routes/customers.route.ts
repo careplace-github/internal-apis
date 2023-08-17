@@ -14,7 +14,10 @@ router
   .route('/health-units/customers/:id')
   .get(AuthenticationGuard, ClientGuard('business'), CustomersController.retrieveHealthUnitCustomer)
   .put(AuthenticationGuard, ClientGuard('business'), CustomersController.updateHealthUnitCustomer)
-  .delete(AuthenticationGuard, ClientGuard('business'), CustomersController.deleteHealthUnitCustomer);
-
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    CustomersController.deleteHealthUnitCustomer
+  );
 
 export default router;
