@@ -112,7 +112,6 @@ export default class S3Manager {
       /**
        *  throw error;
              return;
-      console.log(error);
       logger.error(`Failed to retrieve file from S3: ${error}`);
        *  */
     }

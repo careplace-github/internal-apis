@@ -57,11 +57,10 @@ const CollaboratorSchema: Schema<ICollaboratorDocument> = new Schema<ICollaborat
     permissions: {
       type: [String],
       required: true,
-      default: ['app_user'],
       enum: [
         'app_user',
         'admin_edit_users_permissions',
-        'admin_edit_healthUnit',
+        'admin_edit_health_unit',
         'dashboard_view',
         'calendar_view',
         'calendar_edit',

@@ -845,7 +845,6 @@ export default class CalendarController {
       }
 
       if (!user.permissions.includes('calendar_edit')) {
-        console.log('HERE 1');
         return next(new HTTPError._403('You do not have access to update this event series.'));
       }
 
@@ -864,7 +863,6 @@ export default class CalendarController {
       }
 
       if (eventSeriesExists.owner.toString() !== user.health_unit._id.toString()) {
-        console.log('HERE 1');
 
         return next(new HTTPError._403('You do not have access to update this event series.'));
       }

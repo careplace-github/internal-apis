@@ -189,6 +189,21 @@ export default class AdminHealthUnitsController {
       }
 
       try {
+        // Set the email_verified attribute to true in Cognito.
+        await AdminHealthUnitsController.CognitoService.adminVerifyEmail(reqCollaborator.email!);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'INVALID_PARAMETER': {
+            return next(new HTTPError._400(error.message));
+          }
+
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      try {
         // Add the collaborator to the database.
         newcollaborator = await AdminHealthUnitsController.CollaboratorsDAO.create(collaborator);
       } catch (error: any) {
