@@ -199,6 +199,92 @@ export default class CognitoService {
     return response;
   }
 
+  async adminVerifyEmail(
+    Username: string
+  ): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+    logger.info(`Cognito Service ADMIN_VERIFY_EMAIL Request: \n Username: ${Username} \n`);
+
+    let response: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse;
+
+    let params: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesRequest = {
+      UserAttributes: [
+        {
+          Name: 'email_verified',
+          Value: 'true',
+        },
+      ],
+      UserPoolId: this.userPoolId,
+      Username,
+    };
+
+    try {
+      response = await this.cognito.adminUpdateUserAttributes(params).promise();
+    } catch (error: any) {
+      logger.error(`Cognito Service ADMIN_VERIFY_EMAIL Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
+
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(`
+    Cognito Service ADMIN_VERIFY_EMAIL Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
+
+    return response;
+  }
+
+  async adminVerifyPhoneNumber(
+    Username: string
+  ): Promise<CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse> {
+    logger.info(`Cognito Service ADMIN_VERIFY_PHONE_NUMBER Request: \n Username: ${Username} \n`);
+
+    let response: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesResponse;
+
+    let params: CognitoIdentityServiceProvider.Types.AdminUpdateUserAttributesRequest = {
+      UserAttributes: [
+        {
+          Name: 'phone_number_verified',
+          Value: 'true',
+        },
+      ],
+      UserPoolId: this.userPoolId,
+      Username,
+    };
+
+    try {
+      response = await this.cognito.adminUpdateUserAttributes(params).promise();
+    } catch (error: any) {
+      logger.error(`Cognito Service ADMIN_VERIFY_PHONE_NUMBER Error: \n
+      ${JSON.stringify(error, null, 2)} \n`);
+
+      switch (error.code) {
+        case 'UserNotFoundException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        case 'InvalidParameterException':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(`
+    Cognito Service ADMIN_VERIFY_PHONE_NUMBER Response: \n
+    ${JSON.stringify(response, null, 2)} \n`);
+
+    return response;
+  }
+
   /**
    * @description Send a confirmation code to the user. For the BUSINESS users the code is sent to the user email and for the Marketplace users the code is sent to the user phone number.
    * @param {String} email - User email.
@@ -692,7 +778,6 @@ export default class CognitoService {
     try {
       response = await this.cognito.initiateAuth(params).promise();
     } catch (error: any) {
-      console.log(error);
       logger.error(
         'Cognito Service AUTHENTICATE_USER Error: ' + JSON.stringify(error, null, 2) + '\n'
       );
@@ -756,7 +841,6 @@ export default class CognitoService {
     try {
       response = await this.cognito.adminInitiateAuth(params).promise();
     } catch (error: any) {
-      console.log(error);
       logger.error(
         'Cognito Service AUTHENTICATE_USER Error: ' + JSON.stringify(error, null, 2) + '\n'
       );
@@ -953,7 +1037,6 @@ export default class CognitoService {
     try {
       response = await this.cognito.adminGetUser(params).promise();
     } catch (error: any) {
-      console.log(error);
       switch (error.code) {
         case 'UserNotFoundException':
           throw new LayerError.NOT_FOUND(error.message);

@@ -80,7 +80,7 @@ export default function validateRole(
           res.status(400).send('Invalid token');
         }
       } catch (error: any) {
-        console.log(error.stack);
+        logger.error('Error in validateRole middleware: ' + error);
       }
     }
     handleRequest();
