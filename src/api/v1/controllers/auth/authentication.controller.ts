@@ -557,6 +557,8 @@ export default class AuthenticationController {
 
       const { email } = req.body as { email: string };
 
+      logger.info("EMAIL: " + JSON.stringify(req.body, null, 2));
+
       logger.info('CLIENT ID: ' + clientId);
 
       const Cognito = new CognitoService(clientId);
