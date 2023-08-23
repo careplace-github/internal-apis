@@ -14,6 +14,7 @@ const router = express.Router();
 //                       EVENTS                       //
 // -------------------------------------------------- //
 
+
 router
   .route('/calendar/collaborator/events')
   .get(
