@@ -35,9 +35,14 @@ const AddEvent_DescriptionValidation = check('description').custom((value) => {
     return true;
   }
 
+  /**
+   * Check if the title is a string
+   */
   if (typeof value !== 'string') {
-    throw new Error("The 'description' parameter must be a string.");
+    throw new Error("The 'title' parameter must be a string.");
   }
+
+  return true;
 });
 
 const AddEvent_StartValidation = check('start').custom((value) => {
