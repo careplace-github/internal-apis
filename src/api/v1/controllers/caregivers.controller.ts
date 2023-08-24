@@ -572,7 +572,7 @@ export default class CaregiversController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 

@@ -58,12 +58,14 @@ const main = async () => {
       AuthRoute,
       HealthUnitsRoute,
       CollaboratorsRoute,
+      CaregiversRoute,
       CustomersRoute,
       ServicesRoute,
       OrdersRoute,
       CalendarRoute,
       WebhooksRoute,
       PatientsRoute,
+      DashboardRoute,
       PaymentsRoute,
       ReviewsRoute,
       LeadsRoute,
@@ -453,7 +455,9 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, OrdersRoute);
       app.use(process.env.API_ROUTE as string, ServicesRoute);
       app.use(process.env.API_ROUTE as string, CollaboratorsRoute);
+      app.use(process.env.API_ROUTE as string, CaregiversRoute);
       app.use(process.env.API_ROUTE as string, CalendarRoute);
+      app.use(process.env.API_ROUTE as string, DashboardRoute);
       app.use(process.env.API_ROUTE as string, WebhooksRoute);
       app.use(process.env.API_ROUTE as string, PaymentsRoute);
       app.use(process.env.API_ROUTE as string, LeadsRoute);

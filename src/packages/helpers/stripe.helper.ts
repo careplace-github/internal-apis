@@ -138,15 +138,15 @@ export default class StripeHelper {
     }
 
     let response = {
-      data: clients.length,
-      active_clients_difference_percentage: activeClientsDifferencePercentage,
+      value: clients.length,
+      month_over_month_percentage: activeClientsDifferencePercentage,
     };
 
     return response;
   }
 
   // TODO Move this to dashboard.helper.ts
-  static async getConnectedAccountCurrentMRR(accountId: string) {
+  static async getConnectedAccountCurrentMonthlyBilling(accountId: string) {
     const currentMonthStart = new Date();
     currentMonthStart.setDate(1);
     currentMonthStart.setHours(0, 0, 0, 0);

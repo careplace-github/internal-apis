@@ -18,10 +18,6 @@ import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
 const router = express.Router();
 router.route('/health-units/agencies/search').get(HealthUnitsController.searchAgencies);
 
-router
-  .route('/health-units/dashboard')
-  .get(AuthenticationGuard, ClientGuard('business'), HealthUnitsController.getDashboard);
-
 router.route('/health-units/:id').get(HealthUnitsController.retrieveHealthUnit);
 
 export default router;

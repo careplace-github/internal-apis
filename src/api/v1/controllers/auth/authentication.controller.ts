@@ -364,8 +364,9 @@ export default class AuthenticationController {
       if (cognitoResponse.ChallengeName != null) {
         switch (cognitoResponse.ChallengeName) {
           case 'NEW_PASSWORD_REQUIRED':
-            // FIXME handle cognito response challenges
-            break;
+            return next(new HTTPError._400('New password required.'));
+          default:
+            return next(new HTTPError._500('Internal server error.'));
         }
       } else {
         const responseAux: any = {
@@ -557,7 +558,7 @@ export default class AuthenticationController {
 
       const { email } = req.body as { email: string };
 
-      logger.info("EMAIL: " + JSON.stringify(req.body, null, 2));
+      logger.info('EMAIL: ' + JSON.stringify(req.body, null, 2));
 
       logger.info('CLIENT ID: ' + clientId);
 
