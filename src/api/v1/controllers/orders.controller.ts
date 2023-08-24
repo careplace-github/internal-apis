@@ -835,7 +835,25 @@ export default class OrdersController {
       let homeCareOrder: IHomeCareOrderDocument;
 
       try {
-        homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+        homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId, [
+          {
+            path: 'patient',
+            model: 'Patient',
+            select: 'name phone birthdate address gender medical_conditions',
+          },
+          {
+            path: 'caregiver',
+            model: 'Caregiver',
+          },
+          {
+            path: 'services',
+            model: 'Service',
+          },
+          {
+            path: 'customer',
+            model: 'Customer',
+          },
+        ]);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':

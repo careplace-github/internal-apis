@@ -864,7 +864,7 @@ export default class CognitoService {
     }
 
     logger.info(
-      'COGNITO SERVICE AUTHENTICATE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
+      'COGNITO SERVICE ADMIN AUTHENTICATE_USER SUCESS: ' + JSON.stringify(response, null, 2) + '\n'
     );
 
     return response;

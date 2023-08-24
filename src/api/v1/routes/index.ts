@@ -9,6 +9,7 @@ export { default as CalendarRoute } from './calendar.route';
 export { default as CaregiversRoute } from './caregivers.route';
 export { default as CollaboratorsRoute } from './collaborators.route';
 export { default as CustomersRoute } from './customers.route';
+export { default as DashboardRoute } from './dashboard.route';
 export { default as HealthUnitsRoute } from './health-units.route';
 export { default as OrdersRoute } from './orders.route';
 export { default as PatientsRoute } from './patients.route';

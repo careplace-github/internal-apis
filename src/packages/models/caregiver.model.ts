@@ -9,8 +9,6 @@ const CaregiverSchema: Schema<ICaregiverDocument> = new Schema<ICaregiverDocumen
 
     name: { type: String, required: true },
 
-    cognito_id: { type: String, required: false, unique: true },
-
     /**
      * When creating a caregiver the health unit can decide to allow or not allow the caregiver access to the app.
      *
