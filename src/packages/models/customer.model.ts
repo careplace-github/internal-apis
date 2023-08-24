@@ -29,6 +29,12 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
      * When a Customer is created with access to the app the email and phone number are managed through cognito and because of this they are not required.
      * The email and phone number are only required when the Customer is not allowed to the app.
      */
+
+    /**
+     * Even though the email and phone are managed by cognito, they are still stored in the database because this information is needed to be shown on the orders for the health units.
+     */
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
     birthdate: { type: Date, required: false },
     gender: {
       type: String,
