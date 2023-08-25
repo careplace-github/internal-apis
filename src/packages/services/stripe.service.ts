@@ -389,7 +389,7 @@ export default class StripeService {
     params?: Stripe.ChargeListParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.ApiList<Stripe.Charge>> {
-    logger.info('StripeService.listCharges', { params, options });
+    logger.info('StripeService.listCharges: ' + JSON.stringify({ params, options }, null, 2));
 
     let charges: Stripe.ApiList<Stripe.Charge>;
 
@@ -741,18 +741,21 @@ export default class StripeService {
     params: Stripe.SubscriptionListParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.ApiList<Stripe.Subscription>> {
-    logger.info('StripeService.listSubscriptions', { params, options });
+    logger.info('StripeService.listSubscriptions: ' + JSON.stringify({ params, options }, null , 2));
 
     let subscriptions: Stripe.ApiList<Stripe.Subscription>;
 
     try {
       subscriptions = await this.Stripe.subscriptions.list(params, options);
     } catch (error: any) {
+      logger.error('StripeService.listSubscriptions error: ', error);
       switch (error.type) {
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
+
+    logger.info('StripeService.listSubscriptions return: ', JSON.stringify(subscriptions, null, 2));
 
     return subscriptions;
   }
