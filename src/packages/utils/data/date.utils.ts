@@ -129,6 +129,23 @@ export default class DateUtils {
     return response;
   }
 
+  // fOrderRecurrency = order.schedule_information.recurrency === 1 ? 'Semanal' : order.schedule_information.recurrency === 2 ? 'Quinzenal' : order.schedule_information.recurrency === 4 ? 'Mensal' : 'N/A';
+
+  static async getRecurrencyType(recurrency) {
+    switch (recurrency) {
+      case 0:
+        return 'Pedido Único';
+      case 1:
+        return 'Semanal';
+      case 2:
+        return 'Quinzenal';
+      case 4:
+        return 'Mensal';
+      default:
+        return 'N/A';
+    }
+  }
+
   /**
    * @example
    * input: 1674260545

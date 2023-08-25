@@ -75,10 +75,10 @@ export default class DashboardController {
       let accountId = healthUnit.stripe_information.account_id;
 
       let pendingOrders = await DashboardController.HomeCareOrdersDAO.queryList({
-        health_unit: healthUnitId,
-        status: 'new',
+        health_unit: { $eq: healthUnitId },
+        status: { $eq: 'new' },
       }).then((orders) => {
-        return orders.data.length;
+        return orders.data;
       });
 
       // ----------------------------------------------------------------------------------------- //
@@ -422,7 +422,8 @@ export default class DashboardController {
       response.statusCode = 200;
       response.data = {
         pending_orders: {
-          value: pendingOrders !== null && pendingOrders !== undefined ? pendingOrders : 0,
+          value: pendingOrders.length || 0,
+          orders: pendingOrders,
         },
         active_clients: activeClientsData,
 

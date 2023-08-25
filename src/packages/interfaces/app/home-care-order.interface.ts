@@ -19,6 +19,7 @@ import {
 } from 'src/packages/interfaces/types';
 
 interface IHomeCareOrder {
+  order_number: string;
   _id: Types.ObjectId | string;
   type: 'marketplace' | 'external';
   health_unit: IHealthUnit;
