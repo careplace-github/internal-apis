@@ -94,7 +94,7 @@ export default class CalendarHelper {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
             _id: new Types.ObjectId(),
 
-            ownerType: 'health_unit',
+            owner_type: 'health_unit',
             owner: eventSeries.owner,
             title: eventSeries.title,
             description: eventSeries?.description || '',
@@ -102,7 +102,7 @@ export default class CalendarHelper {
             end: endDate,
             allDay: eventSeries.allDay,
             location: eventSeries.location,
-            textColor: eventSeries.textColor,
+            textColor: eventSeries.textColor || '#1890FF',
           };
 
           let eventModel = new EventModel(event);

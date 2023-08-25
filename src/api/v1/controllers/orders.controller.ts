@@ -33,6 +33,7 @@ import {
   ICollaboratorDocument,
   ICustomerDocument,
   IQueryListResponse,
+  IPatientDocument,
 } from 'src/packages/interfaces';
 
 import {
@@ -52,6 +53,7 @@ import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } fro
 import logger from '@logger';
 // @data
 import { services } from '@assets';
+import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe';
 import { access } from 'fs';
 
@@ -156,6 +158,12 @@ export default class OrdersController {
       order.customer = user._id;
       order.status = 'new';
       order.type = 'marketplace';
+
+      order._id = new mongoose.Types.ObjectId();
+
+      // Use the first 8 characters of the order id as the order number
+      // HC-XXXXXXXX -> Home Care Order
+      order.order_number = 'HC-' + order._id.toString().substring(0, 6).toUpperCase();
 
       const newOrder = new HomeCareOrderModel(order);
 
@@ -1180,7 +1188,7 @@ export default class OrdersController {
         let eventSeries: IEventSeries = {
           _id: new Types.ObjectId(),
 
-          ownerType: 'health_unit',
+          owner_type: 'health_unit',
           owner: order.health_unit,
 
           order: order._id,
@@ -1197,7 +1205,7 @@ export default class OrdersController {
             ending_type: 0,
           },
 
-          textColor: '1890F',
+          textColor: '#1890FF',
         };
 
         const newEventSeries = new EventSeriesModel(eventSeries);
@@ -1249,16 +1257,17 @@ export default class OrdersController {
       );
 
       let userEmailPayload = {
-        name: customer.name,
-        healthUnit: healthUnit.business_profile.name,
+        customerName: customer.name,
+        healthUnitName: healthUnit.business_profile.name,
 
         orderStart: orderStart,
         orderSchedule: schedule,
         orderServices: orderServices,
+        orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
 
         patientName: patient.name,
         patientBirthdate: birthdate,
-        patientMedicalInformation: patient?.medical_conditions || '',
+        patientMedicalInformation: patient?.medical_conditions || 'N/A',
 
         patientStreet: patient.address.street,
         patientCity: patient.address.city,
@@ -1267,7 +1276,7 @@ export default class OrdersController {
       };
 
       let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'marketplace_order_accepted',
+        'marketplace_home_care_order_accepted',
         userEmailPayload
       );
 
@@ -1291,14 +1300,15 @@ export default class OrdersController {
           const collaboratorEmail = collaboratorsEmails[i];
           if (collaboratorEmail) {
             let healthUnitEmailPayload = {
-              name: collaborators[i].name,
-              healthUnit: healthUnit.business_profile.name,
+              collaboratorName: collaborators[i].name,
+              healthUnitName: healthUnit.business_profile.name,
 
-              userName: customer.name,
-              userPhone: customer.phone,
+              customerName: customer.name,
+              customerPhone: customer.phone,
 
               orderStart: orderStart,
               orderSchedule: schedule,
+              orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
               orderServices: orderServices,
 
               patientName: patient.name,
@@ -1315,7 +1325,7 @@ export default class OrdersController {
             };
 
             let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-              'business_order_accepted',
+              'business_home_care_order_accepted',
               healthUnitEmailPayload
             );
 

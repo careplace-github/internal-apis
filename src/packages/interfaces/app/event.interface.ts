@@ -14,7 +14,7 @@ interface IEvent {
   _id: Types.ObjectId | string;
   event_series?: Types.ObjectId | IEventSeries;
 
-  ownerType: 'health_unit' | 'collaborator';
+  owner_type: 'health_unit' | 'collaborator';
   owner: Types.ObjectId | ICollaborator | IHealthUnit;
 
   // If owner type is health-unit
