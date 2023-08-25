@@ -11,7 +11,7 @@ const EventSeriesSchema: Schema<IEventSeriesDocument> = new Schema<IEventSeriesD
       auto: true,
     },
 
-    ownerType: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
+    owner_type: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
     owner: { type: Schema.Types.ObjectId, required: true },
 
     // If ownerType is health-unit

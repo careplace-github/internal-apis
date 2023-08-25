@@ -43,7 +43,7 @@ const PatientSchema: Schema<IPatientDocument> = new Schema<IPatientDocument>(
       postal_code: { type: String, required: true },
       state: { type: String, required: false },
       city: { type: String, required: true },
-      country: { type: String, required: true, enum: ['PT', 'ES', 'US', 'UK'] },
+      country: { type: String, required: true },
     },
   },
   {

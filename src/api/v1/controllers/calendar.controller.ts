@@ -93,7 +93,7 @@ export default class CalendarController {
       const newEvent = new EventModel(event);
 
       // validate the event
-      const validationError = newEvent.validateSync({ pathsToSkip: ['owner', 'ownerType'] });
+      const validationError = newEvent.validateSync({ pathsToSkip: ['owner', 'owner_type'] });
 
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
@@ -101,7 +101,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      newEvent.ownerType = 'collaborator';
+      newEvent.owner_type = 'collaborator';
       newEvent.owner = user._id;
 
       let eventAdded: IEventDocument;
@@ -224,7 +224,7 @@ export default class CalendarController {
       // get the event fields to update from the request body
       const reqEvent = req.body as IEvent;
 
-      const sanitizedReqEvent = omit(reqEvent, ['ownerType', 'owner', '_id']);
+      const sanitizedReqEvent = omit(reqEvent, ['owner_type', 'owner', '_id']);
 
       const newEvent = {
         ...eventExists.toJSON(),
@@ -407,8 +407,8 @@ export default class CalendarController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      // Set the ownerType and owner based on the user's health unit
-      newEvent.ownerType = 'health_unit';
+      // Set the owner_type and owner based on the user's health unit
+      newEvent.owner_type = 'health_unit';
       newEvent.owner = user.health_unit;
 
       let eventAdded: IEventDocument;
@@ -476,7 +476,7 @@ export default class CalendarController {
       }
 
       if (
-        event.ownerType !== 'health_unit' ||
+        event.owner_type !== 'health_unit' ||
         event.owner !== user.health_unit ||
         !user.permissions.includes('calendar_view')
       ) {
@@ -537,7 +537,7 @@ export default class CalendarController {
       }
 
       if (
-        eventExists.ownerType !== 'health_unit' ||
+        eventExists.owner_type !== 'health_unit' ||
         eventExists.owner !== user.health_unit ||
         !user.permissions.includes('calendar_edit')
       ) {
@@ -548,7 +548,7 @@ export default class CalendarController {
       const reqEvent = req.body as IEvent;
 
       // Exclude fields that should not be updated
-      const sanitizedReqEvent = omit(reqEvent, ['ownerType', 'owner', '_id', 'order']);
+      const sanitizedReqEvent = omit(reqEvent, ['owner_type', 'owner', '_id', 'order']);
 
       const newEvent = {
         ...eventExists.toObject(),
@@ -622,7 +622,7 @@ export default class CalendarController {
       }
 
       if (
-        eventExists.ownerType !== 'health_unit' ||
+        eventExists.owner_type !== 'health_unit' ||
         eventExists.owner !== user.health_unit ||
         !user.permissions.includes('calendar_edit')
       ) {
@@ -743,11 +743,8 @@ export default class CalendarController {
         }
       }
 
-      response.statusCode = 200;
-      response.data = {
-        events: events,
-        events_series: eventsSeries,
-      };
+      response.statusCode = events.length > 0 ? 200 : 204;
+      response.data = events;
 
       // Pass to the next middleware to handle the response
       next(response);
@@ -758,6 +755,150 @@ export default class CalendarController {
   }
 
   // EVENT SERIES
+  static async listHealthUnitEventSeries(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    /**
+     * Get the event series from the database.
+     *
+     * If user.permissions.includes("calendar_edit") then also return every eventSeries with health-unit = user.health-unit
+     */
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to access this resource.'));
+      }
+
+      let eventSeries: IEventSeriesDocument[] = [];
+      if (!user.permissions.includes('calendar_view')) {
+        return next(new HTTPError._403('You do not have access to view this event series.'));
+      }
+
+      try {
+        eventSeries = await CalendarController.EventSeriesDAO.queryList(
+          { health_unit: user.health_unit._id },
+          undefined,
+          undefined,
+          undefined,
+          [
+            {
+              path: 'order',
+              model: 'HomeCareOrder',
+            },
+          ]
+        ).then((eventSeries) => {
+          return eventSeries.data;
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = eventSeries.length > 0 ? 200 : 204;
+      response.data = eventSeries;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  static async createHealthUnitEventSeries(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    /**
+     * Create a new event series for a health unit.
+     *
+     * If user.permissions.includes("calendar_edit") then also return every eventSeries with health-unit = user.health-unit
+     */
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+        return next(new HTTPError._403('You are not authorized to access this resource.'));
+      }
+
+      if (!user.permissions.includes('calendar_edit')) {
+        return next(new HTTPError._403('You do not have access to create an event series.'));
+      }
+
+      const { eventSeries } = req.body as { eventSeries: IEventSeries };
+
+      const newEventSeries = new EventSeriesModel(eventSeries);
+
+      // Set the health unit based on the user's health unit
+      newEventSeries.owner = user.health_unit;
+      newEventSeries.owner_type = 'health_unit';
+
+      // validate the event series
+      const validationError = newEventSeries.validateSync();
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+
+      let eventSeriesAdded: IEventSeriesDocument;
+
+      try {
+        eventSeriesAdded = await CalendarController.EventSeriesDAO.create(newEventSeries);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 201;
+      response.data = eventSeriesAdded;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      return next(new HTTPError._500(error.message));
+    }
+  }
 
   static async retrieveHealthUnitEventSeries(
     req: Request,
@@ -863,7 +1004,6 @@ export default class CalendarController {
       }
 
       if (eventSeriesExists.owner.toString() !== user.health_unit._id.toString()) {
-
         return next(new HTTPError._403('You do not have access to update this event series.'));
       }
 
@@ -882,6 +1022,7 @@ export default class CalendarController {
           ...eventSeriesExists.toObject(),
           description: sanitizedReqEventSeries.description,
           textColor: sanitizedReqEventSeries.textColor || eventSeriesExists.textColor,
+          title: sanitizedReqEventSeries.title || eventSeriesExists.title,
         };
         // EventSeries is not related to an order
       } else {

@@ -10,6 +10,9 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
       required: true,
       auto: true,
     },
+
+    order_number: { type: String, required: true },
+
     type: {
       type: String,
       required: true,
