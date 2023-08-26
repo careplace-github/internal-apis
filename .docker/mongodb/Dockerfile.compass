@@ -1,0 +1,14 @@
+FROM ubuntu:20.04
+
+# Download and install MongoDB Compass
+RUN apt-get update && apt-get install -y gnupg2 wget && \
+  wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - && \
+  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-5.0.list && \
+  apt-get update && \
+  apt-get install -y mongodb-org-shell mongodb-org-tools
+
+# Expose the MongoDB Compass GUI port
+EXPOSE 27018
+
+# Start MongoDB Compass
+CMD ["mongod"]
