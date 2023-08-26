@@ -1600,7 +1600,7 @@ export default class OrdersController {
       };
 
       let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'marketplace_quote_sent',
+        'marketplace_home_care_order_quote',
         userEmailPayload
       );
 
@@ -1651,7 +1651,7 @@ export default class OrdersController {
             };
 
             let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-              'business_quote_sent',
+              'business_home_care_order_quote_sent',
               healthUnitEmailPayload
             );
 
