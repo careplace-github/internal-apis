@@ -1,28 +1,74 @@
 import express from 'express';
 
 // Import Controller
-import StripeController from '../controllers/stripe.controller';
-import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
-import AccessGuard from '../middlewares/guards/accessGuard.middleware';
+import PaymentsController from '../controllers/payments.controller';
+import { OrdersController } from '../controllers';
+import { AuthenticationGuard, ClientGuard, ValidatorMiddleware } from '@packages/middlewares';
+import { CheckoutValidator } from '../validations/payments.validator';
 
 const router = express.Router();
 
-router
-  .route('/payments/coupons')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), StripeController.validateCoupon);
+// Promotion Codes
 
 router
-  .route('/payments/tokens/card')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), StripeController.createCardToken);
+  .route('/payments/promotion-code/eligibility')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.validatePromotionCode);
+
+// Payment Methods
 
 router
   .route('/payments/payment-methods')
-  .post(AuthenticationGuard, AccessGuard('marketplace'), StripeController.createPaymentMethod)
-  .get(AuthenticationGuard, AccessGuard('marketplace'), StripeController.listPaymentMethods);
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.createPaymentMethod)
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.listPaymentMethods);
 
 router
-  .route('/payments/payment-methods/:id')
-  .get(AuthenticationGuard, AccessGuard('marketplace'), StripeController.retrievePaymentMethod)
-  .delete(AuthenticationGuard, AccessGuard('marketplace'), StripeController.deletePaymentMethod);
+  .route('/payments/payment-methods/:paymentMethod')
+  .get(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.retrievePaymentMethod)
+  .delete(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.deletePaymentMethod);
+
+// Subscriptions
+
+router
+  .route('/payments/orders/home-care/:order/subscription')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    CheckoutValidator,
+    ValidatorMiddleware,
+    PaymentsController.createSubscriptionWithPaymentMethod
+  );
+
+router
+  .route('/payments/orders/home-care/:order/subscription/coupon')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.addSubscriptionCoupon);
+
+router
+  .route('/payments/orders/home-care/:order/subscription/payment-method')
+  .put(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    PaymentsController.updateSubscriptionPaymentMethod
+  );
+
+router
+  .route('/payments/orders/home-care/:order/subscription/billing-details')
+  .put(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    OrdersController.customerUpdateHomeCareOrderBillingDetails
+  );
+
+router
+  .route('/payments/orders/home-care/:order/subscription/charge')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('marketplace'),
+    PaymentsController.chargeSubscriptionOpenInvoice
+  );
+
+// Tokens
+router
+  .route('/payments/tokens/card')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), PaymentsController.createCardToken);
 
 export default router;

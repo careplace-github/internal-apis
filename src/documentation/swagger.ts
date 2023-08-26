@@ -1,9 +1,7 @@
 import Express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-//import { version } from "../../packageon" assert { type: "json" };
-import { API_VERSION } from '../config/constants/index';
-import logger from '../logs/logger';
+import logger from '@logger';
 
 import YAML from 'yamljs';
 

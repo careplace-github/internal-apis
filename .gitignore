@@ -5,10 +5,12 @@ src/downloads
 src/logs/server.log
 src/assets/data/services.json
 build
-yarn.lock
 
 # .env
 .env.development
 .env.production
 .env.local
 yarn-error.log
+.docker/mongodb/data/*
+package-lock.json
+
