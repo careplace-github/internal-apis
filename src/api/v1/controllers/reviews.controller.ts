@@ -1,85 +1,100 @@
 // express
 import { Request, Response, NextFunction } from 'express';
 // mongoose
-import mongoose, { FilterQuery, startSession } from 'mongoose';
+import mongoose, { FilterQuery, QueryOptions, startSession } from 'mongoose';
 
-// db
-import { CompaniesDAO, OrdersDAO, ReviewsDAO } from '@api/v1/db';
-// helpers
-import { AuthHelper } from '@api/v1/helpers';
-// interfaces
-import { IAPIResponse, IReview, IOrder, ICompany, IQueryListResponse } from '@api/v1/interfaces';
-// utils
-import { HTTPError } from '@api/v1/utils/errors/http';
+// @api
+import { HealthUnitReviewsDAO, HomeCareOrdersDAO, HealthUnitsDAO } from 'src/packages/database';
+import { AuthHelper } from '@packages/helpers';
+import {
+  IAPIResponse,
+  IHealthUnitReview,
+  IHomeCareOrder,
+  IHealthUnit,
+  IQueryListResponse,
+  IHealthUnitDocument,
+  IHealthUnitReviewDocument,
+} from 'src/packages/interfaces';
+import { HealthUnitReviewModel } from 'src/packages/models';
+import { HTTPError } from '@utils';
+// @logger
+import logger from '@logger';
 
 /**
  * REST API controller class that provides methods to handle ```Reviews```.
  */
 export default class ReviewsController {
-  static ReviewsDAO = new ReviewsDAO();
-  static CompaniesDAO = new CompaniesDAO();
-  static OrdersDAO = new OrdersDAO();
-  static AuthHelper = new AuthHelper();
+  // db
+  static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+  static HealthUnitsDAO = new HealthUnitsDAO();
+  static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+  // helpers
+  static AuthHelper = AuthHelper;
 
   /**
-   * Creates a new review for a company.
+   * Creates a new review for a healthUnit.
    *
    * @param {Request} req - Express request object.
    * @param {Response} res - Express response object.
    * @param {NextFunction} next - Express next function.
    * @returns {Promise<void>} - Returns a promise.
-   * @throws {HTTPError._404} - If the company does not exist.
-   * @throws {HTTPError._403} - If the user does not have any valid orders with the company.
-   * @throws {HTTPError._403} - If the user has already created a review for the company.
+   * @throws {HTTPError._404} - If the healthUnit does not exist.
+   * @throws {HTTPError._403} - If the user does not have any valid orders with the healthUnit.
+   * @throws {HTTPError._409} - If the user has already created a review for the healthUnit.
    * @throws {HTTPError._400} - If the rating is not a natural integer between 1 and 5.
    * @throws {HTTPError._500} - If the review could not be created.
    */
-  static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async createHealthUnitReview(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    let session: mongoose.ClientSession | null = null;
     try {
       const response: IAPIResponse = {
-        statusCode: 100, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      const companyId = req.params.id;
-      let company: Partial<ICompany> = {};
+      const healthUnitId = req.params.healthUnit;
+      let healthUnit: IHealthUnitDocument;
 
       try {
-        company = await ReviewsController.CompaniesDAO.retrieve(companyId);
+        healthUnit = await ReviewsController.HealthUnitsDAO.retrieve(healthUnitId);
       } catch (error: any) {
-        throw new HTTPError._404('Company does not exist.');
+        throw new HTTPError._404('HealthUnit does not exist.');
       }
 
-      let orders: IQueryListResponse<IOrder>;
-      let filters: FilterQuery<IReview>;
+      let orders: IQueryListResponse<IHomeCareOrder>;
+      let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
-        user: user._id,
-        company: company._id,
+        customer: user._id,
+        health_unit: healthUnit._id,
         status: {
           $in: ['pending_payment', 'active', 'completed'],
         },
       };
 
-      orders = await ReviewsController.OrdersDAO.queryList(filters);
+      orders = await ReviewsController.HomeCareOrdersDAO.queryList(filters);
 
       if (orders.data.length === 0) {
-        throw new HTTPError._403('You do not have any valid orders with this company.');
+        throw new HTTPError._403('You do not have any valid orders with this healthUnit.');
       }
 
       try {
-        const existingReview = await ReviewsController.ReviewsDAO.queryOne({
-          company: companyId,
+        const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
+          health_unit: healthUnitId,
           user: user._id,
         });
 
         if (existingReview) {
           return next(
-            new HTTPError._403(
-              'You have already created a review for this company. Please update your existing review instead.'
+            new HTTPError._409(
+              'You have already created a review for this healthUnit. Please update your existing review instead.'
             )
           );
         }
@@ -94,27 +109,30 @@ export default class ReviewsController {
         throw new HTTPError._400('Rating must be a natural integer between 1 and 5');
       }
 
-      const review: Partial<IReview> = {
+      const review: IHealthUnitReview = {
+        _id: new mongoose.Types.ObjectId(),
         comment: req.body.comment,
         rating: req.body.rating,
-        user: user._id,
-        company: new mongoose.Types.ObjectId(companyId),
+        customer: user._id,
+        health_unit: new mongoose.Types.ObjectId(healthUnitId),
       };
 
-      const reviewCreated = await ReviewsController.ReviewsDAO.create(review);
+      const newReview = new HealthUnitReviewModel(review);
 
-      if (company && company.rating && review && review.rating !== undefined) {
+      const reviewCreated = await ReviewsController.HealthUnitReviewsDAO.create(newReview);
+
+      if (healthUnit && healthUnit.rating && review && review.rating !== undefined) {
         const ratingSum =
-          (company.rating.average || 0) * (company.rating.count || 0) + review.rating!;
-        company.rating.count = (company.rating.count || 0) + 1;
-        company.rating.average = ratingSum / company.rating.count;
-        company.rating.count_stars[review.rating] =
-          (company.rating.count_stars[review.rating] || 0) + 1;
+          (healthUnit.rating.average || 0) * (healthUnit.rating.count || 0) + review.rating!;
+        healthUnit.rating.count = (healthUnit.rating.count || 0) + 1;
+        healthUnit.rating.average = ratingSum / healthUnit.rating.count;
+        healthUnit.rating.count_stars[review.rating] =
+          (healthUnit.rating.count_stars[review.rating] || 0) + 1;
       }
 
-      const session = await startSession();
+      session = await startSession();
       session.startTransaction();
-      await ReviewsController.CompaniesDAO.update(company, session);
+      await ReviewsController.HealthUnitsDAO.update(healthUnit, session);
       await session.commitTransaction();
       session.endSession();
 
@@ -124,35 +142,43 @@ export default class ReviewsController {
       // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
+      if (session) {
+        await session.abortTransaction();
+        await session.endSession();
+      }
       // Pass to the next middleware to handle the error
       return next(new HTTPError._500(error.message));
     }
   }
 
-  static async checkEligibility(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async checkHealthUnitReviewEligibility(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 100, // request received
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      const companyId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
-      let orders: IQueryListResponse<IOrder>;
-      let filters: FilterQuery<IReview>;
+      let orders: IQueryListResponse<IHomeCareOrder>;
+      let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
-        user: user._id,
-        company: companyId,
+        customer: user._id,
+        health_unit: healthUnitId,
         status: {
           $in: ['pending_payment', 'active', 'completed'],
         },
       };
 
-      orders = await ReviewsController.OrdersDAO.queryList(filters);
+      orders = await ReviewsController.HomeCareOrdersDAO.queryList(filters);
 
       if (orders.data.length === 0) {
         response.statusCode = 200;
@@ -166,9 +192,9 @@ export default class ReviewsController {
       }
 
       try {
-        const existingReview = await ReviewsController.ReviewsDAO.queryOne({
-          company: companyId,
-          user: user._id,
+        const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
+          health_unit: healthUnitId,
+          customer: user._id,
         });
 
         if (existingReview) {
@@ -182,6 +208,7 @@ export default class ReviewsController {
       }
 
       response.statusCode = 200;
+      // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -189,19 +216,23 @@ export default class ReviewsController {
     }
   }
 
-  static async retrieve(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async retrieveHealthUnitReview(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 100,
+        statusCode: res.statusCode,
         data: {},
       };
 
       const reviewId = req.params.id;
 
-      let review: Partial<IReview> = {};
+      let review: IHealthUnitReviewDocument;
 
       try {
-        review = await ReviewsController.ReviewsDAO.retrieve(reviewId);
+        review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId);
       } catch (error: any) {
         throw new HTTPError._404('Review does not exist.');
       }
@@ -217,10 +248,14 @@ export default class ReviewsController {
     }
   }
 
-  static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async updateHealthUnitReview(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const response: IAPIResponse = {
-        statusCode: 100,
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -229,44 +264,48 @@ export default class ReviewsController {
 
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
-      let review: Partial<IReview> = {};
+      let review: IHealthUnitReviewDocument;
 
       try {
-        review = await ReviewsController.ReviewsDAO.retrieve(reviewId);
+        review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId);
       } catch (error: any) {
-        throw new HTTPError._404('Review does not exist.');
+        return next(new HTTPError._404('Review does not exist.'));
       }
 
       const previousRating = review.rating;
 
-      if (review?.user?.toString() !== user._id.toString()) {
-        throw new HTTPError._403('You are not authorized to update this review.');
+      if (review?.customer?.toString() !== user._id.toString()) {
+        return next(new HTTPError._403('You are not authorized to update this review.'));
       }
 
       if (req.body.rating < 1 || req.body.rating > 5 || !Number.isInteger(req.body.rating)) {
-        throw new HTTPError._400('Rating must be a natural integer between 1 and 5');
+        return next(new HTTPError._400('Rating must be a natural integer between 1 and 5'));
       }
 
       review.comment = req.body.comment;
       review.rating = req.body.rating;
 
-      const reviewUpdated = await ReviewsController.ReviewsDAO.update(review);
+      const updateReview = new HealthUnitReviewModel(review);
 
-      const company = await ReviewsController.CompaniesDAO.retrieve(review?.company?.toString()!);
+      const reviewUpdated = await ReviewsController.HealthUnitReviewsDAO.update(updateReview);
 
-      if (company && company.rating) {
+      const healthUnit = await ReviewsController.HealthUnitsDAO.retrieve(
+        review?.health_unit?.toString()!
+      );
+
+      if (healthUnit && healthUnit.rating) {
         const ratingSum =
-          (company.rating.average || 0) * (company.rating.count || 0) -
+          (healthUnit.rating.average || 0) * (healthUnit.rating.count || 0) -
           previousRating! +
           review.rating!;
-        company.rating.average = ratingSum / company.rating.count;
-        company.rating.count_stars[previousRating!] =
-          (company.rating.count_stars[previousRating!] || 0) - 1;
-        company.rating.count_stars[review.rating!] =
-          (company.rating.count_stars[review.rating!] || 0) + 1;
+        healthUnit.rating.average = ratingSum / healthUnit.rating.count;
+        healthUnit.rating.count_stars[previousRating!] =
+          (healthUnit.rating.count_stars[previousRating!] || 0) - 1;
+        healthUnit.rating.count_stars[review.rating!] =
+          (healthUnit.rating.count_stars[review.rating!] || 0) + 1;
       }
 
-      await ReviewsController.CompaniesDAO.update(company);
+      await ReviewsController.HealthUnitsDAO.update(healthUnit);
 
       response.statusCode = 200;
       response.data = reviewUpdated;
@@ -279,21 +318,25 @@ export default class ReviewsController {
     }
   }
 
-  static async getCompanyReviews(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getHealthUnitReviews(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 100, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
-      const filters: FilterQuery<IReview> = {};
-      const options: Record<string, any> = {};
+      const filters: FilterQuery<IHealthUnitReview> = {};
+      let options: QueryOptions<IHealthUnit> = {};
       const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
       const documentsPerPage =
         typeof req.query.documentsPerPage === 'string' ? parseInt(req.query.documentsPerPage) : 10;
 
-      const companyId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
-      filters.company = companyId;
+      filters.health_unit = healthUnitId;
 
       if (req.query.sortBy) {
         if (req.query.sortBy === 'date') {
@@ -314,15 +357,15 @@ export default class ReviewsController {
 
       options.select = '-order -__v';
 
-      const reviews = await ReviewsController.ReviewsDAO.queryList(
+      const reviews = await ReviewsController.HealthUnitReviewsDAO.queryList(
         filters,
         options,
         page,
         documentsPerPage,
         [
           {
-            path: 'user',
-            model: 'marketplace_user',
+            path: 'customer',
+            model: 'Customer',
             select: 'name profile_picture',
           },
         ]
@@ -344,10 +387,14 @@ export default class ReviewsController {
     }
   }
 
-  static async getUserReviews(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async getCustomerHealthUnitReviewReviews(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 100, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
@@ -357,11 +404,11 @@ export default class ReviewsController {
 
       const userId = user._id;
 
-      const filters: FilterQuery<IReview> = {
-        user: userId,
+      const filters: FilterQuery<IHealthUnitReview> = {
+        customer: userId,
       };
 
-      const reviews = await ReviewsController.ReviewsDAO.queryList(filters);
+      const reviews = await ReviewsController.HealthUnitReviewsDAO.queryList(filters);
 
       response.data = reviews.data;
 
@@ -379,36 +426,36 @@ export default class ReviewsController {
     }
   }
 
-  static async getUserCompanyReview(
+  static async getCustomerHealthUnitReview(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
-        statusCode: 100, // request received
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
         data: {},
       };
 
       const accessToken = req.headers['authorization']!.split(' ')[1];
 
-      const companyId = req.params.id;
+      const healthUnitId = req.params.healthUnit;
 
-      if (!companyId) {
-        throw new HTTPError._400('Company ID is required.');
+      if (!healthUnitId) {
+        throw new HTTPError._400('HealthUnit ID is required.');
       }
 
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
       const userId = user._id;
 
-      const filters: FilterQuery<IReview> = {
-        user: userId,
-        company: companyId,
+      const filters: FilterQuery<IHealthUnitReview> = {
+        customer: userId,
+        health_unit: healthUnitId,
       };
 
       try {
-        const review = await ReviewsController.ReviewsDAO.queryOne(filters);
+        const review = await ReviewsController.HealthUnitReviewsDAO.queryOne(filters);
 
         response.data = review;
 

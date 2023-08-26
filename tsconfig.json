@@ -7,7 +7,41 @@
       ],
       "@api/*": [
         "src/api/*"
+      ],
+      "@packages/*": [
+        "src/packages/*"
+      ],
+      "@models": [
+        "src/packages/models"
+      ],
+      "@interfaces": [
+        "src/packages/interfaces"
+      ],
+      "@assets": [
+        "src/assets"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@utils": [
+        "src/packages/utils"
+      ],
+      "@constants": [
+        "src/config/constants"
+      ],
+      "@logs/*": [
+        "src/logs/*"
+      ],
+      "@logger": [
+        "src/logs/logger"
+      ],
+      "@scripts": [
+        "src/config/scripts"
+      ],
+      "@axios": [
+        "src/lib/axios.ts"
       ]
+
     },
     "types": [
       "node"
@@ -26,12 +60,11 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
   ],
   "exclude": [
     "node_modules/**/*",
     "**/*.spec.ts",
-    "src/api/v1/services/ts/*"
   ],
   "ts-node": {
     "esm": true,

@@ -3,13 +3,17 @@
   "env": {
     "es2021": true
   },
-  "plugins": ["@typescript-eslint", "prettier"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier"
+  ],
   "extends": [
     "airbnb-base",
     "prettier",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -24,29 +28,44 @@
         "alwaysTryTypes": true
       },
       "node": {
-        "extensions": [".js", ".ts"],
-        "moduleDirectory": ["node_modules", "src/"]
+        "extensions": [
+          ".js",
+          ".ts"
+        ],
+        "moduleDirectory": [
+          "node_modules",
+          "src/"
+        ]
       }
     }
   },
+  /**
+    * 0 = off
+    * 1 = warn
+    * 2 = error
+    */
   "rules": {
-    "eqeqeq": 2,
-    "import/no-unresolved": 2,
-    "prefer-regex-literals": 2,
-    "import/no-named-as-default-member": 2,
-    "import/no-named-as-default": 2,
-    "import/extensions": 2,
-    "arrow-body-style": 2,
-    "no-alert": 2,
-    "camelcase": 2,
-    "no-console": 2,
-    "no-unused-vars": 2,
-    "no-param-reassign": 2,
-    "no-underscore-dangle": 2,
-    "no-restricted-exports": 2,
-    "import/prefer-default-export": 2,
-    "@typescript-eslint/naming-convention": 2,
-    "@typescript-eslint/no-use-before-define": 2,
+    "prettier/prettier": 2, // prettier
+    "prettier/@typescript-eslint": 2, // prettier
+
+    "@typescript-eslint/no-non-null-assertion": 2, // no ! operator
+    "eqeqeq": 2, // === instead of ==
+    "import/no-unresolved": 2, // import module
+    "prefer-regex-literals": 2, // regex
+    "import/no-named-as-default-member": 2, // import module
+    "import/no-named-as-default": 2, // import module
+    "import/extensions": 0, // import module
+    "arrow-body-style": 2, // use arrow function instead of function
+    "no-alert": 2, // no alert function 
+    "camelcase": 1, // camelcase in variable
+    "no-console": 1, // no console.log
+    "no-unused-vars": 1, // no unused variable
+    "no-param-reassign": 2, // no reassign param function 
+    "no-underscore-dangle": 1, // no underscore in variable
+    "no-restricted-exports": 2, // no export module 
+    "import/prefer-default-export": 2, // import module
+    "@typescript-eslint/naming-convention": 2, // naming convention in typescript 
+    "@typescript-eslint/no-use-before-define": 2, // no use before define
     "prefer-destructuring": [
       1,
       {
@@ -60,11 +79,10 @@
         "args": "none"
       }
     ],
-
     // Additional rules for REST API development
-    "consistent-return": 2,
-    "no-shadow": 2,
-    "no-throw-literal": 2,
-    "prefer-arrow-callback": 2
+    "consistent-return": 2, // consistent return in function 
+    "no-shadow": 2, // no shadow variable
+    "no-throw-literal": 2, // no throw literal
+    "prefer-arrow-callback": 2 // use arrow function instead of function
   }
 }

@@ -2,76 +2,133 @@
 import express from 'express';
 
 // Import Middlewares
-import InputValidation from '../middlewares/validators/inputValidation.middleware';
-import AuthenticationGuard from '../middlewares/guards/authenticationGuard.middleware';
-import { AddEventValidator, UpdateEventValidator } from '../validators/events.validator';
-
+import { AuthenticationGuard, ValidatorMiddleware, ClientGuard } from '@packages/middlewares';
+import { AddEventValidator, UpdateEventValidator } from '@api/v1/validations/events.validator';
 
 // Import Controller
 import CalendarController from '../controllers/calendar.controller';
-import AccessGuard from '../middlewares/guards/accessGuard.middleware';
 
 const router = express.Router();
 
+// -------------------------------------------------- //
+//                       EVENTS                       //
+// -------------------------------------------------- //
+
+
 router
-  .route('/calendar/events')
+  .route('/calendar/collaborators/events')
   .get(
     AuthenticationGuard,
-    AccessGuard('crm'),
+    ClientGuard('business'),
 
-    CalendarController.listEvents
+    CalendarController.listCollaboratorEvents
   )
   .post(
     AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
+    ClientGuard('business'),
+    ValidatorMiddleware,
     AddEventValidator,
-    InputValidation,
-    CalendarController.createEvent
+    ValidatorMiddleware,
+    CalendarController.createCollaboratorEvent
   );
 
 router
-  .route('/calendar/events/:id')
-  .get(AuthenticationGuard, AccessGuard('crm'), InputValidation, CalendarController.retrieveEvent)
+  .route('/calendar/collaborators/events/:id')
+  .get(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    CalendarController.retrieveCollaboratorEvent
+  )
   .put(
     AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
+    ClientGuard('business'),
+    ValidatorMiddleware,
     UpdateEventValidator,
-    InputValidation,
-    CalendarController.update_event
-  )
-  .delete(AuthenticationGuard, AccessGuard('crm'), InputValidation, CalendarController.deleteEvent);
-
-router
-  .route('/calendar/events-series')
-  .get(
-    AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
-    CalendarController.listEventsSeries
-  )
-  .post(AuthenticationGuard, InputValidation, CalendarController.createEventSeries);
-
-router
-  .route('/calendar/events-series/:id')
-  .get(
-    AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
-    CalendarController.retrieveEventSeries
-  )
-  .put(
-    AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
-    CalendarController.updateEventSeries
+    ValidatorMiddleware,
+    CalendarController.updateCollaboratorEvent
   )
   .delete(
     AuthenticationGuard,
-    AccessGuard('crm'),
-    InputValidation,
-    CalendarController.deleteEventSeries
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    CalendarController.deleteCollaboratorEvent
+  );
+
+// -------------------------------------------------- //
+//                     EVENT SERIES                   //
+// -------------------------------------------------- //
+
+// EVENTS
+
+router
+  .route('/calendar/health-units/events')
+  .get(AuthenticationGuard, ClientGuard('business'), CalendarController.listHealthUnitEvents)
+  .post(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    AddEventValidator,
+    ValidatorMiddleware,
+    CalendarController.createHealthUnitEvent
+  );
+
+router
+  .route('/calendar/health-units/events/:id')
+  .get(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    CalendarController.retrieveHealthUnitEvent
+  )
+  .put(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    UpdateEventValidator,
+    ValidatorMiddleware,
+    CalendarController.updateHealthUnitEvent
+  )
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    CalendarController.deleteHealthUnitEvent
+  );
+
+// EVENT SERIES
+
+router
+  .route('/calendar/health-units/event-series')
+  .get(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    CalendarController.listHealthUnitEventSeries
+  )
+  .post(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    AddEventValidator,
+    ValidatorMiddleware,
+    CalendarController.createHealthUnitEventSeries
+  );
+
+
+router
+  .route('/calendar/health-units/event-series/:id')
+  .get(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    CalendarController.retrieveHealthUnitEventSeries
+  )
+  .put(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    ValidatorMiddleware,
+    UpdateEventValidator,
+    ValidatorMiddleware,
+    CalendarController.updateHealthUnitEventSeries
   );
 
 export default router;
