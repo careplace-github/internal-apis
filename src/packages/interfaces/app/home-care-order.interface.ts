@@ -44,7 +44,7 @@ interface IHomeCareOrder {
   cancellation_reason?: string;
   cancellation_date?: Date;
   order_total: number;
-  screening_visit?: IEvent;
+  visits: IEvent[];
   screening_visit_status?: THomeCareOrderScreeningVisitStatus;
   observations?: string;
   stripe_information: {
