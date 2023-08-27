@@ -49,7 +49,7 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
     cancellation_date: { type: Date, required: false }, // date when the order was cancelled
     order_total: { type: Number, required: false },
 
-    screening_visit: { type: Schema.Types.ObjectId, ref: 'Event', required: false, default: null },
+    visits: [{ type: Schema.Types.ObjectId, ref: 'Event', required: true, default: [] }],
     observations: { type: String, required: false, default: null },
     stripe_information: {
       subscription_id: { type: String, required: false, default: null },
