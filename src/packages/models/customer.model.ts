@@ -11,7 +11,7 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
       auto: true,
     },
 
-    cognito_id: { type: String, required: true, unique: true },
+    cognito_id: { type: String, unique: true },
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
     name: { type: String, required: true },
     /**
@@ -49,7 +49,7 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
       country: {
         type: String,
         required: true,
-        enum: ['PT'],
+        default: 'PT',
       },
       coordinates: { type: Array, required: false },
     },

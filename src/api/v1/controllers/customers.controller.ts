@@ -112,18 +112,17 @@ export default class CustomersController {
       // Add the health unit id to the Customer data.
       sanitizedReqCustomer.health_unit = healthUnit._id;
 
-      // Remove any whitespace from the phone number.
-      sanitizedReqCustomer.phone = sanitizedReqCustomer.phone!.replace(/\s/g, '');
-
       const Customer = new CustomerModel(sanitizedReqCustomer);
 
       // Validate the Customer data.
       const validationError = Customer.validateSync({ pathsToSkip: ['cognito_id'] });
-
       // If there are validation errors, return them.
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
       }
+
+      // Remove any whitespace from the phone number.
+      sanitizedReqCustomer.phone = sanitizedReqCustomer.phone!.replace(/\s/g, '');
 
       let existingCustomer: ICustomerDocument | undefined;
 
