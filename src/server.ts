@@ -449,7 +449,6 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, FilesRoute);
       app.use(process.env.API_ROUTE as string, ReviewsRoute);
       app.use(process.env.API_ROUTE as string, AuthRoute);
-      app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
       app.use(process.env.API_ROUTE as string, PatientsRoute);
       app.use(process.env.API_ROUTE as string, CustomersRoute);
       app.use(process.env.API_ROUTE as string, OrdersRoute);
@@ -460,6 +459,8 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, DashboardRoute);
       app.use(process.env.API_ROUTE as string, WebhooksRoute);
       app.use(process.env.API_ROUTE as string, PaymentsRoute);
+      app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
+
       app.use(process.env.API_ROUTE as string, LeadsRoute);
 
       // Admin API Routes

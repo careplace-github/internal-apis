@@ -20,7 +20,7 @@ import { HTTPError } from '@utils';
 import Stripe from 'stripe';
 // @logger
 import logger from '@logger';
-import { IAPIResponse, ICustomer, IHomeCareOrder, IPatient } from '@packages/interfaces';
+import { IAPIResponse, ICustomer, IHealthUnit, IHomeCareOrder, IPatient } from '@packages/interfaces';
 
 /**
  * Controller for Stripe Webhooks
@@ -196,7 +196,7 @@ export default class StripeWebhooksController {
           // Prepare the email payload for the customer
           let customerEmailPayload = {
             customerName: customer.name,
-            healthUnitName: order.health_unit.business_profile.name,
+            healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
             subTotal: order.order_total.toFixed(2),
             taxAmount: '0.00',
             total: order.order_total.toFixed(2),

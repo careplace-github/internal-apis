@@ -13,8 +13,10 @@ export default class CalendarHelper {
     try {
       let events: IEventDocument[] = [];
 
+      logger.info('eventSeries: ', eventSeries);
+
       if (!eventSeries.order) {
-        throw new Error('Order not found');
+        return;
       }
 
       const orderId = eventSeries?.order?._id as string;
