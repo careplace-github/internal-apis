@@ -7,14 +7,11 @@ WORKDIR /usr/src/app
 # Copy host files to container
 COPY . .
 
-# Set environment variables
-ENV NODE_ENV="staging"
-
 # Clean yarn cache
 RUN yarn cache clean --force
 
-# Install dependencies using --production flag
-RUN yarn install 
+# Install dependencies (--frozen-lockfile ensures yarn.lock is not modified)
+RUN yarn install --frozen-lockfile
 
 # Build the app
 RUN yarn build
