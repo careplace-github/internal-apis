@@ -10,7 +10,7 @@
     ]
   },
   "scripts": {
-    "start": "ts-node --project tsconfig.json -r tsconfig-paths/register build/server.js",
+    "start": "ts-node --project tsconfig.json -r tsconfig-paths/register build/server.js" ,
     "build": "rimraf ./build && tsc --project tsconfig.json",
     "dev": "nodemon --exec \"node --trace-warnings --experimental-modules -r ts-node/register -r tsconfig-paths/register\" ./src/server.ts",
     "docker-dev": "docker-compose -f docker-compose.dev.yml up --build",
