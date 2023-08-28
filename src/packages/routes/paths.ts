@@ -17,6 +17,12 @@ const PATHS = {
       resetPassword: `${MARKETPLACE_BASE_URL}/auth/reset-password`,
       logout: `${MARKETPLACE_BASE_URL}/auth/logout`,
     },
+
+    orders: {
+      list: `${MARKETPLACE_BASE_URL}/orders`,
+      view: (id: string) => `${MARKETPLACE_BASE_URL}/orders/${id}`,
+      checkout: (id: string) => `${MARKETPLACE_BASE_URL}/orders/${id}/checkout`,
+    },
   },
 
   business: {
@@ -35,7 +41,8 @@ const PATHS = {
 
     orders: {
       list: `${BUSINESS_BASE_URL}/orders`,
-      view: (id: string) => `${BUSINESS_BASE_URL}/orders/${id}`,
+      view: (id: string) => `${BUSINESS_BASE_URL}/orders/${id}/view`,
+      edit: (id: string) => `${BUSINESS_BASE_URL}/orders/${id}/edit`,
     },
   },
 };
