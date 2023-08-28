@@ -16,10 +16,6 @@ export async function loadAWSSecrets() {
       region: 'eu-west-3',
     };
 
-    const ENV = process.env.NODE_ENV || 'development';
-
-    logger.info(`[ENV: ${ENV}] Loading AWS secrets...`);
-
     try {
       await asyncAccess('.env.local');
       console.log('File .env.local found.');
@@ -40,6 +36,10 @@ export async function loadAWSSecrets() {
     }
 
     AWS.config.update(awsConfig);
+
+    const ENV = process.env.NODE_ENV || 'development';
+
+    logger.info(`[ENV: ${ENV}] Loading AWS secrets...`);
 
     const secretsManager = new AWS.SecretsManager();
     const environment = process.env.NODE_ENV || 'development'; // Get the current environment
