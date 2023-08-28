@@ -49,9 +49,8 @@ const main = async () => {
      *  For the modules to work the environment variables must be loaded first
      */
     const { loadAWSSecrets } = require('@packages/services/secrets.service');
-    await loadAWSSecrets();
-
     // Now that the environment variables are loaded, we can load the modules (we need to use require instead of import because import statements are hoisted)
+    await loadAWSSecrets();
 
     // routes
     const {
@@ -99,15 +98,17 @@ const main = async () => {
       family: 4, // Use IPv4, skip trying IPv6
     };
 
-    logger.info(`Connecting to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}'...`);
-
     mongoose.set('strictQuery', true);
 
     MONGODB_DB_ACTIVE_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_ACTIVE_NS}?retryWrites=true&w=majority`;
     MONGODB_DB_DELETES_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_DELETES_NS}?retryWrites=true&w=majority`;
 
+    logger.info('Connecting to MongoDB Cluster: ' + process.env.MONGODB_CLUSTER_URI);
+
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
+
+    logger.info(`Connecting to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}'...`);
 
     /**
      *  Handle connection errors
@@ -550,9 +551,12 @@ const main = async () => {
       console.log(`Unable to start the HTTP Server: ${error}`);
       // throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
     }
-  } catch (error) {
-    console.log(`Internal Error: ${error}`);
-    // throw new HTTPError._500(`Internal Error: ${error}`);
+  } catch (error: any) {
+    logger.error(`Internal Error: ${error}`);
+
+    if (!error?.isOperational) {
+      process.exit(1);
+    }
   }
 };
 
