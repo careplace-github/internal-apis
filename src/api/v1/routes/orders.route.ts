@@ -72,6 +72,11 @@ router
     AuthenticationGuard,
     ClientGuard('business'),
     OrdersController.healthUnitUpdateHomeCareOrder
+  )
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    OrdersController.healthUnitDeleteHomeCareOrder
   );
 
 router

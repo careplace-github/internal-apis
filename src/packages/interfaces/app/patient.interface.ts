@@ -7,7 +7,7 @@ import { TGender, TKinship } from 'src/packages/interfaces/types';
 
 interface IPatient {
   _id: Types.ObjectId | string;
-  customer: Types.ObjectId | ICustomer;
+  customer?: Types.ObjectId | ICustomer;
   health_unit?: Types.ObjectId | IHealthUnit;
 
   kinship: TKinship;

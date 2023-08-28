@@ -77,7 +77,7 @@ export default class CaregiversController {
 
       const user = await CaregiversController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
@@ -110,7 +110,9 @@ export default class CaregiversController {
       sanitizedReqCaregiver.health_unit = healthUnit._id;
 
       // Remove any whitespace from the phone number.
-      sanitizedReqCaregiver.phone = sanitizedReqCaregiver.phone!.replace(/\s/g, '');
+      sanitizedReqCaregiver.phone = sanitizedReqCaregiver?.phone?.replace(/\s/g, '') || '';
+
+      sanitizedReqCaregiver.role = 'caregiver';
 
       const caregiver = new CaregiverModel(sanitizedReqCaregiver);
 
@@ -303,7 +305,7 @@ export default class CaregiversController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CaregiverModel || user instanceof CollaboratorModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
@@ -358,8 +360,6 @@ export default class CaregiversController {
       const sanitizedReqCaregiver = omit(reqCaregiver, [
         '_id',
         'cognito_id',
-        'email',
-        'phone',
         'health_unit',
         'settings',
       ]);
@@ -380,12 +380,12 @@ export default class CaregiversController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
       if (!user.permissions.includes('users_edit')) {
-        return next(new HTTPError._403('Forbidden'));
+        return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
       // Check if caregiver already exists by verifying the id
@@ -467,12 +467,12 @@ export default class CaregiversController {
 
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CaregiverModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('Forbidden'));
       }
 
       if (!user.permissions.includes('users_edit')) {
-        return next(new HTTPError._403('Forbidden'));
+        return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
       try {
@@ -572,7 +572,7 @@ export default class CaregiversController {
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 

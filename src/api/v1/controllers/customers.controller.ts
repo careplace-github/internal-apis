@@ -37,6 +37,7 @@ export default class CustomersController {
   // db
   static CustomersDAO = new CustomersDAO();
   static HealthUnitsDAO = new HealthUnitsDAO();
+  static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   // helpers
   static AuthHelper = AuthHelper;
   // utils
@@ -366,7 +367,7 @@ export default class CustomersController {
       const reqCustomer = req.body as ICustomer;
 
       // Omit the fiels that are not allowed to be changed by the user.
-      const sanitizedReqCustomer = omit(reqCustomer, [
+      let sanitizedReqCustomer = omit(reqCustomer, [
         '_id',
         'cognito_id',
         'settings',
@@ -393,6 +394,12 @@ export default class CustomersController {
       if (customerExists?.health_unit?.toString() !== healthUnitId) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
+
+      // fill in the missing fields from the existing Customer
+      sanitizedReqCustomer = {
+        ...customerExists.toObject(),
+        ...sanitizedReqCustomer,
+      };
 
       // Remove any whitespace
       sanitizedReqCustomer.phone = sanitizedReqCustomer.phone!.replace(/\s/g, '');
@@ -423,7 +430,7 @@ export default class CustomersController {
         }
       }
 
-      response.statusCode = 204;
+      response.statusCode = 200;
       response.data = updatedCustomer;
 
       // Pass to the next middleware to handle the response
@@ -501,6 +508,39 @@ export default class CustomersController {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
       }
 
+      // Check if the Customer has any orders.
+      let orders: IHomeCareOrderDocument[] = [];
+
+      try {
+        // Get the orders for the Customer from MongoDB.
+        orders = (
+          await CustomersController.HomeCareOrdersDAO.queryList({
+            customer: customerID,
+            // active orders are orders that are not cancelled or declined
+            status: { $nin: ['cancelled', 'declined'] },
+          })
+        ).data;
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND': {
+            // Do nothing.
+            break;
+          }
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      // If the Customer has orders, return an error.
+      if (orders.length > 0) {
+        return next(
+          new HTTPError._403(
+            'You cannot delete a Customer that has active orders. Please delete the orders first.'
+          )
+        );
+      }
+
       try {
         // Delete the Customer from MongoDB.
         await CustomersController.CustomersDAO.delete(customerID);
@@ -514,7 +554,7 @@ export default class CustomersController {
         }
       }
 
-      response.statusCode = 204;
+      response.statusCode = 200;
       response.data = { message: 'Customer deleted successfully.' };
 
       // Pass to the next middleware to handle the response
