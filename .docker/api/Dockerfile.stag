@@ -1,20 +1,26 @@
-FROM node:16.17.0-bullseye-slim
+# Set base image
+FROM node:16.20.1-bookworm-slim
 
+# Create app directory
 WORKDIR /usr/src/app
 
+# Copy host files to container
 COPY . .
 
+# Set environment variables
+ENV NODE_ENV="staging"
+
+# Clean yarn cache
 RUN yarn cache clean --force
 
-RUN yarn config delete proxy
+# Install dependencies using --production flag
+RUN yarn install 
 
-RUN npm config rm proxy
-
-RUN npm config rm https-proxy
-
-RUN yarn install --network-timeout 100000
-
+# Build the app
 RUN yarn build
 
-CMD [ "yarn", "start" ]
+# Expose port 8080
+EXPOSE 8080
 
+# Run the app
+CMD ["yarn", "start"]
