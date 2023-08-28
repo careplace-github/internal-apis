@@ -741,7 +741,7 @@ export default class StripeService {
     params: Stripe.SubscriptionListParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.ApiList<Stripe.Subscription>> {
-    logger.info('StripeService.listSubscriptions: ' + JSON.stringify({ params, options }, null , 2));
+    logger.info('StripeService.listSubscriptions: ' + JSON.stringify({ params, options }, null, 2));
 
     let subscriptions: Stripe.ApiList<Stripe.Subscription>;
 

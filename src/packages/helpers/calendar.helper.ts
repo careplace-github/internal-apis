@@ -91,6 +91,10 @@ export default class CalendarHelper {
             break;
           }
 
+          // verify if the textColor is valid (hexadecimal) and if not, set the default color
+          const textColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(eventSeries.textColor)
+            ? eventSeries.textColor
+            : '#1890FF';
           // Create a new event
           let event: IEvent = {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
@@ -104,7 +108,7 @@ export default class CalendarHelper {
             end: endDate,
             allDay: eventSeries.allDay,
             location: eventSeries.location,
-            textColor: eventSeries.textColor || '#1890FF',
+            textColor,
           };
 
           let eventModel = new EventModel(event);
