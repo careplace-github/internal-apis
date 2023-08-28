@@ -22,7 +22,7 @@ interface IHomeCareOrder {
   order_number: string;
   _id: Types.ObjectId | string;
   type: 'marketplace' | 'external';
-  health_unit: IHealthUnit;
+  health_unit: Types.ObjectId | IHealthUnit;
   caregiver?: Types.ObjectId | ICaregiver;
   customer: Types.ObjectId | ICustomer;
   patient: Types.ObjectId | IPatient;
