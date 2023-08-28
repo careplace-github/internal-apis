@@ -31,6 +31,7 @@ import logger from '@logger';
 import { CaregiverModel, CollaboratorModel } from '@packages/models';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
 import { omit } from 'lodash';
+import { PATHS } from 'src/packages/routes';
 
 export default class CollaboratorsController {
   // db
@@ -241,13 +242,14 @@ export default class CollaboratorsController {
           const emailData = {
             name: reqCollaborator.name,
             email: reqCollaborator.email,
-            healthUnit: healthUnit!.business_profile!.name!,
+            healthUnitName: healthUnit!.business_profile!.name!,
             password: temporaryPassword,
+            link: `${PATHS.business.auth.login}`,
           };
 
           // Insert variables into email template
           let email = await EmailHelper.getEmailTemplateWithData(
-            'business_new_collaborator',
+            'auth_business_invitation',
             emailData
           );
 

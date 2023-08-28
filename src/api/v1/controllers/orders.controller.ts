@@ -69,6 +69,7 @@ import { services } from '@assets';
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe';
 import { access } from 'fs';
+import { PATHS } from 'src/packages/routes';
 
 export default class OrdersController {
   // db
@@ -311,10 +312,7 @@ export default class OrdersController {
           collaboratorName: collaborators[i].name,
           healthUnitName: healthUnit!.business_profile!.name,
 
-          /**
-           * @todo Change this link to the correct one
-           */
-          link: `https://www.sales.careplace.pt/orders/${orderCreated._id}`,
+          link: `${PATHS.business.orders.view(orderCreated._id)}`,
         };
 
         let businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
@@ -1586,8 +1584,7 @@ export default class OrdersController {
               patientPostalCode: patient.address.postal_code,
               patientCountry: patient.address.country,
 
-              //link: `https://www.business.careplace.pt/app/orders/${order._id}`,
-              link: `http://localhost:4000/app/orders/${order._id}/view`,
+              link: `${PATHS.business.orders.view(order._id)}`,
             };
 
             let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1853,7 +1850,7 @@ export default class OrdersController {
           customerName: (order.customer as ICustomer).name,
           healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
-          link: `https://www.careplace.pt/checkout/orders/${order._id}`,
+          link: `${PATHS.marketplace.orders.checkout(order._id)}`,
 
           subTotal: (order.order_total / 1.23).toFixed(2),
           taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2) || '0.00',
@@ -1902,7 +1899,7 @@ export default class OrdersController {
                 collaboratorName: collaborators[i].name,
                 healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
-                link: `https://www.sales.careplace.pt/orders/${order._id}`,
+                link: `${PATHS.business.orders.view(order._id)}`,
 
                 subTotal: (order.order_total / 1.23).toFixed(2),
                 taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),

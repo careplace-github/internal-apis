@@ -18,7 +18,7 @@ export default function clientGuard(app: string) {
 
       if (app === 'business') {
         app = AWS_COGNITO_BUSINESS_CLIENT_ID || '';
-        logger.info("Business Client Id: " + app)
+        logger.info('Business Client Id: ' + app);
       } else if (app === 'marketplace') {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
       } else if (app === 'admin') {

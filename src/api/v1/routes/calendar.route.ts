@@ -14,7 +14,6 @@ const router = express.Router();
 //                       EVENTS                       //
 // -------------------------------------------------- //
 
-
 router
   .route('/calendar/collaborators/events')
   .get(
@@ -100,11 +99,7 @@ router
 
 router
   .route('/calendar/health-units/event-series')
-  .get(
-    AuthenticationGuard,
-    ClientGuard('business'),
-    CalendarController.listHealthUnitEventSeries
-  )
+  .get(AuthenticationGuard, ClientGuard('business'), CalendarController.listHealthUnitEventSeries)
   .post(
     AuthenticationGuard,
     ClientGuard('business'),
@@ -113,7 +108,6 @@ router
     ValidatorMiddleware,
     CalendarController.createHealthUnitEventSeries
   );
-
 
 router
   .route('/calendar/health-units/event-series/:id')
