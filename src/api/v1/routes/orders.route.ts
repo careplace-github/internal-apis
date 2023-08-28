@@ -72,6 +72,11 @@ router
     AuthenticationGuard,
     ClientGuard('business'),
     OrdersController.healthUnitUpdateHomeCareOrder
+  )
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('business'),
+    OrdersController.healthUnitDeleteHomeCareOrder
   );
 
 router
@@ -85,5 +90,9 @@ router
 router
   .route('/health-units/orders/home-care/:id/send-quote')
   .post(AuthenticationGuard, ClientGuard('business'), OrdersController.sendHomeCareOrderQuote);
+
+  router
+  .route('/health-units/orders/home-care/:id/schedule-visit')
+  .post(AuthenticationGuard, ClientGuard('business'), OrdersController.scheduleHomeCareOrderVisit);
 
 export default router;
