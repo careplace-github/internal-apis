@@ -1,7 +1,14 @@
 // express
 import { Request, Response, NextFunction } from 'express';
 // mongoose
-import mongoose, { FilterQuery, QueryOptions, Types, model, startSession } from 'mongoose';
+import mongoose, {
+  FilterQuery,
+  ObjectId,
+  QueryOptions,
+  Types,
+  model,
+  startSession,
+} from 'mongoose';
 // lodash
 import { omit } from 'lodash';
 
@@ -37,11 +44,13 @@ import {
   IPatientDocument,
   IEventDocument,
   IEvent,
+  IEventSeriesDocument,
 } from 'src/packages/interfaces';
 
 import {
   CaregiverModel,
   CollaboratorModel,
+  CustomerModel,
   EventModel,
   EventSeriesModel,
   HomeCareOrderModel,
@@ -168,7 +177,7 @@ export default class OrdersController {
 
       // Use the first 8 characters of the order id as the order number
       // HC-XXXXXXXX -> Home Care Order
-      order.order_number = 'HC-' + order._id.toString().substring(0, 6).toUpperCase();
+      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
 
       const newOrder = new HomeCareOrderModel(order);
 
@@ -758,6 +767,121 @@ export default class OrdersController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      let order = req.body as IHomeCareOrder;
+
+      if (!order.patient) {
+        return next(new HTTPError._400('Missing required field: `patient`.'));
+      }
+
+      if (!order.customer) {
+        return next(new HTTPError._400('Missing required field: `customer`.'));
+      }
+
+      if (!order.caregiver) {
+        return next(new HTTPError._400('Missing required field: `caregiver`.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      if (!user?.permissions?.includes('orders_edit')) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      order.health_unit = user.health_unit._id as Types.ObjectId;
+
+      order.status = 'accepted';
+      order.type = 'external';
+
+      order._id = new mongoose.Types.ObjectId();
+
+      // Use the first 8 characters of the order id as the order number
+      // HC-XXXXXXXX -> Home Care Order
+      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
+
+      const newOrder = new HomeCareOrderModel(order);
+
+      // validate the order
+      const validationError = newOrder.validateSync({
+        pathsToSkip: ['billing_details'],
+      });
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+      let orderCreated: IHomeCareOrderDocument;
+      try {
+        orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      let patient: IPatientDocument;
+
+      const patientId = (order.patient as mongoose.Types.ObjectId).toString();
+
+      try {
+        patient = await OrdersController.PatientsDAO.retrieve(patientId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Patient not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Create a new event series for the order
+      if (order?.schedule_information?.recurrency !== 0) {
+        let eventSeries: IEventSeries = {
+          _id: new Types.ObjectId(),
+
+          owner_type: 'health_unit',
+          owner: order.health_unit,
+
+          order: orderCreated._id,
+
+          start_date: order.schedule_information.start_date,
+
+          recurrency: order.schedule_information.recurrency,
+
+          schedule: order.schedule_information.schedule,
+
+          title: patient.name,
+
+          end_series: {
+            ending_type: 0,
+          },
+
+          textColor: '#54D62C',
+        };
+
+        const newEventSeries = new EventSeriesModel(eventSeries);
+
+        let eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
+      }
+
+      response.statusCode = 200;
+      response.data = orderCreated;
+
       // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
@@ -777,11 +901,32 @@ export default class OrdersController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CustomerModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
       const orderId = req.params.order;
 
       const billingDetails = req.body.billing_details;
 
       const order = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+
+      if (order.customer.toString() !== user._id.toString()) {
+        return next(new HTTPError._403('You do not have access to retrieve this home care order.'));
+      }
 
       const orderObj = order.toObject();
 
@@ -1005,6 +1150,118 @@ export default class OrdersController {
     }
   }
 
+  static async healthUnitDeleteHomeCareOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('You do not have access to delete home care orders.'));
+      }
+
+      if (!user?.permissions?.includes('orders_edit')) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      // Retrieve the home care order based on the provided request parameters
+      const orderId = req.params.id;
+
+      if (!orderId) {
+        return next(new HTTPError._400('Missing required field: `id`.'));
+      }
+
+      let homeCareOrder: IHomeCareOrderDocument;
+
+      try {
+        homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+      } catch (error: any) {
+        // If the home care order is not found, return an error
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Home care order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Check if the order is of type external
+      if (homeCareOrder.type !== 'external') {
+        return next(new HTTPError._403('You cannot delete this order.'));
+      }
+
+      // Check if the home care order belongs to the user's health unit
+      if (homeCareOrder.health_unit.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('You do not have access to delete this home care order.'));
+      }
+
+      // Delete the home care order
+      try {
+        await OrdersController.HomeCareOrdersDAO.delete(orderId);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      let eventSeries: IEventSeriesDocument | undefined;
+
+      // Check if the home care order has an event series
+      try {
+        eventSeries = await OrdersController.EventSeriesDAO.queryOne({
+          order: orderId,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Delete the event series
+      if (eventSeries) {
+        try {
+          await OrdersController.EventSeriesDAO.delete(eventSeries._id);
+        } catch (error: any) {
+          switch (error.type) {
+            default:
+              return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = homeCareOrder;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
   static async listHealthUnitHomeCareOrders(
     req: Request,
     res: Response,
@@ -1016,8 +1273,6 @@ export default class OrdersController {
         data: {},
       };
       let homeCareOrders: IHomeCareOrderDocument[] = [];
-
-      let Cognito = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
 
       let accessToken: string;
 
@@ -1596,7 +1851,7 @@ export default class OrdersController {
 
         let userEmailPayload = {
           customerName: (order.customer as ICustomer).name,
-          healthUnitName: order.health_unit.business_profile.name,
+          healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
           link: `https://www.careplace.pt/checkout/orders/${order._id}`,
 
@@ -1645,7 +1900,7 @@ export default class OrdersController {
             if (collaboratorEmail) {
               let healthUnitEmailPayload = {
                 collaboratorName: collaborators[i].name,
-                healthUnitName: order.health_unit.business_profile.name,
+                healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
                 link: `https://www.sales.careplace.pt/orders/${order._id}`,
 
@@ -1722,11 +1977,7 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const { visit_date, visit_start, visit_end } = req.body;
-
-      if (!visit_date) {
-        return next(new HTTPError._400('Missing required `visit_date`.'));
-      }
+      const { visit_start, visit_end } = req.body;
 
       if (!visit_start) {
         return next(new HTTPError._400('Missing required `visit_start`.'));
@@ -1773,10 +2024,13 @@ export default class OrdersController {
 
         start: visit_start,
 
-        title: `Visita de Triagem: ${(order.patient as IPatient).name}`,
+        title:
+          order?.visits?.length < 0
+            ? `Visita de Triagem: ${(order.patient as IPatient).name}`
+            : `Visita ao Domicílio: ${(order.patient as IPatient).name}`,
         description: ' ',
 
-        textColor: '#1890FF',
+        textColor: order.type === 'marketplace' ? '#04297A' : '#054f02',
 
         end: visit_end,
       };
@@ -1867,7 +2121,7 @@ export default class OrdersController {
 
         let userEmailPayload = {
           customerName: (order.customer as ICustomer).name,
-          healthUnitName: order.health_unit.business_profile.name,
+          healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
           date: await DateUtils.convertDateToReadableString(visit_start),
           time:
             (await DateUtils.getTimeFromDate(visit_start)) +
@@ -1913,7 +2167,7 @@ export default class OrdersController {
             if (collaboratorEmail) {
               let healthUnitEmailPayload = {
                 collaboratorName: collaborators[i].name,
-                healthUnitName: order.health_unit.business_profile.name,
+                healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
                 date: await DateUtils.convertDateToReadableString(visit_start),
 

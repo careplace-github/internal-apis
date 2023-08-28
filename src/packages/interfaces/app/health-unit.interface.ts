@@ -55,7 +55,6 @@ interface IHealthUnit {
     average_hourly_rate?: number;
     minimum_hourly_rate: number;
   };
-  team: Types.ObjectId[] | (ICaregiver | ICollaborator)[];
   legal_information: {
     name: string;
     director: {
