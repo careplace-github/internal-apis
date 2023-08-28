@@ -18,11 +18,10 @@ import mongoose from 'mongoose';
 import xss from 'xss-clean';
 // express-http-context
 import httpContext from 'express-http-context';
-
-// swagger
-import swaggerDocs from './documentation/swagger';
 // @logger
 import logger from '@logger';
+// swagger
+import swaggerDocs from './documentation/swagger';
 
 const main = async () => {
   let app: express.Application = express();
@@ -130,6 +129,7 @@ const main = async () => {
           if (currentReconnectAttempts === MAX_RECONNECT_ATTEMPTS) {
             logger.error(`Maximum reconnection attempts reached. Exiting the server...`);
             process.exit(1);
+          } else {
           }
         }
       } else {
@@ -511,6 +511,7 @@ const main = async () => {
 
       logger.info(`Fetched all the necessary assets successfully! \n`);
     } catch (error) {
+      logger.error(`Unable to fetch all the necessary assets: ${error}`);
       // throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
 
