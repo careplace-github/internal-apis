@@ -1,7 +1,14 @@
 // express
 import { Request, Response, NextFunction } from 'express';
 // mongoose
-import mongoose, { FilterQuery, QueryOptions, Types, startSession } from 'mongoose';
+import mongoose, {
+  FilterQuery,
+  ObjectId,
+  QueryOptions,
+  Types,
+  model,
+  startSession,
+} from 'mongoose';
 // lodash
 import { omit } from 'lodash';
 
@@ -13,6 +20,7 @@ import {
   HealthUnitReviewsDAO,
   HomeCareOrdersDAO,
   PatientsDAO,
+  EventsDAO,
   CollaboratorsDAO,
   EventSeriesDAO,
 } from 'src/packages/database';
@@ -34,11 +42,16 @@ import {
   ICustomerDocument,
   IQueryListResponse,
   IPatientDocument,
+  IEventDocument,
+  IEvent,
+  IEventSeriesDocument,
 } from 'src/packages/interfaces';
 
 import {
   CaregiverModel,
   CollaboratorModel,
+  CustomerModel,
+  EventModel,
   EventSeriesModel,
   HomeCareOrderModel,
   ServiceModel,
@@ -67,6 +80,7 @@ export default class OrdersController {
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
   static EventSeriesDAO = new EventSeriesDAO();
   static PatientsDAO = new PatientsDAO();
+  static EventsDAO = new EventsDAO();
   // helpers
   static AuthHelper = AuthHelper;
   static EmailHelper = EmailHelper;
@@ -163,7 +177,7 @@ export default class OrdersController {
 
       // Use the first 8 characters of the order id as the order number
       // HC-XXXXXXXX -> Home Care Order
-      order.order_number = 'HC-' + order._id.toString().substring(0, 6).toUpperCase();
+      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
 
       const newOrder = new HomeCareOrderModel(order);
 
@@ -753,6 +767,121 @@ export default class OrdersController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      let order = req.body as IHomeCareOrder;
+
+      if (!order.patient) {
+        return next(new HTTPError._400('Missing required field: `patient`.'));
+      }
+
+      if (!order.customer) {
+        return next(new HTTPError._400('Missing required field: `customer`.'));
+      }
+
+      if (!order.caregiver) {
+        return next(new HTTPError._400('Missing required field: `caregiver`.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      if (!user?.permissions?.includes('orders_edit')) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      order.health_unit = user.health_unit._id as Types.ObjectId;
+
+      order.status = 'accepted';
+      order.type = 'external';
+
+      order._id = new mongoose.Types.ObjectId();
+
+      // Use the first 8 characters of the order id as the order number
+      // HC-XXXXXXXX -> Home Care Order
+      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
+
+      const newOrder = new HomeCareOrderModel(order);
+
+      // validate the order
+      const validationError = newOrder.validateSync({
+        pathsToSkip: ['billing_details'],
+      });
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+      let orderCreated: IHomeCareOrderDocument;
+      try {
+        orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      let patient: IPatientDocument;
+
+      const patientId = (order.patient as mongoose.Types.ObjectId).toString();
+
+      try {
+        patient = await OrdersController.PatientsDAO.retrieve(patientId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Patient not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Create a new event series for the order
+      if (order?.schedule_information?.recurrency !== 0) {
+        let eventSeries: IEventSeries = {
+          _id: new Types.ObjectId(),
+
+          owner_type: 'health_unit',
+          owner: order.health_unit,
+
+          order: orderCreated._id,
+
+          start_date: order.schedule_information.start_date,
+
+          recurrency: order.schedule_information.recurrency,
+
+          schedule: order.schedule_information.schedule,
+
+          title: patient.name,
+
+          end_series: {
+            ending_type: 0,
+          },
+
+          textColor: '#54D62C',
+        };
+
+        const newEventSeries = new EventSeriesModel(eventSeries);
+
+        let eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
+      }
+
+      response.statusCode = 200;
+      response.data = orderCreated;
+
       // Pass to the next middleware to handle the response
       next(response);
     } catch (error: any) {
@@ -772,11 +901,32 @@ export default class OrdersController {
         data: {},
       };
 
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CustomerModel)) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
       const orderId = req.params.order;
 
       const billingDetails = req.body.billing_details;
 
       const order = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+
+      if (order.customer.toString() !== user._id.toString()) {
+        return next(new HTTPError._403('You do not have access to retrieve this home care order.'));
+      }
 
       const orderObj = order.toObject();
 
@@ -860,6 +1010,10 @@ export default class OrdersController {
           {
             path: 'customer',
             model: 'Customer',
+          },
+          {
+            path: 'visits',
+            model: 'Event',
           },
         ]);
       } catch (error: any) {
@@ -996,6 +1150,118 @@ export default class OrdersController {
     }
   }
 
+  static async healthUnitDeleteHomeCareOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
+
+      if (!(user instanceof CollaboratorModel)) {
+        return next(new HTTPError._403('You do not have access to delete home care orders.'));
+      }
+
+      if (!user?.permissions?.includes('orders_edit')) {
+        return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
+      }
+
+      // Retrieve the home care order based on the provided request parameters
+      const orderId = req.params.id;
+
+      if (!orderId) {
+        return next(new HTTPError._400('Missing required field: `id`.'));
+      }
+
+      let homeCareOrder: IHomeCareOrderDocument;
+
+      try {
+        homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
+      } catch (error: any) {
+        // If the home care order is not found, return an error
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Home care order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Check if the order is of type external
+      if (homeCareOrder.type !== 'external') {
+        return next(new HTTPError._403('You cannot delete this order.'));
+      }
+
+      // Check if the home care order belongs to the user's health unit
+      if (homeCareOrder.health_unit.toString() !== user.health_unit._id.toString()) {
+        return next(new HTTPError._403('You do not have access to delete this home care order.'));
+      }
+
+      // Delete the home care order
+      try {
+        await OrdersController.HomeCareOrdersDAO.delete(orderId);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      let eventSeries: IEventSeriesDocument | undefined;
+
+      // Check if the home care order has an event series
+      try {
+        eventSeries = await OrdersController.EventSeriesDAO.queryOne({
+          order: orderId,
+        });
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            break;
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // Delete the event series
+      if (eventSeries) {
+        try {
+          await OrdersController.EventSeriesDAO.delete(eventSeries._id);
+        } catch (error: any) {
+          switch (error.type) {
+            default:
+              return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = homeCareOrder;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
   static async listHealthUnitHomeCareOrders(
     req: Request,
     res: Response,
@@ -1007,8 +1273,6 @@ export default class OrdersController {
         data: {},
       };
       let homeCareOrders: IHomeCareOrderDocument[] = [];
-
-      let Cognito = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
 
       let accessToken: string;
 
@@ -1308,7 +1572,9 @@ export default class OrdersController {
 
               orderStart: orderStart,
               orderSchedule: schedule,
-              orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
+              orderRecurrency: await DateUtils.getRecurrencyType(
+                order.schedule_information.recurrency
+              ),
               orderServices: orderServices,
 
               patientName: patient.name,
@@ -1457,7 +1723,7 @@ export default class OrdersController {
       const { order_total } = req.body;
 
       if (!order_total) {
-        next(new HTTPError._400('Missing required fields.'));
+        next(new HTTPError._400('Missing required `order_total`.'));
       }
 
       const user = await AuthHelper.getUserFromDB(accessToken);
@@ -1475,20 +1741,19 @@ export default class OrdersController {
 
       let order: IHomeCareOrderDocument;
 
+      let orderId = req.params.id;
+
       try {
-        order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: req.params.id }, [
+        order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: orderId }, [
           {
             path: 'patient',
-            model: 'patient',
+            model: 'Patient',
           },
           {
             path: 'health_unit',
             model: 'HealthUnit',
           },
-          {
-            path: 'services',
-            model: 'Service',
-          },
+
           {
             path: 'customer',
             model: 'Customer',
@@ -1523,6 +1788,9 @@ export default class OrdersController {
 
       order.order_total = order_total;
 
+      // update the order status to 'pending_payment'
+      order.status = 'pending_payment';
+
       await OrdersController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
@@ -1531,143 +1799,420 @@ export default class OrdersController {
       // Pass to the next middleware to handle the response
       next(response);
 
-      /**
-       * From 'services' array, get the services that are in the order
-       */
+      // Only send emails to the orders originated from our marketplace
+      if (order.type === 'marketplace') {
+        /**
+         * From 'services' array, get the services that are in the order
+         */
 
-      let orderServicesAux = order.services.map((serviceId) => {
-        const service = services.find((service) => service._id.toString() === serviceId.toString());
+        let orderServicesAux = order.services.map((serviceId) => {
+          const service = services.find(
+            (service) => service._id.toString() === serviceId.toString()
+          );
 
-        return service;
-      });
+          return service;
+        });
 
-      // Create a string with the services names
-      // Example: "Cleaning, Laundry, Shopping"
-      const orderServices = orderServicesAux
-        .map((service) => {
-          return service?.name;
-        })
-        .join(', ');
+        // Create a string with the services names
+        // Example: "Cleaning, Laundry, Shopping"
+        const orderServices = orderServicesAux
+          .map((service) => {
+            return service?.name;
+          })
+          .join(', ');
 
-      let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
+        let schedule = await DateUtils.getScheduleRecurrencyText(
+          order.schedule_information.schedule
+        );
 
-      let birthdate = await DateUtils.convertDateToReadableString(
-        (order.patient as IPatient).birthdate
-      );
+        let birthdate = await DateUtils.convertDateToReadableString(
+          (order.patient as IPatient).birthdate
+        );
 
-      let orderStart = await DateUtils.convertDateToReadableString2(
-        order.schedule_information.start_date
-      );
-      let collaborators = (
-        await OrdersController.CollaboratorsDAO.queryList({
-          health_unit: { $eq: order.health_unit },
-        })
-      ).data;
+        let orderStart = await DateUtils.convertDateToReadableString2(
+          order.schedule_information.start_date
+        );
+        let collaborators = (
+          await OrdersController.CollaboratorsDAO.queryList({
+            health_unit: { $eq: order.health_unit },
+          })
+        ).data;
 
-      // Only send email to business users that have the 'orders_emails' permission
-      collaborators = collaborators.filter((user) => {
-        return user?.permissions?.includes('orders_emails');
-      });
+        // Only send email to business users that have the 'orders_emails' permission
+        collaborators = collaborators.filter((user) => {
+          return user?.permissions?.includes('orders_emails');
+        });
 
-      const collaboratorsEmails = collaborators.map((user) => {
-        if (user?.permissions?.includes('orders_emails')) {
-          return user.email;
+        const collaboratorsEmails = collaborators.map((user) => {
+          if (user?.permissions?.includes('orders_emails')) {
+            return user.email;
+          }
+        });
+
+        let userEmailPayload = {
+          customerName: (order.customer as ICustomer).name,
+          healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
+
+          link: `https://www.careplace.pt/checkout/orders/${order._id}`,
+
+          subTotal: (order.order_total / 1.23).toFixed(2),
+          taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2) || '0.00',
+          total: order.order_total.toFixed(2),
+
+          orderStart: orderStart,
+          orderSchedule: schedule,
+          orderServices: orderServices,
+          orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
+
+          patientName: (order.patient as IPatient).name,
+          patientBirthdate: birthdate,
+          patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'n/a',
+
+          patientStreet: (order.patient as IPatient).address.street,
+          patientCity: (order.patient as IPatient).address.city,
+          patientPostalCode: (order.patient as IPatient).address.postal_code,
+          patientCountry: (order.patient as IPatient).address.country,
+        };
+
+        let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+          'marketplace_home_care_order_quote',
+          userEmailPayload
+        );
+
+        if (
+          !marketplaceNewOrderEmail ||
+          !marketplaceNewOrderEmail.htmlBody ||
+          !marketplaceNewOrderEmail.subject
+        ) {
+          return next(new HTTPError._500('Error while getting the email template.'));
         }
-      });
 
-      let userEmailPayload = {
-        name: (order.customer as ICustomer).name,
-        healthUnit: order.health_unit.business_profile.name,
+        await OrdersController.SES.sendEmail(
+          [(order.customer as ICustomer).email],
+          marketplaceNewOrderEmail.subject,
+          marketplaceNewOrderEmail.htmlBody
+        );
 
-        link: `https://www.careplace.pt/checkout/orders/${order._id}`,
+        // Send email to all collaborators that have the 'orders_emails' permission
+        if (collaboratorsEmails && collaboratorsEmails.length > 0) {
+          for (let i = 0; i < collaboratorsEmails.length; i++) {
+            const collaboratorEmail = collaboratorsEmails[i];
+            if (collaboratorEmail) {
+              let healthUnitEmailPayload = {
+                collaboratorName: collaborators[i].name,
+                healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
-        subTotal: (order.order_total / 1.23 / 100).toFixed(2),
-        taxAmount: ((order.order_total - order.order_total / 1.23) / 100).toFixed(2),
-        total: (order.order_total / 100).toFixed(2),
+                link: `https://www.sales.careplace.pt/orders/${order._id}`,
 
-        orderStart: orderStart,
-        orderSchedule: schedule,
-        orderServices: orderServices,
+                subTotal: (order.order_total / 1.23).toFixed(2),
+                taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),
+                total: order.order_total.toFixed(2),
 
-        patientName: (order.patient as IPatient).name,
-        patientBirthdate: birthdate,
-        patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'N/A',
+                orderStart: orderStart,
+                orderSchedule: schedule,
+                orderServices: orderServices,
+                orderRecurrency: await DateUtils.getRecurrencyType(
+                  order.schedule_information.recurrency
+                ),
 
-        patientStreet: (order.patient as IPatient).address.street,
-        patientCity: (order.patient as IPatient).address.city,
-        patientPostalCode: (order.patient as IPatient).address.postal_code,
-        patientCountry: (order.patient as IPatient).address.country,
+                patientName: (order.patient as IPatient).name,
+                patientBirthdate: birthdate,
+                patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'n/a',
+
+                patientStreet: (order.patient as IPatient).address.street,
+                patientCity: (order.patient as IPatient).address.city,
+                patientPostalCode: (order.patient as IPatient).address.postal_code,
+                patientCountry: (order.patient as IPatient).address.country,
+
+                customerName: (order.customer as ICustomer).name,
+                customerPhone: (order.customer as ICustomer).phone,
+              };
+
+              let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+                'business_home_care_order_quote_sent',
+                healthUnitEmailPayload
+              );
+
+              if (
+                !businessNewOrderEmail ||
+                !businessNewOrderEmail.htmlBody ||
+                !businessNewOrderEmail.subject
+              ) {
+                return next(new HTTPError._500('Error while generating email template.'));
+              }
+
+              await OrdersController.SES.sendEmail(
+                [collaboratorEmail],
+                businessNewOrderEmail.subject,
+                businessNewOrderEmail.htmlBody
+              );
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  static async scheduleHomeCareOrderVisit(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
       };
+      let accessToken: string;
 
-      let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-        'marketplace_home_care_order_quote',
-        userEmailPayload
-      );
-
-      if (
-        !marketplaceNewOrderEmail ||
-        !marketplaceNewOrderEmail.htmlBody ||
-        !marketplaceNewOrderEmail.subject
-      ) {
-        return next(new HTTPError._500('Error while getting the email template.'));
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
       }
 
-      await OrdersController.SES.sendEmail(
-        [(order.customer as ICustomer).email],
-        marketplaceNewOrderEmail.subject,
-        marketplaceNewOrderEmail.htmlBody
-      );
+      const { visit_start, visit_end } = req.body;
 
-      // Send email to all collaborators that have the 'orders_emails' permission
-      if (collaboratorsEmails && collaboratorsEmails.length > 0) {
-        for (let i = 0; i < collaboratorsEmails.length; i++) {
-          const collaboratorEmail = collaboratorsEmails[i];
-          if (collaboratorEmail) {
-            let healthUnitEmailPayload = {
-              name: collaborators[i].name,
-              healthUnit: order.health_unit.business_profile.name,
+      if (!visit_start) {
+        return next(new HTTPError._400('Missing required `visit_start`.'));
+      }
 
-              link: `https://www.sales.careplace.pt/orders/${order._id}`,
+      if (!visit_end) {
+        return next(new HTTPError._400('Missing required `visit_end`.'));
+      }
 
-              subTotal: (order.order_total / 1.23).toFixed(2),
-              taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),
-              total: order.order_total.toFixed(2),
+      let order: IHomeCareOrderDocument;
+      try {
+        order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: req.params.id }, [
+          {
+            path: 'patient',
+            model: 'Patient',
+          },
+          {
+            path: 'health_unit',
+            model: 'HealthUnit',
+          },
 
-              orderStart: orderStart,
-              orderSchedule: schedule,
-              orderServices: orderServices,
+          {
+            path: 'customer',
+            model: 'Customer',
+          },
+        ]);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Order not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
 
-              patientName: (order.patient as IPatient).name,
-              patientBirthdate: birthdate,
-              patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'N/A',
+      // Create an event
+      let event: IEvent = {
+        _id: new Types.ObjectId(),
 
-              patientStreet: (order.patient as IPatient).address.street,
-              patientCity: (order.patient as IPatient).address.city,
-              patientPostalCode: (order.patient as IPatient).address.postal_code,
-              patientCountry: (order.patient as IPatient).address.country,
+        owner_type: 'health_unit',
+        owner: order.health_unit,
 
-              userName: (order.customer as ICustomer).name,
-              userPhone: (order.customer as ICustomer).phone,
-            };
+        order: order._id,
 
-            let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
-              'business_home_care_order_quote_sent',
-              healthUnitEmailPayload
-            );
+        start: visit_start,
 
-            if (
-              !businessNewOrderEmail ||
-              !businessNewOrderEmail.htmlBody ||
-              !businessNewOrderEmail.subject
-            ) {
-              return next(new HTTPError._500('Error while generating email template.'));
+        title:
+          order?.visits?.length < 0
+            ? `Visita de Triagem: ${(order.patient as IPatient).name}`
+            : `Visita ao Domicílio: ${(order.patient as IPatient).name}`,
+        description: ' ',
+
+        textColor: order.type === 'marketplace' ? '#04297A' : '#054f02',
+
+        end: visit_end,
+      };
+
+      const newEvent = new EventModel(event);
+
+      // validate event
+      const validationErrors = await newEvent.validateSync();
+
+      if (validationErrors) {
+        return next(new HTTPError._400('Invalid event: ' + validationErrors.message));
+      }
+
+      let eventAdded: IEventDocument;
+
+      try {
+        eventAdded = await OrdersController.EventsDAO.create(newEvent);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      order.visits.push(eventAdded._id);
+
+      try {
+        await OrdersController.HomeCareOrdersDAO.update(order);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = order;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+
+      // Only send emails to the orders originated from our marketplace
+      if (order.type === 'marketplace') {
+        /**
+         * From 'services' array, get the services that are in the order
+         */
+
+        let orderServicesAux = order.services.map((serviceId) => {
+          const service = services.find(
+            (service) => service._id.toString() === serviceId.toString()
+          );
+
+          return service;
+        });
+
+        // Create a string with the services names
+        // Example: "Cleaning, Laundry, Shopping"
+        const orderServices = orderServicesAux
+          .map((service) => {
+            return service?.name;
+          })
+          .join(', ');
+
+        let collaborators = (
+          await OrdersController.CollaboratorsDAO.queryList({
+            health_unit: { $eq: order.health_unit },
+          })
+        ).data;
+
+        // Only send email to business users that have the 'orders_emails' permission
+        collaborators = collaborators.filter((user) => {
+          return user?.permissions?.includes('orders_emails');
+        });
+
+        const collaboratorsEmails = collaborators.map((user) => {
+          if (user?.permissions?.includes('orders_emails')) {
+            return user.email;
+          }
+        });
+
+        let schedule = await DateUtils.getScheduleRecurrencyText(
+          order.schedule_information.schedule
+        );
+
+        let birthdate = await DateUtils.convertDateToReadableString(
+          (order.patient as IPatientDocument).birthdate
+        );
+
+        let userEmailPayload = {
+          customerName: (order.customer as ICustomer).name,
+          healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
+          date: await DateUtils.convertDateToReadableString(visit_start),
+          time:
+            (await DateUtils.getTimeFromDate(visit_start)) +
+            ' - ' +
+            (await DateUtils.getTimeFromDate(visit_end)),
+
+          orderSchedule: schedule,
+          orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
+          orderServices: orderServices,
+
+          patientName: (order.patient as IPatient).name,
+          patientBirthdate: birthdate,
+          patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'n/a',
+          patientStreet: (order.patient as IPatient).address.street,
+          patientCity: (order.patient as IPatient).address.city,
+          patientPostalCode: (order.patient as IPatient).address.postal_code,
+          patientCountry: (order.patient as IPatient).address.country,
+        };
+
+        let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+          'marketplace_home_care_order_visit_scheduled',
+          userEmailPayload
+        );
+
+        if (
+          !marketplaceNewOrderEmail ||
+          !marketplaceNewOrderEmail.htmlBody ||
+          !marketplaceNewOrderEmail.subject
+        ) {
+          return next(new HTTPError._500('Error while getting the email template.'));
+        }
+
+        await OrdersController.SES.sendEmail(
+          [(order.customer as ICustomer).email],
+          marketplaceNewOrderEmail.subject,
+          marketplaceNewOrderEmail.htmlBody
+        );
+
+        // Send email to all collaborators that have the 'orders_emails' permission
+        if (collaboratorsEmails && collaboratorsEmails.length > 0) {
+          for (let i = 0; i < collaboratorsEmails.length; i++) {
+            const collaboratorEmail = collaboratorsEmails[i];
+            if (collaboratorEmail) {
+              let healthUnitEmailPayload = {
+                collaboratorName: collaborators[i].name,
+                healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
+
+                date: await DateUtils.convertDateToReadableString(visit_start),
+
+                time:
+                  (await DateUtils.getTimeFromDate(visit_start)) +
+                  ' - ' +
+                  (await DateUtils.getTimeFromDate(visit_end)),
+
+                orderSchedule: schedule,
+                orderRecurrency: await DateUtils.getRecurrencyType(
+                  order.schedule_information.recurrency
+                ),
+                orderServices: orderServices,
+
+                patientName: (order.patient as IPatient).name,
+                patientBirthdate: birthdate,
+                patientMedicalInformation: (order.patient as IPatient)?.medical_conditions || 'n/a',
+                patientStreet: (order.patient as IPatient).address.street,
+                patientCity: (order.patient as IPatient).address.city,
+                patientPostalCode: (order.patient as IPatient).address.postal_code,
+                patientCountry: (order.patient as IPatient).address.country,
+
+                customerName: (order.customer as ICustomer).name,
+                customerPhone: (order.customer as ICustomer).phone,
+              };
+
+              let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+                'business_home_care_order_visit_scheduled',
+                healthUnitEmailPayload
+              );
+
+              if (
+                !businessNewOrderEmail ||
+                !businessNewOrderEmail.htmlBody ||
+                !businessNewOrderEmail.subject
+              ) {
+                return next(new HTTPError._500('Error while generating email template.'));
+              }
+
+              await OrdersController.SES.sendEmail(
+                [collaboratorEmail],
+                businessNewOrderEmail.subject,
+                businessNewOrderEmail.htmlBody
+              );
             }
-
-            await OrdersController.SES.sendEmail(
-              [collaboratorEmail],
-              businessNewOrderEmail.subject,
-              businessNewOrderEmail.htmlBody
-            );
           }
         }
       }

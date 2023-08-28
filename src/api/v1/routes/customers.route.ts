@@ -7,11 +7,11 @@ import { AuthenticationGuard, ClientGuard } from 'src/packages/middlewares';
 const router = express.Router();
 
 router
-  .route('/health-units/customers')
+  .route('/customers')
   .post(AuthenticationGuard, ClientGuard('business'), CustomersController.createHealthUnitCustomer)
   .get(AuthenticationGuard, ClientGuard('business'), CustomersController.listHealthUnitCustomers);
 router
-  .route('/health-units/customers/:id')
+  .route('/customers/:id')
   .get(AuthenticationGuard, ClientGuard('business'), CustomersController.retrieveHealthUnitCustomer)
   .put(AuthenticationGuard, ClientGuard('business'), CustomersController.updateHealthUnitCustomer)
   .delete(
