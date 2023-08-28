@@ -7,7 +7,6 @@ import logger from '@logger';
 
 export async function loadAWSSecrets() {
   try {
-    logger.info('Loading AWS secrets...');
 
     // Set up AWS SDK with your preferred configuration
     const awsConfig: AWS.ConfigurationOptions & ConfigurationServicePlaceholders & APIVersions = {
@@ -15,6 +14,9 @@ export async function loadAWSSecrets() {
     };
 
     const ENV = process.env.NODE_ENV || 'development';
+
+    logger.info(`[ENV: ${ENV}] Loading AWS secrets...`);
+
 
     /**
      * If the environment is development load AWS accessKeyId and secretAccessKey from .env.local
@@ -27,13 +29,14 @@ export async function loadAWSSecrets() {
       const localEnv = dotenv.config({ path: `.env.local` });
 
       if (localEnv.parsed) {
+        // set the AWS credentials with the values from .env.local
         awsConfig.credentials = new AWS.Credentials({
           accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
           secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
         });
-      } else {
-        throw new Error('Failed to load AWS credentials from .env.local');
       }
+    } else {
+      // no need to load the AWS credentials because the app will be deployed as an ECS task and the credentials will be provided by the task role.
     }
 
     AWS.config.update(awsConfig);
@@ -72,7 +75,5 @@ export async function loadAWSSecrets() {
     } else {
       console.error(`Failed to retrieve AWS ${environment} secrets.`);
     }
-  } catch (error) {
-    console.error('Error loading AWS secrets:', error);
-  }
+  } catch (error) {}
 }
