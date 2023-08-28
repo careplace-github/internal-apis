@@ -5,6 +5,6 @@ import LayerError from '../layer-error';
  */
 export default class InternalError extends LayerError {
   constructor(message: string) {
-    super(message, 'INTERNAL_ERROR');
+    super(message, 'INTERNAL_ERROR', false);
   }
 }
