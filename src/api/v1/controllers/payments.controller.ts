@@ -471,7 +471,7 @@ export default class PaymentsController {
         }
       }
 
-      let healthUnitAccountId = order.health_unit.stripe_information.account_id;
+      let healthUnitAccountId = (order.health_unit as IHealthUnit).stripe_information.account_id;
 
       let user = await AuthHelper.getUserFromDB(accessToken);
 

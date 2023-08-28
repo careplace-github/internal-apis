@@ -10,12 +10,12 @@ const PatientSchema: Schema<IPatientDocument> = new Schema<IPatientDocument>(
       required: true,
       auto: true,
     },
-    customer: { type: Schema.Types.ObjectId, ref: 'customer', required: false },
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: false },
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
 
     kinship: {
       type: String,
-      required: true,
+      required: false,
       enum: [
         'father',
         'mother',
@@ -35,7 +35,7 @@ const PatientSchema: Schema<IPatientDocument> = new Schema<IPatientDocument>(
     profile_picture: { type: String, required: false },
     name: { type: String, required: true },
     birthdate: { type: Date, required: true },
-    phone: { type: String, required: false },
+    phone: { type: String, required: false, default: null },
     gender: { type: String, required: false, enum: ['male', 'female', 'other'] },
     medical_conditions: { type: String, required: false },
     address: {
