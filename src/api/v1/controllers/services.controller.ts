@@ -1,7 +1,7 @@
 // express
 import { Request, Response, NextFunction } from 'express';
 // mongoose
-import mongoose, { FilterQuery, startSession } from 'mongoose';
+import mongoose, { FilterQuery, QueryOptions, startSession } from 'mongoose';
 
 // @api
 import {
@@ -32,7 +32,33 @@ export default class ServicesController {
         statusCode: res.statusCode,
         data: {},
       };
-      const services = await ServicesController.ServicesDAO.queryList({});
+
+      let options: QueryOptions<IHealthUnit> = {};
+
+      const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
+      const documentsPerPage =
+        typeof req.query.documentsPerPage === 'string' ? parseInt(req.query.documentsPerPage) : 10;
+
+      if (req.query.sortBy) {
+        if (req.query.sortBy === 'name') {
+          // sort by healthUnit.business_profile.name
+          options.sort = {
+            name: req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
+          };
+        }
+      } else {
+        // by default sort by the name
+        options.sort = {
+          name: 1, // 1 = ascending, -1 = descending
+        };
+      }
+
+      const services = await ServicesController.ServicesDAO.queryList(
+        {},
+        options,
+        page,
+        documentsPerPage
+      );
 
       response.statusCode = 200;
       response.data = services;
