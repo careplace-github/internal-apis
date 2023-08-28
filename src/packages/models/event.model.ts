@@ -14,6 +14,8 @@ const EventSchema: Schema<IEventDocument> = new Schema<IEventDocument>(
     owner_type: { type: String, required: true, enum: ['health_unit', 'collaborator'] },
     owner: { type: Schema.Types.ObjectId, required: true },
 
+    order: { type: Schema.Types.ObjectId, required: false },
+
     title: { type: String, required: true },
     description: { type: String, required: false },
     start: { type: Date, required: true },

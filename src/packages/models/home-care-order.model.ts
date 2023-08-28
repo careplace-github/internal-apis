@@ -28,7 +28,7 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
     schedule_information: {
       start_date: { type: Date, required: true },
       end_date: { type: Date, required: false, default: null },
-      recurrency: { type: Number, required: true, enum: [0, 1, 2, 4] },
+      recurrency: { type: Number, required: true, enum: [1, 2, 4] },
       schedule: [
         {
           week_day: { type: Number, required: true, enum: [1, 2, 3, 4, 5, 6, 7] },
@@ -49,7 +49,7 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
     cancellation_date: { type: Date, required: false }, // date when the order was cancelled
     order_total: { type: Number, required: false },
 
-    screening_visit: { type: Schema.Types.ObjectId, ref: 'Event', required: false, default: null },
+    visits: [{ type: Schema.Types.ObjectId, ref: 'Event', required: true, default: [] }],
     observations: { type: String, required: false, default: null },
     stripe_information: {
       subscription_id: { type: String, required: false, default: null },
