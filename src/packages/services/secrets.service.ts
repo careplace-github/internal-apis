@@ -5,9 +5,12 @@ import dotenv from 'dotenv';
 
 import logger from '@logger';
 
+import fs from 'fs';
+import util from 'util';
+const asyncAccess = util.promisify(fs.access);
+
 export async function loadAWSSecrets() {
   try {
-
     // Set up AWS SDK with your preferred configuration
     const awsConfig: AWS.ConfigurationOptions & ConfigurationServicePlaceholders & APIVersions = {
       region: 'eu-west-3',
@@ -17,25 +20,22 @@ export async function loadAWSSecrets() {
 
     logger.info(`[ENV: ${ENV}] Loading AWS secrets...`);
 
+    try {
+      await asyncAccess('.env.local');
+      console.log('File .env.local found.');
 
-    /**
-     * If the environment is development load AWS accessKeyId and secretAccessKey from .env.local
-     * If the environment is different from development there is no need to load the AWS credentials
-     * because the app will be deployed as an ECS task and the credentials will be provided by the
-     * task role.
-     */
-    if (ENV === 'development') {
-      // Load accessKeyId and secretAccessKey from .local.env
-      const localEnv = dotenv.config({ path: `.env.local` });
+      const localEnv = dotenv.config({ path: '.env.local' });
 
+      // set the AWS credentials with the values from .env.local
       if (localEnv.parsed) {
-        // set the AWS credentials with the values from .env.local
         awsConfig.credentials = new AWS.Credentials({
           accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
           secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
         });
       }
-    } else {
+    } catch (err) {
+      console.log('No .env.local file found.');
+
       // no need to load the AWS credentials because the app will be deployed as an ECS task and the credentials will be provided by the task role.
     }
 
