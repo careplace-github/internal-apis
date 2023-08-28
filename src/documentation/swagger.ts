@@ -26,7 +26,15 @@ function swaggerDocs(app, port) {
     res.send(swaggerSpec);
   });
 
-  logger.info(`Swagger docs available at http://localhost:${port}/api/v1/docs \n`);
+  let API_URL;
+
+  if (process.env.NODE_ENV === 'development') {
+    API_URL = `${process.env.HOST}`;
+  } else {
+    API_URL = `${process.env.HOST}`;
+  }
+
+  logger.info(`Swagger docs available at ${API_URL}/api/v1/docs \n`);
 }
 
 export default swaggerDocs;

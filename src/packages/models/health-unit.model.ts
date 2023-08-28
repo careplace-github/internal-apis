@@ -79,7 +79,6 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
       minimum_hourly_rate: { type: Number, required: true, default: 0 },
     },
 
-
     stripe_information: {
       account_id: { type: String, required: true, unique: true },
       customer_id: { type: String, required: true, unique: true },
