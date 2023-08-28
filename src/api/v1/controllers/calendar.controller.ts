@@ -392,7 +392,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -457,7 +457,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -518,7 +518,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -536,9 +536,11 @@ export default class CalendarController {
         }
       }
 
+      logger.info('user.health_unit: ' + user.health_unit);
+
       if (
         eventExists.owner_type !== 'health_unit' ||
-        eventExists.owner !== user.health_unit ||
+        eventExists.owner.toString() !== user.health_unit._id.toString() ||
         !user.permissions.includes('calendar_edit')
       ) {
         return next(new HTTPError._403('You do not have access to update this event.'));
@@ -603,7 +605,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -623,7 +625,7 @@ export default class CalendarController {
 
       if (
         eventExists.owner_type !== 'health_unit' ||
-        eventExists.owner !== user.health_unit ||
+        eventExists.owner.toString() !== user.health_unit._id.toString() ||
         !user.permissions.includes('calendar_edit')
       ) {
         return next(new HTTPError._403('You do not have access to delete this event.'));
@@ -674,7 +676,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -689,7 +691,17 @@ export default class CalendarController {
             undefined,
             undefined,
             undefined,
-            undefined
+            [
+              {
+                path: 'order',
+                model: 'HomeCareOrder',
+                populate: {
+                  path: 'caregiver',
+                  model: 'Caregiver',
+                  select: 'name email profile_picture',
+                },
+              },
+            ]
           ).then((events) => {
             return events.data;
           });
@@ -735,9 +747,8 @@ export default class CalendarController {
         for (let i = 0; i < eventsSeries.length; i++) {
           const eventSeries = eventsSeries[i];
 
-          const eventsGenerated = await CalendarController.CalendarHelper.generateEventsFromSeries(
-            eventSeries
-          );
+          const eventsGenerated =
+            (await CalendarController.CalendarHelper.generateEventsFromSeries(eventSeries)) || [];
 
           events = [...events, ...eventsGenerated];
         }
@@ -784,7 +795,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -856,7 +867,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -924,7 +935,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 
@@ -981,7 +992,7 @@ export default class CalendarController {
 
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));
       }
 

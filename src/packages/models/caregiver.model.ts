@@ -27,7 +27,7 @@ const CaregiverSchema: Schema<ICaregiverDocument> = new Schema<ICaregiverDocumen
      * When a caregiver is created with access to the app the email and phone number are managed through cognito and because of this they are not required.
      * The email and phone number are only required when the caregiver is not allowed to the app.
      */
-    email: { type: String },
+    email: { type: String, required: true },
 
     phone: { type: String },
 
@@ -41,7 +41,7 @@ const CaregiverSchema: Schema<ICaregiverDocument> = new Schema<ICaregiverDocumen
      */
     health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit' },
 
-    services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
+    services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: true }],
 
     address: {
       street: { type: String, required: false },
