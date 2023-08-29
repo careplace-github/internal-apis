@@ -28,8 +28,8 @@ name: '[STAGING] Continuous Deployment (CD)'
 
 on:
   push:
-    branches: [ "staging", "*-release" ] # only run CD on staging and release branches (e.g. staging, release-1.0)
-    
+    branches: [ staging, release* ] # only run CD on staging and release branches (e.g. staging, release-1.0)
+
 env:
   AWS_REGION: eu-west-3                                              # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: careplace-staging-ecr-repository-backend         # set this to your Amazon ECR repository name
