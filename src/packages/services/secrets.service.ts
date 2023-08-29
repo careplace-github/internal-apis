@@ -28,7 +28,7 @@ export async function loadAWSSecrets() {
 
     if (environment === 'development') {
       try {
-        await asyncAccess('.env');
+        await asyncAccess('.env.local');
 
         const localEnv = dotenv.config({ path: '.env.local' });
 
