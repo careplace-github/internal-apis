@@ -17,29 +17,38 @@ export async function loadAWSSecrets() {
     };
 
     try {
+      // Check if .env file exists
       await asyncAccess('.env');
+      // Load the .env file
+      dotenv.config({ path: '.env' });
     } catch (error) {
+      // Throw an error if the .env file is missing
       throw new Error('Missing required .env file.');
     }
 
-    const environment = process.env.NODE_ENV || 'development'; // Get the current environment
+    // Get the current environment
+    const environment = process.env.NODE_ENV || 'development';
 
     logger.info(`[ENV: ${environment}] Loading AWS secrets...`);
 
     if (environment === 'development') {
       try {
+        // Check if .env.local file exists
         await asyncAccess('.env.local');
 
+        // Load the .env.local file with the developer credentials
         const localEnv = dotenv.config({ path: '.env.local' });
 
-        // set the AWS credentials with the values from .env.local
         if (localEnv.parsed) {
+          // set the AWS credentials with the values from .env.local
+
           awsConfig.credentials = new AWS.Credentials({
             accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
             secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
           });
         }
       } catch (err) {
+        // Throw an error if the .env.local file is missing
         throw new Error('Server is in development mode but no .env.local file was found.');
       }
     }
