@@ -85,9 +85,9 @@ export default class HealthUnitsController {
       let filters: FilterQuery<IHealthUnit> = {};
       let options: QueryOptions<IHealthUnit> = {};
 
-      const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
+      const page = typeof req.query.page === 'string' ? parseInt(req?.query?.page) : 1;
       const documentsPerPage =
-        typeof req.query.documentsPerPage === 'string' ? parseInt(req.query.documentsPerPage) : 10;
+        typeof req.query.documentsPerPage === 'string' ? parseInt(req?.query?.documentsPerPage) : 10;
 
       // If the sortBy query parameter is not null, then we will sort the results by the sortBy query parameter.
       if (req.query.sortBy) {
