@@ -489,7 +489,7 @@ const main = async () => {
         // Handle SIGUSR1 signal
       });
     } catch (error) {
-      console.log(`Unable to start Express Application: ${error}`);
+      logger.info(`Unable to start Express Application: ${error}`);
       // throw new HTTPError._500(`Unable to start Express Application: ${error}`);
     }
 
