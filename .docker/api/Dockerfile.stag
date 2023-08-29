@@ -12,6 +12,9 @@ RUN npm config rm proxy
 
 RUN npm config rm https-proxy
 
+# Set environment variables
+ENV NODE_ENV="staging"
+
 RUN yarn install --network-timeout 100000
 
 RUN yarn build
