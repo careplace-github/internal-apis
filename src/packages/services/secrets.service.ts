@@ -17,32 +17,45 @@ export async function loadAWSSecrets() {
     };
 
     try {
-      await asyncAccess('.env.local');
-      console.log('File .env.local found.');
+      // Check if .env file exists
+      await asyncAccess('.env');
+      // Load the .env file
+      dotenv.config({ path: '.env' });
+    } catch (error) {
+      // Throw an error if the .env file is missing
+      throw new Error('Missing required .env file.');
+    }
 
-      const localEnv = dotenv.config({ path: '.env.local' });
+    // Get the current environment
+    const environment = process.env.NODE_ENV || 'development';
 
-      // set the AWS credentials with the values from .env.local
-      if (localEnv?.parsed) {
-        awsConfig.credentials = new AWS.Credentials({
-          accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
-          secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
-        });
+    logger.info(`[ENV: ${environment}] Loading AWS secrets...`);
+
+    if (environment === 'development') {
+      try {
+        // Check if .env.local file exists
+        await asyncAccess('.env.local');
+
+        // Load the .env.local file with the developer credentials
+        const localEnv = dotenv.config({ path: '.env.local' });
+
+        if (localEnv.parsed) {
+          // set the AWS credentials with the values from .env.local
+
+          awsConfig.credentials = new AWS.Credentials({
+            accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
+            secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
+          });
+        }
+      } catch (err) {
+        // Throw an error if the .env.local file is missing
+        throw new Error('Server is in development mode but no .env.local file was found.');
       }
-    } catch (err) {
-      console.log('No .env.local file found.');
-
-      // no need to load the AWS credentials because the app will be deployed as an ECS task and the credentials will be provided by the task role.
     }
 
     AWS.config.update(awsConfig);
 
-    const ENV = process.env.NODE_ENV || 'development';
-
-    logger.info(`[ENV: ${ENV}] Loading AWS secrets...`);
-
     const secretsManager = new AWS.SecretsManager();
-    const environment = process.env.NODE_ENV || 'development'; // Get the current environment
 
     // Define the secret name based on the environment
     let secretName: string;
@@ -75,7 +88,5 @@ export async function loadAWSSecrets() {
     } else {
       console.error(`Failed to retrieve AWS ${environment} secrets.`);
     }
-  } catch (error) {
-    logger.error(`Failed to load AWS secrets. \n`, error);
-  }
+  } catch (error) {}
 }
