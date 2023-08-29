@@ -23,7 +23,7 @@ export async function loadAWSSecrets() {
       const localEnv = dotenv.config({ path: '.env.local' });
 
       // set the AWS credentials with the values from .env.local
-      if (localEnv.parsed) {
+      if (localEnv?.parsed) {
         awsConfig.credentials = new AWS.Credentials({
           accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
           secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
@@ -75,5 +75,7 @@ export async function loadAWSSecrets() {
     } else {
       console.error(`Failed to retrieve AWS ${environment} secrets.`);
     }
-  } catch (error) {}
+  } catch (error) {
+    logger.error(`Failed to load AWS secrets. \n`, error);
+  }
 }
