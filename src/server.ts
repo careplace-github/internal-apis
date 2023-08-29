@@ -533,9 +533,7 @@ const main = async () => {
         logger.info(`API Version: ${process.env.API_VERSION} `);
         logger.info(`API Route: ${process.env.API_ROUTE as string} `);
         logger.info(`API URL: ${process.env.API_URL} `);
-        logger.info(`Server Port: ${process.env.PORT}`);
-        logger.info(`Marketplace Base URL: ${process.env.MARKETPLACE_BASE_URL}`);
-        logger.info(`Business Base URL: ${process.env.BUSINESS_BASE_URL} \n`);
+        logger.info(`Server Port: ${process.env.PORT} \n`);
 
         swaggerDocs(app, process.env.PORT);
 
