@@ -26,6 +26,7 @@ export default function ErrorHandler(
       data: {
         error: {
           message: err.message,
+          code: err.code,
           type: err.type,
         },
       },
@@ -90,6 +91,7 @@ export default function ErrorHandler(
         error: {
           message: err.message,
           type: 'VALIDATION_ERROR',
+          code: 'InputValidationError',
         },
       },
       statusCode: 400,
