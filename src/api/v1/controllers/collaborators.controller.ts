@@ -158,7 +158,7 @@ export default class CollaboratorsController {
 
         // Check if the domains are the same or if the collaborator email is a subdomain of the health unit email.
         const isSameDomain = healthUnitEmailDomain === collaboratorEmailDomain;
-        const isSubdomain = collaboratorEmailDomain.endsWith(`.${healthUnitEmailDomain}`)
+        const isSubdomain = collaboratorEmailDomain.endsWith(`.${healthUnitEmailDomain}`);
 
         // Check if the domains are the same or if the collaborator email is a subdomain of the health unit email.
         if (!isSameDomain && !isSubdomain) {
