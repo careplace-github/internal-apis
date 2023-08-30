@@ -27,7 +27,7 @@ export async function loadAWSSecrets() {
     }
 
     // Get the current environment
-    let environment = process.env.NODE_ENV || 'development';
+    const environment = process.env.NODE_ENV || 'development';
 
     logger.info(`[ENV: ${environment}] Loading AWS secrets...`);
 
@@ -59,8 +59,6 @@ export async function loadAWSSecrets() {
 
     // Define the secret name based on the environment
     let secretName: string;
-
-    environment === process.env.NODE_ENV;
 
     if (environment === 'production') {
       secretName = 'prod/env';
