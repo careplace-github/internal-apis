@@ -4,6 +4,8 @@ import HTTP_Error from '../http-error';
 export default class API503Error extends HTTP_Error {
   constructor(
     message,
+    code?: string,
+
     statusCode = httpStatusCodes.SERVICE_UNAVAILABLE,
     type = 'SERVICE_UNAVAILABLE',
     isOperational = false
