@@ -88,7 +88,7 @@ export default class CollaboratorsController {
 
       let healthUnit: IHealthUnitDocument;
 
-      let newcollaborator: ICollaboratorDocument;
+      let newcollaborator: ICollaboratorDocument | undefined;
       let temporaryPassword: string | undefined;
       let cognitocollaborator: CognitoIdentityServiceProvider.SignUpResponse | undefined;
 
@@ -156,8 +156,12 @@ export default class CollaboratorsController {
         // Get the domain from the collaborator email.
         const collaboratorEmailDomain = sanitizedReqCollaborator.email.split('@')[1];
 
-        // Check if the domains are the same.
-        if (healthUnitEmailDomain !== collaboratorEmailDomain) {
+        // Check if the domains are the same or if the collaborator email is a subdomain of the health unit email.
+        const isSameDomain = healthUnitEmailDomain === collaboratorEmailDomain;
+        const isSubdomain = collaboratorEmailDomain.endsWith(`.${healthUnitEmailDomain}`)
+
+        // Check if the domains are the same or if the collaborator email is a subdomain of the health unit email.
+        if (!isSameDomain && !isSubdomain) {
           return next(
             new HTTPError._400(
               'The collaborator email domain is not the same as the health unit email domain.'
@@ -225,9 +229,10 @@ export default class CollaboratorsController {
           reqCollaborator.email
         );
 
-        switch (error.type) {
-          case 'DUPLICATE_KEY': {
-            return next(new HTTPError._400('collaborator already exists.'));
+        switch (error.code) {
+          case 'UserNotFoundException': {
+            // If the collaborator was not found in Cognito ignore the error.
+            break;
           }
 
           default: {
@@ -519,7 +524,11 @@ export default class CollaboratorsController {
         try {
           await CollaboratorsController.CognitoService.adminDeleteUser(collaborator.cognito_id);
         } catch (error: any) {
-          switch (error.type) {
+          switch (error.code) {
+            case 'UserNotFoundException': {
+              // If the collaborator was not found in Cognito ignore the error.
+              break;
+            }
             default:
               return next(new HTTPError._500(error.message));
           }
