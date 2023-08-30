@@ -6,13 +6,15 @@ export default class HTTP_Error extends Error {
   isOperational: boolean;
   statusCode: number;
   description?: string;
+  code?: string;
 
   constructor(
     message: string,
     statusCode: number,
     isOperational: boolean,
     type: string,
-    description?: string
+    description?: string,
+    code?: string
   ) {
     super(message);
 
@@ -23,6 +25,7 @@ export default class HTTP_Error extends Error {
     this.isOperational = isOperational;
     this.statusCode = statusCode;
     this.description = description;
+    this.code = code;
 
     Error.captureStackTrace(this);
   }

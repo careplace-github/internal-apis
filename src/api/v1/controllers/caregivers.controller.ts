@@ -497,13 +497,16 @@ export default class CaregiversController {
           // queryList returns 402 if no results so we don't need error handling
           caregiver: caregiverId,
           // Status different from new, cancelled, completed
-          status: { $nin: ['new', 'cancelled', 'completed'] },
+          status: { $nin: ['new', 'cancelled', 'declined', 'completed'] },
         })
       ).data;
 
       if (orders.length > 0) {
         return next(
-          new HTTPError._400('Caregiver is associated with an order and cannot be deleted.')
+          new HTTPError._400(
+            'Caregiver is associated with an order and cannot be deleted.',
+            'CaregiverIsAssociatedWithOrder'
+          )
         );
       }
 
