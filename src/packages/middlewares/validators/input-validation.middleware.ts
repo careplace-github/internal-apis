@@ -15,7 +15,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
     );
 
     // Throw a 400 error with the errors array
-    throw new HTTPError._400(errors.array()[0].msg, undefined, 'VALIDATION_ERROR');
+    throw new HTTPError._400(errors.array()[0].msg, 'InputValidationError');
   }
 
   logger.info('Input Validation Middleware: No errors found.');
