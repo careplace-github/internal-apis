@@ -17,5 +17,5 @@ RUN yarn install --frozen-lockfile --network-timeout 100000
 
 RUN yarn build
 
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:staging" ]
 

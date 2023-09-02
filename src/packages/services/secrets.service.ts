@@ -16,41 +16,36 @@ export async function loadAWSSecrets() {
       region: 'eu-west-3',
     };
 
-    try {
-      // Check if .env file exists
-      await asyncAccess('.env');
-      // Load the .env file
-      dotenv.config({ path: '.env' });
-    } catch (error) {
-      // Throw an error if the .env file is missing
-      throw new Error('Missing required .env file.');
-    }
-
-    // Get the current environment
-    const environment = process.env.NODE_ENV || 'development';
+    // Get the current environment, this is set in the package.json file. The default is development
+    const environment = process.env.ENV || 'development';
 
     logger.info(`[ENV: ${environment}] Loading AWS secrets...`);
 
-    if (environment === 'development') {
-      try {
-        // Check if .env.local file exists
-        await asyncAccess('.env.local');
+    try {
+      // Check if .env.local file exists
+      await asyncAccess('.env.local');
 
-        // Load the .env.local file with the developer credentials
-        const localEnv = dotenv.config({ path: '.env.local' });
+      // If the file exists use the credentials from the .env.local file, otherwise it will use the ECS task role credentials by default
 
-        if (localEnv.parsed) {
-          // set the AWS credentials with the values from .env.local
+      // Load the .env.local file with the developer credentials
+      const localEnv = dotenv.config({ path: '.env.local' });
 
-          awsConfig.credentials = new AWS.Credentials({
-            accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
-            secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
-          });
-        }
-      } catch (err) {
-        // Throw an error if the .env.local file is missing
+      if (localEnv.parsed) {
+        // set the AWS credentials with the values from .env.local
+
+        awsConfig.credentials = new AWS.Credentials({
+          accessKeyId: localEnv.parsed.AWS_ACCESS_KEY_ID,
+          secretAccessKey: localEnv.parsed.AWS_SECRET_ACCESS_KEY,
+        });
+      }
+    } catch (err) {
+      console.log(`Failed to load .env.local file.`, err);
+      if (environment === 'development') {
+        // If the environment is development and the .env.local file does not exist, throw an error
         throw new Error('Server is in development mode but no .env.local file was found.');
       }
+      // If the environment is not development, then the .env.local file is not required
+      // If one wants to use the NODE_ENV=staging in development, then the .env.local file is required
     }
 
     AWS.config.update(awsConfig);
@@ -88,5 +83,7 @@ export async function loadAWSSecrets() {
     } else {
       console.error(`Failed to retrieve AWS ${environment} secrets.`);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(`Failed to retrieve AWS secrets.`, error);
+  }
 }
