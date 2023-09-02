@@ -19,6 +19,7 @@
     "@packages/routes",
     "@api/v1",
     "@api/files",
+    "@api/admin",
     "src"
   ]
 }
