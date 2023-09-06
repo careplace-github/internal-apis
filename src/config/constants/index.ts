@@ -91,6 +91,7 @@ export const AWS_S3_REGION = process.env.AWS_S3_REGION || (process.env.AWS_REGIO
 // AWS SES Credentials
 export const AWS_SES_REGION = process.env.AWS_SES_REGION || (process.env.AWS_REGION as string);
 export const AWS_SES_SENDER_EMAIL = process.env.AWS_SES_SENDER_EMAIL as string;
+export const AWS_SES_BUSINESS_SENDER_EMAIL = process.env.AWS_SES_BUSINESS_SENDER_EMAIL as string;
 export const AWS_SES_REPLY_TO_EMAIL = process.env.AWS_SES_REPLY_TO_EMAIL as string;
 export const AWS_SES_ORDERS_BCC_EMAIL = process.env.AWS_SES_ORDERS_BCC_EMAIL as string;
 

@@ -54,6 +54,19 @@ export default class DateUtils {
     return newDate;
   }
 
+  static async getNextWeekdayWithTimeFromDate(date, weekdayNumber) {
+    const targetDate = new Date(date);
+    const currentDay = targetDate.getUTCDay();
+    
+    if (currentDay === weekdayNumber) {
+      // If the current day matches the target weekday, return the input date itself.
+      return targetDate;
+    }
+    
+    const daysUntilTargetWeekday = ((weekdayNumber - currentDay + 7) % 7) || 7;
+    targetDate.setUTCDate(targetDate.getUTCDate() + daysUntilTargetWeekday);
+    return targetDate;
+  }
   // Helper function to get the next Monday date from a date
   static async getNextMondayDate(date) {
     const newDate = new Date(date);

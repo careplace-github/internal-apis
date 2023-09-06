@@ -247,6 +247,7 @@ export default class CaregiversController {
             email: reqCaregiver.email,
             healthUnit: healthUnit!.business_profile!.name!,
             password: temporaryPassword,
+            
           };
 
           // Insert variables into email template

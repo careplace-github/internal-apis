@@ -2,11 +2,12 @@
 import { Request, Response, NextFunction } from 'express';
 
 // Import Services
-import { StripeService, VendusService } from '@packages/services';
+import { SESService, StripeService, VendusService } from '@packages/services';
 
 import { buffer } from 'micro';
 
 import {
+  AWS_SES_ORDERS_BCC_EMAIL,
   STRIPE_ACCOUNT_ENDPOINT_SECRET,
   STRIPE_APPLICATION_FEE,
   STRIPE_CONNECT_ENDPOINT_SECRET,
@@ -27,6 +28,7 @@ import {
   IHomeCareOrder,
   IPatient,
 } from '@packages/interfaces';
+import { PATHS } from 'src/packages/routes';
 
 /**
  * Controller for Stripe Webhooks
@@ -45,6 +47,7 @@ export default class StripeWebhooksController {
   // services
   static StripeService = StripeService;
   static VendusService = VendusService;
+  static SES = SESService;
   // utils
   static DateUtils = DateUtils;
 
@@ -119,6 +122,9 @@ export default class StripeWebhooksController {
         case 'person.updated':
           break;
 
+        case 'application_fee.created':
+          break;
+
         /**
          *	Occurs when a payment intent results in a successful charge. Available for all payments, including destination and direct charges
          */
@@ -165,7 +171,11 @@ export default class StripeWebhooksController {
 
           let customer = order.customer as ICustomer;
 
-          let faturaRecibo = await StripeWebhooksController.VendusService.createFaturaRecibo(
+          let attachment = null;
+
+          // TODO: CREATE PAYMENT RECEIPT
+          /**
+           *  let faturaRecibo = await StripeWebhooksController.VendusService.createFaturaRecibo(
             '500',
             '500',
             {
@@ -184,20 +194,22 @@ export default class StripeWebhooksController {
               ? (invoice.discount?.coupon?.amount_off / 100).toFixed(2).toString()
               : undefined
           );
-
-          // download the pdf
-          let faturaReciboPDF = await StripeWebhooksController.VendusService.downloadDocument(
+           * let faturaReciboPDF = await StripeWebhooksController.VendusService.downloadDocument(
             faturaRecibo.id
           );
 
-          // get the pdf link
+          let attachment = faturaReciboPDF;
+           */
 
           // If the payment was made having a discount the application fee had to be changed, so we need to change it back to the original value
           await StripeWebhooksController.StripeService.updateSubscription(subscriptionId, {
             application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
           });
 
-          object;
+          order.status = 'active';
+
+          // Update the order status
+          await StripeWebhooksController.HomeCareOrdersDAO.update(order);
 
           // Prepare the email payload for the customer
           let customerEmailPayload = {
@@ -206,16 +218,20 @@ export default class StripeWebhooksController {
             subTotal: order.order_total.toFixed(2),
             taxAmount: '0.00',
             total: order.order_total.toFixed(2),
-            orderNumber: invoice?.number?.replace('A53F4B19-', ''),
+            orderNumber: order.order_number,
             patientName: (order.patient as IPatient).name,
             receiptDate: await StripeWebhooksController.DateUtils.getDateFromUnixTimestamp(
               invoice.created
             ),
-            paymentMethod: paymentMethod.card?.brand + ' ' + paymentMethod.card?.last4,
+            paymentMethod: '**** ' + paymentMethod.card?.last4,
             customerStreet: order.billing_details.address.street,
             customerCity: order.billing_details.address.city,
             customerPostalCode: order.billing_details.address.postal_code,
             customerCountry: order.billing_details.address.country,
+
+            website: PATHS.marketplace.home,
+            termsAndConditions: PATHS.marketplace.termsAndConditions,
+            privacyPolicy: PATHS.marketplace.privacyPolicy,
           };
 
           // Get the email template for the customer
@@ -226,15 +242,28 @@ export default class StripeWebhooksController {
 
           // Send the email to the customer
           try {
-            await StripeWebhooksController.EmailHelper.sendEmailWithAttachment(
-              order.billing_details.email || 'henrique.fonseca@careplace.pt',
-              customerEmail.subject,
-              customerEmail.htmlBody,
-              null,
-              [faturaReciboPDF],
-              null,
-              null
-            );
+            if (customerEmail.subject && customerEmail.htmlBody) {
+              if (attachment) {
+                await StripeWebhooksController.EmailHelper.sendEmailWithAttachment(
+                  order.billing_details.email,
+                  customerEmail.subject,
+                  customerEmail.htmlBody,
+                  null,
+                  [attachment],
+                  null,
+                  AWS_SES_ORDERS_BCC_EMAIL
+                );
+              } else {
+                await StripeWebhooksController.SES.sendEmail(
+                  [order.billing_details.email],
+                  customerEmail.subject,
+                  customerEmail.htmlBody,
+                  undefined,
+                  undefined,
+                  [AWS_SES_ORDERS_BCC_EMAIL]
+                );
+              }
+            }
           } catch (error) {
             logger.error('Error sending email to customer: ' + error);
           }
@@ -246,6 +275,18 @@ export default class StripeWebhooksController {
 
         case 'payment_intent.payment_failed':
           // TODO: payment_intent.payment_failed
+          break;
+
+        case 'charge.succeeded':
+          // TODO: charge.succeeded
+          break;
+
+        case 'charge.failed':
+          // TODO: charge.failed
+          break;
+
+        case 'charge.refunded':
+          // TODO: charge.refunded
           break;
 
         /**

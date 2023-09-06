@@ -232,6 +232,9 @@ export default class AdminHealthUnitsController {
             healthUnitName: healthUnit!.business_profile!.name!,
             password: temporaryPassword,
             link: PATHS.business.auth.login,
+            website: PATHS.business.home,
+            privacyPolicy: PATHS.business.privacyPolicy,
+            termsAndConditions: PATHS.business.termsAndConditions,
           };
 
           // Insert variables into email template
