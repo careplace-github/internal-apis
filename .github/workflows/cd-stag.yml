@@ -34,6 +34,7 @@ env:
   AWS_REGION: eu-west-3                                              # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: careplace-staging-ecr-repository-backend         # set this to your Amazon ECR repository name
   ECS_SERVICE: careplace-staging-ecs-service-backend               # set this to your Amazon ECS service name
+  ECS_SERVICE_WEBHOOKS: careplace-staging-ecs-service-backend 
   ECS_CLUSTER: careplace-staging-ecs-cluster-backend                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition.staging.json                     # set this to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
   CONTAINER_NAME: backend                                            # set this to the name of the container in the containerDefinitions section of your task definition
@@ -83,10 +84,18 @@ jobs:
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
+    - name: Deploy Amazon ECS task definition (backend)
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+
+    - name: Deploy Amazon ECS task definition (webhooks)
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE_WEBHOOKS }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
