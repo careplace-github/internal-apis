@@ -57,13 +57,13 @@ export default class DateUtils {
   static async getNextWeekdayWithTimeFromDate(date, weekdayNumber) {
     const targetDate = new Date(date);
     const currentDay = targetDate.getUTCDay();
-    
+
     if (currentDay === weekdayNumber) {
       // If the current day matches the target weekday, return the input date itself.
       return targetDate;
     }
-    
-    const daysUntilTargetWeekday = ((weekdayNumber - currentDay + 7) % 7) || 7;
+
+    const daysUntilTargetWeekday = (weekdayNumber - currentDay + 7) % 7 || 7;
     targetDate.setUTCDate(targetDate.getUTCDate() + daysUntilTargetWeekday);
     return targetDate;
   }

@@ -56,7 +56,7 @@ export default class SES {
     textBody = '',
     ccEmails?: string[],
     bccEmails?: string[],
-    senderEmail?: string,
+    senderEmail?: string
   ): Promise<AWS.SES.SendEmailResponse | AWS.AWSError> {
     try {
       // https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html
@@ -100,7 +100,7 @@ export default class SES {
 
       return emailSent;
     } catch (error: any) {
-      logger.error("AWS SES Service Send Email Error: " + error);
+      logger.error('AWS SES Service Send Email Error: ' + error);
       throw new LayerError.INTERNAL_ERROR(error.message);
     }
   }
