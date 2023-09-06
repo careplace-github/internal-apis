@@ -514,7 +514,7 @@ export default class StripeService {
     } catch (error: any) {
       switch (error.type) {
         case 'StripeSignatureVerificationError':
-          throw new LayerError.INVALID_PARAMETER(error.message);
+          throw new LayerError.INVALID_PARAMETER(error.type);
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }

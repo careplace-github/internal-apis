@@ -92,8 +92,17 @@ export default class StripeWebhooksController {
           STRIPE_CONNECT_ENDPOINT_SECRET
         );
       } catch (error: any) {
-        switch (error.type) {
+        switch (error) {
+          case 'StripeSignatureVerificationError':
+            event = await StripeWebhooksController.StripeService.constructEvent(
+              payload,
+              signature,
+              STRIPE_ACCOUNT_ENDPOINT_SECRET
+            );
+            break;
+
           default:
+            logger.info('Stripe Webhook Error: ' + error);
             return next(new HTTPError._400('Webhook Error: ' + error.message));
         }
       }
