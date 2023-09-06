@@ -103,7 +103,11 @@ export default class StripeWebhooksController {
 
           default:
             logger.info('Stripe Webhook Error: ' + error);
-            return next(new HTTPError._400('Webhook Error: ' + error.message + `\n${STRIPE_ACCOUNT_ENDPOINT_SECRET}`));
+            return next(
+              new HTTPError._400(
+                'Webhook Error: ' + error.message + `\n${STRIPE_ACCOUNT_ENDPOINT_SECRET}`
+              )
+            );
         }
       }
 
@@ -142,6 +146,12 @@ export default class StripeWebhooksController {
 
           // Get invoice
           let invoiceId = object.invoice as string;
+
+          // Not a subscription payment
+          if (invoiceId === null) {
+            // TODO: Handle one time payments
+            return;
+          }
 
           let invoice = await StripeWebhooksController.StripeService.getInvoice(invoiceId);
 
@@ -417,12 +427,6 @@ export default class StripeWebhooksController {
          * Sent when a PaymentIntent is created.
          */
         case 'payment_intent.created':
-          break;
-
-        /**
-         * Sent when a PaymentIntent has successfully completed payment.
-         */
-        case 'payment_intent.succeeded':
           break;
 
         default:
