@@ -92,7 +92,7 @@ export default class StripeWebhooksController {
           STRIPE_CONNECT_ENDPOINT_SECRET
         );
       } catch (error: any) {
-        switch (error) {
+        switch (error.message) {
           case 'StripeSignatureVerificationError':
             event = await StripeWebhooksController.StripeService.constructEvent(
               payload,
@@ -103,7 +103,7 @@ export default class StripeWebhooksController {
 
           default:
             logger.info('Stripe Webhook Error: ' + error);
-            return next(new HTTPError._400('Webhook Error: ' + error.message));
+            return next(new HTTPError._400('Webhook Error: ' + error.message + `\n${STRIPE_ACCOUNT_ENDPOINT_SECRET}`));
         }
       }
 
