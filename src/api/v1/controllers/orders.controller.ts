@@ -1151,16 +1151,13 @@ export default class OrdersController {
       // Get the fields to update from the request body
       const reqOrder = req.body as IHomeCareOrder;
 
+      // Thos endpoint allows health units to update their offline orders, so it is allowed to update fields like the status
       const sanitizedReqOrder = omit(reqOrder, [
         '_id',
         'health_unit',
-        'customer',
         'patient',
-        'status',
         'decline_reason',
-        'screening_visit',
         'stripe_information',
-        'billing_details',
       ]);
 
       const newOrder = {
