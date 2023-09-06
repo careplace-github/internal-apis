@@ -150,7 +150,7 @@ export default class StripeWebhooksController {
           // Not a subscription payment
           if (invoiceId === null) {
             // TODO: Handle one time payments
-            return;
+            break; // Exit switch
           }
 
           let invoice = await StripeWebhooksController.StripeService.getInvoice(invoiceId);
