@@ -61,22 +61,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate changelog
-        run: npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+      - name: Generate changelog and version
+        run: yarn changelog:standard 
 
-      - name: Determine recommended version bump
-        id: bump
-        run: npx conventional-recommended-bump
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch:  ${{ github.head_ref }}
 
-      - name: Create release
+      - name: Create Release
+        id: create_release
         uses: ncipollo/release-action@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
-          body: |
-            ${{ steps.bump.outputs.reason }}
-            ${{ steps.bump.outputs.releaseType }}
+          tag: ${{ github.ref }}
+          name: Release ${{ github.ref }}
           draft: true
-          prerelease: false
+          prerelease: true
+
+     
