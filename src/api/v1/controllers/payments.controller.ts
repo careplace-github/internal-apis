@@ -567,7 +567,7 @@ export default class PaymentsController {
       }
 
       // Convert amount to interger
-      let amount = order.order_total;
+      let amount = order.order_total * 100; // stripe requires the amount in cents
 
       if (!amount) {
         return next(new HTTPError._400('No order amount provided.'));
@@ -1222,7 +1222,7 @@ export default class PaymentsController {
         country: defaultPaymentMethod.card?.country || '',
       };
 
-      const orderTotal = order.order_total;
+      const orderTotal = order.order_total * 100; // stripe uses cents
       const discount = promotionCode.coupon.amount_off || undefined;
 
       let newApplicationFee: number;
