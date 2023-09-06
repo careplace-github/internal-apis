@@ -535,7 +535,7 @@ export default class StripeService {
     params: Stripe.PriceCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Price> {
-    logger.info('StripeService.createPrice', { params, options });
+    logger.info('StripeService.createPrice' + JSON.stringify(params, null, 2));
 
     let price: Stripe.Price;
 
@@ -549,6 +549,8 @@ export default class StripeService {
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
+
+    logger.info('StripeService.createPrice return: ' + JSON.stringify(price, null, 2));
 
     return price;
   }
