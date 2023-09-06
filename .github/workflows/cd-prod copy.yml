@@ -43,7 +43,7 @@ permissions:
 
 jobs:
   release:
-    name: Release
+    name: Tag & Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -62,7 +62,7 @@ jobs:
         run: npm install
 
       - name: Generate changelog and version
-        run: yarn changelog:standard 
+        run: npx standard-version
 
       - name: Push changes
         uses: ad-m/github-push-action@master
@@ -70,7 +70,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch:  ${{ github.head_ref }}
 
-      - name: Create Release
+      - name: Create release
         id: create_release
         uses: ncipollo/release-action@v1
         env:
