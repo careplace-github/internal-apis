@@ -28,6 +28,7 @@ import {
   IPatient,
   IService,
   IServiceDocument,
+  ICustomerDocument,
 } from 'src/packages/interfaces';
 import {
   CustomerModel,
@@ -159,6 +160,25 @@ export default class PaymentsController {
 
       let customerId = user.stripe_information.customer_id;
 
+      if (!customerId) {
+        // If the customer does not have a stripe customer id, create one.
+        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+          email: user.email,
+          name: user.name,
+        });
+
+        customerId = stripeCustomer.id;
+
+        // Update the user with the stripe customer id
+        await PaymentsController.CustomersDAO.update({
+          _id: user._id,
+          stripe_information: {
+            ...user.stripe_information, // keep the existing stripe information
+            customer_id: customerId,
+          },
+        } as ICustomerDocument);
+      }
+
       let createPaymentMethodParams: Stripe.PaymentMethodCreateParams = {
         type: 'card',
         card: {
@@ -284,6 +304,25 @@ export default class PaymentsController {
 
       let customerId = user.stripe_information.customer_id;
 
+      if (!customerId) {
+        // If the customer does not have a stripe customer id, create one.
+        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+          email: user.email,
+          name: user.name,
+        });
+
+        customerId = stripeCustomer.id;
+
+        // Update the user with the stripe customer id
+        await PaymentsController.CustomersDAO.update({
+          _id: user._id,
+          stripe_information: {
+            ...user.stripe_information, // keep the existing stripe information
+            customer_id: customerId,
+          },
+        } as ICustomerDocument);
+      }
+
       // Check if the payment method is attached to the customer trying to delete it.
       let paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
         paymentMethodId
@@ -369,6 +408,25 @@ export default class PaymentsController {
       }
 
       let customerId = user.stripe_information?.customer_id;
+
+      if (!customerId) {
+        // If the customer does not have a stripe customer id, create one.
+        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+          email: user.email,
+          name: user.name,
+        });
+
+        customerId = stripeCustomer.id;
+
+        // Update the user with the stripe customer id
+        await PaymentsController.CustomersDAO.update({
+          _id: user._id,
+          stripe_information: {
+            ...user.stripe_information, // keep the existing stripe information
+            customer_id: customerId,
+          },
+        } as ICustomerDocument);
+      }
 
       console.log('customerId: ', customerId);
 
@@ -488,6 +546,25 @@ export default class PaymentsController {
       }
 
       let customerId = user.stripe_information?.customer_id;
+
+      if (!customerId) {
+        // If the customer does not have a stripe customer id, create one.
+        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+          email: user.email,
+          name: user.name,
+        });
+
+        customerId = stripeCustomer.id;
+
+        // Update the user with the stripe customer id
+        await PaymentsController.CustomersDAO.update({
+          _id: user._id,
+          stripe_information: {
+            ...user.stripe_information, // keep the existing stripe information
+            customer_id: customerId,
+          },
+        } as ICustomerDocument);
+      }
 
       // Convert amount to interger
       let amount = order.order_total;
@@ -768,6 +845,14 @@ export default class PaymentsController {
 
       const orderId = req.params.order;
       const paymentMethodId = req.body.payment_method;
+
+      if (!paymentMethodId) {
+        return next(new HTTPError._400('No payment method id provided.'));
+      }
+
+      if (!orderId) {
+        return next(new HTTPError._400('No order id provided.'));
+      }
 
       let subscriptionId: string;
       let order: IHomeCareOrderDocument;

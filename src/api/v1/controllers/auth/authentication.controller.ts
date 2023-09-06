@@ -450,6 +450,19 @@ export default class AuthenticationController {
             clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
               ? PATHS.business.auth.login
               : PATHS.marketplace.auth.login,
+
+          website:
+            clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+              ? PATHS.business.home
+              : PATHS.marketplace.home,
+          privacyPolicy:
+            clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+              ? PATHS.business.privacyPolicy
+              : PATHS.marketplace.privacyPolicy,
+          termsAndConditions:
+            clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+              ? PATHS.business.termsAndConditions
+              : PATHS.marketplace.termsAndConditions,
         };
 
         const changePasswordEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1325,6 +1338,18 @@ export default class AuthenticationController {
             clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
               ? PATHS.business.auth.login
               : PATHS.marketplace.auth.login,
+              website:
+              clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+                ? PATHS.business.home
+                : PATHS.marketplace.home,
+            privacyPolicy:
+              clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+                ? PATHS.business.privacyPolicy
+                : PATHS.marketplace.privacyPolicy,
+            termsAndConditions:
+              clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+                ? PATHS.business.termsAndConditions
+                : PATHS.marketplace.termsAndConditions,
         };
 
         const changeEmailEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1407,6 +1432,18 @@ export default class AuthenticationController {
         const changePhoneEmailPayload = {
           name: user.name,
           phone: user.phone,
+          website:
+          clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+            ? PATHS.business.home
+            : PATHS.marketplace.home,
+        privacyPolicy:
+          clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+            ? PATHS.business.privacyPolicy
+            : PATHS.marketplace.privacyPolicy,
+        termsAndConditions:
+          clientId === AWS_COGNITO_BUSINESS_CLIENT_ID
+            ? PATHS.business.termsAndConditions
+            : PATHS.marketplace.termsAndConditions,
         };
 
         const changePhoneEmail = await EmailHelper.getEmailTemplateWithData(
