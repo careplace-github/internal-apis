@@ -1,6 +1,6 @@
 {
   "name": "careplace-internal-apis",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Careplace Internal APIs",
   "main": "./src/server.ts",
   "private": true,
@@ -32,7 +32,8 @@
     "depcheck": "depcheck --config=.depcheckrc",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "changelog:standard": "standard-version",
+    "changelog:conventional": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "husky": {
     "hooks": {
@@ -117,6 +118,7 @@
     "child_process": "^1.0.2",
     "concurrently": "^8.2.0",
     "conventional-changelog-cli": "^3.0.0",
+    "conventional-recommended-bump": "^8.0.0",
     "depcheck": "^1.4.3",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
