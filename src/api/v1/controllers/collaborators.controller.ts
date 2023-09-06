@@ -108,9 +108,10 @@ export default class CollaboratorsController {
 
       sanitizedReqCollaborator.health_unit = healthUnit._id;
 
-      // Remove any whitespace from the phone number.
-      sanitizedReqCollaborator.phone = sanitizedReqCollaborator.phone!.replace(/\s/g, '');
+      const phone = sanitizedReqCollaborator.phone!.replace(/\s/g, '');
 
+      // Remove any whitespace from the phone number.
+      sanitizedReqCollaborator.phone = phone;
       const collaborator = new CollaboratorModel(sanitizedReqCollaborator);
 
       // Validate the collaborator data.
@@ -182,7 +183,7 @@ export default class CollaboratorsController {
           cognitocollaborator = await CollaboratorsController.CognitoService.addUser(
             reqCollaborator.email,
             temporaryPassword,
-            reqCollaborator.phone
+            phone
           );
         } catch (error: any) {
           switch (error.type) {
