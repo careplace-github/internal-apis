@@ -61,7 +61,11 @@ import { AuthUtils } from 'src/packages/utils';
 import { HTTPError, DateUtils } from '@utils';
 
 // @constants
-import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
+import {
+  AWS_COGNITO_BUSINESS_CLIENT_ID,
+  AWS_COGNITO_MARKETPLACE_CLIENT_ID,
+  AWS_SES_ORDERS_BCC_EMAIL,
+} from '@constants';
 // @logger
 import logger from '@logger';
 // @data
@@ -136,14 +140,9 @@ export default class OrdersController {
         }
       }
 
+      const patientId = (order.patient as mongoose.Types.ObjectId).toString();
       try {
-        patient = await OrdersController.PatientsDAO.queryOne(
-          { user: user._id },
-          {
-            path: 'customer',
-            model: 'Customer',
-          }
-        );
+        patient = await OrdersController.PatientsDAO.retrieve(patientId);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
@@ -153,6 +152,11 @@ export default class OrdersController {
             return next(new HTTPError._500(error.message));
           }
         }
+      }
+
+      // Check if the patient belongs to the customer
+      if (patient?.customer?.toString() !== user._id.toString()) {
+        return next(new HTTPError._403('You are not authorized to create this order.'));
       }
 
       let healthUnit: IHealthUnitDocument;
@@ -271,6 +275,10 @@ export default class OrdersController {
         patientCity: patient.address.city,
         patientPostalCode: patient.address.postal_code,
         patientCountry: patient.address.country,
+
+        website: PATHS.marketplace.home,
+        privacyPolicy: PATHS.marketplace.privacyPolicy,
+        termsAndConditions: PATHS.marketplace.termsAndConditions,
       };
 
       let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -286,11 +294,16 @@ export default class OrdersController {
         return next(new HTTPError._500('Error getting email template'));
       }
 
-      await OrdersController.SES.sendEmail(
-        [user.email],
-        marketplaceNewOrderEmail.subject,
-        marketplaceNewOrderEmail.htmlBody
-      );
+      if (order.type === 'marketplace') {
+        await OrdersController.SES.sendEmail(
+          [user.email],
+          marketplaceNewOrderEmail.subject,
+          marketplaceNewOrderEmail.htmlBody,
+          undefined,
+          undefined,
+          [AWS_SES_ORDERS_BCC_EMAIL]
+        );
+      }
 
       let collaborators = (
         await OrdersController.CollaboratorsDAO.queryList({
@@ -303,16 +316,28 @@ export default class OrdersController {
         return user?.permissions?.includes('orders_emails');
       });
 
-      const collaboratorsEmails = collaborators.map((user) => {
+      let collaboratorsEmails = collaborators.map((user) => {
         return user.email;
       });
+
+      // Check if there are repeated emails
+      const collaboratorsEmailsSet = new Set(collaboratorsEmails);
+
+      // Convert the set to an array
+      const collaboratorsEmailsArray = Array.from(collaboratorsEmailsSet);
+
+      // Update the collaboratorsEmails array without repeated emails
+      collaboratorsEmails = collaboratorsEmailsArray;
 
       for (let i = 0; i < collaboratorsEmails.length; i++) {
         let healthUnitEmailPayload = {
           collaboratorName: collaborators[i].name,
           healthUnitName: healthUnit!.business_profile!.name,
 
-          link: `${PATHS.business.orders.view(orderCreated._id)}`,
+          link: `${PATHS.business.orders.edit(orderCreated._id)}`,
+          website: PATHS.business.home,
+          privacyPolicy: PATHS.business.privacyPolicy,
+          termsAndConditions: PATHS.business.termsAndConditions,
         };
 
         let businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
@@ -328,11 +353,13 @@ export default class OrdersController {
           return next(new HTTPError._500('Error getting email template'));
         }
 
-        await OrdersController.SES.sendEmail(
-          collaboratorsEmails,
-          businessNewOrderEmail.subject,
-          businessNewOrderEmail.htmlBody
-        );
+        if (order.type === 'marketplace') {
+          await OrdersController.SES.sendEmail(
+            [collaboratorsEmails[i]],
+            businessNewOrderEmail.subject,
+            businessNewOrderEmail.htmlBody
+          );
+        }
       }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
@@ -849,6 +876,23 @@ export default class OrdersController {
 
       // Create a new event series for the order
       if (order?.schedule_information?.recurrency !== 0) {
+        // TODO: get the correct schedule for the event series based on the order schedule_information.schedule and schedule_information.start_date (user may want mondays and wednesdays, and the start date may be a tuesday)
+        let eventSeriesSchedule = order.schedule_information.schedule;
+
+        // for each
+        for (let i = 0; i < eventSeriesSchedule.length; i++) {
+          eventSeriesSchedule[i].start =
+            await OrdersController.DateUtils.getNextWeekdayWithTimeFromDate(
+              eventSeriesSchedule[i].start,
+              eventSeriesSchedule[i].week_day
+            );
+          eventSeriesSchedule[i].end =
+            await OrdersController.DateUtils.getNextWeekdayWithTimeFromDate(
+              eventSeriesSchedule[i].end,
+              eventSeriesSchedule[i].week_day
+            );
+        }
+
         let eventSeries: IEventSeries = {
           _id: new Types.ObjectId(),
 
@@ -861,7 +905,7 @@ export default class OrdersController {
 
           recurrency: order.schedule_information.recurrency,
 
-          schedule: order.schedule_information.schedule,
+          schedule: eventSeriesSchedule,
 
           title: patient.name,
 
@@ -1134,6 +1178,44 @@ export default class OrdersController {
         switch (error.type) {
           default:
             return next(new HTTPError._500(error.message));
+        }
+      }
+
+      let eventSeries = await OrdersController.EventSeriesDAO.queryOne({
+        order: orderId,
+      });
+
+      // Update the event series schedule
+      if (eventSeries) {
+        let eventSeriesSchedule;
+        // Create a new event series for the order
+        if (updatedOrder?.schedule_information?.recurrency !== 0) {
+          // TODO: get the correct schedule for the event series based on the order schedule_information.schedule and schedule_information.start_date (user may want mondays and wednesdays, and the start date may be a tuesday)
+          eventSeriesSchedule = updatedOrder.schedule_information.schedule;
+
+          // for each
+          for (let i = 0; i < eventSeriesSchedule.length; i++) {
+            eventSeriesSchedule[i].start =
+              await OrdersController.DateUtils.getNextWeekdayWithTimeFromDate(
+                eventSeriesSchedule[i].start,
+                eventSeriesSchedule[i].week_day
+              );
+            eventSeriesSchedule[i].end =
+              await OrdersController.DateUtils.getNextWeekdayWithTimeFromDate(
+                eventSeriesSchedule[i].end,
+                eventSeriesSchedule[i].week_day
+              );
+          }
+        }
+        eventSeries.schedule = eventSeriesSchedule;
+
+        try {
+          await OrdersController.EventSeriesDAO.update(eventSeries);
+        } catch (error: any) {
+          switch (error.type) {
+            default:
+              return next(new HTTPError._500(error.message));
+          }
         }
       }
 
@@ -1535,6 +1617,10 @@ export default class OrdersController {
         patientCity: patient.address.city,
         patientPostalCode: patient.address.postal_code,
         patientCountry: patient.address.country,
+
+        website: PATHS.marketplace.home,
+        privacyPolicy: PATHS.marketplace.privacyPolicy,
+        termsAndConditions: PATHS.marketplace.termsAndConditions,
       };
 
       let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1550,12 +1636,15 @@ export default class OrdersController {
         return next(new HTTPError._500('Error while generating email template.'));
       }
 
-      await OrdersController.SES.sendEmail(
-        [customer.email],
-        marketplaceNewOrderEmail.subject,
-        marketplaceNewOrderEmail.htmlBody
-      );
+      logger.info('Sending email to customer: ' + customer.email);
 
+      if (order.type === 'marketplace') {
+        await OrdersController.SES.sendEmail(
+          [customer.email],
+          marketplaceNewOrderEmail.subject,
+          marketplaceNewOrderEmail.htmlBody
+        );
+      }
       // Send email to all collaborators that have the 'orders_emails' permission
       if (collaboratorsEmails && collaboratorsEmails.length > 0) {
         for (let i = 0; i < collaboratorsEmails.length; i++) {
@@ -1585,6 +1674,9 @@ export default class OrdersController {
               patientCountry: patient.address.country,
 
               link: `${PATHS.business.orders.view(order._id)}`,
+              website: PATHS.business.home,
+              privacyPolicy: PATHS.business.privacyPolicy,
+              termsAndConditions: PATHS.business.termsAndConditions,
             };
 
             let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1600,11 +1692,13 @@ export default class OrdersController {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
-            await OrdersController.SES.sendEmail(
-              [collaboratorEmail],
-              businessNewOrderEmail.subject,
-              businessNewOrderEmail.htmlBody
-            );
+            if (order.type === 'marketplace') {
+              await OrdersController.SES.sendEmail(
+                [collaboratorEmail],
+                businessNewOrderEmail.subject,
+                businessNewOrderEmail.htmlBody
+              );
+            }
           }
         }
       }
@@ -1869,6 +1963,10 @@ export default class OrdersController {
           patientCity: (order.patient as IPatient).address.city,
           patientPostalCode: (order.patient as IPatient).address.postal_code,
           patientCountry: (order.patient as IPatient).address.country,
+
+          website: PATHS.marketplace.home,
+          privacyPolicy: PATHS.marketplace.privacyPolicy,
+          termsAndConditions: PATHS.marketplace.termsAndConditions,
         };
 
         let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1884,11 +1982,15 @@ export default class OrdersController {
           return next(new HTTPError._500('Error while getting the email template.'));
         }
 
-        await OrdersController.SES.sendEmail(
-          [(order.customer as ICustomer).email],
-          marketplaceNewOrderEmail.subject,
-          marketplaceNewOrderEmail.htmlBody
-        );
+        logger.info('Sending email to customer: ', (order.customer as ICustomer).email);
+
+        if (order.type === 'marketplace') {
+          await OrdersController.SES.sendEmail(
+            [(order.customer as ICustomer).email],
+            marketplaceNewOrderEmail.subject,
+            marketplaceNewOrderEmail.htmlBody
+          );
+        }
 
         // Send email to all collaborators that have the 'orders_emails' permission
         if (collaboratorsEmails && collaboratorsEmails.length > 0) {
@@ -1923,6 +2025,10 @@ export default class OrdersController {
 
                 customerName: (order.customer as ICustomer).name,
                 customerPhone: (order.customer as ICustomer).phone,
+
+                website: PATHS.business.home,
+                privacyPolicy: PATHS.business.privacyPolicy,
+                termsAndConditions: PATHS.business.termsAndConditions,
               };
 
               let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -1938,11 +2044,13 @@ export default class OrdersController {
                 return next(new HTTPError._500('Error while generating email template.'));
               }
 
-              await OrdersController.SES.sendEmail(
-                [collaboratorEmail],
-                businessNewOrderEmail.subject,
-                businessNewOrderEmail.htmlBody
-              );
+              if (order.type === 'marketplace') {
+                await OrdersController.SES.sendEmail(
+                  [collaboratorEmail],
+                  businessNewOrderEmail.subject,
+                  businessNewOrderEmail.htmlBody
+                );
+              }
             }
           }
         }
@@ -2022,9 +2130,10 @@ export default class OrdersController {
         start: visit_start,
 
         title:
-          order?.visits?.length < 0
-            ? `Visita de Triagem: ${(order.patient as IPatient).name}`
-            : `Visita ao Domicílio: ${(order.patient as IPatient).name}`,
+          order?.visits?.length > 0
+            ? `Visita ao Domicílio: ${(order.patient as IPatient).name}`
+            : `Visita de Triagem: ${(order.patient as IPatient).name}`,
+
         description: ' ',
 
         textColor: order.type === 'marketplace' ? '#04297A' : '#054f02',
@@ -2136,6 +2245,10 @@ export default class OrdersController {
           patientCity: (order.patient as IPatient).address.city,
           patientPostalCode: (order.patient as IPatient).address.postal_code,
           patientCountry: (order.patient as IPatient).address.country,
+
+          website: PATHS.marketplace.home,
+          privacyPolicy: PATHS.marketplace.privacyPolicy,
+          termsAndConditions: PATHS.marketplace.termsAndConditions,
         };
 
         let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -2151,11 +2264,13 @@ export default class OrdersController {
           return next(new HTTPError._500('Error while getting the email template.'));
         }
 
-        await OrdersController.SES.sendEmail(
-          [(order.customer as ICustomer).email],
-          marketplaceNewOrderEmail.subject,
-          marketplaceNewOrderEmail.htmlBody
-        );
+        if (order.type === 'marketplace') {
+          await OrdersController.SES.sendEmail(
+            [(order.customer as ICustomer).email],
+            marketplaceNewOrderEmail.subject,
+            marketplaceNewOrderEmail.htmlBody
+          );
+        }
 
         // Send email to all collaborators that have the 'orders_emails' permission
         if (collaboratorsEmails && collaboratorsEmails.length > 0) {
@@ -2189,6 +2304,10 @@ export default class OrdersController {
 
                 customerName: (order.customer as ICustomer).name,
                 customerPhone: (order.customer as ICustomer).phone,
+
+                website: PATHS.business.home,
+                privacyPolicy: PATHS.business.privacyPolicy,
+                termsAndConditions: PATHS.business.termsAndConditions,
               };
 
               let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
@@ -2204,11 +2323,13 @@ export default class OrdersController {
                 return next(new HTTPError._500('Error while generating email template.'));
               }
 
-              await OrdersController.SES.sendEmail(
-                [collaboratorEmail],
-                businessNewOrderEmail.subject,
-                businessNewOrderEmail.htmlBody
-              );
+              if (order.type === 'marketplace') {
+                await OrdersController.SES.sendEmail(
+                  [collaboratorEmail],
+                  businessNewOrderEmail.subject,
+                  businessNewOrderEmail.htmlBody
+                );
+              }
             }
           }
         }

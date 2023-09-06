@@ -31,7 +31,7 @@ const CustomerSchema: Schema<ICustomerDocument> = new Schema<ICustomerDocument>(
      */
 
     /**
-     * Even though the email and phone are managed by cognito, they are still stored in the database because this information is needed to be shown on the orders for the health units.
+     * Even though the email and phone are managed by cognito, they are still stored in the database because this information is needed to be shown on the orders for the health units and to send emails and sms.
      */
     email: { type: String, required: true, default: null },
     phone: { type: String, required: true, default: null },

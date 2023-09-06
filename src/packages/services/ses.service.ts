@@ -55,47 +55,53 @@ export default class SES {
     htmlBody: string,
     textBody = '',
     ccEmails?: string[],
-    bccEmails?: string[]
+    bccEmails?: string[],
+    senderEmail?: string,
   ): Promise<AWS.SES.SendEmailResponse | AWS.AWSError> {
-    // https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html
-    const params = {
-      Message: {
-        Body: {
-          Html: {
-            Charset: 'UTF-8',
-            Data: htmlBody,
+    try {
+      // https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html
+      const params = {
+        Message: {
+          Body: {
+            Html: {
+              Charset: 'UTF-8',
+              Data: htmlBody,
+            },
+            Text: {
+              Charset: 'UTF-8',
+              Data: textBody ? textBody : 'htmlBody',
+            },
           },
-          Text: {
+
+          // Subject
+          Subject: {
             Charset: 'UTF-8',
-            Data: textBody ? textBody : 'htmlBody',
+            Data: subject,
           },
         },
 
-        // Subject
-        Subject: {
-          Charset: 'UTF-8',
-          Data: subject,
+        // Email Address, CC and BCC
+        Destination: {
+          ToAddresses: receiverEmails,
+          CcAddresses: ccEmails,
+          BccAddresses: bccEmails,
         },
-      },
 
-      // Email Address, CC and BCC
-      Destination: {
-        ToAddresses: receiverEmails,
-        CcAddresses: ccEmails,
-        BccAddresses: bccEmails,
-      },
+        // ReplyTo
+        ReplyToAddresses: [AWS_SES_REPLY_TO_EMAIL],
 
-      // ReplyTo
-      ReplyToAddresses: [AWS_SES_REPLY_TO_EMAIL],
+        // Source
+        Source: senderEmail || AWS_SES_SENDER_EMAIL,
+      };
 
-      // Source
-      Source: AWS_SES_SENDER_EMAIL,
-    };
+      const emailSent = await this.SES.sendEmail(params).promise();
 
-    const emailSent = await this.SES.sendEmail(params).promise();
+      logger.info('SES Service Email Sent: ' + emailSent);
 
-    logger.info('SES Service Email Sent: ' + emailSent);
-
-    return emailSent;
+      return emailSent;
+    } catch (error: any) {
+      logger.error("AWS SES Service Send Email Error: " + error);
+      throw new LayerError.INTERNAL_ERROR(error.message);
+    }
   }
 }
