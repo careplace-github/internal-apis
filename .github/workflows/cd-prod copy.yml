@@ -45,6 +45,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     environment: production
 
     steps:
@@ -67,14 +69,14 @@ jobs:
         run: npx conventional-recommended-bump
 
       - name: Create release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
+          tag: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
           body: |
             ${{ steps.bump.outputs.reason }}
             ${{ steps.bump.outputs.releaseType }}
-          draft: false
+          draft: true
           prerelease: false
