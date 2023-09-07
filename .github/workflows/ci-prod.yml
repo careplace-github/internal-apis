@@ -88,6 +88,6 @@ jobs:
       - name: Snyk Test Code
         run: npx snyk test --severity-threshold=high
       - name: Build the Docker image
-        run: docker build . --file .docker/api/Dockerfile.prod --tag careplace/internal-apis:dev
+        run: docker build . --file .docker/api/Dockerfile.prod --tag careplace/internal-apis:prod
       - name: Snyk Test Docker Image
-        run: npx snyk container test careplace/internal-apis:dev --file=.docker/api/Dockerfile.prod --severity-threshold=high
+        run: npx snyk container test careplace/internal-apis:prod --file=.docker/api/Dockerfile.prod --severity-threshold=high
