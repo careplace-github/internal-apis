@@ -3,6 +3,8 @@ name: '[PRODUCTION] Continuous Integration (CI)'
 on:
   push:
     branches: ['Main']
+  pull_request:
+    branches: ['Main']
 
 jobs:
   dependencies:
