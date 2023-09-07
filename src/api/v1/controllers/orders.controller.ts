@@ -308,16 +308,14 @@ export default class OrdersController {
         return next(new HTTPError._500('Error getting email template'));
       }
 
-      if (order.type === 'marketplace') {
-        await OrdersController.SES.sendEmail(
-          [user.email],
-          marketplaceNewOrderEmail.subject,
-          marketplaceNewOrderEmail.htmlBody,
-          undefined,
-          undefined,
-          [AWS_SES_ORDERS_BCC_EMAIL]
-        );
-      }
+      await OrdersController.SES.sendEmail(
+        [user.email],
+        marketplaceNewOrderEmail.subject,
+        marketplaceNewOrderEmail.htmlBody,
+        undefined,
+        undefined,
+        [AWS_SES_ORDERS_BCC_EMAIL]
+      );
 
       let collaborators = (
         await OrdersController.CollaboratorsDAO.queryList({
