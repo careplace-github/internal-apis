@@ -41,14 +41,18 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch:  feat-cd
 
+      - name: Get latest tag
+        id: get_latest_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
       - name: Create release
         id: create_release
         uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: ${{ github.ref }}
-          name: Release ${{ github.ref }}
+          tag: ${{ steps.get_latest_tag.outputs.tag }}
+          name: Release ${{ steps.get_latest_tag.outputs.tag }}
           draft: true
           prerelease: true
 
