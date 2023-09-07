@@ -1,1 +1,17 @@
 node_modules
+.DS_Store
+src/uploads
+src/downloads
+src/logs/server.log
+src/assets/data/services.json
+build
+
+# .env
+.env
+.env.development
+.env.production
+.env.local
+yarn-error.log
+.docker/mongodb/data/*
+package-lock.json
+

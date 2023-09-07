@@ -1,0 +1,73 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@packages/*": [
+        "src/packages/*"
+      ],
+      "@models": [
+        "src/packages/models"
+      ],
+      "@interfaces": [
+        "src/packages/interfaces"
+      ],
+      "@assets": [
+        "src/assets"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@utils": [
+        "src/packages/utils"
+      ],
+      "@constants": [
+        "src/config/constants"
+      ],
+      "@logs/*": [
+        "src/logs/*"
+      ],
+      "@logger": [
+        "src/logs/logger"
+      ],
+      "@scripts": [
+        "src/config/scripts"
+      ],
+      "@axios": [
+        "src/lib/axios.ts"
+      ]
+
+    },
+    "types": [
+      "node"
+    ],
+    "target": "es5",
+    "lib": [
+      "es6"
+    ],
+    "allowJs": true,
+    "sourceMap": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*",
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    "**/*.spec.ts",
+  ],
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
+}

@@ -1,0 +1,13 @@
+# .snyk
+
+# Specify the Snyk organization to use for testing and monitoring
+org: a3842cbd-3843-4f7c-b070-9c3741901756
+
+# Specify the project name for identification purposes
+project: careplace/internal-apis
+
+# Set the severity threshold for reporting vulnerabilities (optional)
+# Can be "low", "medium", "high", or "critical"
+severityThreshold: medium
+
+# Specify additional settings or configurations as needed

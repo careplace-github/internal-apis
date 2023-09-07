@@ -1,0 +1,22 @@
+version: "1.0.0"
+name: backend
+services:
+  rest-api:
+    stdin_open: true
+    tty: true
+    build: 
+      context: ../
+      dockerfile: ./.docker/api/Dockerfile.prod
+    image: careplace/rest-api:prod
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    container_name: rest-api-prod
+    environment:
+      - APP_NAME=rest_api-production
+      - CHOKIDAR_USEPOLLING=true
+    
