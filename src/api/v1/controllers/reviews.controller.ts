@@ -177,7 +177,7 @@ export default class ReviewsController {
         customer: user._id,
         health_unit: healthUnitId,
         status: {
-          $in: ['pending_payment', 'active', 'completed'],
+          $in: ['pending_payment', 'active', 'completed', 'cancelled'],
         },
       };
 
