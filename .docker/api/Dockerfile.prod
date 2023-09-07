@@ -1,0 +1,21 @@
+FROM node:16.20.2-bookworm-slim
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN yarn cache clean --force
+
+RUN yarn config delete proxy
+
+RUN npm config rm proxy
+
+RUN npm config rm https-proxy
+
+# RUN yarn install --production --frozen-lockfile --network-timeout 100000
+RUN yarn install --frozen-lockfile --network-timeout 100000
+
+RUN yarn build
+
+CMD [ "yarn", "start" ]
+
