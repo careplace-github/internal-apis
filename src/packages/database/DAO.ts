@@ -15,7 +15,9 @@ import logger from '@logger';
 // T extends Document constrains T to be a Mongoose Document
 export default abstract class DAO<T extends Document> {
   private readonly Model: Model<T>;
+
   protected readonly Collection: string;
+
   protected readonly Type: string;
 
   constructor(documentModel: Model<T>, documentCollection: string) {
@@ -187,8 +189,8 @@ export default abstract class DAO<T extends Document> {
   async queryList(
     filters: FilterQuery<T>,
     options?: Record<string, any>,
-    page: number = 1,
-    documentsPerPage: number = 10,
+    page = 1,
+    documentsPerPage = 10,
     populate?: PopulateOptions | PopulateOptions[],
     select?: string,
     session?: mongoose.ClientSession
@@ -292,7 +294,7 @@ export default abstract class DAO<T extends Document> {
 
       logger.info(`DOCUMENT : ${document}`);
     } catch (err: any) {
-      logger.error(`${this.Collection}DAO QUERY_ONE Error: ` + err.stack);
+      logger.error(`${this.Collection}DAO QUERY_ONE Error: ${err.stack}`);
 
       if (session) {
         await session.abortTransaction();

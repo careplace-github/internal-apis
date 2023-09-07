@@ -1,7 +1,7 @@
 import express from 'express';
 
-import ReviewsController from '../controllers/reviews.controller';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import ReviewsController from '../controllers/reviews.controller';
 
 const router = express.Router();
 

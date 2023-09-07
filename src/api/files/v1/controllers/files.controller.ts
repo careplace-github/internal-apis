@@ -42,7 +42,7 @@ export default class FilesController {
         data: {},
       };
 
-      const file = req.file;
+      const { file } = req;
 
       if (!file) {
         return next(new HTTPError._400('Missing required file.'));
@@ -50,7 +50,7 @@ export default class FilesController {
 
       const filePath = file.path;
 
-      let fileUpload = await FilesController.BucketService.uploadFile(filePath);
+      const fileUpload = await FilesController.BucketService.uploadFile(filePath);
 
       response.statusCode = 201;
       response.data = {
@@ -92,7 +92,7 @@ export default class FilesController {
         data: {},
       };
 
-      const key = req.params.key;
+      const { key } = req.params;
 
       if (!key) {
         next(new HTTPError._400('Missing required key.'));
@@ -117,6 +117,7 @@ export default class FilesController {
       return next(new HTTPError._500(error.message));
     }
   }
+
   /**
    * Deletes a file from the S3 bucket by its key.
    *
@@ -132,7 +133,7 @@ export default class FilesController {
       };
 
       const bucketService = new BucketService();
-      const key = req.params.key;
+      const { key } = req.params;
 
       const deletedFile = await FilesController.BucketService.deleteFile(key);
 

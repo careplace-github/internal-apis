@@ -34,9 +34,13 @@ import { CognitoIdentityServiceProvider } from 'aws-sdk';
 export default class PatientsController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   static PatientsDAO = new PatientsDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
 
@@ -176,9 +180,9 @@ export default class PatientsController {
 
       const user = await PatientsController.AuthHelper.getUserFromDB(accessToken);
 
-      let patient = await PatientsController.PatientsDAO.retrieve(patientID);
+      const patient = await PatientsController.PatientsDAO.retrieve(patientID);
 
-      let reqPatient = req.body as IPatient;
+      const reqPatient = req.body as IPatient;
 
       // Do not allow updating the user or the _id
       const sanitizedReqPatient = omit(reqPatient, ['customer', '_id']);
@@ -495,6 +499,7 @@ export default class PatientsController {
       return next(new HTTPError._500(error.message));
     }
   }
+
   static async updateHealthUnitPatient(
     req: Request,
     res: Response,

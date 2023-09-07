@@ -7,6 +7,7 @@ import logger from '@logger';
 
 import fs from 'fs';
 import util from 'util';
+
 const asyncAccess = util.promisify(fs.access);
 
 export async function loadAWSSecrets() {

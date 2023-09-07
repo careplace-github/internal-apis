@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../../../logs/logger';
 import httpContext from 'express-http-context';
+import logger from '../../../logs/logger';
 
 // TODO Move to TS folder
 interface HttpRequest {
@@ -52,8 +52,8 @@ export default function responseHandler(
       body: req.body,
     };
 
-    let logResponse = {
-      request: request,
+    const logResponse = {
+      request,
       response: {
         headers: res.getHeaders(),
         body: response.data,
@@ -67,7 +67,7 @@ export default function responseHandler(
       };
     }
 
-    let statusCode = response.statusCode ? response.statusCode : 500;
+    const statusCode = response.statusCode ? response.statusCode : 500;
 
     // Add Access Token to the response headers
     if (response.data?.accessToken) {

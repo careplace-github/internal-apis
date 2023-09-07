@@ -1,4 +1,4 @@
-//auth
+// auth
 export { default as AuthRoute } from './auth/authentication.route';
 
 // webhooks

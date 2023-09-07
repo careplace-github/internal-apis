@@ -1,7 +1,7 @@
 import express from 'express';
 
-import PatientsController from '../controllers/patients.controller';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import PatientsController from '../controllers/patients.controller';
 
 const router = express.Router();
 

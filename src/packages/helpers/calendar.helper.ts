@@ -1,9 +1,14 @@
 import { Document, Types } from 'mongoose';
-import { IEventSeries, IEvent, ICaregiver, IEventDocument } from 'src/packages/interfaces';
+import {
+  IEventSeries,
+  IEvent,
+  ICaregiver,
+  IEventDocument,
+  IHomeCareOrder,
+} from 'src/packages/interfaces';
 import { HomeCareOrdersDAO } from 'src/packages/database';
 import logger from 'src/logs/logger';
 
-import { IHomeCareOrder } from 'src/packages/interfaces';
 import { EventModel } from 'src/packages/models';
 
 export default class CalendarHelper {
@@ -11,7 +16,7 @@ export default class CalendarHelper {
 
   static async generateEventsFromSeries(eventSeries: IEventSeries) {
     try {
-      let events: IEventDocument[] = [];
+      const events: IEventDocument[] = [];
 
       logger.info('eventSeries: ', eventSeries);
 
@@ -96,7 +101,7 @@ export default class CalendarHelper {
             ? eventSeries.textColor
             : '#1890FF';
           // Create a new event
-          let event: IEvent = {
+          const event: IEvent = {
             // use mongoose _id instead of uuidv4() to link the event to the eventSeries._id
             _id: new Types.ObjectId(),
 
@@ -111,7 +116,7 @@ export default class CalendarHelper {
             textColor,
           };
 
-          let eventModel = new EventModel(event);
+          const eventModel = new EventModel(event);
 
           const error = eventModel.validateSync();
 
@@ -162,6 +167,7 @@ export default class CalendarHelper {
         throw new Error('Invalid recurrency type');
     }
   }
+
   private static getRecurrencyIncrement(
     recurrencyType: IEventSeries['recurrency'],
     multiplier = 1

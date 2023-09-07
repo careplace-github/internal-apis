@@ -1,4 +1,4 @@
-//import registerUserValitation from "./validators/users.validator"
+// import registerUserValitation from "./validators/users.validator"
 import { validationResult } from 'express-validator';
 import { HTTPError } from '@utils';
 import logger from '@logger';

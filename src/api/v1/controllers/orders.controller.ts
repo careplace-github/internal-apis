@@ -57,8 +57,7 @@ import {
   ServiceModel,
 } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
-import { AuthUtils } from 'src/packages/utils';
-import { HTTPError, DateUtils } from '@utils';
+import { AuthUtils, HTTPError, DateUtils } from 'src/packages/utils';
 
 // @constants
 import {
@@ -78,23 +77,38 @@ import { PATHS } from 'src/packages/routes';
 export default class OrdersController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   static EventSeriesDAO = new EventSeriesDAO();
+
   static PatientsDAO = new PatientsDAO();
+
   static EventsDAO = new EventsDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   // services
   static SES = SESService;
+
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
+
   static StripeService = StripeService;
+
   // utils
   static AuthUtils = AuthUtils;
+
   static DateUtils = DateUtils;
 
   // -------------------------------------------------- //
@@ -112,7 +126,7 @@ export default class OrdersController {
         data: {},
       };
 
-      let order = req.body as IHomeCareOrder;
+      const order = req.body as IHomeCareOrder;
       let patient: IPatient;
 
       const healthUnitId = req.body.health_unit;
@@ -182,7 +196,7 @@ export default class OrdersController {
 
       // Use the first 8 characters of the order id as the order number
       // HC-XXXXXXXX -> Home Care Order
-      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
+      order.order_number = `HC-${order._id.toString().slice(-6).toUpperCase()}`;
 
       const newOrder = new HomeCareOrderModel(order);
 
@@ -214,10 +228,10 @@ export default class OrdersController {
       /**
        * From 'services' array, get the services that are in the order
        */
-      let orderServices: IServiceDocument[] = [];
+      const orderServices: IServiceDocument[] = [];
 
       for (let i = 0; i < order!.services!.length; i++) {
-        let service = services.find((service) => {
+        const service = services.find((service) => {
           if (order?.services && service?._id == order.services[i]?.toString()) {
             return service;
           }
@@ -240,22 +254,22 @@ export default class OrdersController {
         })
         .join(', ');
 
-      let schedule = await OrdersController.DateUtils.getScheduleRecurrencyText(
+      const schedule = await OrdersController.DateUtils.getScheduleRecurrencyText(
         order?.schedule_information?.schedule
       );
 
-      let birthdate = await OrdersController.DateUtils.convertDateToReadableString(
+      const birthdate = await OrdersController.DateUtils.convertDateToReadableString(
         patient.birthdate
       );
 
-      let orderStart = await OrdersController.DateUtils.convertDateToReadableString2(
+      const orderStart = await OrdersController.DateUtils.convertDateToReadableString2(
         order?.schedule_information?.start_date
       );
 
-      let userEmailPayload = {
+      const userEmailPayload = {
         customerName: user.name,
         healthUnitName: healthUnit?.business_profile?.name,
-        orderStart: orderStart,
+        orderStart,
         orderSchedule: schedule,
         orderServices: servicesNames,
         orderRecurrency:
@@ -281,7 +295,7 @@ export default class OrdersController {
         termsAndConditions: PATHS.marketplace.termsAndConditions,
       };
 
-      let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+      const marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
         'marketplace_home_care_order_received',
         userEmailPayload
       );
@@ -312,13 +326,9 @@ export default class OrdersController {
       ).data;
 
       // Only send email to business users that have the 'orders_emails' permission
-      collaborators = collaborators.filter((user) => {
-        return user?.permissions?.includes('orders_emails');
-      });
+      collaborators = collaborators.filter((user) => user?.permissions?.includes('orders_emails'));
 
-      let collaboratorsEmails = collaborators.map((user) => {
-        return user.email;
-      });
+      let collaboratorsEmails = collaborators.map((user) => user.email);
 
       // Check if there are repeated emails
       const collaboratorsEmailsSet = new Set(collaboratorsEmails);
@@ -330,7 +340,7 @@ export default class OrdersController {
       collaboratorsEmails = collaboratorsEmailsArray;
 
       for (let i = 0; i < collaboratorsEmails.length; i++) {
-        let healthUnitEmailPayload = {
+        const healthUnitEmailPayload = {
           collaboratorName: collaborators[i].name,
           healthUnitName: healthUnit!.business_profile!.name,
 
@@ -340,7 +350,7 @@ export default class OrdersController {
           termsAndConditions: PATHS.business.termsAndConditions,
         };
 
-        let businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
+        const businessNewOrderEmail = await OrdersController.EmailHelper.getEmailTemplateWithData(
           'business_new_home_care_order',
           healthUnitEmailPayload
         );
@@ -373,7 +383,7 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
@@ -685,7 +695,7 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
@@ -722,7 +732,7 @@ export default class OrdersController {
 
       try {
         orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
-        logger.info('ORDER EXISTS: ' + orderExists);
+        logger.info(`ORDER EXISTS: ${orderExists}`);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':
@@ -745,7 +755,7 @@ export default class OrdersController {
         ...reqOrder,
       });
 
-      logger.info('ORDER TO UPDATE: ' + updatedOrder);
+      logger.info(`ORDER TO UPDATE: ${updatedOrder}`);
 
       // validate the order
       const validationError = updatedOrder.validateSync({});
@@ -787,7 +797,7 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
@@ -803,7 +813,7 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let order = req.body as IHomeCareOrder;
+      const order = req.body as IHomeCareOrder;
 
       if (!order.patient) {
         return next(new HTTPError._400('Missing required field: `patient`.'));
@@ -836,7 +846,7 @@ export default class OrdersController {
 
       // Use the first 8 characters of the order id as the order number
       // HC-XXXXXXXX -> Home Care Order
-      order.order_number = 'HC-' + order._id.toString().slice(-6).toUpperCase();
+      order.order_number = `HC-${order._id.toString().slice(-6).toUpperCase()}`;
 
       const newOrder = new HomeCareOrderModel(order);
 
@@ -877,7 +887,7 @@ export default class OrdersController {
       // Create a new event series for the order
       if (order?.schedule_information?.recurrency !== 0) {
         // TODO: get the correct schedule for the event series based on the order schedule_information.schedule and schedule_information.start_date (user may want mondays and wednesdays, and the start date may be a tuesday)
-        let eventSeriesSchedule = order.schedule_information.schedule;
+        const eventSeriesSchedule = order.schedule_information.schedule;
 
         // for each
         for (let i = 0; i < eventSeriesSchedule.length; i++) {
@@ -893,7 +903,7 @@ export default class OrdersController {
             );
         }
 
-        let eventSeries: IEventSeries = {
+        const eventSeries: IEventSeries = {
           _id: new Types.ObjectId(),
 
           owner_type: 'health_unit',
@@ -918,7 +928,7 @@ export default class OrdersController {
 
         const newEventSeries = new EventSeriesModel(eventSeries);
 
-        let eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
+        const eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
       }
 
       response.statusCode = 200;
@@ -938,7 +948,7 @@ export default class OrdersController {
     next: NextFunction
   ): Promise<void> {
     try {
-      let response: IAPIResponse = {
+      const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
@@ -1067,7 +1077,7 @@ export default class OrdersController {
         }
       }
 
-      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+      const healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
@@ -1178,7 +1188,7 @@ export default class OrdersController {
         }
       }
 
-      let eventSeries = await OrdersController.EventSeriesDAO.queryOne({
+      const eventSeries = await OrdersController.EventSeriesDAO.queryOne({
         order: orderId,
       });
 
@@ -1372,7 +1382,7 @@ export default class OrdersController {
         }
       }
 
-      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+      const healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
         }
@@ -1450,7 +1460,7 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let caregiver = req.body.caregiver as string;
+      const caregiver = req.body.caregiver as string;
 
       if (!caregiver) {
         return next(new HTTPError._400('Missing caregiver.'));
@@ -1478,7 +1488,7 @@ export default class OrdersController {
         return next(new HTTPError._403('Caregiver does not belong to this health unit.'));
       }
 
-      let healthUnitId = user.health_unit._id.toString();
+      const healthUnitId = user.health_unit._id.toString();
 
       let order: IHomeCareOrderDocument;
       try {
@@ -1521,12 +1531,12 @@ export default class OrdersController {
       next(response);
 
       // From the users.patients array, get the patient that matches the patient id in the order
-      let patient = await OrdersController.PatientsDAO.queryOne({ _id: order.patient });
-      let healthUnit = await OrdersController.HealthUnitsDAO.queryOne({ _id: order.health_unit });
-      let customer = await OrdersController.CustomersDAO.queryOne({ _id: order.customer });
+      const patient = await OrdersController.PatientsDAO.queryOne({ _id: order.patient });
+      const healthUnit = await OrdersController.HealthUnitsDAO.queryOne({ _id: order.health_unit });
+      const customer = await OrdersController.CustomersDAO.queryOne({ _id: order.customer });
 
       if (order?.schedule_information?.recurrency !== 0) {
-        let eventSeries: IEventSeries = {
+        const eventSeries: IEventSeries = {
           _id: new Types.ObjectId(),
 
           owner_type: 'health_unit',
@@ -1551,14 +1561,14 @@ export default class OrdersController {
 
         const newEventSeries = new EventSeriesModel(eventSeries);
 
-        let eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
+        const eventSeriesAdded = await OrdersController.EventSeriesDAO.create(newEventSeries);
       }
 
       /**
        * From 'services' array, get the services that are in the order
        */
 
-      let orderServicesAux = order.services.map((serviceId) => {
+      const orderServicesAux = order.services.map((serviceId) => {
         const service = services.find((service) => service._id.toString() === serviceId.toString());
 
         return service;
@@ -1566,11 +1576,7 @@ export default class OrdersController {
 
       // Create a string with the services names
       // Example: "Cleaning, Laundry, Shopping"
-      const orderServices = orderServicesAux
-        .map((service) => {
-          return service?.name;
-        })
-        .join(', ');
+      const orderServices = orderServicesAux.map((service) => service?.name).join(', ');
 
       let collaborators = (
         await OrdersController.CollaboratorsDAO.queryList({
@@ -1579,9 +1585,7 @@ export default class OrdersController {
       ).data;
 
       // Only send email to business users that have the 'orders_emails' permission
-      collaborators = collaborators.filter((user) => {
-        return user?.permissions?.includes('orders_emails');
-      });
+      collaborators = collaborators.filter((user) => user?.permissions?.includes('orders_emails'));
 
       const collaboratorsEmails = collaborators.map((user) => {
         if (user?.permissions?.includes('orders_emails')) {
@@ -1589,21 +1593,23 @@ export default class OrdersController {
         }
       });
 
-      let schedule = await DateUtils.getScheduleRecurrencyText(order.schedule_information.schedule);
+      const schedule = await DateUtils.getScheduleRecurrencyText(
+        order.schedule_information.schedule
+      );
 
-      let birthdate = await DateUtils.convertDateToReadableString(patient.birthdate);
+      const birthdate = await DateUtils.convertDateToReadableString(patient.birthdate);
 
-      let orderStart = await DateUtils.convertDateToReadableString2(
+      const orderStart = await DateUtils.convertDateToReadableString2(
         order.schedule_information.start_date
       );
 
-      let userEmailPayload = {
+      const userEmailPayload = {
         customerName: customer.name,
         healthUnitName: healthUnit.business_profile.name,
 
-        orderStart: orderStart,
+        orderStart,
         orderSchedule: schedule,
-        orderServices: orderServices,
+        orderServices,
         orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
 
         patientName: patient.name,
@@ -1620,7 +1626,7 @@ export default class OrdersController {
         termsAndConditions: PATHS.marketplace.termsAndConditions,
       };
 
-      let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+      const marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
         'marketplace_home_care_order_accepted',
         userEmailPayload
       );
@@ -1633,7 +1639,7 @@ export default class OrdersController {
         return next(new HTTPError._500('Error while generating email template.'));
       }
 
-      logger.info('Sending email to customer: ' + customer.email);
+      logger.info(`Sending email to customer: ${customer.email}`);
 
       if (order.type === 'marketplace') {
         await OrdersController.SES.sendEmail(
@@ -1647,19 +1653,19 @@ export default class OrdersController {
         for (let i = 0; i < collaboratorsEmails.length; i++) {
           const collaboratorEmail = collaboratorsEmails[i];
           if (collaboratorEmail) {
-            let healthUnitEmailPayload = {
+            const healthUnitEmailPayload = {
               collaboratorName: collaborators[i].name,
               healthUnitName: healthUnit.business_profile.name,
 
               customerName: customer.name,
               customerPhone: customer.phone,
 
-              orderStart: orderStart,
+              orderStart,
               orderSchedule: schedule,
               orderRecurrency: await DateUtils.getRecurrencyType(
                 order.schedule_information.recurrency
               ),
-              orderServices: orderServices,
+              orderServices,
 
               patientName: patient.name,
               patientBirthdate: birthdate,
@@ -1676,7 +1682,7 @@ export default class OrdersController {
               termsAndConditions: PATHS.business.termsAndConditions,
             };
 
-            let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+            const businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
               'business_home_care_order_accepted',
               healthUnitEmailPayload
             );
@@ -1728,7 +1734,7 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let { decline_reason } = req.body as {
+      const { decline_reason } = req.body as {
         decline_reason: string;
       };
 
@@ -1736,7 +1742,7 @@ export default class OrdersController {
         return next(new HTTPError._400('Missing decline reason.'));
       }
 
-      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+      const healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
@@ -1820,7 +1826,7 @@ export default class OrdersController {
         return next(new HTTPError._403('You do not have access to retrieve home care orders.'));
       }
 
-      let healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
+      const healthUnitId = await AuthHelper.getUserFromDB(accessToken).then((user) => {
         if (!('health_unit' in user)) {
           return next(new HTTPError._403('You are not authorized to decline this order.'));
         }
@@ -1829,7 +1835,7 @@ export default class OrdersController {
 
       let order: IHomeCareOrderDocument;
 
-      let orderId = req.params.id;
+      const orderId = req.params.id;
 
       try {
         order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: orderId }, [
@@ -1893,7 +1899,7 @@ export default class OrdersController {
          * From 'services' array, get the services that are in the order
          */
 
-        let orderServicesAux = order.services.map((serviceId) => {
+        const orderServicesAux = order.services.map((serviceId) => {
           const service = services.find(
             (service) => service._id.toString() === serviceId.toString()
           );
@@ -1903,21 +1909,17 @@ export default class OrdersController {
 
         // Create a string with the services names
         // Example: "Cleaning, Laundry, Shopping"
-        const orderServices = orderServicesAux
-          .map((service) => {
-            return service?.name;
-          })
-          .join(', ');
+        const orderServices = orderServicesAux.map((service) => service?.name).join(', ');
 
-        let schedule = await DateUtils.getScheduleRecurrencyText(
+        const schedule = await DateUtils.getScheduleRecurrencyText(
           order.schedule_information.schedule
         );
 
-        let birthdate = await DateUtils.convertDateToReadableString(
+        const birthdate = await DateUtils.convertDateToReadableString(
           (order.patient as IPatient).birthdate
         );
 
-        let orderStart = await DateUtils.convertDateToReadableString2(
+        const orderStart = await DateUtils.convertDateToReadableString2(
           order.schedule_information.start_date
         );
         let collaborators = (
@@ -1927,9 +1929,9 @@ export default class OrdersController {
         ).data;
 
         // Only send email to business users that have the 'orders_emails' permission
-        collaborators = collaborators.filter((user) => {
-          return user?.permissions?.includes('orders_emails');
-        });
+        collaborators = collaborators.filter((user) =>
+          user?.permissions?.includes('orders_emails')
+        );
 
         const collaboratorsEmails = collaborators.map((user) => {
           if (user?.permissions?.includes('orders_emails')) {
@@ -1937,7 +1939,7 @@ export default class OrdersController {
           }
         });
 
-        let userEmailPayload = {
+        const userEmailPayload = {
           customerName: (order.customer as ICustomer).name,
           healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
@@ -1947,9 +1949,9 @@ export default class OrdersController {
           taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2) || '0.00',
           total: order.order_total.toFixed(2),
 
-          orderStart: orderStart,
+          orderStart,
           orderSchedule: schedule,
-          orderServices: orderServices,
+          orderServices,
           orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
 
           patientName: (order.patient as IPatient).name,
@@ -1966,7 +1968,7 @@ export default class OrdersController {
           termsAndConditions: PATHS.marketplace.termsAndConditions,
         };
 
-        let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+        const marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
           'marketplace_home_care_order_quote',
           userEmailPayload
         );
@@ -1994,7 +1996,7 @@ export default class OrdersController {
           for (let i = 0; i < collaboratorsEmails.length; i++) {
             const collaboratorEmail = collaboratorsEmails[i];
             if (collaboratorEmail) {
-              let healthUnitEmailPayload = {
+              const healthUnitEmailPayload = {
                 collaboratorName: collaborators[i].name,
                 healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
@@ -2004,9 +2006,9 @@ export default class OrdersController {
                 taxAmount: (order.order_total - order.order_total / 1.23).toFixed(2),
                 total: order.order_total.toFixed(2),
 
-                orderStart: orderStart,
+                orderStart,
                 orderSchedule: schedule,
-                orderServices: orderServices,
+                orderServices,
                 orderRecurrency: await DateUtils.getRecurrencyType(
                   order.schedule_information.recurrency
                 ),
@@ -2028,7 +2030,7 @@ export default class OrdersController {
                 termsAndConditions: PATHS.business.termsAndConditions,
               };
 
-              let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+              const businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
                 'business_home_care_order_quote_sent',
                 healthUnitEmailPayload
               );
@@ -2116,7 +2118,7 @@ export default class OrdersController {
       }
 
       // Create an event
-      let event: IEvent = {
+      const event: IEvent = {
         _id: new Types.ObjectId(),
 
         owner_type: 'health_unit',
@@ -2144,7 +2146,7 @@ export default class OrdersController {
       const validationErrors = await newEvent.validateSync();
 
       if (validationErrors) {
-        return next(new HTTPError._400('Invalid event: ' + validationErrors.message));
+        return next(new HTTPError._400(`Invalid event: ${validationErrors.message}`));
       }
 
       let eventAdded: IEventDocument;
@@ -2181,7 +2183,7 @@ export default class OrdersController {
          * From 'services' array, get the services that are in the order
          */
 
-        let orderServicesAux = order.services.map((serviceId) => {
+        const orderServicesAux = order.services.map((serviceId) => {
           const service = services.find(
             (service) => service._id.toString() === serviceId.toString()
           );
@@ -2191,11 +2193,7 @@ export default class OrdersController {
 
         // Create a string with the services names
         // Example: "Cleaning, Laundry, Shopping"
-        const orderServices = orderServicesAux
-          .map((service) => {
-            return service?.name;
-          })
-          .join(', ');
+        const orderServices = orderServicesAux.map((service) => service?.name).join(', ');
 
         let collaborators = (
           await OrdersController.CollaboratorsDAO.queryList({
@@ -2204,9 +2202,9 @@ export default class OrdersController {
         ).data;
 
         // Only send email to business users that have the 'orders_emails' permission
-        collaborators = collaborators.filter((user) => {
-          return user?.permissions?.includes('orders_emails');
-        });
+        collaborators = collaborators.filter((user) =>
+          user?.permissions?.includes('orders_emails')
+        );
 
         const collaboratorsEmails = collaborators.map((user) => {
           if (user?.permissions?.includes('orders_emails')) {
@@ -2214,26 +2212,25 @@ export default class OrdersController {
           }
         });
 
-        let schedule = await DateUtils.getScheduleRecurrencyText(
+        const schedule = await DateUtils.getScheduleRecurrencyText(
           order.schedule_information.schedule
         );
 
-        let birthdate = await DateUtils.convertDateToReadableString(
+        const birthdate = await DateUtils.convertDateToReadableString(
           (order.patient as IPatientDocument).birthdate
         );
 
-        let userEmailPayload = {
+        const userEmailPayload = {
           customerName: (order.customer as ICustomer).name,
           healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
           date: await DateUtils.convertDateToReadableString(visit_start),
-          time:
-            (await DateUtils.getTimeFromDate(visit_start)) +
-            ' - ' +
-            (await DateUtils.getTimeFromDate(visit_end)),
+          time: `${await DateUtils.getTimeFromDate(
+            visit_start
+          )} - ${await DateUtils.getTimeFromDate(visit_end)}`,
 
           orderSchedule: schedule,
           orderRecurrency: await DateUtils.getRecurrencyType(order.schedule_information.recurrency),
-          orderServices: orderServices,
+          orderServices,
 
           patientName: (order.patient as IPatient).name,
           patientBirthdate: birthdate,
@@ -2248,7 +2245,7 @@ export default class OrdersController {
           termsAndConditions: PATHS.marketplace.termsAndConditions,
         };
 
-        let marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+        const marketplaceNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
           'marketplace_home_care_order_visit_scheduled',
           userEmailPayload
         );
@@ -2274,22 +2271,21 @@ export default class OrdersController {
           for (let i = 0; i < collaboratorsEmails.length; i++) {
             const collaboratorEmail = collaboratorsEmails[i];
             if (collaboratorEmail) {
-              let healthUnitEmailPayload = {
+              const healthUnitEmailPayload = {
                 collaboratorName: collaborators[i].name,
                 healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
 
                 date: await DateUtils.convertDateToReadableString(visit_start),
 
-                time:
-                  (await DateUtils.getTimeFromDate(visit_start)) +
-                  ' - ' +
-                  (await DateUtils.getTimeFromDate(visit_end)),
+                time: `${await DateUtils.getTimeFromDate(
+                  visit_start
+                )} - ${await DateUtils.getTimeFromDate(visit_end)}`,
 
                 orderSchedule: schedule,
                 orderRecurrency: await DateUtils.getRecurrencyType(
                   order.schedule_information.recurrency
                 ),
-                orderServices: orderServices,
+                orderServices,
 
                 patientName: (order.patient as IPatient).name,
                 patientBirthdate: birthdate,
@@ -2307,7 +2303,7 @@ export default class OrdersController {
                 termsAndConditions: PATHS.business.termsAndConditions,
               };
 
-              let businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
+              const businessNewOrderEmail = await EmailHelper.getEmailTemplateWithData(
                 'business_home_care_order_visit_scheduled',
                 healthUnitEmailPayload
               );

@@ -1,8 +1,8 @@
 import express from 'express';
 
 // Import Controller
-import OrdersController from '../controllers/orders.controller';
 import { AuthenticationGuard, ClientGuard, ValidatorMiddleware } from '@packages/middlewares';
+import OrdersController from '../controllers/orders.controller';
 import { CheckoutValidator } from '../validations/payments.validator';
 
 const router = express.Router();

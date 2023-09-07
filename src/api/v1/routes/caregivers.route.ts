@@ -3,9 +3,8 @@ import Router from 'express';
 import express from 'express';
 
 // Import controllers
-import { CaregiversController } from '../controllers';
-
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import { CaregiversController } from '../controllers';
 
 const router = express.Router();
 

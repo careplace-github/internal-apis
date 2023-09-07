@@ -41,19 +41,26 @@ import { PATHS } from '@packages/routes';
 export default class AuthenticationController {
   // db
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   // services
   static StripeService = StripeService;
+
   static SESService = SESService;
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
 
   static async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      let response: any = {};
+      const response: any = {};
 
       const clientId = req.headers['x-client-id'];
       let Cognito: CognitoService;
@@ -66,7 +73,7 @@ export default class AuthenticationController {
         return next(new HTTPError._400('Invalid client id.'));
       }
 
-      logger.info('Client ID: ' + clientId);
+      logger.info(`Client ID: ${clientId}`);
 
       Cognito = new CognitoService(clientId);
 
@@ -76,7 +83,7 @@ export default class AuthenticationController {
       };
 
       // create a new customer model
-      let newCustomer = new CustomerModel(reqCustomer);
+      const newCustomer = new CustomerModel(reqCustomer);
 
       // validate the new customer model
       const validationError = newCustomer.validateSync({ pathsToSkip: ['cognito_id'] });
@@ -214,6 +221,7 @@ export default class AuthenticationController {
       return next(new HTTPError._500(error.message));
     }
   }
+
   static async verifyConfirmationCode(
     req: Request,
     res: Response,
@@ -261,7 +269,7 @@ export default class AuthenticationController {
 
       try {
         user = await AuthenticationController.CustomersDAO.queryOne({
-          email: email,
+          email,
         });
       } catch (error: any) {
         return next(new HTTPError._500(error.message));
@@ -277,7 +285,7 @@ export default class AuthenticationController {
 
       try {
         user.stripe_information = {
-          customer_id: customer_id,
+          customer_id,
         };
 
         await AuthenticationController.CustomersDAO.update(user);
@@ -327,10 +335,10 @@ export default class AuthenticationController {
         return next(new HTTPError._400('Missing required header: x-client-id'));
       }
 
-      logger.info('CLIENT ID: ' + clientId);
-      logger.info('AWS_COGNITO_BUSINESS_CLIENT_ID: ' + AWS_COGNITO_BUSINESS_CLIENT_ID);
+      logger.info(`CLIENT ID: ${clientId}`);
+      logger.info(`AWS_COGNITO_BUSINESS_CLIENT_ID: ${AWS_COGNITO_BUSINESS_CLIENT_ID}`);
 
-      logger.info('AWS_COGNITO_MARKETPLACE_CLIENT_ID: ' + AWS_COGNITO_MARKETPLACE_CLIENT_ID);
+      logger.info(`AWS_COGNITO_MARKETPLACE_CLIENT_ID: ${AWS_COGNITO_MARKETPLACE_CLIENT_ID}`);
 
       if (
         clientId !== AWS_COGNITO_BUSINESS_CLIENT_ID &&
@@ -341,9 +349,9 @@ export default class AuthenticationController {
 
       const Cognito = new CognitoService(clientId);
 
-      const username = email ? email : phone;
+      const username = email || phone;
 
-      const payload = { username: username, password: password };
+      const payload = { username, password };
 
       try {
         cognitoResponse = await Cognito.adminAuthenticateUser('USER_PASSWORD_AUTH', payload);
@@ -571,9 +579,9 @@ export default class AuthenticationController {
 
       const { email } = req.body as { email: string };
 
-      logger.info('EMAIL: ' + JSON.stringify(req.body, null, 2));
+      logger.info(`EMAIL: ${JSON.stringify(req.body, null, 2)}`);
 
-      logger.info('CLIENT ID: ' + clientId);
+      logger.info(`CLIENT ID: ${clientId}`);
 
       const Cognito = new CognitoService(clientId);
 
@@ -676,9 +684,9 @@ export default class AuthenticationController {
         statusCode: res.statusCode,
         data: {},
       };
-      logger.info('STRIPE KEY: ' + STRIPE_SECRET_KEY);
+      logger.info(`STRIPE KEY: ${STRIPE_SECRET_KEY}`);
 
-      let app: string = '';
+      let app = '';
 
       let accessToken: string;
 
@@ -861,10 +869,10 @@ export default class AuthenticationController {
 
       const user = await AuthenticationController.AuthHelper.getUserFromDB(accessToken);
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
-      let app: string = '';
+      let app = '';
 
       if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
         app = 'business';
@@ -981,13 +989,13 @@ export default class AuthenticationController {
 
       const authUser = await AuthenticationController.AuthHelper.getAuthUser(accessToken);
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
       const Cognito = new CognitoService(clientId);
 
-      logger.info('AUTH USER: ' + JSON.stringify(authUser, null, 2));
+      logger.info(`AUTH USER: ${JSON.stringify(authUser, null, 2)}`);
 
       const userEmail = authUser?.UserAttributes?.find((attribute) => attribute.Name === 'email')
         ?.Value as string;
@@ -1084,7 +1092,7 @@ export default class AuthenticationController {
 
       const cognitoUser = await AuthenticationController.AuthHelper.getAuthUser(accessToken);
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
@@ -1187,7 +1195,7 @@ export default class AuthenticationController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
@@ -1243,7 +1251,7 @@ export default class AuthenticationController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
@@ -1302,7 +1310,7 @@ export default class AuthenticationController {
 
       const { code } = req.body as { code: string };
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 
@@ -1399,7 +1407,7 @@ export default class AuthenticationController {
 
       const { code } = req.body as { code: string };
 
-      let clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
+      const clientId = await AuthenticationController.AuthHelper.getClientIdFromAccessToken(
         accessToken
       );
 

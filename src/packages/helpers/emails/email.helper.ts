@@ -1,5 +1,4 @@
-import { readFileSync, promises as fsPromises } from 'fs';
-import fs from 'fs';
+import fs, { readFileSync, promises as fsPromises } from 'fs';
 import nodemailer from 'nodemailer';
 // Import logger
 import logger from '@logger';
@@ -32,7 +31,7 @@ export default class EmailHelper {
       throw new Error('Email template file does not exist');
     }
 
-    let template = readFileSync(filename, 'utf-8');
+    const template = readFileSync(filename, 'utf-8');
 
     return template;
   }
@@ -57,14 +56,14 @@ export default class EmailHelper {
     let htmlBody = await this.getEmailTemplate(emailTemplate);
 
     // Get the keys of the data object
-    let keys = Object.keys(data);
+    const keys = Object.keys(data);
 
     // Iterate over the keys
     // Replace the variables in the email template with the values
     // Each variable may appear multiple times in the email template
     keys.forEach((key) => {
       // Get the value of the key
-      let value = data[key];
+      const value = data[key];
 
       // Replace the variables with the respective values
       // The same variable may appear multiple times in the email template
@@ -80,7 +79,7 @@ export default class EmailHelper {
       subject = 'Careplace';
     }
 
-    return { htmlBody: htmlBody, subject: subject };
+    return { htmlBody, subject };
   }
 
   /**
@@ -100,9 +99,9 @@ export default class EmailHelper {
     const uniqueVariables = Array.from(new Set(variables));
 
     // Remove the {{ and }} from the variables
-    const variablesWithoutBrackets = uniqueVariables.map((variable) => {
-      return variable.replace('{{', '').replace('}}', '');
-    });
+    const variablesWithoutBrackets = uniqueVariables.map((variable) =>
+      variable.replace('{{', '').replace('}}', '')
+    );
 
     return variablesWithoutBrackets;
   }
@@ -231,27 +230,26 @@ export default class EmailHelper {
     ccEmails,
     bccEmails
   ) {
-    let SES = SESService;
-    let ses = await SES.getSES();
+    const SES = SESService;
+    const ses = await SES.getSES();
     const transporter = nodemailer.createTransport({
       SES: { ses, aws },
     });
 
     logger.info(
-      'EmailHelper.sendEmailWithAttachment params: ' +
-        JSON.stringify(
-          {
-            receiverEmail,
-            subject,
-            htmlBody,
-            textBody,
-            attachments,
-            ccEmails,
-            bccEmails,
-          },
-          null,
-          2
-        )
+      `EmailHelper.sendEmailWithAttachment params: ${JSON.stringify(
+        {
+          receiverEmail,
+          subject,
+          htmlBody,
+          textBody,
+          attachments,
+          ccEmails,
+          bccEmails,
+        },
+        null,
+        2
+      )}`
     );
 
     // transporter.use("compile", htmlToText.htmlToText());
@@ -261,16 +259,16 @@ export default class EmailHelper {
       to: receiverEmail,
       cc: ccEmails,
       bcc: bccEmails,
-      subject: subject,
+      subject,
       html: htmlBody,
       //      text: textBody,
-      attachments: attachments,
+      attachments,
     };
 
-    let response = await transporter.sendMail(mailOptions);
+    const response = await transporter.sendMail(mailOptions);
 
-    for (let attachment of attachments) {
-      var filePath = attachment.path;
+    for (const attachment of attachments) {
+      const filePath = attachment.path;
 
       // Delete the file
       fs.unlink.bind(fs, filePath);

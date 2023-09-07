@@ -102,13 +102,13 @@ export default class VendusService {
         mode: 'tests',
       };
 
-      logger.info('VendusService.createFaturaRecibo params: ' + JSON.stringify(payload, null, 2));
+      logger.info(`VendusService.createFaturaRecibo params: ${JSON.stringify(payload, null, 2)}`);
 
       // TODO Remove tests mode
       const response = await this.axios.post('/documents?mode=tests', payload);
 
       logger.info(
-        'VendusService.createFaturaRecibo return: ' + JSON.stringify(response.data, null, 2)
+        `VendusService.createFaturaRecibo return: ${JSON.stringify(response.data, null, 2)}`
       );
       return response.data;
     } catch (error: any) {
@@ -121,12 +121,12 @@ export default class VendusService {
 
   static async getDocument(id: string) {
     try {
-      logger.info('VendusService.getDocument params: ' + id);
+      logger.info(`VendusService.getDocument params: ${id}`);
 
       // TODO Remove tests mode
       const response = await this.axios.get(`/documents/${id}?mode=tests`);
 
-      logger.info('VendusService.getDocument return: ' + JSON.stringify(response.data, null, 2));
+      logger.info(`VendusService.getDocument return: ${JSON.stringify(response.data, null, 2)}`);
 
       return response.data;
     } catch (error: any) {
@@ -142,7 +142,7 @@ export default class VendusService {
     path: string;
   }> {
     try {
-      logger.info('VendusService.downloadDocument params: ' + id);
+      logger.info(`VendusService.downloadDocument params: ${id}`);
 
       // TODO Remove tests mode
       const vendusDocument = await this.getDocument(id);
@@ -152,7 +152,7 @@ export default class VendusService {
       });
 
       logger.info(
-        'VendusService.downloadDocument response.data: ' + JSON.stringify(response.data, null, 2)
+        `VendusService.downloadDocument response.data: ${JSON.stringify(response.data, null, 2)}`
       );
 
       let documentName = `${vendusDocument.number}.pdf`;
@@ -163,17 +163,17 @@ export default class VendusService {
       documentName = documentName.replace(/\//g, '_');
 
       // TODO Remove tests mode
-      let documentPath = `src/downloads/${documentName}`;
+      const documentPath = `src/downloads/${documentName}`;
 
       fs.writeFileSync(documentPath, response.data);
 
-      let document = {
+      const document = {
         filename: documentName,
 
         path: documentPath,
       };
 
-      logger.info('VendusService.downloadDocument return: ' + JSON.stringify(document, null, 2));
+      logger.info(`VendusService.downloadDocument return: ${JSON.stringify(document, null, 2)}`);
 
       return document;
     } catch (error: any) {

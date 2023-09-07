@@ -14,6 +14,7 @@ import { CognitoService, StripeService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
+
 export default class LeadsController {
   // db
   static LeadsDAO = new LeadsDAO();
@@ -46,7 +47,7 @@ export default class LeadsController {
       try {
         leadExists = await LeadsController.LeadsDAO.queryOne({
           type: 'caregiver',
-          email: email,
+          email,
         });
       } catch (error: any) {
         switch (error.type) {
@@ -111,7 +112,7 @@ export default class LeadsController {
       try {
         leadExists = await LeadsController.LeadsDAO.queryOne({
           type: 'health_unit',
-          email: email,
+          email,
         });
       } catch (error: any) {
         switch (error.type) {
@@ -170,7 +171,7 @@ export default class LeadsController {
       try {
         leadExists = await LeadsController.LeadsDAO.queryOne({
           type: 'customer_newsletter',
-          email: email,
+          email,
         });
       } catch (error: any) {
         switch (error.type) {
@@ -231,7 +232,7 @@ export default class LeadsController {
       try {
         leadExists = await LeadsController.LeadsDAO.queryOne({
           type: 'collaborator_newsletter',
-          email: email,
+          email,
         });
       } catch (error: any) {
         switch (error.type) {

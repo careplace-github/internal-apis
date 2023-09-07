@@ -30,15 +30,24 @@ import { CaregiverModel, CollaboratorModel } from '@packages/models';
 export default class DashboardController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   static StripeHelper = StripeHelper;
+
   // services
   static SES = SESService;
 
@@ -49,9 +58,9 @@ export default class DashboardController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
 
-      let user = await DashboardController.AuthHelper.getUserFromDB(accessToken);
+      const user = await DashboardController.AuthHelper.getUserFromDB(accessToken);
 
       let healthUnitId = '';
 
@@ -65,21 +74,19 @@ export default class DashboardController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let healthUnit = await DashboardController.HealthUnitsDAO.retrieve(healthUnitId);
+      const healthUnit = await DashboardController.HealthUnitsDAO.retrieve(healthUnitId);
 
       if (!healthUnit || !healthUnit.stripe_information) {
         next(new HTTPError._500('Failed to retrieve healthUnit information.'));
         return;
       }
 
-      let accountId = healthUnit.stripe_information.account_id;
+      const accountId = healthUnit.stripe_information.account_id;
 
-      let pendingOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+      const pendingOrders = await DashboardController.HomeCareOrdersDAO.queryList({
         health_unit: { $eq: healthUnitId },
         status: { $eq: 'new' },
-      }).then((orders) => {
-        return orders.data;
-      });
+      }).then((orders) => orders.data);
 
       // ----------------------------------------------------------------------------------------- //
       const currentYear = new Date().getFullYear();
@@ -177,34 +184,38 @@ export default class DashboardController {
         return chargeDate.getMonth() === previousMonth && chargeDate.getFullYear() === currentYear;
       });
 
-      let currentMonthChargesAmount = currentMonthCharges.reduce((total, charge) => {
-        return total + charge.amount;
-      }, 0);
+      let currentMonthChargesAmount = currentMonthCharges.reduce(
+        (total, charge) => total + charge.amount,
+        0
+      );
 
-      currentMonthChargesAmount = currentMonthChargesAmount / 100; // Convert from cents to dollars
+      currentMonthChargesAmount /= 100; // Convert from cents to dollars
 
-      let previousMonthChargesAmount = previousMonthCharges.reduce((total, charge) => {
-        return total + charge.amount;
-      }, 0);
+      let previousMonthChargesAmount = previousMonthCharges.reduce(
+        (total, charge) => total + charge.amount,
+        0
+      );
 
-      previousMonthChargesAmount = previousMonthChargesAmount / 100; // Convert from cents to dollars
+      previousMonthChargesAmount /= 100; // Convert from cents to dollars
 
-      let currentYearChargesAmount = currentYearCharges.data.reduce((total, charge) => {
-        return total + charge.amount;
-      }, 0);
+      let currentYearChargesAmount = currentYearCharges.data.reduce(
+        (total, charge) => total + charge.amount,
+        0
+      );
 
-      currentYearChargesAmount = currentYearChargesAmount / 100; // Convert from cents to dollars
+      currentYearChargesAmount /= 100; // Convert from cents to dollars
 
-      let previousYearChargesAmount = previousYearCharges.data.reduce((total, charge) => {
-        return total + charge.amount;
-      }, 0);
+      let previousYearChargesAmount = previousYearCharges.data.reduce(
+        (total, charge) => total + charge.amount,
+        0
+      );
 
-      previousYearChargesAmount = previousYearChargesAmount / 100; // Convert from cents to dollars
+      previousYearChargesAmount /= 100; // Convert from cents to dollars
 
       // ------- ACTIVE CLIENTS ------- //
 
-      let currentMonthClients = currentMonthCharges.length;
-      let previousMonthClients = previousMonthCharges.length;
+      const currentMonthClients = currentMonthCharges.length;
+      const previousMonthClients = previousMonthCharges.length;
 
       let activeClientsMonthOverMonthPercentage = 0;
 
@@ -357,8 +368,8 @@ export default class DashboardController {
         yearly_order_average_month_over_month_percentage: Number(
           yearly_order_average_month_over_month_percentage.toFixed(2)
         ),
-        current_month_order_average: current_month_order_average,
-        previous_month_order_average: previous_month_order_average,
+        current_month_order_average,
+        previous_month_order_average,
         monthly_order_average_month_over_month_percentage: Number(
           monthly_order_average_month_over_month_percentage.toFixed(2)
         ),
@@ -451,9 +462,9 @@ export default class DashboardController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
 
-      let user = await DashboardController.AuthHelper.getUserFromDB(accessToken);
+      const user = await DashboardController.AuthHelper.getUserFromDB(accessToken);
 
       let healthUnitId = '';
 
@@ -467,14 +478,14 @@ export default class DashboardController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let healthUnit = await DashboardController.HealthUnitsDAO.retrieve(healthUnitId);
+      const healthUnit = await DashboardController.HealthUnitsDAO.retrieve(healthUnitId);
 
       if (!healthUnit || !healthUnit.stripe_information) {
         next(new HTTPError._500('Failed to retrieve healthUnit information.'));
         return;
       }
 
-      let accountId = healthUnit.stripe_information.account_id;
+      const accountId = healthUnit.stripe_information.account_id;
 
       let annualBilling;
 

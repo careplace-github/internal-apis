@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../../../logs/logger';
-import authUtils from '../../utils/auth/auth.utils';
 import { HTTPError } from '@utils';
 import { AWS_COGNITO_MARKETPLACE_CLIENT_ID, AWS_COGNITO_BUSINESS_CLIENT_ID } from '@constants';
+import logger from '../../../logs/logger';
+import authUtils from '../../utils/auth/auth.utils';
 
 /**
  * @description Middleware to validate if a user is authenticated through the JWT accessToken.
@@ -24,7 +24,7 @@ export default function validateAuth(req: Request, res: Response, next: NextFunc
         `AuthenticationGuard Middleware Request: \n ${JSON.stringify(req.headers, null, 2)} \n`
       );
 
-      let AuthUtils = authUtils;
+      const AuthUtils = authUtils;
 
       let accessToken: string;
 
@@ -38,7 +38,7 @@ export default function validateAuth(req: Request, res: Response, next: NextFunc
 
       // accessToken provided
       if (accessToken !== null && accessToken !== undefined) {
-        let isLoggedIn = await AuthUtils.isValidJwtToken(accessToken);
+        const isLoggedIn = await AuthUtils.isValidJwtToken(accessToken);
 
         if (isLoggedIn) {
           next();

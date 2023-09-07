@@ -15,9 +15,7 @@ export default class GeometryUtils {
    */
   async pointInPolygon(point, polygon) {
     // Create an array of coordinates from the polygon array
-    const polygon_array = polygon.map((point) => {
-      return [point.longitude, point.latitude];
-    });
+    const polygon_array = polygon.map((point) => [point.longitude, point.latitude]);
 
     return pointInPolygon([point.longitude, point.latitude], polygon_array);
   }
