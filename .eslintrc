@@ -47,10 +47,14 @@
   "rules": {
     "prettier/prettier": 1, // prettier
     "prefer-const": 1, // prefer const
+    "spaced-comment": 1, // spaced comment
+    "import/order": 1, // import module
 
     "@typescript-eslint/no-non-null-asserted-optional-chain": 1, // no ! operator
+    "dot-notation": 1, // dot notation
     "@typescript-eslint/no-non-null-assertion": 1, // no ! operator
     "eqeqeq": 1, // === instead of ==
+    "lines-between-class-members": 1, // lines between class members
     "array-callback-return": 1, // array callback return
     "no-case-declarations": 1, // no case declarations
     "import/no-unresolved": 1, // import module
