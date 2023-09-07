@@ -85,7 +85,7 @@ jobs:
         run: npx snyk auth ${{ secrets.SNYK_API_TOKEN }}
       - name: Snyk Policy
         run: npx snyk policy
-      - name: Snyk Test
+      - name: Snyk Test Code
         run: npx snyk test --severity-threshold=high
       - name: Build the Docker image
         run: docker build . --file .docker/api/Dockerfile.prod --tag careplace/internal-apis:dev

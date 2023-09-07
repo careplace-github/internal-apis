@@ -39,7 +39,7 @@ env:
   CONTAINER_NAME: backend # set this to the name of the container in the containerDefinitions section of your task definition
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   release:
@@ -66,17 +66,15 @@ jobs:
         run: npx conventional-recommended-bump
 
       - name: Create release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            ${{ steps.bump.outputs.reason }}
-            ${{ steps.bump.outputs.releaseType }}
+          tag: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          bodyFile: CHANGELOG.md
           draft: false
-          prerelease: false
+          prerelease: true
 
 
   deploy:
