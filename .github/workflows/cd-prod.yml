@@ -141,7 +141,7 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-       - name: Deploy Amazon ECS task definition (webhooks)
+      - name: Deploy Amazon ECS task definition (webhooks)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
