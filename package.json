@@ -1,6 +1,6 @@
 {
   "name": "careplace-internal-apis",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Internal RESTful APIs for Careplace platforms.",
   "main": "./src/server.ts",
   "private": true,
