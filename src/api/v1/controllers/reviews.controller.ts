@@ -91,7 +91,7 @@ export default class ReviewsController {
       try {
         const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
           health_unit: healthUnitId,
-          user: user._id,
+          customer: user._id,
         });
 
         if (existingReview) {
