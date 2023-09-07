@@ -457,10 +457,12 @@ export default class ReviewsController {
       };
 
       try {
-        const review = await ReviewsController.HealthUnitReviewsDAO.queryOne(filters);
-
+        const review = await ReviewsController.HealthUnitReviewsDAO.queryOne(filters, {
+          path: 'customer',
+          model: 'Customer',
+          select: 'name profile_picture -_id',
+        });
         response.data = review;
-
         response.statusCode = 200;
       } catch (error: any) {
         switch (error.type) {
