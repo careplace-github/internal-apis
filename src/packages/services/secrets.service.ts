@@ -40,7 +40,7 @@ export async function loadAWSSecrets() {
         });
       }
     } catch (err) {
-      console.log(`Failed to load .env.local file.`, err);
+      console.log(`No .env.local file found.`, err);
       if (environment === 'development') {
         // If the environment is development and the .env.local file does not exist, throw an error
         throw new Error('Server is in development mode but no .env.local file was found.');
