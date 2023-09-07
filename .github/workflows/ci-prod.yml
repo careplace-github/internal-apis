@@ -45,12 +45,6 @@ jobs:
         id: get_latest_tag
         run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
 
-      - name: Get Changelog
-        id: get_changelog
-        run: |
-          changelog_content=$(cat CHANGELOG.md)
-          echo "::set-output name=changelog::$changelog_content"
-
       - name: Create release
         id: create_release
         uses: ncipollo/release-action@v1
@@ -60,7 +54,7 @@ jobs:
           tag: ${{ steps.get_latest_tag.outputs.tag }}
           name: Release ${{ steps.get_latest_tag.outputs.tag }}
           bodyFile: CHANGELOG.md
-          draft: true
+          draft: false
           prerelease: true
 
      
