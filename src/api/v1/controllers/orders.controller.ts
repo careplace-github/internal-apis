@@ -647,6 +647,9 @@ export default class OrdersController {
         homeCareOrders = await OrdersController.HomeCareOrdersDAO.queryList(
           {
             customer: user._id,
+            status: {
+              $nin: ['declined'],
+            },
           },
           undefined,
           undefined,
