@@ -9,6 +9,10 @@ import { LayerError } from '@utils';
 
 import { CognitoService } from '@packages/services';
 
+import AuthUtils from '../../utils/auth/auth.utils';
+
+import { ICaregiverDocument, ICollaboratorDocument, ICustomerDocument } from '../../interfaces';
+
 import {
   AWS_COGNITO_BUSINESS_GROUPS,
   AWS_COGNITO_MARKETPLACE_GROUPS,
@@ -16,36 +20,30 @@ import {
   AWS_COGNITO_MARKETPLACE_CLIENT_ID,
   AWS_COGNITO_ADMIN_CLIENT_ID,
 } from '@constants';
-import { TClientID } from 'src/packages/interfaces/types';
-import AuthUtils from '../../utils/auth/auth.utils';
-
-import { ICaregiverDocument, ICollaboratorDocument, ICustomerDocument } from '../../interfaces';
 
 import CustomersDao from '../../database/customers.dao';
 import CollaboratorsDAO from '../../database/collaborators.dao';
 import { CaregiversDAO } from '../../database';
+import { TClientID } from 'src/packages/interfaces/types';
 
 /**
  * Class with utility functions for authentication.
  * AWS Cognito Context.
  */
 export default class AuthHelper {
-  // db
+  //db
   static CollaboratorsDAO = new CollaboratorsDAO();
-
   static CustomersDAO = new CustomersDao();
-
   static CaregiversDAO = new CaregiversDAO();
-
   // utils
   static AuthUtils = AuthUtils;
 
   static async getClientIdFromAccessToken(accessToken: string): Promise<string> {
     logger.info(`Authentication Helper GET_CLIENT_ID_FROM_ACCESS_TOKEN Request: \n ${accessToken}`);
 
-    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+    let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
 
-    const clientId = decodedToken.client_id;
+    let clientId = decodedToken['client_id'];
 
     if (!clientId) {
       throw new LayerError.INVALID_PARAMETER('Client id not found in token');
@@ -75,13 +73,13 @@ export default class AuthHelper {
   ): Promise<CognitoIdentityServiceProvider.AdminGetUserResponse> {
     logger.info(`Authentication Helper GET_AUTH_USER Request: \n ${accessToken}`);
 
-    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+    let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
 
-    const clientId = decodedToken.client_id;
+    let clientId = decodedToken['client_id'];
 
-    const { username } = decodedToken;
+    let username = decodedToken['username'];
 
-    const Cognito = new CognitoService(clientId);
+    let Cognito = new CognitoService(clientId);
 
     const authUser = await Cognito.adminGetUser(username);
 
@@ -97,17 +95,17 @@ export default class AuthHelper {
   ): Promise<CognitoIdentityServiceProvider.AttributeListType | undefined> {
     logger.info(`Authentication Helper GET_USER_ATTRIBUTES Request: \n ${accessToken}`);
 
-    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+    let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
 
-    const clientId = decodedToken.client_id as string;
+    let clientId = decodedToken['client_id'] as string;
 
-    const username = decodedToken.username as string;
+    let username = decodedToken['username'] as string;
 
-    const Cognito = new CognitoService(clientId);
+    let Cognito = new CognitoService(clientId);
 
     const user = await Cognito.adminGetUser(username);
 
-    const userAttributes = user.UserAttributes;
+    let userAttributes = user.UserAttributes;
 
     logger.info(
       `Authentication Helper GET_USER_ATTRIBUTES RESULT: \n ${JSON.stringify(
@@ -135,9 +133,9 @@ export default class AuthHelper {
   static async getAppId(accessToken: string): Promise<'business' | 'marketplace'> {
     logger.info(`Authentication Helper GET_APP Request: \n ${accessToken}`);
 
-    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+    let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
 
-    const clientId = decodedToken.client_id as string;
+    let clientId = decodedToken['client_id'] as string;
 
     let appId: 'business' | 'marketplace';
 
@@ -159,11 +157,11 @@ export default class AuthHelper {
   ): Promise<ICollaboratorDocument | ICaregiverDocument | ICustomerDocument> {
     logger.info(`Authentication Helper GET_USER_FROM_DB Request: \n ${accessToken}`);
 
-    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+    let decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
 
-    const clientId = decodedToken.client_id;
+    let clientId = decodedToken['client_id'];
 
-    const { username } = decodedToken;
+    let username = decodedToken['username'];
 
     let user: ICollaboratorDocument | ICaregiverDocument | ICustomerDocument;
 
