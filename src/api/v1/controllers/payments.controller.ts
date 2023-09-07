@@ -37,8 +37,7 @@ import {
   ServiceModel,
 } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
-import { AuthUtils } from 'src/packages/utils';
-import { HTTPError, DateUtils } from '@utils';
+import { AuthUtils, HTTPError, DateUtils } from 'src/packages/utils';
 
 // @constants
 import {
@@ -55,24 +54,40 @@ import Stripe from 'stripe';
 
 export default class PaymentsController {
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   static EventSeriesDAO = new EventSeriesDAO();
+
   static PatientsDAO = new PatientsDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   static OrdersHelper = OrdersHelper;
+
   static StripeHelper = StripeHelper;
+
   // services
   static SES = SESService;
+
   static StripeService = StripeService;
+
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
+
   // utils
   static AuthUtils = AuthUtils;
+
   static DateUtils = DateUtils;
 
   // -------------------------------------------------- //
@@ -99,7 +114,7 @@ export default class PaymentsController {
 
       let cardToken: Stripe.Token;
 
-      let params: Stripe.TokenCreateParams = {
+      const params: Stripe.TokenCreateParams = {
         card: {
           number: req.body.card_number,
           exp_month: req.body.exp_month,
@@ -148,11 +163,11 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let paymentMethodToken = req.body.payment_method_token;
+      const paymentMethodToken = req.body.payment_method_token;
 
-      let billingDetails = req.body.billing_details;
+      const billingDetails = req.body.billing_details;
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._401('You are not authorized to perform this action.'));
@@ -162,7 +177,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -179,7 +194,7 @@ export default class PaymentsController {
         } as ICustomerDocument);
       }
 
-      let createPaymentMethodParams: Stripe.PaymentMethodCreateParams = {
+      const createPaymentMethodParams: Stripe.PaymentMethodCreateParams = {
         type: 'card',
         card: {
           token: paymentMethodToken,
@@ -261,9 +276,9 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let paymentMethodId = req.params.paymentMethod;
+      const paymentMethodId = req.params.paymentMethod;
 
-      let paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+      const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
         paymentMethodId
       );
 
@@ -294,9 +309,9 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let paymentMethodId = req.params.paymentMethod;
+      const paymentMethodId = req.params.paymentMethod;
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._401('You are not authorized to perform this action.'));
@@ -306,7 +321,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -324,17 +339,17 @@ export default class PaymentsController {
       }
 
       // Check if the payment method is attached to the customer trying to delete it.
-      let paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+      const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
         paymentMethodId
       );
 
       if (paymentMethod.customer !== customerId) {
-        logger.info('paymentMethod.customer: ' + paymentMethod.customer);
-        logger.info('customerId: ' + customerId);
+        logger.info(`paymentMethod.customer: ${paymentMethod.customer}`);
+        logger.info(`customerId: ${customerId}`);
         return next(new HTTPError._403('You are not authorized to delete this payment method.'));
       }
 
-      let filters = {
+      const filters = {
         user: user._id,
         // status should be active or pending_payment
         status: ['active', 'pending_payment'],
@@ -347,8 +362,8 @@ export default class PaymentsController {
         })
       ).data;
 
-      for (let order of orders) {
-        let subscriptionId = order.stripe_information.subscription_id;
+      for (const order of orders) {
+        const subscriptionId = order.stripe_information.subscription_id;
 
         let subscription;
 
@@ -367,7 +382,7 @@ export default class PaymentsController {
       }
 
       // If the payment method is not the default payment method for any active orders, then delete it.
-      let paymentMethodDeleted = await PaymentsController.StripeService.deletePaymentMethod(
+      const paymentMethodDeleted = await PaymentsController.StripeService.deletePaymentMethod(
         paymentMethodId
       );
 
@@ -401,7 +416,7 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._401('You are not authorized to perform this action.'));
@@ -411,7 +426,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -434,7 +449,7 @@ export default class PaymentsController {
         throw new HTTPError._400('No customer id found.');
       }
 
-      let paymentMethods = await PaymentsController.StripeService.listPaymentMethods(customerId);
+      const paymentMethods = await PaymentsController.StripeService.listPaymentMethods(customerId);
 
       response.statusCode = 200;
       response.data = paymentMethods;
@@ -471,15 +486,15 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let orderId = req.params.order as string;
+      const orderId = req.params.order as string;
 
-      let paymentMethodId = req.body.payment_method as string;
+      const paymentMethodId = req.body.payment_method as string;
 
       if (!paymentMethodId) {
         return next(new HTTPError._400('No payment method id provided.'));
       }
 
-      let promotionCodeName = req.body.promotion_code as string;
+      const promotionCodeName = req.body.promotion_code as string;
 
       const billingDetails = req.body.billing_details;
 
@@ -529,9 +544,9 @@ export default class PaymentsController {
         }
       }
 
-      let healthUnitAccountId = (order.health_unit as IHealthUnit).stripe_information.account_id;
+      const healthUnitAccountId = (order.health_unit as IHealthUnit).stripe_information.account_id;
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         logger.warn('User is not a customer.');
@@ -549,7 +564,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        let stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -567,15 +582,15 @@ export default class PaymentsController {
       }
 
       // Convert amount to interger
-      let amount = order.order_total * 100; // stripe requires the amount in cents
+      const amount = order.order_total * 100; // stripe requires the amount in cents
 
       if (!amount) {
         return next(new HTTPError._400('No order amount provided.'));
       }
 
-      let stripeCustomer = await PaymentsController.StripeService.getCustomer(customerId);
-      let currency = 'eur';
-      let productId = STRIPE_PRODUCT_ID;
+      const stripeCustomer = await PaymentsController.StripeService.getCustomer(customerId);
+      const currency = 'eur';
+      const productId = STRIPE_PRODUCT_ID;
       let priceId: string;
       let subscription: Stripe.Subscription | undefined;
       let coupon: Stripe.Coupon | undefined;
@@ -583,15 +598,15 @@ export default class PaymentsController {
       /**
        * Check if any field is missing in req.body.billing_address
        */
-      let taxId = req.body.billing_details.tax_id;
+      const taxId = req.body.billing_details.tax_id;
 
       if (taxId) {
         // Check if the customer already has the tax id
-        let customerTaxIds = await PaymentsController.StripeService.getCustomerTaxIds(customerId);
+        const customerTaxIds = await PaymentsController.StripeService.getCustomerTaxIds(customerId);
 
         let taxIdExists = false;
 
-        let taxIdAux = 'PT' + taxId;
+        const taxIdAux = `PT${taxId}`;
 
         for (let i = 0; i < customerTaxIds.data.length; i++) {
           if (customerTaxIds.data[i].value === taxIdAux) {
@@ -611,9 +626,9 @@ export default class PaymentsController {
         }
       }
 
-      let createPriceParams: Stripe.PriceCreateParams = {
+      const createPriceParams: Stripe.PriceCreateParams = {
         unit_amount: amount,
-        currency: currency,
+        currency,
         recurring: {
           interval: 'month',
         },
@@ -651,7 +666,7 @@ export default class PaymentsController {
         collection_method: 'charge_automatically', // automatically charge the customer's card for each invoice
       };
 
-      let createSubscriptionParamsWithPromotionCode: Stripe.SubscriptionCreateParams = {
+      const createSubscriptionParamsWithPromotionCode: Stripe.SubscriptionCreateParams = {
         customer: customerId,
         items: [
           {
@@ -678,8 +693,8 @@ export default class PaymentsController {
           createSubscriptionParamsWithPromotionCode.coupon = coupon.id;
 
           try {
-            logger.info('AMOUNT: ' + amount / 100);
-            logger.info('COUPON: ' + JSON.stringify(coupon, null, 2));
+            logger.info(`AMOUNT: ${amount / 100}`);
+            logger.info(`COUPON: ${JSON.stringify(coupon, null, 2)}`);
 
             const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
               paymentMethodId
@@ -689,7 +704,7 @@ export default class PaymentsController {
               type: paymentMethod.type,
               country: paymentMethod?.card?.country || '',
             };
-            logger.info('PAYMENT METHOD: ' + JSON.stringify(paymentMethodAux, null, 2));
+            logger.info(`PAYMENT METHOD: ${JSON.stringify(paymentMethodAux, null, 2)}`);
 
             const amountOff = promotionCodeExists.coupon.amount_off / 100;
             const orderTotal = amount / 100;
@@ -707,7 +722,7 @@ export default class PaymentsController {
 
             newApplicationFee = amounts.application_fee;
 
-            logger.info('NEW APPLICATION FEE: ' + newApplicationFee);
+            logger.info(`NEW APPLICATION FEE: ${newApplicationFee}`);
 
             // Create a subscription with a promotion code
             subscription = await PaymentsController.StripeService.createSubscription(
@@ -782,10 +797,10 @@ export default class PaymentsController {
       const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
       logger.info(
-        'paymentIntent?.last_payment_error?.code' + paymentIntent?.last_payment_error?.code
+        `paymentIntent?.last_payment_error?.code${paymentIntent?.last_payment_error?.code}`
       );
 
-      logger.info('subscription.status' + subscription.status);
+      logger.info(`subscription.status${subscription.status}`);
 
       // Check if the charge succeeded
       if (paymentIntent?.last_payment_error?.code || subscription.status === 'incomplete') {
@@ -794,17 +809,16 @@ export default class PaymentsController {
       }
 
       // Charge succeeded, change the order status to active
-      else {
-        // Change the order status to active
-        order.status = 'active';
 
-        // Update the order
-        PaymentsController.HomeCareOrdersDAO.update(order);
-      }
+      // Change the order status to active
+      order.status = 'active';
+
+      // Update the order
+      PaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
-        subscription: subscription,
+        subscription,
       };
 
       // Pass to the next middleware to handle the response
@@ -876,9 +890,8 @@ export default class PaymentsController {
 
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
-      } else {
-        subscriptionId = order.stripe_information.subscription_id;
       }
+      subscriptionId = order.stripe_information.subscription_id;
 
       try {
         paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
@@ -912,7 +925,7 @@ export default class PaymentsController {
 
       response.statusCode = 200;
       response.data = {
-        subscription: subscription,
+        subscription,
       };
 
       // Pass to the next middleware to handle the response
@@ -974,11 +987,10 @@ export default class PaymentsController {
 
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
-      } else {
-        subscription = await PaymentsController.StripeService.getSubscription(
-          order.stripe_information.subscription_id
-        );
       }
+      subscription = await PaymentsController.StripeService.getSubscription(
+        order.stripe_information.subscription_id
+      );
 
       // Get the latest invoice id
       const latestInvoiceId = subscription.latest_invoice as string;
@@ -1081,11 +1093,10 @@ export default class PaymentsController {
 
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
-      } else {
-        subscription = await PaymentsController.StripeService.getSubscription(
-          order.stripe_information.subscription_id
-        );
       }
+      subscription = await PaymentsController.StripeService.getSubscription(
+        order.stripe_information.subscription_id
+      );
 
       if (subscription.status !== 'active') {
         return next(new HTTPError._400('Subscription is not active.'));
@@ -1112,7 +1123,7 @@ export default class PaymentsController {
 
       response.statusCode = 200;
       response.data = {
-        subscription: subscription,
+        subscription,
       };
 
       // Pass to the next middleware to handle the response
@@ -1176,11 +1187,10 @@ export default class PaymentsController {
 
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
-      } else {
-        subscription = await PaymentsController.StripeService.getSubscription(
-          order.stripe_information.subscription_id
-        );
       }
+      subscription = await PaymentsController.StripeService.getSubscription(
+        order.stripe_information.subscription_id
+      );
 
       if (subscription.status !== 'active') {
         return next(new HTTPError._400('Subscription is not active.'));
@@ -1241,7 +1251,7 @@ export default class PaymentsController {
 
       response.statusCode = 200;
       response.data = {
-        subscription: subscription,
+        subscription,
       };
 
       // Add the coupon to the subscription
@@ -1281,9 +1291,9 @@ export default class PaymentsController {
         statusCode: res.statusCode,
         data: {},
       };
-      let reqPromotionCode = req.body.promotion_code;
+      const reqPromotionCode = req.body.promotion_code;
 
-      let promotionCodes = (
+      const promotionCodes = (
         await PaymentsController.StripeService.listPromotionCodes(
           // expand the coupon object
           { expand: ['data.coupon'] }
@@ -1291,7 +1301,7 @@ export default class PaymentsController {
       ).data;
 
       // Check if the coupon exists
-      let promotionCodeExists = promotionCodes.find((c) => c.code === reqPromotionCode);
+      const promotionCodeExists = promotionCodes.find((c) => c.code === reqPromotionCode);
 
       if (!promotionCodeExists) {
         response.statusCode = 404;

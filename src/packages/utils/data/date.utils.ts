@@ -1,5 +1,4 @@
-import { readFileSync, promises as fsPromises } from 'fs';
-import fs from 'fs';
+import fs, { readFileSync, promises as fsPromises } from 'fs';
 
 // Import logger
 import logger from '../../../logs/logger';
@@ -67,6 +66,7 @@ export default class DateUtils {
     targetDate.setUTCDate(targetDate.getUTCDate() + daysUntilTargetWeekday);
     return targetDate;
   }
+
   // Helper function to get the next Monday date from a date
   static async getNextMondayDate(date) {
     const newDate = new Date(date);
@@ -111,7 +111,7 @@ export default class DateUtils {
 
     let response = '';
 
-    let weekDays = [
+    const weekDays = [
       'Segundas-feiras',
       'Terças-feiras',
       'Quartas-feiras',
@@ -126,8 +126,8 @@ export default class DateUtils {
 
       const weekDay = scheduleItem.week_day;
 
-      const start = scheduleItem.start;
-      const end = scheduleItem.end;
+      const { start } = scheduleItem;
+      const { end } = scheduleItem;
 
       const weekDayText = weekDays[weekDay - 1];
 
@@ -254,13 +254,15 @@ export default class DateUtils {
      */
     if (hours < 10 && minutes >= 10) {
       return `0${hours}:${minutes}`;
-    } else if (hours >= 10 && minutes < 10) {
+    }
+    if (hours >= 10 && minutes < 10) {
       /**
        * @example
        * 08:5 -> 08:05
        */
       return `${hours}:0${minutes}`;
-    } else if (hours < 10 && minutes < 10) {
+    }
+    if (hours < 10 && minutes < 10) {
       /**
        * @example
        * 8:5 -> 08:05

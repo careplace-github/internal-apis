@@ -1,8 +1,8 @@
 // Import the express module
 import Router from 'express';
 import express from 'express';
-import CustomersController from '../controllers/customers.controller';
 import { AuthenticationGuard, ClientGuard } from 'src/packages/middlewares';
+import CustomersController from '../controllers/customers.controller';
 
 const router = express.Router();
 

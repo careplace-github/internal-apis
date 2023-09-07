@@ -39,18 +39,27 @@ import { CognitoService, StripeService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
+
 export default class CalendarController {
   // db
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static EventsDAO = new EventsDAO();
+
   static EventSeriesDAO = new EventSeriesDAO();
+
   // services
   static StripeService = new StripeService();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static OrdersHelper = OrdersHelper;
+
   static CalendarHelper = CalendarHelper;
 
   // -------------------------------------------------- //
@@ -347,9 +356,9 @@ export default class CalendarController {
       const user = await CalendarController.AuthHelper.getUserFromDB(accessToken);
 
       let events: IEventDocument[];
-      events = await CalendarController.EventsDAO.queryList({ owner: user._id }).then((events) => {
-        return events.data;
-      });
+      events = await CalendarController.EventsDAO.queryList({ owner: user._id }).then(
+        (events) => events.data
+      );
 
       response.statusCode = events.length > 0 ? 200 : 204;
       response.data = events;
@@ -536,7 +545,7 @@ export default class CalendarController {
         }
       }
 
-      logger.info('user.health_unit: ' + user.health_unit);
+      logger.info(`user.health_unit: ${user.health_unit}`);
 
       if (
         eventExists.owner_type !== 'health_unit' ||
@@ -702,9 +711,7 @@ export default class CalendarController {
                 },
               },
             ]
-          ).then((events) => {
-            return events.data;
-          });
+          ).then((events) => events.data);
 
           // add the healthUnitEvents to the events array
           events = events.concat(healthUnitEvents);
@@ -729,9 +736,7 @@ export default class CalendarController {
                 model: 'HomeCareOrder',
               },
             ]
-          ).then((eventsSeries) => {
-            return eventsSeries.data;
-          });
+          ).then((eventsSeries) => eventsSeries.data);
         } catch (error: any) {
           switch (error.type) {
             case 'NOT_FOUND':
@@ -816,9 +821,7 @@ export default class CalendarController {
               model: 'HomeCareOrder',
             },
           ]
-        ).then((eventSeries) => {
-          return eventSeries.data;
-        });
+        ).then((eventSeries) => eventSeries.data);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND':

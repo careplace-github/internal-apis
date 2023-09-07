@@ -14,10 +14,9 @@ import {
 } from '@constants';
 
 import { StripeHelper, EmailHelper } from '@packages/helpers';
-import { DateUtils } from '@packages/utils';
+import { DateUtils, HTTPError } from '@packages/utils';
 
 import { HomeCareOrdersDAO } from 'src/packages/database';
-import { HTTPError } from '@utils';
 import Stripe from 'stripe';
 // @logger
 import logger from '@logger';
@@ -41,13 +40,19 @@ import { PATHS } from 'src/packages/routes';
 export default class StripeWebhooksController {
   // db
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static StripeHelper = StripeHelper;
+
   static EmailHelper = EmailHelper;
+
   // services
   static StripeService = StripeService;
+
   static VendusService = VendusService;
+
   static SES = SESService;
+
   // utils
   static DateUtils = DateUtils;
 
@@ -102,10 +107,10 @@ export default class StripeWebhooksController {
             break;
 
           default:
-            logger.info('Stripe Webhook Error: ' + error);
+            logger.info(`Stripe Webhook Error: ${error}`);
             return next(
               new HTTPError._400(
-                'Webhook Error: ' + error.message + `\n${STRIPE_ACCOUNT_ENDPOINT_SECRET}`
+                `Webhook Error: ${error.message}\n${STRIPE_ACCOUNT_ENDPOINT_SECRET}`
               )
             );
         }
@@ -142,10 +147,10 @@ export default class StripeWebhooksController {
          *	Occurs when a payment intent results in a successful charge. Available for all payments, including destination and direct charges
          */
         case 'payment_intent.succeeded':
-          let object = event.data.object as Stripe.PaymentIntent;
+          const object = event.data.object as Stripe.PaymentIntent;
 
           // Get invoice
-          let invoiceId = object.invoice as string;
+          const invoiceId = object.invoice as string;
 
           // Not a subscription payment
           if (invoiceId === null) {
@@ -153,16 +158,16 @@ export default class StripeWebhooksController {
             break; // Exit switch
           }
 
-          let invoice = await StripeWebhooksController.StripeService.getInvoice(invoiceId);
+          const invoice = await StripeWebhooksController.StripeService.getInvoice(invoiceId);
 
-          let subscriptionId = invoice.subscription as string;
+          const subscriptionId = invoice.subscription as string;
 
-          let paymentMethod = await StripeWebhooksController.StripeService.retrievePaymentMethod(
+          const paymentMethod = await StripeWebhooksController.StripeService.retrievePaymentMethod(
             object.payment_method as string
           );
 
           // Get order from database
-          let order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
+          const order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
             {
               stripe_information: {
                 subscription_id: subscriptionId,
@@ -188,9 +193,9 @@ export default class StripeWebhooksController {
             ]
           );
 
-          let customer = order.customer as ICustomer;
+          const customer = order.customer as ICustomer;
 
-          let attachment = null;
+          const attachment = null;
 
           // TODO: CREATE PAYMENT RECEIPT
           /**
@@ -231,7 +236,7 @@ export default class StripeWebhooksController {
           await StripeWebhooksController.HomeCareOrdersDAO.update(order);
 
           // Prepare the email payload for the customer
-          let customerEmailPayload = {
+          const customerEmailPayload = {
             customerName: customer.name,
             healthUnitName: (order.health_unit as IHealthUnit).business_profile.name,
             subTotal: order.order_total.toFixed(2),
@@ -242,7 +247,7 @@ export default class StripeWebhooksController {
             receiptDate: await StripeWebhooksController.DateUtils.getDateFromUnixTimestamp(
               invoice.created
             ),
-            paymentMethod: '**** ' + paymentMethod.card?.last4,
+            paymentMethod: `**** ${paymentMethod.card?.last4}`,
             customerStreet: order.billing_details.address.street,
             customerCity: order.billing_details.address.city,
             customerPostalCode: order.billing_details.address.postal_code,
@@ -254,7 +259,7 @@ export default class StripeWebhooksController {
           };
 
           // Get the email template for the customer
-          let customerEmail = await StripeWebhooksController.EmailHelper.getEmailTemplateWithData(
+          const customerEmail = await StripeWebhooksController.EmailHelper.getEmailTemplateWithData(
             'payments_marketplace_order_payment_confirmation',
             customerEmailPayload
           );
@@ -284,7 +289,7 @@ export default class StripeWebhooksController {
               }
             }
           } catch (error) {
-            logger.error('Error sending email to customer: ' + error);
+            logger.error(`Error sending email to customer: ${error}`);
           }
 
           // TODO: Prepare the email payload for the health unit

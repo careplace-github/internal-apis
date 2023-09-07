@@ -1,9 +1,4 @@
 // Auth
-export { default as AuthUtils } from './auth/auth.utils';
-
-// Data
-export { default as DateUtils } from './data/date.utils';
-
 // Errors
 import { default as _400 } from './errors/http/handlers/400Error';
 import { default as _401 } from './errors/http/handlers/401Error';
@@ -14,6 +9,20 @@ import { default as _409 } from './errors/http/handlers/409Error';
 import { default as _429 } from './errors/http/handlers/429Error';
 import { default as _500 } from './errors/http/handlers/500Error';
 import { default as _503 } from './errors/http/handlers/503Error';
+
+import { default as NOT_FOUND } from './errors/layer/handlers/not-found';
+import { default as INVALID_PARAMETER } from './errors/layer/handlers/invalid-parameter';
+import { default as INTERNAL_ERROR } from './errors/layer/handlers/internal';
+import { default as UNAUTHORIZED } from './errors/layer/handlers/unauthorized';
+import { default as INVALID_CODE } from './errors/layer/handlers/invalid-code';
+import { default as FORBIDDEN } from './errors/layer/handlers/forbidden';
+import { default as ATTEMPT_LIMIT } from './errors/layer/handlers/attempt-limit';
+import { default as DUPLICATE_KEY } from './errors/layer/handlers/duplicate-key';
+
+export { default as AuthUtils } from './auth/auth.utils';
+
+// Data
+export { default as DateUtils } from './data/date.utils';
 
 export const HTTPError = {
   _400,
@@ -26,15 +35,6 @@ export const HTTPError = {
   _500,
   _503,
 };
-
-import { default as NOT_FOUND } from './errors/layer/handlers/not-found';
-import { default as INVALID_PARAMETER } from './errors/layer/handlers/invalid-parameter';
-import { default as INTERNAL_ERROR } from './errors/layer/handlers/internal';
-import { default as UNAUTHORIZED } from './errors/layer/handlers/unauthorized';
-import { default as INVALID_CODE } from './errors/layer/handlers/invalid-code';
-import { default as FORBIDDEN } from './errors/layer/handlers/forbidden';
-import { default as ATTEMPT_LIMIT } from './errors/layer/handlers/attempt-limit';
-import { default as DUPLICATE_KEY } from './errors/layer/handlers/duplicate-key';
 
 export const LayerError = {
   NOT_FOUND,

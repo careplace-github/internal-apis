@@ -3,8 +3,11 @@
  */
 export default class LayerError extends Error {
   type: string;
+
   isOperational: boolean;
+
   description?: string;
+
   constructor(message: string, type: string, isOperational = true, description?: string) {
     super(message);
 

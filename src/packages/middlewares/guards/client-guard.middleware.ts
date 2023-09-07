@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
+import { HTTPError } from '@utils';
 import logger from '../../../logs/logger';
 
 import {
@@ -10,15 +11,14 @@ import {
 
 import authUtils from '../../utils/auth/auth.utils';
 
-import { HTTPError } from '@utils';
 export default function clientGuard(app: string) {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
-      let AuthUtils = authUtils;
+      const AuthUtils = authUtils;
 
       if (app === 'business') {
         app = AWS_COGNITO_BUSINESS_CLIENT_ID || '';
-        logger.info('Business Client Id: ' + app);
+        logger.info(`Business Client Id: ${app}`);
       } else if (app === 'marketplace') {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
       } else if (app === 'admin') {

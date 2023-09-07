@@ -33,7 +33,7 @@ export default class ServicesController {
         data: {},
       };
 
-      let options: QueryOptions<IHealthUnit> = {};
+      const options: QueryOptions<IHealthUnit> = {};
 
       const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
       const documentsPerPage =

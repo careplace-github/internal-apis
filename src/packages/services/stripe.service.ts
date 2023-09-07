@@ -389,7 +389,7 @@ export default class StripeService {
     params?: Stripe.ChargeListParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.ApiList<Stripe.Charge>> {
-    logger.info('StripeService.listCharges: ' + JSON.stringify({ params, options }, null, 2));
+    logger.info(`StripeService.listCharges: ${JSON.stringify({ params, options }, null, 2)}`);
 
     let charges: Stripe.ApiList<Stripe.Charge>;
 
@@ -498,8 +498,11 @@ export default class StripeService {
     cryptoProvider?: Stripe.CryptoProvider | undefined
   ): Promise<Stripe.Event> {
     logger.info(
-      'StripeService.constructEvent' +
-        JSON.stringify({ payload, header: signature, secret, tolerance, cryptoProvider }, null, 2)
+      `StripeService.constructEvent${JSON.stringify(
+        { payload, header: signature, secret, tolerance, cryptoProvider },
+        null,
+        2
+      )}`
     );
 
     let stripeEvent: Stripe.Event;
@@ -535,7 +538,7 @@ export default class StripeService {
     params: Stripe.PriceCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Price> {
-    logger.info('StripeService.createPrice' + JSON.stringify(params, null, 2));
+    logger.info(`StripeService.createPrice${JSON.stringify(params, null, 2)}`);
 
     let price: Stripe.Price;
 
@@ -550,7 +553,7 @@ export default class StripeService {
       }
     }
 
-    logger.info('StripeService.createPrice return: ' + JSON.stringify(price, null, 2));
+    logger.info(`StripeService.createPrice return: ${JSON.stringify(price, null, 2)}`);
 
     return price;
   }
@@ -574,7 +577,7 @@ export default class StripeService {
     params: Stripe.SubscriptionCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Subscription> {
-    logger.info('StripeService.createSubscription' + { params, options });
+    logger.info(`StripeService.createSubscription${{ params, options }}`);
 
     let subscription: Stripe.Subscription;
 
@@ -620,7 +623,7 @@ export default class StripeService {
     params?: Stripe.SubscriptionCancelParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Subscription> {
-    logger.info('StripeService.cancelSubscription' + { subscriptionId, params, options });
+    logger.info(`StripeService.cancelSubscription${{ subscriptionId, params, options }}`);
 
     let subscription: Stripe.Subscription;
 
@@ -743,7 +746,7 @@ export default class StripeService {
     params: Stripe.SubscriptionListParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.ApiList<Stripe.Subscription>> {
-    logger.info('StripeService.listSubscriptions: ' + JSON.stringify({ params, options }, null, 2));
+    logger.info(`StripeService.listSubscriptions: ${JSON.stringify({ params, options }, null, 2)}`);
 
     let subscriptions: Stripe.ApiList<Stripe.Subscription>;
 

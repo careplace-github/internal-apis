@@ -77,7 +77,7 @@ export default class S3Manager {
       /**
        * ACL stands for Access Control List and is a list of permissions
        */
-      ACL: ACL ? ACL : 'private',
+      ACL: ACL || 'private',
     };
 
     try {

@@ -20,9 +20,9 @@ import xss from 'xss-clean';
 import httpContext from 'express-http-context';
 
 // swagger
+import logger from '@logger';
 import swaggerDocs from './documentation/swagger';
 // @logger
-import logger from '@logger';
 
 const main = async () => {
   let app: express.Application = express();
@@ -89,9 +89,9 @@ const main = async () => {
 
     // MongoDB connection options
     const options: mongoose.ConnectOptions = {
-      //useCreateIndex: true, //
+      // useCreateIndex: true, //
       autoIndex: false, // Don't build indexes
-      //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
+      // useFindAndModify: false, // Use the new Server Discover and Monitoring engine
       maxPoolSize: 100, // Maintain up to 100 socket connections
       serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
@@ -103,7 +103,7 @@ const main = async () => {
     MONGODB_DB_ACTIVE_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_ACTIVE_NS}?retryWrites=true&w=majority`;
     MONGODB_DB_DELETES_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_DELETES_NS}?retryWrites=true&w=majority`;
 
-    logger.info('Connecting to MongoDB Cluster: ' + process.env.MONGODB_CLUSTER_URI);
+    logger.info(`Connecting to MongoDB Cluster: ${process.env.MONGODB_CLUSTER_URI}`);
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
     let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
@@ -154,7 +154,7 @@ const main = async () => {
     logger.info(
       `Connected to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}' Successfully!`
     );
-    //Store the connection in a global variable
+    // Store the connection in a global variable
     global.db = db_connection.connection;
 
     try {
@@ -182,7 +182,7 @@ const main = async () => {
 
       logger.info(`Applying Application Security Middlewares...`);
 
-      //app.use('/packages/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
+      // app.use('/packages/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -221,9 +221,7 @@ const main = async () => {
             // If the value is an array
             if (Array.isArray(value)) {
               // trim and escape all of its elements
-              value = value.map((element) => {
-                return element.trim().escape();
-              });
+              value = value.map((element) => element.trim().escape());
 
               // delete unwanted elements
               delete value.__v;

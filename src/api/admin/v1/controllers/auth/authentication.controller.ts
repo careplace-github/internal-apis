@@ -74,8 +74,8 @@ export default class AdminAuthenticationController {
         return next(new HTTPError._400('Missing required header: x-client-id'));
       }
 
-      logger.info('CLIENT ID: ' + clientId);
-      logger.info('AWS_COGNITO_ADMIN_CLIENT_ID: ' + AWS_COGNITO_ADMIN_CLIENT_ID);
+      logger.info(`CLIENT ID: ${clientId}`);
+      logger.info(`AWS_COGNITO_ADMIN_CLIENT_ID: ${AWS_COGNITO_ADMIN_CLIENT_ID}`);
 
       if (clientId !== AWS_COGNITO_ADMIN_CLIENT_ID) {
         return next(new HTTPError._400('Invalid client id.'));
@@ -83,11 +83,11 @@ export default class AdminAuthenticationController {
 
       const Cognito = new CognitoService(clientId);
 
-      const username = email ? email : phone;
+      const username = email || phone;
 
-      logger.info('USERNAME: ' + username);
+      logger.info(`USERNAME: ${username}`);
 
-      const payload = { username: username, password: password };
+      const payload = { username, password };
 
       try {
         cognitoResponse = await Cognito.adminAuthenticateUser('USER_PASSWORD_AUTH', payload);

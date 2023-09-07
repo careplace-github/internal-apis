@@ -24,8 +24,7 @@ import {
   IHomeCareOrderDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
-import { HTTPError } from '@utils';
-import { AuthUtils } from 'src/packages/utils';
+import { HTTPError, AuthUtils } from '@utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
@@ -37,16 +36,25 @@ import { omit } from 'lodash';
 export default class CaregiversController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   // services
   static SES = SESService;
+
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
+
   // utils
   static AuthUtils = AuthUtils;
 
@@ -250,7 +258,7 @@ export default class CaregiversController {
           };
 
           // Insert variables into email template
-          let email = await EmailHelper.getEmailTemplateWithData(
+          const email = await EmailHelper.getEmailTemplateWithData(
             'business_new_caregiver',
             emailData
           );
@@ -573,7 +581,7 @@ export default class CaregiversController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let user = await AuthHelper.getUserFromDB(accessToken);
+      const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to access this resource.'));

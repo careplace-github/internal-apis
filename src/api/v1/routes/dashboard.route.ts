@@ -3,8 +3,8 @@ import Router from 'express';
 import express from 'express';
 
 // Import controllers
-import DashboardController from '../controllers/dashboard.controller';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import DashboardController from '../controllers/dashboard.controller';
 
 const router = express.Router();
 

@@ -19,7 +19,7 @@ export default class StripeHelper {
     filters?: Stripe.SubscriptionListParams,
     lastSubscriptionId?: string
   ) {
-    let options = {
+    const options = {
       ...filters,
       limit: 100,
     };
@@ -29,12 +29,12 @@ export default class StripeHelper {
     }
 
     try {
-      let subscriptions = await this.Stripe.listSubscriptions(options);
+      const subscriptions = await this.Stripe.listSubscriptions(options);
 
       // If there are more subscriptions, fetch the next page
       if (subscriptions.has_more) {
-        let lastSubscription = subscriptions.data[subscriptions.data.length - 1];
-        let moreSubscriptions = await this.getSubscriptionsByConnectedAcountId(
+        const lastSubscription = subscriptions.data[subscriptions.data.length - 1];
+        const moreSubscriptions = await this.getSubscriptionsByConnectedAcountId(
           accountId,
           filters,
           lastSubscription?.id
@@ -44,9 +44,9 @@ export default class StripeHelper {
 
       // Filter the subscriptions by the connected account id
 
-      subscriptions.data = subscriptions.data.filter((subscription) => {
-        return subscription.transfer_data?.destination === accountId;
-      });
+      subscriptions.data = subscriptions.data.filter(
+        (subscription) => subscription.transfer_data?.destination === accountId
+      );
 
       return subscriptions.data;
     } catch (error) {
@@ -55,46 +55,46 @@ export default class StripeHelper {
   }
 
   static async getReceiptLink(subscriptionId) {
-    let subscription = await this.Stripe.getSubscription(subscriptionId);
+    const subscription = await this.Stripe.getSubscription(subscriptionId);
 
     if (!subscription.latest_invoice) {
       throw new LayerError.INTERNAL_ERROR('The subscription does not have an invoice');
     }
 
-    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
+    const invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
 
     if (!invoice.charge) {
       throw new LayerError.INTERNAL_ERROR('The invoice does not have a charge');
     }
 
-    let charge = await this.Stripe.getCharge(invoice.charge as string);
+    const charge = await this.Stripe.getCharge(invoice.charge as string);
 
-    let receiptUrl = charge?.receipt_url?.replace('?s=ap', '') + '/pdf?s=em';
+    const receiptUrl = `${charge?.receipt_url?.replace('?s=ap', '')}/pdf?s=em`;
 
     return receiptUrl;
   }
 
   static async getOrderNumber(subscriptionId) {
-    let subscription = await this.Stripe.getSubscription(subscriptionId);
+    const subscription = await this.Stripe.getSubscription(subscriptionId);
 
     if (!subscription.latest_invoice) {
       throw new LayerError.INTERNAL_ERROR('The subscription does not have an invoice');
     }
 
-    let invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
+    const invoice = await this.Stripe.getInvoice(subscription.latest_invoice as string);
 
-    let orderNumber = invoice?.receipt_number?.replace('-', '');
+    const orderNumber = invoice?.receipt_number?.replace('-', '');
 
     return orderNumber;
   }
 
   static async downloadReceipt(subscriptionId) {
-    let receiptUrl = await this.getReceiptLink(subscriptionId);
+    const receiptUrl = await this.getReceiptLink(subscriptionId);
 
     /**
      * Download the receipt and save it as a file into `./src/downloads/
      */
-    let receiptFile = await axios.get(receiptUrl, {
+    const receiptFile = await axios.get(receiptUrl, {
       responseType: 'arraybuffer',
     });
 
@@ -102,16 +102,16 @@ export default class StripeHelper {
      * 2689-5764
      * -> 26895764
      */
-    let orderNumber = await this.getOrderNumber(subscriptionId);
+    const orderNumber = await this.getOrderNumber(subscriptionId);
 
-    let receiptFileName = `careplace-receipt-${orderNumber}.pdf`;
-    let receiptFilePath = `./src/downloads/${receiptFileName}`;
+    const receiptFileName = `careplace-receipt-${orderNumber}.pdf`;
+    const receiptFilePath = `./src/downloads/${receiptFileName}`;
 
     fs.writeFileSync(receiptFilePath, receiptFile.data, {
       encoding: 'binary',
     });
 
-    let receipt = {
+    const receipt = {
       filename: receiptFileName,
 
       path: receiptFilePath,
@@ -150,8 +150,8 @@ export default class StripeHelper {
       previousMonthChargesPromise,
     ]);
 
-    let currentMonthClients = currentMonthCharges.data.length;
-    let previousMonthClients = previousMonthCharges.data.length;
+    const currentMonthClients = currentMonthCharges.data.length;
+    const previousMonthClients = previousMonthCharges.data.length;
 
     let monthOverMonthPercentage = 0;
 
@@ -197,17 +197,19 @@ export default class StripeHelper {
       previousMonthChargesPromise,
     ]);
 
-    let currentMonthChargesAmount = currentMonthCharges.data.reduce((total, charge) => {
-      return total + charge.amount;
-    }, 0);
+    let currentMonthChargesAmount = currentMonthCharges.data.reduce(
+      (total, charge) => total + charge.amount,
+      0
+    );
 
-    currentMonthChargesAmount = currentMonthChargesAmount / 100; // Convert from cents to dollars
+    currentMonthChargesAmount /= 100; // Convert from cents to dollars
 
-    let previousMonthChargesAmount = previousMonthCharges.data.reduce((total, charge) => {
-      return total + charge.amount;
-    }, 0);
+    let previousMonthChargesAmount = previousMonthCharges.data.reduce(
+      (total, charge) => total + charge.amount,
+      0
+    );
 
-    previousMonthChargesAmount = previousMonthChargesAmount / 100; // Convert from cents to dollars
+    previousMonthChargesAmount /= 100; // Convert from cents to dollars
 
     let monthOverMonthPercentage = 0;
 
@@ -241,22 +243,24 @@ export default class StripeHelper {
       },
     });
 
-    let [currentYearCharges, previousYearCharges] = await Promise.all([
+    const [currentYearCharges, previousYearCharges] = await Promise.all([
       currentYearChargesPromise,
       previousYearChargesPromise,
     ]);
 
-    let yearToDateChargesAmount = currentYearCharges.data.reduce((total, charge) => {
-      return total + charge.amount;
-    }, 0);
+    let yearToDateChargesAmount = currentYearCharges.data.reduce(
+      (total, charge) => total + charge.amount,
+      0
+    );
 
-    yearToDateChargesAmount = yearToDateChargesAmount / 100; // Convert from cents to dollars
+    yearToDateChargesAmount /= 100; // Convert from cents to dollars
 
-    let previousYearChargesAmount = previousYearCharges.data.reduce((total, charge) => {
-      return total + charge.amount;
-    }, 0);
+    let previousYearChargesAmount = previousYearCharges.data.reduce(
+      (total, charge) => total + charge.amount,
+      0
+    );
 
-    previousYearChargesAmount = previousYearChargesAmount / 100; // Convert from cents to dollars
+    previousYearChargesAmount /= 100; // Convert from cents to dollars
 
     let yearOverYearPercentage = 0;
 
@@ -274,7 +278,7 @@ export default class StripeHelper {
   // TODO Move this to dashboard.helper.ts
   static async getConnectAccountTotalRevenueByMonth(accountId: string) {
     try {
-      let charges = await this.getChargesByConnectedAccountId(accountId, {
+      const charges = await this.getChargesByConnectedAccountId(accountId, {
         status: 'succeeded',
       });
 
@@ -285,7 +289,7 @@ export default class StripeHelper {
       let endYear = startYear;
 
       // Find earliest and latest year from the charges data
-      for (let charge of charges.data) {
+      for (const charge of charges.data) {
         const date = new Date(charge.created * 1000);
         const year = date.getFullYear();
         startYear = Math.min(startYear, year);
@@ -307,7 +311,7 @@ export default class StripeHelper {
       }
 
       // Calculate the revenue for each month
-      for (let charge of charges.data) {
+      for (const charge of charges.data) {
         const date = new Date(charge.created * 1000);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
@@ -316,12 +320,10 @@ export default class StripeHelper {
       }
 
       const revenuePerMonthArray = Object.keys(revenuePerYearAndMonth).map((year) => {
-        const data = Object.keys(revenuePerYearAndMonth[year]).map((month) => {
-          return {
-            month: parseInt(month),
-            revenue: parseFloat(revenuePerYearAndMonth[year][month]?.toFixed(2)) || 0,
-          };
-        });
+        const data = Object.keys(revenuePerYearAndMonth[year]).map((month) => ({
+          month: parseInt(month),
+          revenue: parseFloat(revenuePerYearAndMonth[year][month]?.toFixed(2)) || 0,
+        }));
 
         return {
           year: parseInt(year),
@@ -346,23 +348,30 @@ export default class StripeHelper {
       // Starting on the next month add 10% to the previous month
       const nexthMonthIndex = new Date().getMonth() + 1; // 0 - 11 (January - December)
 
-      logger.info('nexthMonthIndex: ' + nexthMonthIndex);
+      logger.info(`nexthMonthIndex: ${nexthMonthIndex}`);
       logger.info(
-        'revenuePerMonthArray ' +
-          JSON.stringify(revenuePerMonthArray[revenuePerMonthArray.length - 1], null, 2)
+        `revenuePerMonthArray ${JSON.stringify(
+          revenuePerMonthArray[revenuePerMonthArray.length - 1],
+          null,
+          2
+        )}`
       );
 
       logger.info(
-        'revenuePerMonthArray.data ' +
-          JSON.stringify(revenuePerMonthArray[revenuePerMonthArray.length - 1].data, null, 2)
+        `revenuePerMonthArray.data ${JSON.stringify(
+          revenuePerMonthArray[revenuePerMonthArray.length - 1].data,
+          null,
+          2
+        )}`
       );
       logger.info(
-        'revenuePerMonthArray.data.length ' +
+        `revenuePerMonthArray.data.length ${
           revenuePerMonthArray[revenuePerMonthArray.length - 1].data.length
+        }`
       );
 
       for (let i = nexthMonthIndex; i < 12; i++) {
-        logger.info('i: ' + i);
+        logger.info(`i: ${i}`);
 
         // random percentage between 1.05 and 1.15
         const percentageIncrease = Math.random() * (1.15 - 1.05) + 1.05;
@@ -370,10 +379,10 @@ export default class StripeHelper {
         const previousMonthRevenue =
           revenuePerMonthArray[revenuePerMonthArray.length - 1].data[i - 1].revenue;
 
-        logger.info('previousMonthRevenue: ' + previousMonthRevenue);
+        logger.info(`previousMonthRevenue: ${previousMonthRevenue}`);
         const nextMonthRevenue = Number((previousMonthRevenue * percentageIncrease).toFixed(2));
 
-        logger.info('nextMonthRevenue: ' + nextMonthRevenue);
+        logger.info(`nextMonthRevenue: ${nextMonthRevenue}`);
 
         revenuePerMonthArray[revenuePerMonthArray.length - 1].data[i].revenue = nextMonthRevenue;
       }
@@ -392,15 +401,15 @@ export default class StripeHelper {
   ) {
     const invoices = (await this.Stripe.listInvoices(filters)).data;
 
-    const filteredInvoices = invoices.filter((invoice) => {
-      return invoice.transfer_data?.destination === accountId;
-    });
+    const filteredInvoices = invoices.filter(
+      (invoice) => invoice.transfer_data?.destination === accountId
+    );
 
     return filteredInvoices;
   }
 
   static async getChargesByConnectedAccountId(accountId, filters, lastChargeId?: string) {
-    let options = {
+    const options = {
       ...filters,
       limit: 100,
     };
@@ -410,12 +419,12 @@ export default class StripeHelper {
     }
 
     try {
-      let charges = await this.Stripe.listCharges(options, { stripeAccount: accountId });
+      const charges = await this.Stripe.listCharges(options, { stripeAccount: accountId });
 
       // If there are more charges, fetch the next page
       if (charges.has_more) {
-        let lastCharge = charges.data[charges.data.length - 1];
-        let moreCharges = await this.getChargesByConnectedAccountId(
+        const lastCharge = charges.data[charges.data.length - 1];
+        const moreCharges = await this.getChargesByConnectedAccountId(
           accountId,
           filters,
           lastCharge?.id
@@ -442,27 +451,27 @@ export default class StripeHelper {
   }
 
   static async getPromotionCodeByName(name: string) {
-    let promotionCodes = (await this.Stripe.listPromotionCodes()).data;
+    const promotionCodes = (await this.Stripe.listPromotionCodes()).data;
 
-    let promotionCode = promotionCodes.find((promotionCode) => promotionCode.code === name);
+    const promotionCode = promotionCodes.find((promotionCode) => promotionCode.code === name);
 
     return promotionCode;
   }
 
   static async getPaymentMethodByChargeId(chargeId: string) {
-    let charge = await this.Stripe.getCharge(chargeId);
+    const charge = await this.Stripe.getCharge(chargeId);
 
     if (!charge || !charge.payment_method) throw new LayerError.NOT_FOUND('Charge not found');
 
-    let paymentMethod = await this.Stripe.retrievePaymentMethod(charge.payment_method);
+    const paymentMethod = await this.Stripe.retrievePaymentMethod(charge.payment_method);
 
     return paymentMethod;
   }
 
   static async getBillingAddressByChargeId(chargeId) {
-    let paymentMethod = await this.getPaymentMethodByChargeId(chargeId);
+    const paymentMethod = await this.getPaymentMethodByChargeId(chargeId);
 
-    let billingAddress = paymentMethod.billing_details.address;
+    const billingAddress = paymentMethod.billing_details.address;
 
     return billingAddress;
   }

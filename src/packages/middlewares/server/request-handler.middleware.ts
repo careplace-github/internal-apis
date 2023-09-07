@@ -1,7 +1,7 @@
-import logger from '../../../logs/logger';
 import { Request, Response, NextFunction, response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import httpContext from 'express-http-context';
+import logger from '../../../logs/logger';
 
 export default function RequestHandlerMiddleware(req: Request, res: Response, next: NextFunction) {
   const requestId = uuidv4();
