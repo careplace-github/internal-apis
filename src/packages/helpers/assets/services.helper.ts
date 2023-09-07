@@ -1,0 +1,33 @@
+import { HTTPError } from '@utils';
+import fs from 'fs';
+import ServicesDAO from '../../database/services.dao';
+
+/**
+ * Gets all the services from the database and writes them in a file called serviceson in the ./src/assets/data folder.
+ */
+export async function getServices() {
+  const servicesDAO = new ServicesDAO();
+
+  try {
+    var services = await servicesDAO.queryList({}, {}, undefined, undefined);
+  } catch (err: any) {
+    throw new HTTPError._500(err.message);
+  }
+
+  const servicesJSON = JSON.stringify(services.data, null, 2);
+
+  // Delete the file before writing the new data
+  fs.unlink('./src/assets/data/servicesf.json', (err) => {
+    // Ignore "file not found" error (ENOENT)
+    if (err && err.code !== 'ENOENT') {
+      throw new HTTPError._500(err.message);
+    }
+
+    // Write the new data to the file
+    fs.writeFile('./src/assets/data/servicesf.json', servicesJSON, (err) => {
+      if (err) {
+        throw new HTTPError._500(err.message);
+      }
+    });
+  });
+}
