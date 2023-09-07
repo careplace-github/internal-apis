@@ -34,6 +34,7 @@ env:
   AWS_REGION: eu-west-3 # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: careplace-production-ecr-repository-backend # set this to your Amazon ECR repository name
   ECS_SERVICE: careplace-production-ecs-service-backend # set this to your Amazon ECS service name
+  ECS_SERVICE_WEBHOOKS: careplace-production-ecs-service-webhooks # set this to your Amazon ECS service name
   ECS_CLUSTER: careplace-production-ecs-cluster-backend # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition.production.json # set this to the path to your Amazon ECS task definition file, e.g. .aws/task-definition.json
   CONTAINER_NAME: backend # set this to the name of the container in the containerDefinitions section of your task definition
@@ -45,6 +46,9 @@ jobs:
   release:
     name: Tag & Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    environment: production
 
     steps:
       - name: Checkout code
@@ -58,20 +62,32 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Generate changelog
-        run: npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+      - name: Configure git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "admin@careplace.pt"
 
-      - name: Determine recommended version bump
-        id: bump
-        run: npx conventional-recommended-bump
+      - name: Generate changelog and version
+        run: npx standard-version
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch:  Main
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
 
       - name: Create release
+        id: create_release
         uses: ncipollo/release-action@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
+          tag: ${{ steps.get_latest_tag.outputs.tag }}
+          name: Release ${{ steps.get_latest_tag.outputs.tag }}
           bodyFile: CHANGELOG.md
           draft: false
           prerelease: true
@@ -117,11 +133,19 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Deploy Amazon ECS task definition
+      - name: Deploy Amazon ECS task definition (backend)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+       - name: Deploy Amazon ECS task definition (webhooks)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_WEBHOOKS }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
