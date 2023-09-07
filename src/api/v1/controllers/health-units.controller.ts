@@ -164,7 +164,9 @@ export default class HealthUnitsController {
       if (req.query.services) {
         const services = Array.isArray(req.query.services)
           ? req.query.services
-          : [req.query.services as string];
+          : // req.query.services=1,2,3 so we'll split it by comma and convert it to an array of strings.
+            (req.query.services as string).split(',');
+
 
         filters.services = {
           $all: services,
