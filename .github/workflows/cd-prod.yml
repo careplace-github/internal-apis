@@ -42,6 +42,43 @@ permissions:
   contents: read
 
 jobs:
+  release:
+    name: Tag & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate changelog
+        run: npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+
+      - name: Determine recommended version bump
+        id: bump
+        run: npx conventional-recommended-bump
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ${{ steps.bump.outputs.reason }}
+            ${{ steps.bump.outputs.releaseType }}
+          draft: false
+          prerelease: false
+
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -90,37 +127,4 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-  release:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Generate changelog
-        run: npx conventional-changelog -p angular -i CHANGELOG.md -s -r 0
-
-      - name: Determine recommended version bump
-        id: bump
-        run: npx conventional-recommended-bump
-
-      - name: Create release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_ACTIONS }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            ${{ steps.bump.outputs.reason }}
-            ${{ steps.bump.outputs.releaseType }}
-          draft: false
-          prerelease: false
+  
