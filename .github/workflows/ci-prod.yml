@@ -59,7 +59,6 @@ jobs:
         with:
           tag: ${{ steps.get_latest_tag.outputs.tag }}
           name: Release ${{ steps.get_latest_tag.outputs.tag }}
-          body: ${{ steps.get_changelog.outputs.changelog }}
           bodyFile: CHANGELOG.md
           draft: true
           prerelease: true
