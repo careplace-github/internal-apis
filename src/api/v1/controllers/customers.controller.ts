@@ -23,8 +23,7 @@ import {
   IHomeCareOrderDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
-import { HTTPError } from '@utils';
-import { AuthUtils } from 'src/packages/utils';
+import { HTTPError, AuthUtils } from '@utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
@@ -36,10 +35,14 @@ import { omit } from 'lodash';
 export default class CustomersController {
   // db
   static CustomersDAO = new CustomersDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   // utils
   static AuthUtils = AuthUtils;
 

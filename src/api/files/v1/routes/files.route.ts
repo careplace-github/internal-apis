@@ -1,15 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import multer from 'multer';
-import FilesController from '../controllers/files.controller';
 import { AuthenticationGuard } from '@packages/middlewares';
 import { HTTPError } from '@utils';
 import fs from 'fs';
+import FilesController from '../controllers/files.controller';
+
 const storage = multer.diskStorage({
-  destination: function (req: Request, file, cb) {
+  destination(req: Request, file, cb) {
     cb(null, 'src/uploads');
   },
-  filename: function (req: Request, file, cb) {
+  filename(req: Request, file, cb) {
     /**
      * Change the file name to the current date and time to avoid duplicate file names
      */
@@ -25,7 +26,7 @@ const storage = multer.diskStorage({
  * @see https://www.npmjs.com/package/multer
  */
 const upload = multer({
-  storage: storage,
+  storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // Maximum file size (10MB)
   },

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { AuthHelper } from '../../helpers';
 import logger from '@logger';
 import { IAPIResponse } from '@packages/interfaces';
 import { HTTPError } from '@utils';
+import { AuthHelper } from '../../helpers';
 
 /**
  * @description Role Based Guard Middleware.
@@ -50,7 +50,7 @@ export default function validateRole(
               response.data = { message: 'User passed role based guard.' };
               response.statusCode = 200;
 
-              logger.info(JSON.stringify(response, null, 2) + '\n');
+              logger.info(`${JSON.stringify(response, null, 2)}\n`);
 
               next();
             } else {
@@ -59,7 +59,7 @@ export default function validateRole(
               };
               response.statusCode = 403;
 
-              logger.info(JSON.stringify(response, null, 2) + '\n');
+              logger.info(`${JSON.stringify(response, null, 2)}\n`);
 
               res.status(403).send('Forbidden');
             }
@@ -67,7 +67,7 @@ export default function validateRole(
             response.data = { message: 'No token provided' };
             response.statusCode = 400;
 
-            logger.warn(JSON.stringify(response, null, 2) + '\n');
+            logger.warn(`${JSON.stringify(response, null, 2)}\n`);
 
             res.status(400).send('No token provided.');
           }
@@ -75,12 +75,12 @@ export default function validateRole(
           response.data = { message: 'Invalid token' };
           response.statusCode = 400;
 
-          logger.warn(JSON.stringify(response, null, 2) + '\n');
+          logger.warn(`${JSON.stringify(response, null, 2)}\n`);
 
           res.status(400).send('Invalid token');
         }
       } catch (error: any) {
-        logger.error('Error in validateRole middleware: ' + error);
+        logger.error(`Error in validateRole middleware: ${error}`);
       }
     }
     handleRequest();

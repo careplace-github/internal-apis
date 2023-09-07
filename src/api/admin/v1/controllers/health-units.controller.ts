@@ -22,8 +22,7 @@ import {
   IHealthUnitDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
-import { HTTPError } from '@utils';
-import { AuthUtils } from 'src/packages/utils';
+import { HTTPError, AuthUtils } from '@utils';
 // @constants
 import { AWS_COGNITO_BUSINESS_CLIENT_ID, AWS_COGNITO_MARKETPLACE_CLIENT_ID } from '@constants';
 // @logger
@@ -36,16 +35,25 @@ import { PATHS } from 'src/packages/routes';
 export default class AdminHealthUnitsController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   // services
   static SES = SESService;
+
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
+
   // utils
   static AuthUtils = AuthUtils;
 
@@ -75,10 +83,10 @@ export default class AdminHealthUnitsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      let reqCollaborator = req.body as ICollaborator;
+      const reqCollaborator = req.body as ICollaborator;
       // reqCollaborator.profile_picture = '';
       const healthUnitId = req.params.healthUnit;
-      let sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
+      const sanitizedReqCollaborator = omit(reqCollaborator, ['_id', 'cognito_id', 'settings']);
 
       let healthUnit: IHealthUnitDocument;
 
@@ -107,7 +115,7 @@ export default class AdminHealthUnitsController {
 
       const collaborator = new CollaboratorModel(sanitizedReqCollaborator);
 
-      logger.info('COLLABORATOR VALIDATION: ' + JSON.stringify(collaborator, null, 2));
+      logger.info(`COLLABORATOR VALIDATION: ${JSON.stringify(collaborator, null, 2)}`);
 
       // Validate the collaborator data.
       const validationError = collaborator.validateSync({ pathsToSkip: ['cognito_id'] });
@@ -238,7 +246,7 @@ export default class AdminHealthUnitsController {
           };
 
           // Insert variables into email template
-          let email = await EmailHelper.getEmailTemplateWithData(
+          const email = await EmailHelper.getEmailTemplateWithData(
             'auth_business_invitation',
             emailData
           );

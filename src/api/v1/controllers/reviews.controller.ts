@@ -26,8 +26,11 @@ import logger from '@logger';
 export default class ReviewsController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
 
@@ -56,7 +59,7 @@ export default class ReviewsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
       const healthUnitId = req.params.healthUnit;
@@ -162,7 +165,7 @@ export default class ReviewsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
       const healthUnitId = req.params.healthUnit;
@@ -187,9 +190,8 @@ export default class ReviewsController {
         };
 
         return next(response);
-      } else {
-        response.data.eligible = true;
       }
+      response.data.eligible = true;
 
       try {
         const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
@@ -259,7 +261,7 @@ export default class ReviewsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
       const reviewId = req.params.id;
 
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
@@ -329,7 +331,7 @@ export default class ReviewsController {
         data: {},
       };
       const filters: FilterQuery<IHealthUnitReview> = {};
-      let options: QueryOptions<IHealthUnit> = {};
+      const options: QueryOptions<IHealthUnit> = {};
       const page = typeof req.query.page === 'string' ? parseInt(req.query.page) : 1;
       const documentsPerPage =
         typeof req.query.documentsPerPage === 'string' ? parseInt(req.query.documentsPerPage) : 10;
@@ -398,7 +400,7 @@ export default class ReviewsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
 
       const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
@@ -437,7 +439,7 @@ export default class ReviewsController {
         data: {},
       };
 
-      const accessToken = req.headers['authorization']!.split(' ')[1];
+      const accessToken = req.headers.authorization!.split(' ')[1];
 
       const healthUnitId = req.params.healthUnit;
 

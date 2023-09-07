@@ -1,8 +1,13 @@
 import { Document, Types } from 'mongoose';
-import { IEventSeries, IEvent, ICaregiver, IEventDocument } from 'src/packages/interfaces';
+import {
+  IEventSeries,
+  IEvent,
+  ICaregiver,
+  IEventDocument,
+  IHomeCareOrder,
+} from 'src/packages/interfaces';
 import logger from 'src/logs/logger';
 
-import { IHomeCareOrder } from 'src/packages/interfaces';
 import { EventModel } from 'src/packages/models';
 
 interface Amounts {
@@ -93,8 +98,8 @@ export default class PaymentsHelper {
      *
      * @see https://stripe.com/en-pt/pricing
      */
-    const stripePercentageFee: number = 1.9; // 1.5% processing fee
-    const stripeFixedFee: number = 0.25; // 0.25€ fixed fee
+    const stripePercentageFee = 1.9; // 1.5% processing fee
+    const stripeFixedFee = 0.25; // 0.25€ fixed fee
 
     processingFeesPercentage = stripePercentageFee;
 
@@ -104,10 +109,10 @@ export default class PaymentsHelper {
 
     let stripeTotalFeePercentage = Number(((stripePercentageFee / orderTotal) * 100).toFixed(2));
 
-    let connectedAccountPercentage = 100 - applicationFee;
-    let connectedAccountNet = orderTotal * (connectedAccountPercentage / 100);
-    let connectedAccountEarnings = connectedAccountNet;
-    let connectedAccountEarningsPercentage = Number(
+    const connectedAccountPercentage = 100 - applicationFee;
+    const connectedAccountNet = orderTotal * (connectedAccountPercentage / 100);
+    const connectedAccountEarnings = connectedAccountNet;
+    const connectedAccountEarningsPercentage = Number(
       ((connectedAccountEarnings / orderTotal) * 100).toFixed(2)
     );
 
@@ -127,7 +132,7 @@ export default class PaymentsHelper {
           2
         )
       );
-      console.log('NEW APPLICATION FEE: ' + applicationFee);
+      console.log(`NEW APPLICATION FEE: ${applicationFee}`);
 
       stripeProcessingFees = Number(
         (discountOrderTotal * (stripePercentageFee / 100) + stripeFixedFee).toFixed(2)
@@ -151,7 +156,7 @@ export default class PaymentsHelper {
 
       applicationFee = newApplicationFee;
 
-      console.log('NEW APPLICATION FEE: ' + applicationFee);
+      console.log(`NEW APPLICATION FEE: ${applicationFee}`);
 
       if (
         careplaceEarningsPercentage < MIN_CAREPLACE_EARNINGS_PERCENTAGE ||
@@ -166,7 +171,7 @@ export default class PaymentsHelper {
 
         const amount_off = amountOff;
 
-        console.log('NEW APPLICATION FEE: ' + application_fee);
+        console.log(`NEW APPLICATION FEE: ${application_fee}`);
 
         const min_order_total = Number(
           (
@@ -175,7 +180,7 @@ export default class PaymentsHelper {
           ).toFixed(2)
         );
 
-        logger.info('x: ' + min_order_total);
+        logger.info(`x: ${min_order_total}`);
 
         return {
           error: {

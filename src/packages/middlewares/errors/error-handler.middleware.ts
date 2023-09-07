@@ -12,7 +12,7 @@ export default function ErrorHandler(
   res: Response,
   next: NextFunction
 ) {
-  let error = {
+  const error = {
     ...err,
     stack: err.stack,
   };
@@ -103,7 +103,7 @@ export default function ErrorHandler(
    * If the err is not an instance of HTTPError or LayerError, then it is a normal response that successfully passed through the application.
    * In this case, we will return the response as is.
    */
-  let response = err;
+  const response = err;
 
   logger.info(`Error Handler Middleware Response: No error found, returning response as is. \n`);
 

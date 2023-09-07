@@ -51,13 +51,13 @@ export default class NodemailerHelper {
       to: receiverEmails,
       cc: ccEmails,
       bcc: bccEmails,
-      subject: subject,
+      subject,
       html: htmlBody,
       text: textBody,
-      attachments: attachments,
+      attachments,
     };
 
-    let response = await transporter.sendMail(mailOptions);
+    const response = await transporter.sendMail(mailOptions);
 
     return response;
   }

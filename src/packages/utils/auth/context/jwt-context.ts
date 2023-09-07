@@ -56,7 +56,7 @@ export default class JwtContext {
       const decodedToken: JwtPayload = await this.decodeToken(accessToken);
 
       // Verify the client ID
-      const clientId = decodedToken['client_id'];
+      const clientId = decodedToken.client_id;
 
       if (
         clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID &&

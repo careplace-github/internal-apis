@@ -1,6 +1,6 @@
 import { JWK, RSA } from 'jwk-to-pem';
-import publicKey from './cognito-public-key.json';
 import logger from 'src/logs/logger';
+import publicKey from './cognito-public-key.json';
 
 // Loads environment settings
 export const ENV = process.env.NODE_ENV || ('development' as string);
@@ -27,7 +27,7 @@ export const MONGODB_PASSWORD = process.env.MONGODB_PASSWORD as string;
 // MongoDB Cluster
 export const MONGODB_CLUSTER_URI = process.env.MONGODB_CLUSTER_URI as string;
 
-//MongoDB databases
+// MongoDB databases
 export const MONGODB_DB_ACTIVE_NS = process.env.MONGODB_DB_ACTIVE_NS as string;
 export const MONGODB_DB_DELETES_NS = process.env.MONGODB_DB_DELETES_NS as string;
 export const MONGODB_DB_ADMIN_NS = process.env.MONGODB_DB_ADMIN_NS as string;

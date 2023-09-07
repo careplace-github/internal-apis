@@ -8,6 +8,8 @@ package.json
 package-lock.json
 
 src/api/v1/services/ts/*
+jest.config.js
 
+/build
 src/_mock
 /config

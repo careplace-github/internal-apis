@@ -3,9 +3,8 @@ import Router from 'express';
 import express from 'express';
 
 // Import controllers
-import { CollaboratorsController } from '../controllers';
-
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import { CollaboratorsController } from '../controllers';
 
 const router = express.Router();
 

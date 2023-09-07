@@ -3,8 +3,8 @@ import Router from 'express';
 import express from 'express';
 
 // Import controllers
-import HealthUnitsController from '../controllers/health-units.controller';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
+import HealthUnitsController from '../controllers/health-units.controller';
 
 /**
  * Health Units Routes

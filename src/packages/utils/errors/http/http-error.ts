@@ -3,9 +3,13 @@
  */
 export default class HTTP_Error extends Error {
   type: string;
+
   isOperational: boolean;
+
   statusCode: number;
+
   description?: string;
+
   code?: string;
 
   constructor(

@@ -1,7 +1,7 @@
 {
   "name": "careplace-internal-apis",
   "version": "0.1.0",
-  "description": "Careplace Internal APIs",
+  "description": "Internal RESTful APIs for Careplace platforms.",
   "main": "./src/server.ts",
   "private": true,
   "nodemonConfig": {
@@ -27,6 +27,7 @@
     "test:snyk": "snyk test",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint . --ext .js,.ts --fix",
+    "lint:quiet": "eslint . --ext .js,.ts --quiet",
     "lint:commit": "lint-staged",
     "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
     "depcheck": "depcheck --config=.depcheckrc",

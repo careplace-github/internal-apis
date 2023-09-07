@@ -30,15 +30,24 @@ import { CaregiverModel, CollaboratorModel } from '@packages/models';
 export default class HealthUnitsController {
   // db
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
+
   static CustomersDAO = new CustomersDAO();
+
   static CollaboratorsDAO = new CollaboratorsDAO();
+
   static CaregiversDAO = new CaregiversDAO();
+
   static HealthUnitsDAO = new HealthUnitsDAO();
+
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
   // helpers
   static AuthHelper = AuthHelper;
+
   static EmailHelper = EmailHelper;
+
   static StripeHelper = StripeHelper;
+
   // services
   static SES = SESService;
 
@@ -82,8 +91,8 @@ export default class HealthUnitsController {
         data: {},
       };
 
-      let filters: FilterQuery<IHealthUnit> = {};
-      let options: QueryOptions<IHealthUnit> = {};
+      const filters: FilterQuery<IHealthUnit> = {};
+      const options: QueryOptions<IHealthUnit> = {};
 
       const page = typeof req.query.page === 'string' ? parseInt(req?.query?.page) : 1;
       const documentsPerPage =
@@ -140,7 +149,7 @@ export default class HealthUnitsController {
 
         // If the lat and lng query parameters are valid numbers, then we'll add them to the filter object.
         if (!isNaN(lat) && !isNaN(lng)) {
-          filters['service_area'] = {
+          filters.service_area = {
             $geoIntersects: {
               $geometry: {
                 type: 'Point',
@@ -157,7 +166,7 @@ export default class HealthUnitsController {
           ? req.query.services
           : [req.query.services as string];
 
-        filters['services'] = {
+        filters.services = {
           $all: services,
         };
       }
@@ -214,7 +223,7 @@ export default class HealthUnitsController {
         };
       }
 
-      let healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
+      const healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
         filters,
         options,
         page,

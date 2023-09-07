@@ -1,12 +1,12 @@
-import ServicesDAO from '../../database/services.dao';
 import { HTTPError } from '@utils';
 import fs from 'fs';
+import ServicesDAO from '../../database/services.dao';
 
 /**
  * Gets all the services from the database and writes them in a file called serviceson in the ./src/assets/data folder.
  */
 export async function getServices() {
-  let servicesDAO = new ServicesDAO();
+  const servicesDAO = new ServicesDAO();
 
   try {
     var services = await servicesDAO.queryList({}, {}, undefined, undefined);

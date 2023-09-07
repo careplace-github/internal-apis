@@ -2,7 +2,6 @@
 import AWS from 'aws-sdk';
 
 // @api
-import { EmailHelper } from '../helpers';
 import { LayerError } from '@utils';
 
 // @constants
@@ -15,6 +14,7 @@ import {
 } from '@constants';
 // @logger
 import logger from '@logger';
+import { EmailHelper } from '../helpers';
 
 // FIXME Use custom LayerError error handling
 // FIXME Check the Stripe Error Api Response and update the error handling accordingly
@@ -69,7 +69,7 @@ export default class SES {
             },
             Text: {
               Charset: 'UTF-8',
-              Data: textBody ? textBody : 'htmlBody',
+              Data: textBody || 'htmlBody',
             },
           },
 
@@ -96,11 +96,11 @@ export default class SES {
 
       const emailSent = await this.SES.sendEmail(params).promise();
 
-      logger.info('SES Service Email Sent: ' + emailSent);
+      logger.info(`SES Service Email Sent: ${emailSent}`);
 
       return emailSent;
     } catch (error: any) {
-      logger.error('AWS SES Service Send Email Error: ' + error);
+      logger.error(`AWS SES Service Send Email Error: ${error}`);
       throw new LayerError.INTERNAL_ERROR(error.message);
     }
   }
