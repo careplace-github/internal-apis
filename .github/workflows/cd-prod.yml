@@ -1,5 +1,5 @@
 # This workflow will build and push a new container image to Amazon ECR,
-# and then will deploy a new task definition to Amazon ECS, when there is a push to the "Master" branch.
+# and then will deploy a new task definition to Amazon ECS, when there is a push to the "Main" branch.
 #
 # To use this workflow, you will need to complete the following set-up steps:
 #
@@ -28,7 +28,7 @@ name: '[PRODUCTION] Continuous Deployment (CD)'
 
 on:
   push:
-    branches: [Master]
+    branches: [Main]
 
 env:
   AWS_REGION: eu-west-3 # set this to your preferred AWS region, e.g. us-west-1
@@ -71,7 +71,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -f .docker/api/Dockerfile.stag -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker build -f .docker/api/Dockerfile.prod -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
       - name: Fill in the new image ID in the Amazon ECS task definition

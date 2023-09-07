@@ -1,6 +1,6 @@
 {
   "name": "careplace-internal-apis",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Careplace Internal APIs",
   "main": "./src/server.ts",
   "private": true,
