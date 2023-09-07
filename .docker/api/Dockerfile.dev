@@ -1,5 +1,5 @@
 # Set base image
-FROM node:16.20.1-bookworm-slim
+FROM node:16.20.2-bookworm-slim
 
 # Create app directory
 WORKDIR /usr/src/app
