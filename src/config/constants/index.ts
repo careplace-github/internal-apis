@@ -1,5 +1,4 @@
 import { JWK, RSA } from 'jwk-to-pem';
-import logger from 'src/logs/logger';
 import publicKey from './cognito-public-key.json';
 
 // Loads environment settings
