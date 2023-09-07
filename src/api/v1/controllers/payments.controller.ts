@@ -350,7 +350,7 @@ export default class PaymentsController {
       }
 
       const filters = {
-        user: user._id,
+        customer: user._id,
         // status should be active or pending_payment
         status: ['active', 'pending_payment'],
       };
