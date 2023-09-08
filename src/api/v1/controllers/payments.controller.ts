@@ -789,9 +789,6 @@ export default class PaymentsController {
       // Attach tbe billing details to the order.
       order.billing_details = billingDetails;
 
-      // Update the order
-      PaymentsController.HomeCareOrdersDAO.update(order);
-
       const invoice = subscription.latest_invoice as Stripe.Invoice;
 
       const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
@@ -814,7 +811,7 @@ export default class PaymentsController {
       order.status = 'active';
 
       // Update the order
-      PaymentsController.HomeCareOrdersDAO.update(order);
+      await PaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
