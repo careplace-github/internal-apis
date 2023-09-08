@@ -25,6 +25,7 @@ import {
   ICustomer,
   IHealthUnit,
   IHomeCareOrder,
+  IHomeCareOrderDocument,
   IPatient,
 } from '@packages/interfaces';
 import { PATHS } from 'src/packages/routes';
@@ -166,32 +167,56 @@ export default class StripeWebhooksController {
             object.payment_method as string
           );
 
-          // Get order from database
-          const order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
-            {
-              stripe_information: {
-                subscription_id: subscriptionId,
-              },
-            },
-            [
+          // If the payment was made having a discount the application fee had to be changed, so we need to change it back to the original value
+          await StripeWebhooksController.StripeService.updateSubscription(subscriptionId, {
+            application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
+          });
+
+          let order: IHomeCareOrderDocument | undefined = undefined;
+
+          try {
+            // Get order from database
+            order = await StripeWebhooksController.HomeCareOrdersDAO.queryOne(
               {
-                path: 'patient',
-                model: 'Patient',
+                stripe_information: {
+                  subscription_id: subscriptionId,
+                },
               },
-              {
-                path: 'health_unit',
-                model: 'HealthUnit',
-              },
-              {
-                path: 'customer',
-                model: 'Customer',
-              },
-              {
-                path: 'services',
-                model: 'Service',
-              },
-            ]
-          );
+              [
+                {
+                  path: 'patient',
+                  model: 'Patient',
+                },
+                {
+                  path: 'health_unit',
+                  model: 'HealthUnit',
+                },
+                {
+                  path: 'customer',
+                  model: 'Customer',
+                },
+                {
+                  path: 'services',
+                  model: 'Service',
+                },
+              ]
+            );
+          } catch (error: any) {
+            logger.error(`Stripe Webhooks Controller: Error getting order from database: ${error}`);
+            switch (error.type) {
+              case 'NOT_FOUND':
+                // TODO: is this a bug? how should we handle this?
+                break; // Exit switch
+
+              default:
+                break; // Exit switch
+            }
+          }
+
+          if (!order) {
+            // TODO: is this a bug? how should we handle this?
+            break; // Exit switch
+          }
 
           const customer = order.customer as ICustomer;
 
@@ -224,11 +249,6 @@ export default class StripeWebhooksController {
 
           let attachment = faturaReciboPDF;
            */
-
-          // If the payment was made having a discount the application fee had to be changed, so we need to change it back to the original value
-          await StripeWebhooksController.StripeService.updateSubscription(subscriptionId, {
-            application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
-          });
 
           order.status = 'active';
 
