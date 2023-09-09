@@ -13,7 +13,8 @@ import CognitoContext from './context/cognito-context';
  * Class with utility functions for authentication with different authentication contexts.
  */
 export default class AuthUtils {
-  static async decodeJwtToken(accessToken: string): Promise<JwtPayload> {
+  // Cognito JWT tokens have custom fields in the payload so we can't use JwtPayload types
+  static async decodeJwtToken(accessToken: string): Promise<any> {
     logger.info(`Authentication Utils DECODE_JWT_TOKEN Request: \n ${accessToken}`);
 
     if (!accessToken) {

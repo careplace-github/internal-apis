@@ -53,10 +53,12 @@ export default class JwtContext {
       if (!accessToken) {
         throw new HTTPError._401('Unauthorized: No token provided');
       }
-      const decodedToken: JwtPayload = await this.decodeToken(accessToken);
+
+      // Cognito JWT tokens have custom fields in the payload so we can't use JwtPayload types
+      const decodedToken: any = await this.decodeToken(accessToken);
 
       // Verify the client ID
-      const clientId = decodedToken['client_id'];
+      const clientId = decodedToken.client_id;
 
       if (
         clientId !== AWS_COGNITO_MARKETPLACE_CLIENT_ID &&
