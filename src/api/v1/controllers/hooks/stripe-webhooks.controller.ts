@@ -172,7 +172,7 @@ export default class StripeWebhooksController {
             application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
           });
 
-          let order: IHomeCareOrderDocument | undefined = undefined;
+          let order: IHomeCareOrderDocument | undefined;
 
           try {
             // Get order from database
