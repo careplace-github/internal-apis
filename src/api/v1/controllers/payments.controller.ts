@@ -128,7 +128,7 @@ export default class PaymentsController {
       } catch (error: any) {
         switch (error.code) {
           default:
-            return next(new HTTPError._400('Invalid card information.'));
+            return next(new HTTPError._400(`Invalid card information: ${error.message}`));
         }
       }
 
@@ -546,6 +546,10 @@ export default class PaymentsController {
 
       const healthUnitAccountId = (order.health_unit as IHealthUnit).stripe_information.account_id;
 
+      if (!healthUnitAccountId) {
+        return next(new HTTPError._400('Health unit does not have a stripe account id.'));
+      }
+
       const user = await AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
@@ -598,7 +602,7 @@ export default class PaymentsController {
       /**
        * Check if any field is missing in req.body.billing_address
        */
-      const taxId = req.body.billing_details.tax_id;
+      let taxId = req.body.billing_details.tax_id;
 
       if (taxId) {
         // Check if the customer already has the tax id
@@ -606,11 +610,13 @@ export default class PaymentsController {
 
         let taxIdExists = false;
 
-        const taxIdAux = `PT${taxId}`;
+        // remove white spaces from taxId
+        taxId = taxId.replace(/\s/g, '');
 
         for (let i = 0; i < customerTaxIds.data.length; i++) {
-          if (customerTaxIds.data[i].value === taxIdAux) {
+          if (customerTaxIds.data[i].value === `PT${taxId}`) {
             taxIdExists = true;
+            taxId = customerTaxIds.data[i].value;
             break;
           }
         }
@@ -618,8 +624,13 @@ export default class PaymentsController {
         if (taxIdExists === false) {
           // Create a tax id for the customer
 
+          const taxParams: Stripe.TaxIdCreateParams = {
+            type: 'eu_vat',
+            value: `PT${taxId}`,
+          };
+
           try {
-            await PaymentsController.StripeService.createCustomerTaxId(customerId, taxId);
+            await PaymentsController.StripeService.createCustomerTaxId(customerId, taxParams);
           } catch (err: any) {
             return next(new HTTPError._400(err.message));
           }

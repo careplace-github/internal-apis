@@ -311,18 +311,25 @@ export default class StripeService {
     params: Stripe.TokenCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Token> {
-    logger.info('StripeService.createCardToken', { params, options });
+    logger.info(`StripeService.createCardToken${JSON.stringify({ params, options }, null, 2)}`);
 
     let cardToken: Stripe.Token;
 
     try {
       cardToken = await this.Stripe.tokens.create(params, options);
     } catch (error: any) {
+      logger.error(`StripeService.createCardToken Error: ${error}`);
+
       switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
         default:
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
+
+    logger.info(`StripeService.createCardToken return: ${{ cardToken }}`);
 
     return cardToken;
   }
@@ -577,7 +584,7 @@ export default class StripeService {
     params: Stripe.SubscriptionCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Subscription> {
-    logger.info(`StripeService.createSubscription${{ params, options }}`);
+    logger.info(`StripeService.createSubscription_ `, JSON.stringify(params, null, 2));
 
     let subscription: Stripe.Subscription;
 
