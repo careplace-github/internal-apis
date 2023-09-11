@@ -938,6 +938,8 @@ export default class PaymentsController {
 
       // Pass to the next middleware to handle the response
       next(response);
+
+      // TODO: create receipt and send email to customer
     } catch (err: any) {
       // Pass to the next middleware to handle the error
       next(err);
