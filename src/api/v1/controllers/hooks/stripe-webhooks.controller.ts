@@ -205,16 +205,35 @@ export default class StripeWebhooksController {
             logger.error(`Stripe Webhooks Controller: Error getting order from database: ${error}`);
             switch (error.type) {
               case 'NOT_FOUND':
-                // TODO: is this a bug? how should we handle this?
+                /**
+                 * When we make an api call to create a subscription with collection_method: 'charge_automatically' the subscription is created and then
+                 * Stripe automatically charges the customer.
+                 * After the api call is made we retrieve the subscription id and save it in the database.
+                 * Also after the api call stripe sends a webhook.
+                 *
+                 * Because of this workflow when a webhook of type 'payment_intent.succeeded' is received for first invoice of a subscription the subscription id
+                 * is not yet saved in the database, and therefore we get a NOT_FOUND error.
+                 * But when the webhook of type 'invoice.payment_succeeded' is received for non first invoices of a subscription the subscription id is already saved in the database
+                 * and therefore we don't get a NOT_FOUND error.
+                 *
+                 * Even though we use this webhook to send an email to the customer with the receipt of the payment, first invoices of a subscription are handled
+                 * by the payments controller that creates the stripe subscription, so there's no problem in exiting the switch. For non first invoices of a subscription
+                 * the receipts are handled by this webhook.
+                 *
+                 * For this reason we need to ignore this error.
+                 */
                 break; // Exit switch
 
               default:
+                logger.error(
+                  `Stripe Webhooks Controller: Error getting order from database: ${error}`
+                );
                 break; // Exit switch
             }
           }
 
           if (!order) {
-            // TODO: is this a bug? how should we handle this?
+            // First invoice of a subscription, explained above.
             break; // Exit switch
           }
 
