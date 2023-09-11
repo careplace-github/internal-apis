@@ -63,7 +63,7 @@
     "aws-sdk": "2.1354.0",
     "axios": "^1.4.0",
     "btoa-lite": "^1.0.0",
-    "commitlint": "^17.6.6",
+    "commitlint": "^17.7.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "eslint": "^8.43.0",
