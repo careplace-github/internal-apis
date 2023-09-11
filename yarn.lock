@@ -3911,10 +3911,10 @@ express-mongo-sanitize@^2.2.0:
   resolved "https://registry.npmjs.org/express-mongo-sanitize/-/express-mongo-sanitize-2.2.0.tgz"
   integrity sha512-PZBs5nwhD6ek9ZuP+W2xmpvcrHwXZxD5GdieX2dsjPbAbH4azOkrHbycBud2QRU+YQF1CT+pki/lZGedHgo/dQ==
 
-express-rate-limit@^6.7.0:
-  version "6.7.1"
-  resolved "https://registry.npmjs.org/express-rate-limit/-/express-rate-limit-6.7.1.tgz"
-  integrity sha512-eH4VgI64Nowd2vC5Xylx0lLYovWIp2gRFtTklWDbhSDydGAPQUjvr1B7aQ2/ZADrAi6bJ51qSizKIXWAZ1WCQw==
+express-rate-limit@^6.9.0:
+  version "6.11.1"
+  resolved "https://registry.yarnpkg.com/express-rate-limit/-/express-rate-limit-6.11.1.tgz#52e05c5d379cd5d06ae29665862436eb712e414a"
+  integrity sha512-8+UpWtQY25lJaa4+3WxDBGDcAu4atcTruSs3QSL5VPEplYy6kmk84wutG9rUkkK5LmMQQ7TFHWLZYITwVNbbEg==
 
 express-validator@^6.14.2:
   version "6.15.0"
