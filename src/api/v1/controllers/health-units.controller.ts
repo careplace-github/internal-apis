@@ -224,6 +224,18 @@ export default class HealthUnitsController {
         };
       }
 
+      // If the name query parameter is provided, we'll add it to the filter object.
+      if (req.query.name) {
+        const nameSubstring = req.query.name as string;
+
+        // Create a regular expression for a case-insensitive substring search.
+        const nameRegex = new RegExp(nameSubstring, 'i');
+
+        filters['business_profile.name'] = {
+          $regex: nameRegex,
+        };
+      }
+
       const healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
         filters,
         options,
