@@ -1,15 +1,16 @@
 import express from 'express';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
 import AdminHealthUnitsController from '../controllers/health-units.controller';
+import HealthUnitsController from '@api/v1/controllers/health-units.controller';
 
 const router = express.Router();
 
 router
-  .route('/health-units/:healthUnit/collaborators')
-  .post(
-    AuthenticationGuard,
-    ClientGuard('admin'),
-    AdminHealthUnitsController.createHealthUnitCollaborator
-  );
+  .route('/health-units/search')
+  .get(AuthenticationGuard, ClientGuard('admin'), HealthUnitsController.searchAgencies);
+
+router
+  .route('/health-units/:id')
+  .get(AuthenticationGuard, ClientGuard('admin'), HealthUnitsController.retrieveHealthUnit);
 
 export default router;

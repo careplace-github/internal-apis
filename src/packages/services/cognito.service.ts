@@ -1250,7 +1250,7 @@ export default class CognitoService {
   }
 
   /**
-   * @deprecated
+   *
    */
   async getUserRoles(
     username: string
