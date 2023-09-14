@@ -251,4 +251,58 @@ export default class AdminAuthenticationController {
       return next(new HTTPError._500(error.message));
     }
   }
+
+  static async getAccount(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const clientId = await AdminAuthenticationController.AuthHelper.getClientIdFromAccessToken(
+        accessToken
+      );
+
+      const user = await AdminAuthenticationController.AuthHelper.getAuthUser(accessToken);
+
+      // for each user attribute get the value
+      const userAttributes = user?.UserAttributes?.reduce((acc: any, attribute: any) => {
+        acc[attribute.Name] = attribute.Value;
+        return acc;
+      }, {});
+
+      const groups = await AdminAuthenticationController.AuthHelper.getAuthUserGroups(accessToken);
+
+      // for each group get the group name
+      const permissions = groups?.Groups?.reduce((acc: any, group: any) => {
+        acc.push(group.GroupName);
+        return acc;
+      }, []);
+
+      response.statusCode = 200;
+      response.data = {
+        ...userAttributes,
+        ...omit(user, ['UserAttributes', 'Username']),
+        ...groups,
+        permissions
+      };
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
 }

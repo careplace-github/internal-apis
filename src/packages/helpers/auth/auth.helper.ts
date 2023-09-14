@@ -92,6 +92,26 @@ export default class AuthHelper {
     return authUser;
   }
 
+  static async getAuthUserGroups(accessToken: string): Promise<any> {
+    logger.info(`Authentication Helper GET_AUTH_USER_GROUPS Request: \n ${accessToken}`);
+
+    const decodedToken = await this.AuthUtils.decodeJwtToken(accessToken);
+
+    const clientId = decodedToken.client_id;
+
+    const { username } = decodedToken;
+
+    const Cognito = new CognitoService(clientId);
+
+    const authUser = await Cognito.getUserRoles(username);
+
+    logger.info(
+      `Authentication Helper GET_AUTH_USER_GROUPS RESULT: \n ${JSON.stringify(authUser, null, 2)}`
+    );
+
+    return authUser;
+  }
+
   static async getUserAttributes(
     accessToken: string
   ): Promise<CognitoIdentityServiceProvider.AttributeListType | undefined> {
