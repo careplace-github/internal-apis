@@ -70,8 +70,11 @@ const main = async () => {
       LeadsRoute,
     } = require('@api/v1/routes');
 
-    const { AdminAuthRoute, AdminHealthUnitsRoute, AdminServicesRoute } = require('@api/admin/v1/routes');
-
+    const {
+      AdminAuthRoute,
+      AdminHealthUnitsRoute,
+      AdminServicesRoute,
+    } = require('@api/admin/v1/routes');
 
     const { FilesRoute } = require('@api/files/v1/routes');
 

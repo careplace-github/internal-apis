@@ -295,7 +295,7 @@ export default class AdminAuthenticationController {
         ...userAttributes,
         ...omit(user, ['UserAttributes', 'Username']),
         ...groups,
-        permissions
+        permissions,
       };
 
       // Pass to the next middleware to handle the response
