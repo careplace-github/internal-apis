@@ -70,17 +70,12 @@ const main = async () => {
       LeadsRoute,
     } = require('@api/v1/routes');
 
-<<<<<<< Updated upstream
-    const { AdminAuthRoute, AdminHealthUnitsRoute, AdminServicesRoute } = require('@api/admin/v1/routes');
-
-=======
     const {
       AdminAuthRoute,
       AdminHealthUnitsRoute,
       AdminReviewsRoute,
       AdminServicesRoute,
     } = require('@api/admin/v1/routes');
->>>>>>> Stashed changes
 
     const { FilesRoute } = require('@api/files/v1/routes');
 
