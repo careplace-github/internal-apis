@@ -70,8 +70,17 @@ const main = async () => {
       LeadsRoute,
     } = require('@api/v1/routes');
 
+<<<<<<< Updated upstream
     const { AdminAuthRoute, AdminHealthUnitsRoute, AdminServicesRoute } = require('@api/admin/v1/routes');
 
+=======
+    const {
+      AdminAuthRoute,
+      AdminHealthUnitsRoute,
+      AdminReviewsRoute,
+      AdminServicesRoute,
+    } = require('@api/admin/v1/routes');
+>>>>>>> Stashed changes
 
     const { FilesRoute } = require('@api/files/v1/routes');
 
@@ -466,6 +475,7 @@ const main = async () => {
       // Admin API Routes
       app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminReviewsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminServicesRoute);
 
       // Middleware to handle and log all the errors
