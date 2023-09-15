@@ -10,9 +10,7 @@ router
   .route('/auth/change-password')
   .post(AuthenticationGuard, AdminAuthenticationController.changePassword);
 
-router
-  .route('/auth/account')
-  .get(AuthenticationGuard, AdminAuthenticationController.getAccount)
+router.route('/auth/account').get(AuthenticationGuard, AdminAuthenticationController.getAccount);
 
 router.route('/auth/signout').post(AuthenticationGuard, AdminAuthenticationController.signout);
 
