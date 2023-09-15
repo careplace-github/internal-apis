@@ -91,6 +91,16 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         email: { type: String, required: true },
         phone: { type: String, required: true },
         birthdate: { type: Date, required: true },
+        address: {
+          street: { type: String, required: true },
+          postal_code: { type: String, required: true },
+          state: { type: String, required: false },
+          city: { type: String, required: true },
+          country: {
+            type: String,
+            required: true,
+          },
+        },
       },
       tax_number: { type: String, required: true },
       business_structure: { type: String, required: true },
@@ -102,7 +112,6 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         country: {
           type: String,
           required: true,
-          enum: ['PT', 'ES', 'US', 'UK'],
         },
         coordinates: { type: Array, required: true },
       },
