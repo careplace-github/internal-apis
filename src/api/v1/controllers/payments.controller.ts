@@ -377,6 +377,42 @@ export default class PaymentsController {
       next(error);
     }
   }
+  static async deleteConnectAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let accessToken: string;
+
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const connectAccountId = req.params.connectAccount;
+
+      let deleteAccount;
+
+      try {
+        deleteAccount = await PaymentsController.StripeService.deleteConnectAccount(
+          connectAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = deleteAccount;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
   static async deletePaymentMethod(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

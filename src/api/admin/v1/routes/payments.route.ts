@@ -15,4 +15,5 @@ router
   router
   .route('/payments/accounts/:connectAccount')
   .get(AuthenticationGuard, ClientGuard('admin'), PaymentsController.retrieveConnectAccount)
+  .delete(AuthenticationGuard, ClientGuard('admin'), PaymentsController.deleteConnectAccount);
 export default router;
