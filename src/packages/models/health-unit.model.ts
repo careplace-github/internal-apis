@@ -77,6 +77,8 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     pricing: {
       average_hourly_rate: { type: Number, required: false, default: 0 },
       minimum_hourly_rate: { type: Number, required: true, default: 0 },
+      average_monthly_rate: { type: Number, required: false, default: 0 },
+      minimum_monthly_rate: { type: Number, required: true, default: 0 },
     },
 
     stripe_information: {
