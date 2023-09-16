@@ -62,6 +62,10 @@ interface IHealthUnit {
       email: string;
       phone: string;
       birthdate: Date;
+      address: IAddress;
+      gender: string;
+      id_number: string;
+      political_exposure?: boolean;
     };
     tax_number: string;
     business_structure: string;

@@ -62,6 +62,33 @@ export default class StripeService {
     return paymentMethods;
   }
 
+  static async createConnectAccount(
+    params: Stripe.AccountCreateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Account> {
+    logger.info('StripeService.createConnectAccount params: ', { params, options });
+
+    let account: Stripe.Account;
+
+    try {
+      account = await this.Stripe.accounts.create(params, options);
+    } catch (error: any) {
+      logger.error('StripeService.createConnectAccount Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.createConnectAccount return: ', { account });
+
+    return account;
+  }
+
   static async retrievePaymentMethod(
     paymentMethodId: string,
     options?: Stripe.RequestOptions
