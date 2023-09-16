@@ -190,11 +190,7 @@ export default class AdminHealthUnitsController {
           postal_code: reqHealthUnit.legal_information.director.address.postal_code,
           state: reqHealthUnit.legal_information.director.address.state,
         },
-        dob: {
-          day: new Date(reqHealthUnit.legal_information?.director?.birthdate).getDate(),
-          month: new Date(reqHealthUnit.legal_information?.director?.birthdate).getMonth(),
-          year: new Date(reqHealthUnit.legal_information?.director?.birthdate).getFullYear(),
-        },
+
         email: reqHealthUnit.legal_information?.director?.email,
         first_name: reqHealthUnit.legal_information?.director?.name?.split(' ')[0],
         last_name: reqHealthUnit.legal_information?.director?.name?.split(' ')[1],
@@ -204,10 +200,23 @@ export default class AdminHealthUnitsController {
         relationship: {
           executive: true,
           representative: true,
-          title: 'CEO',
+          title: reqHealthUnit.legal_information?.director?.role || 'CEO',
           owner: true,
         },
       };
+
+      if (reqHealthUnit.legal_information?.director?.birthdate) {
+        // check if the date is valid
+        if (isNaN(new Date(reqHealthUnit.legal_information?.director?.birthdate).getTime())) {
+          return next(new HTTPError._400('Invalid director birthdate.'));
+        }
+
+        representativeParams.dob = {
+          day: new Date(reqHealthUnit.legal_information?.director?.birthdate)?.getDate(),
+          month: new Date(reqHealthUnit.legal_information?.director?.birthdate)?.getMonth(),
+          year: new Date(reqHealthUnit.legal_information?.director?.birthdate)?.getFullYear(),
+        };
+      }
 
       try {
         stripeRepresentativeId = (
