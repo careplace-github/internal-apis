@@ -411,8 +411,6 @@ export default class AdminHealthUnitsController {
         );
       } catch (error: any) {
         switch (error.type) {
-          default:
-            return next(new HTTPError._500(error.message));
         }
       }
 
