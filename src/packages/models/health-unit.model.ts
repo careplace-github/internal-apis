@@ -80,8 +80,8 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     },
 
     stripe_information: {
-      account_id: { type: String, required: true, unique: true },
-      customer_id: { type: String, required: true, unique: true },
+      account_id: { type: String, required: false, unique: true },
+      customer_id: { type: String, required: false, unique: true },
     },
 
     legal_information: {
