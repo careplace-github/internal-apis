@@ -170,7 +170,12 @@ export default class ReviewsController {
       let review: IHealthUnitReviewDocument;
 
       try {
-        review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId);
+        review = await ReviewsController.HealthUnitReviewsDAO.retrieve(reviewId, [
+          {
+            path: 'customer',
+            model: 'Customer',
+          },
+        ]);
       } catch (error: any) {
         throw new HTTPError._404('Review does not exist.');
       }
@@ -310,7 +315,6 @@ export default class ReviewsController {
           {
             path: 'customer',
             model: 'Customer',
-            select: 'name profile_picture',
           },
         ]
       );
