@@ -430,6 +430,78 @@ export default class AdminHealthUnitsController {
     }
   }
 
+  static async adminDeleteHealthUnit(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const healthUnitId = req.params.id;
+
+      let healthUnit: IHealthUnitDocument | undefined;
+
+      try {
+        healthUnit = await AdminHealthUnitsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Health unit not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // delete the health unit from the database
+      try {
+        await AdminHealthUnitsController.HealthUnitsDAO.delete(healthUnitId);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // delete the health unit from Stripe
+      try {
+        await AdminHealthUnitsController.StripeService.deleteConnectAccount(
+          healthUnit.stripe_information?.account_id
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 204;
+      response.data = {
+        message: 'Health unit deleted successfully.',
+      };
+
+      // Send the response
+      return next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
   static async adminSearchHealthUnits(
     req: Request,
     res: Response,
@@ -610,7 +682,7 @@ export default class AdminHealthUnitsController {
           } catch (error: any) {
             switch (error.type) {
               default:
-                //return next(new HTTPError._500(error.message));
+              //return next(new HTTPError._500(error.message));
             }
           }
 
