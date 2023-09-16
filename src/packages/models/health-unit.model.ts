@@ -91,7 +91,7 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         id_number: { type: String, required: false },
         email: { type: String, required: true },
         phone: { type: String, required: true },
-        birthdate: { type: Date, required: true },
+        birthdate: { type: Date, required: false },
         gender: { type: String, required: false },
         political_exposure: { type: Boolean, required: false },
         address: {
