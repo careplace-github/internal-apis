@@ -61,7 +61,7 @@ export default class StripeService {
 
     return paymentMethods;
   }
-static async retrieveConnectAccount(
+  static async retrieveConnectAccount(
     accountId: string,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Account> {
@@ -88,6 +88,32 @@ static async retrieveConnectAccount(
     return account;
   }
 
+  static async deleteConnectAccount(
+    accountId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.DeletedAccount> {
+    logger.info('StripeService.deleteConnectAccount params: ', { accountId, options });
+
+    let account: Stripe.DeletedAccount;
+
+    try {
+      account = await this.Stripe.accounts.del(accountId, options);
+    } catch (error: any) {
+      logger.error('StripeService.deleteConnectAccount Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.deleteConnectAccount return: ', { account });
+
+    return account;
+  }
 
   static async createBankAccountToken(
     params: Stripe.TokenCreateParams,

@@ -15,7 +15,11 @@ router
 
 router
   .route('/health-units/search')
-  .get(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminSearchHealthUnits);
+  .get(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminHealthUnitsController.adminSearchHealthUnits
+  );
 
 router
   .route('/health-units/:id')
@@ -24,6 +28,11 @@ router
     ClientGuard('admin'),
     AdminHealthUnitsController.adminRetrieveHealthUnit
   )
-  .put(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminUpdateHealthUnit);
+  .put(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminUpdateHealthUnit)
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminHealthUnitsController.adminDeleteHealthUnit
+  );
 
 export default router;
