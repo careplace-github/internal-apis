@@ -7,7 +7,11 @@ const router = express.Router();
 
 router
   .route('/health-units')
-  .get(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminCreateHealthUnit);
+  .post(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminHealthUnitsController.adminCreateHealthUnit
+  );
 
 router
   .route('/health-units/search')
@@ -15,7 +19,11 @@ router
 
 router
   .route('/health-units/:id')
-  .get(AuthenticationGuard, ClientGuard('admin'), HealthUnitsController.retrieveHealthUnit)
+  .get(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminHealthUnitsController.adminRetrieveHealthUnit
+  )
   .put(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminUpdateHealthUnit);
 
 export default router;
