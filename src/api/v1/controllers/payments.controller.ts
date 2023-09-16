@@ -141,6 +141,49 @@ export default class PaymentsController {
     }
   }
 
+  static async createBankAccountToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let accessToken: string;
+      let bankAccountToken: Stripe.Token;
+
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const params: Stripe.TokenCreateParams = {
+        bank_account: {
+          country: req.body.country,
+          currency: req.body.currency,
+          account_holder_name: req.body.account_holder_name,
+          account_holder_type: req.body.account_holder_type,
+          routing_number: req.body.routing_number,
+          account_number: req.body.account_number,
+        },
+      };
+
+      try {
+        bankAccountToken = await StripeService.createBankAccountToken(params);
+      } catch (error: any) {
+        switch (error.code) {
+          default:
+            return next(new HTTPError._400(`Invalid bank account information: ${error.message}`));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = bankAccountToken;
+
+      next(response);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   // -------------------------------------------------- //
   //                  PAYMENT METHODS                   //
   // -------------------------------------------------- //
@@ -284,6 +327,50 @@ export default class PaymentsController {
 
       response.statusCode = 200;
       response.data = paymentMethod;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async retrieveConnectAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const connectAccountId = req.params.connectAccount;
+      let connectAccount: Stripe.Account | undefined;
+      try {
+        connectAccount = await PaymentsController.StripeService.retrieveConnectAccount(
+          connectAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = connectAccount;
 
       next(response);
     } catch (error: any) {

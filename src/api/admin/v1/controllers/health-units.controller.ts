@@ -111,7 +111,7 @@ export default class AdminHealthUnitsController {
       let stripeAccountId: string | undefined;
 
       let conectAccountParams: Stripe.AccountCreateParams = {
-        type: 'express',
+        type: 'custom',
         country: 'PT',
         email: reqHealthUnit.business_profile.email,
         capabilities: {
@@ -126,58 +126,137 @@ export default class AdminHealthUnitsController {
           sofort_payments: { requested: true },
           transfers: { requested: true },
         },
+
+        business_profile: {
+          // TODO: check if this is the correct MCC
+          // 8050 - Nursing/Personal Care
+          mcc: '8050',
+          product_description: 'Healthcare',
+          support_email: reqHealthUnit.business_profile.email,
+          support_phone: reqHealthUnit.business_profile.phone,
+          url: 'https://www.caregivers.pt',
+        },
         business_type: 'company',
         company: {
           address: {
-            city: reqHealthUnit.legal_information.address.city,
-            country: reqHealthUnit.legal_information.address.country,
-            line1: reqHealthUnit.legal_information.address.street,
-            postal_code: reqHealthUnit.legal_information.address.postal_code,
-            state: reqHealthUnit.legal_information.address.state,
+            city: reqHealthUnit.legal_information?.address?.city,
+            country: reqHealthUnit.legal_information?.address?.country,
+            line1: reqHealthUnit.legal_information?.address?.street,
+            postal_code: reqHealthUnit.legal_information?.address?.postal_code,
+            state: reqHealthUnit.legal_information?.address?.state,
           },
+          phone: reqHealthUnit.business_profile.phone,
           directors_provided: true,
           executives_provided: true,
           owners_provided: true,
-          name: reqHealthUnit.legal_information.name,
-          registration_number: reqHealthUnit.legal_information.tax_number,
-          tax_id: reqHealthUnit.legal_information.tax_number,
-          vat_id: reqHealthUnit.legal_information.tax_number,
-          structure: 'private_company',
+          name: reqHealthUnit.legal_information?.name,
+          registration_number: reqHealthUnit.legal_information?.tax_number,
+          tax_id: reqHealthUnit.legal_information?.tax_number,
+          vat_id: reqHealthUnit.legal_information?.tax_number,
         },
-        individual: {
-          address: {
-            city: reqHealthUnit.legal_information.director.address.city,
-            country: reqHealthUnit.legal_information.director.address.country,
-            line1: reqHealthUnit.legal_information.director.address.street,
-            postal_code: reqHealthUnit.legal_information.director.address.postal_code,
-            state: reqHealthUnit.legal_information.director.address.state,
-          },
-          dob: {
-            day: reqHealthUnit.legal_information.director.birthdate.getDate(),
-            month: reqHealthUnit.legal_information.director.birthdate.getMonth(),
-            year: reqHealthUnit.legal_information.director.birthdate.getFullYear(),
-          },
-          email: reqHealthUnit.legal_information.director.email,
-          first_name: reqHealthUnit.legal_information.director.name.split(' ')[0],
-          last_name: reqHealthUnit.legal_information.director.name.split(' ')[1],
-          gender: reqHealthUnit.legal_information.director.gender,
-          political_exposure: 'none',
+
+        tos_acceptance: {
+          date: Math.floor(Date.now() / 1000),
+          // accepted from our onboarding workshop
+          ip: req.ip,
+          user_agent: req.headers['user-agent'],
         },
       };
 
+      // create a Stripe account
       try {
         stripeAccountId = (
           await AdminHealthUnitsController.StripeService.createConnectAccount(conectAccountParams)
         ).id;
-      } catch (error) {}
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
 
       if (!stripeAccountId) {
         return next(new HTTPError._400('Error getting the stripe account id.'));
       }
 
+      // create a representative in Stripe
+      let stripeRepresentativeId: string | undefined;
+
+      let representativeParams: Stripe.PersonCreateParams = {
+        address: {
+          city: reqHealthUnit.legal_information.director.address.city,
+          country: reqHealthUnit.legal_information.director.address.country,
+          line1: reqHealthUnit.legal_information.director.address.street,
+          postal_code: reqHealthUnit.legal_information.director.address.postal_code,
+          state: reqHealthUnit.legal_information.director.address.state,
+        },
+        dob: {
+          day: new Date(reqHealthUnit.legal_information?.director?.birthdate).getDate(),
+          month: new Date(reqHealthUnit.legal_information?.director?.birthdate).getMonth(),
+          year: new Date(reqHealthUnit.legal_information?.director?.birthdate).getFullYear(),
+        },
+        email: reqHealthUnit.legal_information?.director?.email,
+        first_name: reqHealthUnit.legal_information?.director?.name?.split(' ')[0],
+        last_name: reqHealthUnit.legal_information?.director?.name?.split(' ')[1],
+        phone: reqHealthUnit.legal_information?.director?.phone,
+        id_number: reqHealthUnit.legal_information?.director?.id_number,
+
+        relationship: {
+          executive: true,
+          representative: true,
+          title: 'CEO',
+          owner: true,
+        },
+      };
+
+      try {
+        stripeRepresentativeId = (
+          await AdminHealthUnitsController.StripeService.createPerson(
+            stripeAccountId,
+            representativeParams
+          )
+        ).id;
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!stripeRepresentativeId) {
+        return next(new HTTPError._400('Error getting the stripe representative id.'));
+      }
+
+      // create a customer in Stripe
+      let stripeCustomerId: string | undefined;
+
+      let customerParams: Stripe.CustomerCreateParams = {
+        email: reqHealthUnit.business_profile.email,
+        name: reqHealthUnit.legal_information.name,
+        phone: reqHealthUnit.business_profile.phone,
+        address: {
+          city: reqHealthUnit.legal_information?.address?.city,
+          country: reqHealthUnit.legal_information?.address?.country,
+          line1: reqHealthUnit.legal_information?.address?.street,
+          postal_code: reqHealthUnit.legal_information?.address?.postal_code,
+          state: reqHealthUnit.legal_information?.address?.state,
+        },
+      };
+
+      try {
+        stripeCustomerId = (
+          await AdminHealthUnitsController.StripeService.createCustomer(customerParams)
+        ).id;
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
       newHealthUnit.stripe_information = {
         account_id: stripeAccountId,
-        customer_id: '',
+        customer_id: stripeCustomerId,
       };
 
       try {
@@ -193,7 +272,25 @@ export default class AdminHealthUnitsController {
       response.data = newHealthUnit;
 
       // Send the response
-      return next(response);
+      next(response);
+
+      // If a bank account token was provided, add it to the account
+      if (req.body.bank_account_token) {
+        let bankAccount: Stripe.ExternalAccountCreateParams = {
+          external_account: req.body.bank_account_token,
+        };
+        try {
+          await AdminHealthUnitsController.StripeService.createExternalAccount(
+            stripeAccountId,
+            bankAccount
+          );
+        } catch (error: any) {
+          switch (error.type) {
+            default:
+              return next(new HTTPError._500('Internal server error.'));
+          }
+        }
+      }
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       return next(new HTTPError._500(error.message));
@@ -274,6 +371,59 @@ export default class AdminHealthUnitsController {
 
       // Send the response
       return next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  static async adminRetrieveHealthUnit(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const healthUnitId = req.params.id;
+
+      let healthUnit: IHealthUnitDocument;
+
+      try {
+        healthUnit = await AdminHealthUnitsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Health unit not found.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      const connectAccountId = healthUnit.stripe_information?.account_id;
+      let connectAccount: Stripe.Account | undefined;
+      try {
+        connectAccount = await AdminHealthUnitsController.StripeService.retrieveConnectAccount(
+          connectAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = {
+        ...healthUnit.toJSON(),
+        stripe_account: connectAccount,
+      };
+
+      // Pass to the next middleware to handle the response
+      next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       return next(new HTTPError._500(error.message));

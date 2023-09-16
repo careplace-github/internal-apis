@@ -61,12 +61,63 @@ export default class StripeService {
 
     return paymentMethods;
   }
+static async retrieveConnectAccount(
+    accountId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Account> {
+    logger.info('StripeService.retrieveConnectAccount params: ', { accountId, options });
+
+    let account: Stripe.Account;
+
+    try {
+      account = await this.Stripe.accounts.retrieve(accountId, options);
+    } catch (error: any) {
+      logger.error('StripeService.retrieveConnectAccount Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.retrieveConnectAccount return: ', { account });
+
+    return account;
+  }
+
+
+  static async createBankAccountToken(
+    params: Stripe.TokenCreateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Token> {
+    logger.info('StripeService.createBankAccountToken params: ', { params, options });
+
+    let bankAccountToken: Stripe.Token;
+
+    try {
+      bankAccountToken = await this.Stripe.tokens.create(params, options);
+    } catch (error: any) {
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.createBankAccountToken return: ', { bankAccountToken });
+
+    return bankAccountToken;
+  }
 
   static async createConnectAccount(
     params: Stripe.AccountCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Account> {
-    logger.info('StripeService.createConnectAccount params: ', { params, options });
+    logger.info('StripeService.createConnectAccount params: ' + JSON.stringify(params, null, 2));
 
     let account: Stripe.Account;
 
@@ -84,7 +135,7 @@ export default class StripeService {
       }
     }
 
-    logger.info('StripeService.createConnectAccount return: ', { account });
+    logger.info('StripeService.createConnectAccount return: ' + JSON.stringify(account, null, 2));
 
     return account;
   }
@@ -214,6 +265,67 @@ export default class StripeService {
     return bankAccounts;
   }
 
+  static async createPerson(
+    accountId: string,
+    params: Stripe.PersonCreateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Person> {
+    logger.info(
+      'StripeService.createPerson params: ',
+      JSON.stringify({ accountId, params, options }, null, 2)
+    );
+
+    let person: Stripe.Person;
+
+    try {
+      person = await this.Stripe.accounts.createPerson(accountId, params, options);
+    } catch (error: any) {
+      logger.error('StripeService.createPerson Error: ', error);
+      switch (error.type) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.createPerson return: ', JSON.stringify(person, null, 2));
+
+    return person;
+  }
+
+  static async createExternalAccount(
+    accountId: string,
+    params: Stripe.ExternalAccountCreateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.BankAccount> {
+    let bankAccount: Stripe.BankAccount;
+
+    logger.info(
+      'StripeService.createExternalAccount params: ',
+      JSON.stringify({ accountId, params, options }, null, 2)
+    );
+
+    try {
+      bankAccount = (await this.Stripe.accounts.createExternalAccount(
+        accountId,
+        params,
+        options
+      )) as Stripe.BankAccount;
+    } catch (error: any) {
+      logger.error('StripeService.createExternalAccount Error: ', error);
+      switch (error.type) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      'StripeService.createExternalAccount return: ',
+      JSON.stringify(bankAccount, null, 2)
+    );
+
+    return bankAccount;
+  }
+
   // -------------------------------------------------------------------------------------------- //
   //                                        CORE RESOURCES                                        //
   //                                                                                              //
@@ -232,7 +344,7 @@ export default class StripeService {
     params: Stripe.CustomerCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Customer> {
-    logger.info('StripeService.createCustomer', { params, options });
+    logger.info('StripeService.createCustomer' + JSON.stringify({ params, options }, null, 2));
 
     let createdCustomer: Stripe.Customer;
 
@@ -244,6 +356,8 @@ export default class StripeService {
           throw new LayerError.INTERNAL_ERROR(error.message);
       }
     }
+
+    logger.info('StripeService.createCustomer return: ' + JSON.stringify(createdCustomer, null, 2));
 
     return createdCustomer;
   }
