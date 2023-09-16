@@ -1,7 +1,13 @@
 // mongoose
 import { Types, Document } from 'mongoose';
 // Interfaces
-import { IAddress, ICaregiver, ICollaborator, IService } from 'src/packages/interfaces';
+import {
+  IAddress,
+  IBillingAddress,
+  ICaregiver,
+  ICollaborator,
+  IService,
+} from 'src/packages/interfaces';
 // Types
 import { TCoordinates, THealthUnitType } from 'src/packages/interfaces/types';
 
@@ -63,6 +69,7 @@ interface IHealthUnit {
       phone: string;
       birthdate: Date;
       address: IAddress;
+      role?: string;
       gender: string;
       id_number: string;
       political_exposure?: boolean;
@@ -71,6 +78,9 @@ interface IHealthUnit {
     business_structure: string;
     address: IAddress;
   };
+
+  billing_addresses: IBillingAddress[];
+
   stripe_information: {
     account_id: string;
     customer_id: string;

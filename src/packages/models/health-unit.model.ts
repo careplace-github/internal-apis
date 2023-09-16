@@ -87,25 +87,28 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     },
 
     legal_information: {
-      name: { type: String, required: true },
+      name: { type: String, required: false },
       director: {
+        // the following fields are required for the director because of Stripe
         name: { type: String, required: true },
-        id_number: { type: String, required: false },
         email: { type: String, required: true },
         phone: { type: String, required: true },
-        birthdate: { type: Date, required: false },
-        gender: { type: String, required: false },
-        political_exposure: { type: Boolean, required: false },
+        role: { type: String, required: true },
+        birthdate: { type: Date, required: true },
         address: {
-          street: { type: String, required: false },
-          postal_code: { type: String, required: false },
+          street: { type: String, required: true },
+          postal_code: { type: String, required: true },
           state: { type: String, required: false },
-          city: { type: String, required: false },
+          city: { type: String, required: true },
           country: {
             type: String,
-            required: false,
+            required: true,
           },
         },
+
+        id_number: { type: String, required: false },
+        gender: { type: String, required: false },
+        political_exposure: { type: Boolean, required: false },
       },
       tax_number: { type: String, required: true },
       business_structure: { type: String, required: true },
@@ -121,6 +124,23 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         coordinates: { type: Array, required: true },
       },
     },
+
+    billing_addresses: [
+      {
+        primary: { type: Boolean, required: false },
+        name: { type: String, required: false },
+        phone: { type: String, required: false },
+        email: { type: String, required: false },
+        street: { type: String, required: true },
+        postal_code: { type: String, required: true },
+        state: { type: String, required: false },
+        city: { type: String, required: true },
+        country: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
 
     is_active: { type: Boolean, required: true, default: false },
   },
