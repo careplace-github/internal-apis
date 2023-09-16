@@ -15,7 +15,7 @@ router
 
 router
   .route('/health-units/search')
-  .get(AuthenticationGuard, ClientGuard('admin'), HealthUnitsController.searchAgencies);
+  .get(AuthenticationGuard, ClientGuard('admin'), AdminHealthUnitsController.adminSearchHealthUnits);
 
 router
   .route('/health-units/:id')
