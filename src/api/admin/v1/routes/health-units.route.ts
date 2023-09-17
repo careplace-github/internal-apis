@@ -1,7 +1,7 @@
 import express from 'express';
 import { AuthenticationGuard, ClientGuard } from '@packages/middlewares';
-import AdminHealthUnitsController from '../controllers/health-units.controller';
 import HealthUnitsController from '@api/v1/controllers/health-units.controller';
+import AdminHealthUnitsController from '../controllers/health-units.controller';
 
 const router = express.Router();
 

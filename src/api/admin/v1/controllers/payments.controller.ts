@@ -112,7 +112,8 @@ export default class AdminPaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const healthUnitId = req.params.healthUnit as string;
+      const healthUnitId = req.body.health_unit_id as string;
+
       let healthUnitExists: IHealthUnitDocument | undefined;
 
       try {
@@ -128,7 +129,7 @@ export default class AdminPaymentsController {
       // create an account in Stripe
       let stripeAccountId: string | undefined;
 
-      let conectAccountParams: Stripe.AccountCreateParams = {
+      const conectAccountParams: Stripe.AccountCreateParams = {
         type: 'custom',
         country: 'PT',
         email: healthUnitExists.business_profile.email,
@@ -153,9 +154,11 @@ export default class AdminPaymentsController {
           support_email: healthUnitExists.business_profile.email,
           support_phone: healthUnitExists.business_profile.phone,
           url: healthUnitExists?.business_profile?.website || '',
+          name: healthUnitExists.business_profile?.name,
         },
         business_type: 'company',
         company: {
+          name: healthUnitExists.legal_information?.name,
           address: {
             city: healthUnitExists.legal_information?.address?.city,
             country: healthUnitExists.legal_information?.address?.country,
@@ -167,7 +170,6 @@ export default class AdminPaymentsController {
           directors_provided: true,
           executives_provided: true,
           owners_provided: true,
-          name: healthUnitExists.legal_information?.name,
           registration_number: healthUnitExists.legal_information?.tax_number,
           tax_id: healthUnitExists.legal_information?.tax_number,
           vat_id: healthUnitExists.legal_information?.tax_number,
@@ -200,7 +202,7 @@ export default class AdminPaymentsController {
       // create a representative in Stripe
       let stripeRepresentativeId: string | undefined;
 
-      let representativeParams: Stripe.PersonCreateParams = {
+      const representativeParams: Stripe.PersonCreateParams = {
         address: {
           city: healthUnitExists.legal_information.director.address.city,
           country: healthUnitExists.legal_information.director.address.country,
@@ -290,7 +292,6 @@ export default class AdminPaymentsController {
         data: {},
       };
       let accessToken: string;
-      let healthUnitId: string;
 
       // Check if there is an authorization header
       if (req.headers.authorization) {
@@ -301,9 +302,9 @@ export default class AdminPaymentsController {
         // If there is no authorization header, return an error
         return next(new HTTPError._401('Missing required access token.'));
       }
-      if (req.params.healthUnit) {
-        healthUnitId = req.params.healthUnit;
-      } else {
+      const healthUnitId = req.body.health_unit_id as string;
+
+      if (!healthUnitId) {
         return next(new HTTPError._400('Missing health unit id.'));
       }
 
@@ -316,7 +317,7 @@ export default class AdminPaymentsController {
       // create a customer in Stripe
       let stripeCustomerId: string | undefined;
 
-      let customerParams: Stripe.CustomerCreateParams = {
+      const customerParams: Stripe.CustomerCreateParams = {
         email: healthUnit.business_profile.email,
         name: healthUnit.legal_information.name,
         phone: healthUnit.business_profile.phone,
@@ -615,7 +616,7 @@ export default class AdminPaymentsController {
     }
   }
 
-  static async retrieveConnectAccount(
+  static async adminRetrieveHealthUnitConnectAccount(
     req: Request,
     res: Response,
     next: NextFunction
@@ -637,7 +638,7 @@ export default class AdminPaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const connectAccountId = req.params.connectAccount;
+      const connectAccountId = req.query.connectAccount as string;
       let connectAccount: Stripe.Account | undefined;
       try {
         connectAccount = await AdminPaymentsController.StripeService.retrieveConnectAccount(
@@ -658,20 +659,39 @@ export default class AdminPaymentsController {
       next(error);
     }
   }
-  static async deleteConnectAccount(
+
+  static async adminDeleteHealthUnitConnectAccount(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
-      let accessToken: string;
-
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
+      let accessToken: string;
 
-      const connectAccountId = req.params.connectAccount;
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const connectAccountId = req.params.connectAccount as string;
+
+      const healthUnitId = req.query.health_unit_id as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('Missing connect account id.'));
+      }
 
       let deleteAccount;
 
@@ -681,13 +701,147 @@ export default class AdminPaymentsController {
         );
       } catch (error: any) {
         switch (error.type) {
+          // worst case scenario, the account is already deleted and will also delete it from our database
+          default:
+            break;
+        }
+      }
+
+      // delete the connect account id from the health unit
+      let healthUnit: IHealthUnitDocument | undefined;
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      let updatedHealthUnit: IHealthUnitDocument | undefined;
+      try {
+        updatedHealthUnit = await AdminPaymentsController.HealthUnitsDAO.update({
+          ...healthUnit.toJSON(),
+          stripe_information: {
+            ...healthUnit?.stripe_information,
+            account_id: '',
+          },
+        } as IHealthUnitDocument);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      response.statusCode = 200;
+      response.data = updatedHealthUnit;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminRetrieveHealthUnitCustomerId(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const customerId = req.query.customer as string;
+
+      let customer: Stripe.Customer | Stripe.DeletedCustomer | undefined;
+
+      try {
+        customer = await AdminPaymentsController.StripeService.retrieveCustomer(customerId);
+      } catch (error: any) {
+        switch (error.type) {
           default:
             return next(new HTTPError._500(error.message));
         }
       }
+      response.statusCode = 200;
+      response.data = customer;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminDeleteHealthUnitCustomerId(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+      let accessToken: string;
+      let deletedCustomer: Stripe.DeletedCustomer | undefined;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        // accessToken = req.headers.authorization.split(' ')[1];
+        accessToken = req.headers.authorization;
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+      const customerId = req.params.customer as string;
+
+      const healthUnitId = req.query.health_unit_id as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      if (!customerId) {
+        return next(new HTTPError._400('Missing customer id.'));
+      }
+
+      try {
+        deletedCustomer = await AdminPaymentsController.StripeService.deleteCustomer(customerId);
+      } catch (error: any) {
+        switch (error.type) {
+          // worst case scenario, the account is already deleted and will also delete it from our database
+          default:
+            break;
+        }
+      }
+
+      // delete the health unit customer if from the database
+
+      let healthUnit: IHealthUnitDocument | undefined;
+
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      let updatedHealthUnit: IHealthUnitDocument | undefined;
+
+      try {
+        updatedHealthUnit = await AdminPaymentsController.HealthUnitsDAO.update({
+          ...healthUnit.toJSON(),
+          stripe_information: {
+            ...healthUnit?.stripe_information,
+            customer_id: '',
+          },
+        } as IHealthUnitDocument);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
 
       response.statusCode = 200;
-      response.data = deleteAccount;
+      response.data = updatedHealthUnit;
 
       next(response);
     } catch (error: any) {

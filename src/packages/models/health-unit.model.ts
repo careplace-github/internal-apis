@@ -90,6 +90,7 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     legal_information: {
       name: { type: String, required: false },
       director: {
+        stripe_id: { type: String, required: false },
         // the following fields are required for the director because of Stripe
         name: { type: String, required: false },
         email: { type: String, required: false },
