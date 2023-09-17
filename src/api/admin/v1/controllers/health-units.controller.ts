@@ -107,6 +107,16 @@ export default class AdminHealthUnitsController {
         return next(new HTTPError._400(validationError.message));
       }
 
+      // Create the health unit in the database
+      try {
+        newHealthUnit = await AdminHealthUnitsController.HealthUnitsDAO.create(newHealthUnit);
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
       response.statusCode = 201;
       response.data = newHealthUnit;
 
