@@ -72,6 +72,7 @@ const main = async () => {
 
     const {
       AdminAuthRoute,
+      AdminFilesRoute,
       AdminHealthUnitsRoute,
       AdminPaymentsRoute,
       AdminReviewsRoute,
@@ -470,6 +471,7 @@ const main = async () => {
 
       // Admin API Routes
       app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminFilesRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminPaymentsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminReviewsRoute);
