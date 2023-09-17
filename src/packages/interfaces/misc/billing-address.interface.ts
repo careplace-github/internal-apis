@@ -7,5 +7,4 @@ interface IBillingAddress extends IAddress {
   email: string;
 }
 
-export { IBillingAddress 
-};
+export { IBillingAddress };

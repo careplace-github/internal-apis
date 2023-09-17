@@ -61,6 +61,7 @@ export default class StripeService {
 
     return paymentMethods;
   }
+
   static async retrieveConnectAccount(
     accountId: string,
     options?: Stripe.RequestOptions
@@ -143,7 +144,7 @@ export default class StripeService {
     params: Stripe.AccountCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Account> {
-    logger.info('StripeService.createConnectAccount params: ' + JSON.stringify(params, null, 2));
+    logger.info(`StripeService.createConnectAccount params: ${JSON.stringify(params, null, 2)}`);
 
     let account: Stripe.Account;
 
@@ -161,7 +162,7 @@ export default class StripeService {
       }
     }
 
-    logger.info('StripeService.createConnectAccount return: ' + JSON.stringify(account, null, 2));
+    logger.info(`StripeService.createConnectAccount return: ${JSON.stringify(account, null, 2)}`);
 
     return account;
   }
@@ -370,7 +371,7 @@ export default class StripeService {
     params: Stripe.CustomerCreateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Customer> {
-    logger.info('StripeService.createCustomer' + JSON.stringify({ params, options }, null, 2));
+    logger.info(`StripeService.createCustomer${JSON.stringify({ params, options }, null, 2)}`);
 
     let createdCustomer: Stripe.Customer;
 
@@ -383,9 +384,63 @@ export default class StripeService {
       }
     }
 
-    logger.info('StripeService.createCustomer return: ' + JSON.stringify(createdCustomer, null, 2));
+    logger.info(`StripeService.createCustomer return: ${JSON.stringify(createdCustomer, null, 2)}`);
 
     return createdCustomer;
+  }
+
+  static async retrieveCustomer(
+    customerId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Customer | Stripe.DeletedCustomer> {
+    logger.info('StripeService.retrieveCustomer', { customerId, options });
+
+    let customer: Stripe.Customer | Stripe.DeletedCustomer;
+
+    try {
+      customer = await this.Stripe.customers.retrieve(customerId, options);
+    } catch (error: any) {
+      logger.error('StripeService.retrieveCustomer Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.retrieveCustomer return: ', { customer });
+
+    return customer;
+  }
+
+  static async deleteCustomer(
+    customerId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.DeletedCustomer> {
+    logger.info('StripeService.deleteCustomer', { customerId, options });
+
+    let customer: Stripe.DeletedCustomer;
+
+    try {
+      customer = await this.Stripe.customers.del(customerId, options);
+    } catch (error: any) {
+      logger.error('StripeService.deleteCustomer Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.deleteCustomer return: ', { customer });
+
+    return customer;
   }
 
   /**

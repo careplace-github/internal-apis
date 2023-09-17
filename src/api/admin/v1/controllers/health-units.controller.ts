@@ -52,7 +52,9 @@ export default class AdminHealthUnitsController {
 
   // services
   static SES = SESService;
+
   static StripeService = StripeService;
+
   static CognitoService = new CognitoService(AWS_COGNITO_BUSINESS_CLIENT_ID);
 
   // utils
@@ -242,6 +244,8 @@ export default class AdminHealthUnitsController {
         );
       } catch (error: any) {
         switch (error.type) {
+          default:
+            break;
         }
       }
 
@@ -306,15 +310,29 @@ export default class AdminHealthUnitsController {
         }
       }
 
-      // delete the health unit from Stripe
+      // delete the health unit connect account from Stripe
       try {
         await AdminHealthUnitsController.StripeService.deleteConnectAccount(
           healthUnit.stripe_information?.account_id
         );
       } catch (error: any) {
         switch (error.type) {
+          // ignore if the account is already deleted
           default:
-            return next(new HTTPError._500(error.message));
+            break;
+        }
+      }
+
+      // delete health unit customer from Stripe
+      try {
+        await AdminHealthUnitsController.StripeService.deleteCustomer(
+          healthUnit.stripe_information?.customer_id
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          // ignore if the customer is already deleted
+          default:
+            break;
         }
       }
 
@@ -511,7 +529,7 @@ export default class AdminHealthUnitsController {
           } catch (error: any) {
             switch (error.type) {
               default:
-              //return next(new HTTPError._500(error.message));
+              // return next(new HTTPError._500(error.message));
             }
           }
 

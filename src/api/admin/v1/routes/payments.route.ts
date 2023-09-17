@@ -12,7 +12,7 @@ router
   .post(AuthenticationGuard, ClientGuard('admin'), AdminPaymentsController.createBankAccountToken);
 
 router
-  .route('/payments/accounts/health-units/:healthUnit')
+  .route('/payments/accounts')
   .post(
     AuthenticationGuard,
     ClientGuard('admin'),
@@ -20,7 +20,7 @@ router
   );
 
 router
-  .route('/payments/customers/health-units/:healthUnit')
+  .route('/payments/customers')
   .post(
     AuthenticationGuard,
     ClientGuard('admin'),
@@ -29,6 +29,28 @@ router
 
 router
   .route('/payments/accounts/:connectAccount')
-  .get(AuthenticationGuard, ClientGuard('admin'), AdminPaymentsController.retrieveConnectAccount)
-  .delete(AuthenticationGuard, ClientGuard('admin'), AdminPaymentsController.deleteConnectAccount);
+  .get(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminRetrieveHealthUnitConnectAccount
+  )
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminDeleteHealthUnitConnectAccount
+  );
+
+router
+  .route('/payments/customers/:customer')
+  .get(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminRetrieveHealthUnitCustomerId
+  )
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminDeleteHealthUnitCustomerId
+  );
+
 export default router;
