@@ -19,10 +19,11 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
 
     business_profile: {
       name: { type: String, required: true, unique: true },
-      about: { type: String, required: true },
       email: { type: String, required: true, unique: true },
       phone: { type: String, required: true, unique: true },
-      website: { type: String, required: true, unique: true },
+
+      about: { type: String, required: false },
+      website: { type: String, required: false, unique: true },
       logo: { type: String, required: true },
       banner: { type: String, required: false },
       social_links: {
@@ -37,12 +38,12 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     addresses: {
       type: [
         {
-          street: { type: String, required: true },
-          postal_code: { type: String, required: true },
+          street: { type: String, required: false },
+          postal_code: { type: String, required: false },
           state: { type: String, required: false },
-          city: { type: String, required: true },
-          country: { type: String, required: true },
-          coordinates: { type: Array, required: true, default: [0, 0] },
+          city: { type: String, required: false },
+          country: { type: String, required: false },
+          coordinates: { type: Array, required: false, default: [0, 0] },
         },
       ],
       required: true,
@@ -76,9 +77,9 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
 
     pricing: {
       average_hourly_rate: { type: Number, required: false, default: 0 },
-      minimum_hourly_rate: { type: Number, required: true, default: 0 },
+      minimum_hourly_rate: { type: Number, required: false, default: 0 },
       average_monthly_rate: { type: Number, required: false, default: 0 },
-      minimum_monthly_rate: { type: Number, required: true, default: 0 },
+      minimum_monthly_rate: { type: Number, required: false, default: 0 },
     },
 
     stripe_information: {
@@ -90,19 +91,19 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
       name: { type: String, required: false },
       director: {
         // the following fields are required for the director because of Stripe
-        name: { type: String, required: true },
-        email: { type: String, required: true },
-        phone: { type: String, required: true },
-        role: { type: String, required: true },
-        birthdate: { type: Date, required: true },
+        name: { type: String, required: false },
+        email: { type: String, required: false },
+        phone: { type: String, required: false },
+        role: { type: String, required: false },
+        birthdate: { type: Date, required: false },
         address: {
-          street: { type: String, required: true },
-          postal_code: { type: String, required: true },
+          street: { type: String, required: false },
+          postal_code: { type: String, required: false },
           state: { type: String, required: false },
-          city: { type: String, required: true },
+          city: { type: String, required: false },
           country: {
             type: String,
-            required: true,
+            required: false,
           },
         },
 
@@ -110,18 +111,18 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         gender: { type: String, required: false },
         political_exposure: { type: Boolean, required: false },
       },
-      tax_number: { type: String, required: true },
-      business_structure: { type: String, required: true },
+      tax_number: { type: String, required: false },
+      business_structure: { type: String, required: false },
       address: {
-        street: { type: String, required: true },
-        postal_code: { type: String, required: true },
+        street: { type: String, required: false },
+        postal_code: { type: String, required: false },
         state: { type: String, required: false },
-        city: { type: String, required: true },
+        city: { type: String, required: false },
         country: {
           type: String,
           required: true,
         },
-        coordinates: { type: Array, required: true },
+        coordinates: { type: Array, required: false },
       },
     },
 
