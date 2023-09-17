@@ -265,7 +265,9 @@ export default class ReviewsController {
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> {}
+  ): Promise<void> {
+    return next(new HTTPError._500('Not implemented'));
+  }
 
   static async getHealthUnitReviews(
     req: Request,
@@ -319,7 +321,7 @@ export default class ReviewsController {
         ]
       );
 
-      logger.info('reviews!: ' + reviews);
+      logger.info(`reviews!: ${reviews}`);
 
       response.data = reviews;
 

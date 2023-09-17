@@ -377,6 +377,7 @@ export default class PaymentsController {
       next(error);
     }
   }
+
   static async deleteConnectAccount(
     req: Request,
     res: Response,
