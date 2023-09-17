@@ -11,3 +11,10 @@ project: careplace/internal-apis
 severityThreshold: medium
 
 # Specify additional settings or configurations as needed
+
+# Ignore paths from being scanned
+ignore:
+  'SNYK-GOLANG-GITHUBCOMELAZARLGOPROXY-5783247':
+    - '/usr/src/app/node_modules/snyk/wrapper_dist/snyk-linux > github.com/elazarl/goproxy@v0.0.0-20220901064549-fbd10ff4f5a1':
+        reason: 'This vulnerability is deemed non-critical for our current setup.'
+
