@@ -26,6 +26,7 @@
     "test:jenkins": "jenkins tests/test-dev.Jenkinsfile",
     "test:snyk": "snyk test",
     "lint": "eslint . --ext .js,.ts",
+    "lint:errors": "eslint . --ext .js,.ts --quiet --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "lint:quiet": "eslint . --ext .js,.ts --quiet",
     "lint:commit": "lint-staged",

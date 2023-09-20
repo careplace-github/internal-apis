@@ -52,7 +52,7 @@ import logger from '@logger';
 import { services } from '@assets';
 import Stripe from 'stripe';
 
-export default class PaymentsController {
+export default class AdminPaymentsController {
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
 
   static CustomersDAO = new CustomersDAO();
@@ -89,6 +89,287 @@ export default class PaymentsController {
   static AuthUtils = AuthUtils;
 
   static DateUtils = DateUtils;
+
+  static async adminCreateHealthUnitAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const healthUnitId = req.body.health_unit_id as string;
+
+      let healthUnitExists: IHealthUnitDocument | undefined;
+
+      try {
+        healthUnitExists = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        // do nothing
+      }
+
+      if (!healthUnitExists) {
+        return next(new HTTPError._400('Health unit already exists.'));
+      }
+
+      // create an account in Stripe
+      let stripeAccountId: string | undefined;
+
+      const conectAccountParams: Stripe.AccountCreateParams = {
+        type: 'custom',
+        country: 'PT',
+        email: healthUnitExists.business_profile.email,
+        capabilities: {
+          bancontact_payments: { requested: true },
+          card_payments: { requested: true },
+          eps_payments: { requested: true },
+          giropay_payments: { requested: true },
+          ideal_payments: { requested: true },
+          link_payments: { requested: true },
+          p24_payments: { requested: true },
+          sepa_debit_payments: { requested: true },
+          sofort_payments: { requested: true },
+          transfers: { requested: true },
+        },
+
+        business_profile: {
+          // TODO: check if this is the correct MCC
+          // 8050 - Nursing/Personal Care
+          mcc: '8050',
+          product_description: 'Healthcare',
+          support_email: healthUnitExists.business_profile.email,
+          support_phone: healthUnitExists.business_profile.phone,
+          url: healthUnitExists?.business_profile?.website || '',
+          name: healthUnitExists.business_profile?.name,
+        },
+        business_type: 'company',
+        company: {
+          name: healthUnitExists.legal_information?.name,
+          address: {
+            city: healthUnitExists.legal_information?.address?.city,
+            country: healthUnitExists.legal_information?.address?.country,
+            line1: healthUnitExists.legal_information?.address?.street,
+            postal_code: healthUnitExists.legal_information?.address?.postal_code,
+            state: healthUnitExists.legal_information?.address?.state,
+          },
+          phone: healthUnitExists.business_profile.phone,
+          directors_provided: true,
+          executives_provided: true,
+          owners_provided: true,
+          registration_number: healthUnitExists.legal_information?.tax_number,
+          tax_id: healthUnitExists.legal_information?.tax_number,
+          vat_id: healthUnitExists.legal_information?.tax_number,
+        },
+
+        tos_acceptance: {
+          date: Math.floor(Date.now() / 1000),
+          // accepted from our onboarding workshop
+          ip: req.ip,
+          user_agent: req.headers['user-agent'],
+        },
+      };
+
+      // create a Stripe account
+      try {
+        stripeAccountId = (
+          await AdminPaymentsController.StripeService.createConnectAccount(conectAccountParams)
+        ).id;
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!stripeAccountId) {
+        return next(new HTTPError._400('Error getting the stripe account id.'));
+      }
+
+      // create a representative in Stripe
+      let stripeRepresentativeId: string | undefined;
+
+      const representativeParams: Stripe.PersonCreateParams = {
+        address: {
+          city: healthUnitExists.legal_information.director.address.city,
+          country: healthUnitExists.legal_information.director.address.country,
+          line1: healthUnitExists.legal_information.director.address.street,
+          postal_code: healthUnitExists.legal_information.director.address.postal_code,
+          state: healthUnitExists.legal_information.director.address.state,
+        },
+
+        email: healthUnitExists.legal_information?.director?.email,
+        first_name: healthUnitExists.legal_information?.director?.name?.split(' ')[0],
+        last_name: healthUnitExists.legal_information?.director?.name?.split(' ')[1],
+        phone: healthUnitExists.legal_information?.director?.phone,
+        id_number: healthUnitExists.legal_information?.director?.id_number,
+
+        relationship: {
+          executive: true,
+          representative: true,
+          title: healthUnitExists.legal_information?.director?.role || 'CEO',
+          owner: true,
+        },
+      };
+
+      if (healthUnitExists.legal_information?.director?.birthdate) {
+        // check if the date is valid
+        if (isNaN(new Date(healthUnitExists.legal_information?.director?.birthdate).getTime())) {
+          return next(new HTTPError._400('Invalid director birthdate.'));
+        }
+
+        representativeParams.dob = {
+          day: new Date(healthUnitExists.legal_information?.director?.birthdate)?.getDate(),
+          month: new Date(healthUnitExists.legal_information?.director?.birthdate)?.getMonth(),
+          year: new Date(healthUnitExists.legal_information?.director?.birthdate)?.getFullYear(),
+        };
+      }
+
+      try {
+        stripeRepresentativeId = (
+          await AdminPaymentsController.StripeService.createPerson(
+            stripeAccountId,
+            representativeParams
+          )
+        ).id;
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!stripeRepresentativeId) {
+        return next(new HTTPError._400('Error getting the stripe representative id.'));
+      }
+
+      // update the health unit with the stripe account id
+
+      healthUnitExists.stripe_information = {
+        ...healthUnitExists.stripe_information,
+        account_id: stripeAccountId,
+      };
+
+      let updatedHelahtUnit: IHealthUnitDocument | undefined;
+      try {
+        updatedHelahtUnit = await AdminPaymentsController.HealthUnitsDAO.update(
+          healthUnitExists as IHealthUnitDocument
+        );
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      response.statusCode = 200;
+      response.data = updatedHelahtUnit;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminCreateHealthUnitCustomer(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        // accessToken = req.headers.authorization.split(' ')[1];
+        accessToken = req.headers.authorization;
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+      const healthUnitId = req.body.health_unit_id as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      const healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+
+      if (!healthUnit) {
+        return next(new HTTPError._404('Health unit not found.'));
+      }
+
+      // create a customer in Stripe
+      let stripeCustomerId: string | undefined;
+
+      const customerParams: Stripe.CustomerCreateParams = {
+        email: healthUnit.business_profile.email,
+        name: healthUnit.legal_information.name,
+        phone: healthUnit.business_profile.phone,
+        address: {
+          city: healthUnit.legal_information?.address?.city,
+          country: healthUnit.legal_information?.address?.country,
+          line1: healthUnit.legal_information?.address?.street,
+          postal_code: healthUnit.legal_information?.address?.postal_code,
+          state: healthUnit.legal_information?.address?.state,
+        },
+      };
+
+      try {
+        stripeCustomerId = (
+          await AdminPaymentsController.StripeService.createCustomer(customerParams)
+        ).id;
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!stripeCustomerId) {
+        return next(new HTTPError._400('Error getting the stripe customer id.'));
+      }
+
+      // update the health unit with the stripe customer id
+
+      healthUnit.stripe_information = {
+        ...healthUnit.stripe_information,
+        customer_id: stripeCustomerId,
+      };
+
+      let updatedHelahtUnit: IHealthUnitDocument | undefined;
+
+      try {
+        updatedHelahtUnit = await AdminPaymentsController.HealthUnitsDAO.update(
+          healthUnit as IHealthUnitDocument
+        );
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      response.statusCode = 200;
+      response.data = updatedHelahtUnit;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 
   // -------------------------------------------------- //
   //                       TOKENS                       //
@@ -220,7 +501,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await AdminPaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -228,7 +509,7 @@ export default class PaymentsController {
         customerId = stripeCustomer.id;
 
         // Update the user with the stripe customer id
-        await PaymentsController.CustomersDAO.update({
+        await AdminPaymentsController.CustomersDAO.update({
           _id: user._id,
           stripe_information: {
             ...user.stripe_information, // keep the existing stripe information
@@ -262,9 +543,10 @@ export default class PaymentsController {
       let createPaymentMethod: Stripe.PaymentMethod;
 
       try {
-        createPaymentMethod = await PaymentsController.StripeService.createPaymentMethodWithToken(
-          createPaymentMethodParams
-        );
+        createPaymentMethod =
+          await AdminPaymentsController.StripeService.createPaymentMethodWithToken(
+            createPaymentMethodParams
+          );
       } catch (error: any) {
         switch (error.type) {
           default:
@@ -276,7 +558,7 @@ export default class PaymentsController {
 
       try {
         paymentMethodAttached =
-          await PaymentsController.StripeService.attachPaymentMethodToCustomer(
+          await AdminPaymentsController.StripeService.attachPaymentMethodToCustomer(
             createPaymentMethod.id,
             customerId
           );
@@ -321,7 +603,7 @@ export default class PaymentsController {
 
       const paymentMethodId = req.params.paymentMethod;
 
-      const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+      const paymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
         paymentMethodId
       );
 
@@ -334,7 +616,7 @@ export default class PaymentsController {
     }
   }
 
-  static async retrieveConnectAccount(
+  static async adminRetrieveHealthUnitConnectAccount(
     req: Request,
     res: Response,
     next: NextFunction
@@ -356,10 +638,10 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const connectAccountId = req.params.connectAccount;
+      const connectAccountId = req.query.connectAccount as string;
       let connectAccount: Stripe.Account | undefined;
       try {
-        connectAccount = await PaymentsController.StripeService.retrieveConnectAccount(
+        connectAccount = await AdminPaymentsController.StripeService.retrieveConnectAccount(
           connectAccountId
         );
       } catch (error: any) {
@@ -378,36 +660,188 @@ export default class PaymentsController {
     }
   }
 
-  static async deleteConnectAccount(
+  static async adminDeleteHealthUnitConnectAccount(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
       let accessToken: string;
 
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const connectAccountId = req.params.connectAccount as string;
+
+      const healthUnitId = req.query.health_unit_id as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('Missing connect account id.'));
+      }
+
+      let deleteAccount;
+
+      try {
+        deleteAccount = await AdminPaymentsController.StripeService.deleteConnectAccount(
+          connectAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          // worst case scenario, the account is already deleted and will also delete it from our database
+          default:
+            break;
+        }
+      }
+
+      // delete the connect account id from the health unit
+      let healthUnit: IHealthUnitDocument | undefined;
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      let updatedHealthUnit: IHealthUnitDocument | undefined;
+      try {
+        updatedHealthUnit = await AdminPaymentsController.HealthUnitsDAO.update({
+          ...healthUnit.toJSON(),
+          stripe_information: {
+            ...healthUnit?.stripe_information,
+            account_id: '',
+          },
+        } as IHealthUnitDocument);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      response.statusCode = 200;
+      response.data = updatedHealthUnit;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminRetrieveHealthUnitCustomerId(req: Request, res: Response, next: NextFunction) {
+    try {
       const response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };
 
-      const connectAccountId = req.params.connectAccount;
+      let accessToken: string;
 
-      let deleteAccount;
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const customerId = req.query.customer as string;
+
+      let customer: Stripe.Customer | Stripe.DeletedCustomer | undefined;
 
       try {
-        deleteAccount = await PaymentsController.StripeService.deleteConnectAccount(
-          connectAccountId
-        );
+        customer = await AdminPaymentsController.StripeService.retrieveCustomer(customerId);
       } catch (error: any) {
         switch (error.type) {
           default:
             return next(new HTTPError._500(error.message));
         }
       }
+      response.statusCode = 200;
+      response.data = customer;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminDeleteHealthUnitCustomerId(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+      let accessToken: string;
+      let deletedCustomer: Stripe.DeletedCustomer | undefined;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        // accessToken = req.headers.authorization.split(' ')[1];
+        accessToken = req.headers.authorization;
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+      const customerId = req.params.customer as string;
+
+      const healthUnitId = req.query.health_unit_id as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      if (!customerId) {
+        return next(new HTTPError._400('Missing customer id.'));
+      }
+
+      try {
+        deletedCustomer = await AdminPaymentsController.StripeService.deleteCustomer(customerId);
+      } catch (error: any) {
+        switch (error.type) {
+          // worst case scenario, the account is already deleted and will also delete it from our database
+          default:
+            break;
+        }
+      }
+
+      // delete the health unit customer if from the database
+
+      let healthUnit: IHealthUnitDocument | undefined;
+
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      let updatedHealthUnit: IHealthUnitDocument | undefined;
+
+      try {
+        updatedHealthUnit = await AdminPaymentsController.HealthUnitsDAO.update({
+          ...healthUnit.toJSON(),
+          stripe_information: {
+            ...healthUnit?.stripe_information,
+            customer_id: '',
+          },
+        } as IHealthUnitDocument);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
 
       response.statusCode = 200;
-      response.data = deleteAccount;
+      response.data = updatedHealthUnit;
 
       next(response);
     } catch (error: any) {
@@ -445,7 +879,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await AdminPaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -453,7 +887,7 @@ export default class PaymentsController {
         customerId = stripeCustomer.id;
 
         // Update the user with the stripe customer id
-        await PaymentsController.CustomersDAO.update({
+        await AdminPaymentsController.CustomersDAO.update({
           _id: user._id,
           stripe_information: {
             ...user.stripe_information, // keep the existing stripe information
@@ -463,7 +897,7 @@ export default class PaymentsController {
       }
 
       // Check if the payment method is attached to the customer trying to delete it.
-      const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+      const paymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
         paymentMethodId
       );
 
@@ -480,7 +914,7 @@ export default class PaymentsController {
       };
 
       const orders = (
-        await PaymentsController.HomeCareOrdersDAO.queryList({
+        await AdminPaymentsController.HomeCareOrdersDAO.queryList({
           // queryList returns 402 if no results so we don't need error handling
           filters,
         })
@@ -492,7 +926,9 @@ export default class PaymentsController {
         let subscription;
 
         if (subscriptionId) {
-          subscription = await PaymentsController.StripeService.getSubscription(subscriptionId);
+          subscription = await AdminPaymentsController.StripeService.getSubscription(
+            subscriptionId
+          );
         }
 
         // Check if the payment method the customer is trying to delete is the default payment method for the subscription.
@@ -506,7 +942,7 @@ export default class PaymentsController {
       }
 
       // If the payment method is not the default payment method for any active orders, then delete it.
-      const paymentMethodDeleted = await PaymentsController.StripeService.deletePaymentMethod(
+      const paymentMethodDeleted = await AdminPaymentsController.StripeService.deletePaymentMethod(
         paymentMethodId
       );
 
@@ -550,7 +986,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await AdminPaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -558,7 +994,7 @@ export default class PaymentsController {
         customerId = stripeCustomer.id;
 
         // Update the user with the stripe customer id
-        await PaymentsController.CustomersDAO.update({
+        await AdminPaymentsController.CustomersDAO.update({
           _id: user._id,
           stripe_information: {
             ...user.stripe_information, // keep the existing stripe information
@@ -573,7 +1009,9 @@ export default class PaymentsController {
         throw new HTTPError._400('No customer id found.');
       }
 
-      const paymentMethods = await PaymentsController.StripeService.listPaymentMethods(customerId);
+      const paymentMethods = await AdminPaymentsController.StripeService.listPaymentMethods(
+        customerId
+      );
 
       response.statusCode = 200;
       response.data = paymentMethods;
@@ -625,7 +1063,7 @@ export default class PaymentsController {
       // Convert orderId to string
       let order: IHomeCareOrderDocument | undefined;
       try {
-        order = await PaymentsController.HomeCareOrdersDAO.queryOne(
+        order = await AdminPaymentsController.HomeCareOrdersDAO.queryOne(
           { _id: { $eq: orderId } },
 
           [
@@ -656,7 +1094,7 @@ export default class PaymentsController {
       let paymentMethod: Stripe.PaymentMethod;
 
       try {
-        paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+        paymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
           paymentMethodId
         );
       } catch (error: any) {
@@ -692,7 +1130,7 @@ export default class PaymentsController {
 
       if (!customerId) {
         // If the customer does not have a stripe customer id, create one.
-        const stripeCustomer = await PaymentsController.StripeService.createCustomer({
+        const stripeCustomer = await AdminPaymentsController.StripeService.createCustomer({
           email: user.email,
           name: user.name,
         });
@@ -700,7 +1138,7 @@ export default class PaymentsController {
         customerId = stripeCustomer.id;
 
         // Update the user with the stripe customer id
-        await PaymentsController.CustomersDAO.update({
+        await AdminPaymentsController.CustomersDAO.update({
           _id: user._id,
           stripe_information: {
             ...user.stripe_information, // keep the existing stripe information
@@ -716,7 +1154,7 @@ export default class PaymentsController {
         return next(new HTTPError._400('No order amount provided.'));
       }
 
-      const stripeCustomer = await PaymentsController.StripeService.getCustomer(customerId);
+      const stripeCustomer = await AdminPaymentsController.StripeService.getCustomer(customerId);
       const currency = 'eur';
       const productId = STRIPE_PRODUCT_ID;
       let priceId: string;
@@ -730,7 +1168,9 @@ export default class PaymentsController {
 
       if (taxId) {
         // Check if the customer already has the tax id
-        const customerTaxIds = await PaymentsController.StripeService.getCustomerTaxIds(customerId);
+        const customerTaxIds = await AdminPaymentsController.StripeService.getCustomerTaxIds(
+          customerId
+        );
 
         let taxIdExists = false;
 
@@ -754,7 +1194,7 @@ export default class PaymentsController {
           };
 
           try {
-            await PaymentsController.StripeService.createCustomerTaxId(customerId, taxParams);
+            await AdminPaymentsController.StripeService.createCustomerTaxId(customerId, taxParams);
           } catch (err: any) {
             return next(new HTTPError._400(err.message));
           }
@@ -777,7 +1217,7 @@ export default class PaymentsController {
        * Create a price for the product.
        */
       try {
-        priceId = (await PaymentsController.StripeService.createPrice(createPriceParams)).id;
+        priceId = (await AdminPaymentsController.StripeService.createPrice(createPriceParams)).id;
       } catch (err: any) {
         return next(new HTTPError._500(err.message));
       }
@@ -819,7 +1259,7 @@ export default class PaymentsController {
       };
 
       if (promotionCodeName) {
-        promotionCodeExists = await PaymentsController.StripeHelper.getPromotionCodeByName(
+        promotionCodeExists = await AdminPaymentsController.StripeHelper.getPromotionCodeByName(
           promotionCodeName
         );
 
@@ -831,7 +1271,7 @@ export default class PaymentsController {
             logger.info(`AMOUNT: ${amount / 100}`);
             logger.info(`COUPON: ${JSON.stringify(coupon, null, 2)}`);
 
-            const paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+            const paymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
               paymentMethodId
             );
 
@@ -846,7 +1286,7 @@ export default class PaymentsController {
 
             let amounts;
             try {
-              amounts = PaymentsController.OrdersHelper.calculateAmounts(
+              amounts = AdminPaymentsController.OrdersHelper.calculateAmounts(
                 orderTotal,
                 paymentMethodAux,
                 amountOff
@@ -860,7 +1300,7 @@ export default class PaymentsController {
             logger.info(`NEW APPLICATION FEE: ${newApplicationFee}`);
 
             // Create a subscription with a promotion code
-            subscription = await PaymentsController.StripeService.createSubscription(
+            subscription = await AdminPaymentsController.StripeService.createSubscription(
               createSubscriptionParamsWithPromotionCode
             );
 
@@ -870,7 +1310,7 @@ export default class PaymentsController {
               const updateSubscriptionParams: Stripe.SubscriptionUpdateParams = {
                 application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
               };
-              await PaymentsController.StripeService.updateSubscription(
+              await AdminPaymentsController.StripeService.updateSubscription(
                 subscription.id,
                 updateSubscriptionParams
               );
@@ -890,7 +1330,7 @@ export default class PaymentsController {
           try {
             // Create a subscription without a promotion code
 
-            subscription = await PaymentsController.StripeService.createSubscription(
+            subscription = await AdminPaymentsController.StripeService.createSubscription(
               createSubscriptionParams
             );
           } catch (err: any) {
@@ -904,7 +1344,7 @@ export default class PaymentsController {
         // If no promotion code is provided, handle the scenario here
         // Perform the necessary operations for creating a subscription without a promotion code
         try {
-          subscription = await PaymentsController.StripeService.createSubscription(
+          subscription = await AdminPaymentsController.StripeService.createSubscription(
             createSubscriptionParams
           );
         } catch (err: any) {
@@ -946,7 +1386,7 @@ export default class PaymentsController {
       order.status = 'active';
 
       // Update the order
-      await PaymentsController.HomeCareOrdersDAO.update(order);
+      await AdminPaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
@@ -983,7 +1423,7 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const user = await PaymentsController.AuthHelper.getUserFromDB(accessToken);
+      const user = await AdminPaymentsController.AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
@@ -1006,7 +1446,7 @@ export default class PaymentsController {
       let subscription: Stripe.Subscription;
 
       try {
-        order = await PaymentsController.HomeCareOrdersDAO.retrieve(orderId);
+        order = await AdminPaymentsController.HomeCareOrdersDAO.retrieve(orderId);
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1026,7 +1466,7 @@ export default class PaymentsController {
       subscriptionId = order.stripe_information.subscription_id;
 
       try {
-        paymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+        paymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
           paymentMethodId
         );
       } catch (err: any) {
@@ -1043,9 +1483,12 @@ export default class PaymentsController {
       }
 
       try {
-        subscription = await PaymentsController.StripeService.updateSubscription(subscriptionId, {
-          default_payment_method: paymentMethodId,
-        });
+        subscription = await AdminPaymentsController.StripeService.updateSubscription(
+          subscriptionId,
+          {
+            default_payment_method: paymentMethodId,
+          }
+        );
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1092,7 +1535,7 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const user = await PaymentsController.AuthHelper.getUserFromDB(accessToken);
+      const user = await AdminPaymentsController.AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
@@ -1105,7 +1548,7 @@ export default class PaymentsController {
       let invoice: Stripe.Invoice;
 
       try {
-        order = await PaymentsController.HomeCareOrdersDAO.retrieve(orderId);
+        order = await AdminPaymentsController.HomeCareOrdersDAO.retrieve(orderId);
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1122,7 +1565,7 @@ export default class PaymentsController {
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
       }
-      subscription = await PaymentsController.StripeService.getSubscription(
+      subscription = await AdminPaymentsController.StripeService.getSubscription(
         order.stripe_information.subscription_id
       );
 
@@ -1137,7 +1580,7 @@ export default class PaymentsController {
       let latestInvoice: Stripe.Invoice;
 
       try {
-        latestInvoice = await PaymentsController.StripeService.getInvoice(latestInvoiceId);
+        latestInvoice = await AdminPaymentsController.StripeService.getInvoice(latestInvoiceId);
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1153,7 +1596,7 @@ export default class PaymentsController {
       }
 
       try {
-        invoice = await PaymentsController.StripeService.chargeInvoice(latestInvoiceId);
+        invoice = await AdminPaymentsController.StripeService.chargeInvoice(latestInvoiceId);
       } catch (err: any) {
         switch (err.type) {
           default:
@@ -1165,7 +1608,7 @@ export default class PaymentsController {
       order.status = 'active';
 
       // Update the order
-      await PaymentsController.HomeCareOrdersDAO.update(order);
+      await AdminPaymentsController.HomeCareOrdersDAO.update(order);
 
       response.statusCode = 200;
       response.data = {
@@ -1199,7 +1642,7 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const user = await PaymentsController.AuthHelper.getUserFromDB(accessToken);
+      const user = await AdminPaymentsController.AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
@@ -1211,7 +1654,7 @@ export default class PaymentsController {
       let subscription: Stripe.Subscription;
 
       try {
-        order = await PaymentsController.HomeCareOrdersDAO.retrieve(orderId);
+        order = await AdminPaymentsController.HomeCareOrdersDAO.retrieve(orderId);
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1228,7 +1671,7 @@ export default class PaymentsController {
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
       }
-      subscription = await PaymentsController.StripeService.getSubscription(
+      subscription = await AdminPaymentsController.StripeService.getSubscription(
         order.stripe_information.subscription_id
       );
 
@@ -1243,7 +1686,7 @@ export default class PaymentsController {
       }
 
       try {
-        subscription = await PaymentsController.StripeService.cancelSubscription(
+        subscription = await AdminPaymentsController.StripeService.cancelSubscription(
           order.stripe_information.subscription_id
         );
       } catch (err: any) {
@@ -1290,7 +1733,7 @@ export default class PaymentsController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const user = await PaymentsController.AuthHelper.getUserFromDB(accessToken);
+      const user = await AdminPaymentsController.AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CustomerModel)) {
         return next(new HTTPError._403('You are not authorized to perform this action.'));
@@ -1305,7 +1748,7 @@ export default class PaymentsController {
       let coupon: Stripe.Coupon;
 
       try {
-        order = await PaymentsController.HomeCareOrdersDAO.retrieve(orderId);
+        order = await AdminPaymentsController.HomeCareOrdersDAO.retrieve(orderId);
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1322,7 +1765,7 @@ export default class PaymentsController {
       if (!order?.stripe_information?.subscription_id) {
         return next(new HTTPError._400('Order does not have a subscription.'));
       }
-      subscription = await PaymentsController.StripeService.getSubscription(
+      subscription = await AdminPaymentsController.StripeService.getSubscription(
         order.stripe_information.subscription_id
       );
 
@@ -1332,9 +1775,12 @@ export default class PaymentsController {
 
       // Get the promotion code
       try {
-        promotionCode = await PaymentsController.StripeService.getPromotionCode(promotionCodeId, {
-          expand: ['coupon'],
-        });
+        promotionCode = await AdminPaymentsController.StripeService.getPromotionCode(
+          promotionCodeId,
+          {
+            expand: ['coupon'],
+          }
+        );
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1349,7 +1795,7 @@ export default class PaymentsController {
       let defaultPaymentMethod: Stripe.PaymentMethod;
 
       try {
-        defaultPaymentMethod = await PaymentsController.StripeService.retrievePaymentMethod(
+        defaultPaymentMethod = await AdminPaymentsController.StripeService.retrievePaymentMethod(
           subscription.default_payment_method as string
         );
       } catch (err: any) {
@@ -1372,7 +1818,7 @@ export default class PaymentsController {
       let newApplicationFee: number;
 
       try {
-        amounts = PaymentsController.OrdersHelper.calculateAmounts(
+        amounts = AdminPaymentsController.OrdersHelper.calculateAmounts(
           orderTotal,
           paymentMethodAux,
           discount
@@ -1390,10 +1836,13 @@ export default class PaymentsController {
 
       // Add the coupon to the subscription
       try {
-        subscription = await PaymentsController.StripeService.updateSubscription(subscription.id, {
-          coupon: promotionCode.coupon.id,
-          application_fee_percent: newApplicationFee,
-        });
+        subscription = await AdminPaymentsController.StripeService.updateSubscription(
+          subscription.id,
+          {
+            coupon: promotionCode.coupon.id,
+            application_fee_percent: newApplicationFee,
+          }
+        );
       } catch (err: any) {
         switch (err.type) {
           case 'NOT_FOUND':
@@ -1428,7 +1877,7 @@ export default class PaymentsController {
       const reqPromotionCode = req.body.promotion_code;
 
       const promotionCodes = (
-        await PaymentsController.StripeService.listPromotionCodes(
+        await AdminPaymentsController.StripeService.listPromotionCodes(
           // expand the coupon object
           { expand: ['data.coupon'] }
         )

@@ -16,6 +16,7 @@ export type { ILead, ILeadDocument } from './app/leads.interface';
 
 // Misc Interfaces
 export type { IAddress } from './misc/address.interface';
+export type { IBillingAddress } from './misc/billing-address.interface';
 export type { IDeletedDocument, IDeletedDocumentDocument } from './misc/deleted-document.interface';
 export type { IFile, IFileDocument } from './misc/file.interface';
 export type { ISettings } from './misc/settings.interface';
