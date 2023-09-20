@@ -72,7 +72,10 @@ const main = async () => {
 
     const {
       AdminAuthRoute,
+      AdminFilesRoute,
       AdminHealthUnitsRoute,
+      AdminPaymentsRoute,
+      AdminReviewsRoute,
       AdminServicesRoute,
     } = require('@api/admin/v1/routes');
 
@@ -468,7 +471,10 @@ const main = async () => {
 
       // Admin API Routes
       app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminFilesRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminPaymentsRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminReviewsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminServicesRoute);
 
       // Middleware to handle and log all the errors

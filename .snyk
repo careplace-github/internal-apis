@@ -11,3 +11,10 @@ project: careplace/internal-apis
 severityThreshold: medium
 
 # Specify additional settings or configurations as needed
+
+# Exclude paths from being scanned
+ignore:
+  'SNYK-GOLANG-GITHUBCOMELAZARLGOPROXY-5783247':
+    - '*':
+        reason: We have no control over this dependency.
+        expires: 2024-01-01
