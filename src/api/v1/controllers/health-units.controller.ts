@@ -236,13 +236,16 @@ export default class HealthUnitsController {
         };
       }
 
+      // Only search for health units that are active.
+      filters.is_active = true;
+
       const healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
         filters,
         options,
         page,
         documentsPerPage,
         undefined,
-        '-plan -legal_information -team -stripe_information -billing_address -createdAt -updatedAt -__v'
+        '-plan -legal_information.name -legal_information.director -legal_information.tax_number -legal_information.business_structure -team -stripe_information -billing_address -createdAt -updatedAt -__v'
       );
 
       response.statusCode = 200;

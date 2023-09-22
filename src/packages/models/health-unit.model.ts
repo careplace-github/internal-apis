@@ -33,20 +33,16 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
         linkedin: { type: String, required: false },
         youtube: { type: String, required: false },
       },
-    },
-
-    addresses: {
-      type: [
-        {
-          street: { type: String, required: false },
-          postal_code: { type: String, required: false },
-          state: { type: String, required: false },
-          city: { type: String, required: false },
-          country: { type: String, required: false },
-          coordinates: { type: Array, required: false, default: [0, 0] },
+      address: {
+        street: { type: String, required: false },
+        postal_code: { type: String, required: false },
+        state: { type: String, required: false },
+        city: { type: String, required: false },
+        country: {
+          type: String,
+          required: false,
         },
-      ],
-      required: true,
+      },
     },
 
     rating: {
