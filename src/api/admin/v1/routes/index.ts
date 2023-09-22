@@ -11,3 +11,5 @@ export { default as AdminPaymentsRoute } from './payments.route';
 export { default as AdminReviewsRoute } from './reviews.route';
 
 export { default as AdminServicesRoute } from './services.route';
+
+export { default as AdminCustomersRoute } from './customers.route';
