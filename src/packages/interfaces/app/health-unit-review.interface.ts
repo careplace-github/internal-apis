@@ -9,6 +9,7 @@ interface IHealthUnitReview {
   customer: Types.ObjectId | ICustomer;
   rating: number;
   comment: string;
+  type?: string;
 }
 
 type IHealthUnitReviewDocument = IHealthUnitReview & Document;
