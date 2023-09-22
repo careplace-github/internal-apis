@@ -33,6 +33,7 @@ const HealthUnitReviewSchema: Schema<IHealthUnitReviewDocument> =
         },
       },
       comment: { type: String, required: true },
+      type: { type: String, required: false },
     },
     {
       timestamps: true, // createdAt, updatedAt
