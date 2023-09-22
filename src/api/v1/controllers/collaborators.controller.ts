@@ -209,7 +209,7 @@ export default class CollaboratorsController {
           }
         }
 
-        reqCollaborator.cognito_id = cognitocollaborator.UserSub;
+        collaborator.cognito_id = cognitocollaborator.UserSub;
 
         try {
           // Confirm the collaborator in Cognito.
