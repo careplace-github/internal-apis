@@ -60,7 +60,6 @@ export default class ReviewsController {
       };
 
       const accessToken = req.headers.authorization!.split(' ')[1];
-      const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
 
       const healthUnitId = req.params.healthUnit;
       let healthUnit: IHealthUnitDocument;
@@ -71,43 +70,6 @@ export default class ReviewsController {
         throw new HTTPError._404('HealthUnit does not exist.');
       }
 
-      let orders: IQueryListResponse<IHomeCareOrder>;
-      let filters: FilterQuery<IHealthUnitReview>;
-
-      filters = {
-        customer: user._id,
-        health_unit: healthUnit._id,
-        status: {
-          $in: ['pending_payment', 'active', 'completed', 'cancelled'],
-        },
-      };
-
-      orders = await ReviewsController.HomeCareOrdersDAO.queryList(filters);
-
-      if (orders.data.length === 0) {
-        throw new HTTPError._403('You do not have any valid orders with this healthUnit.');
-      }
-
-      try {
-        const existingReview = await ReviewsController.HealthUnitReviewsDAO.queryOne({
-          health_unit: healthUnitId,
-          customer: user._id,
-        });
-
-        if (existingReview) {
-          return next(
-            new HTTPError._409(
-              'You have already created a review for this healthUnit. Please update your existing review instead.'
-            )
-          );
-        }
-      } catch (error: any) {
-        switch (error.type) {
-          case 'NOT_FOUND':
-            break;
-        }
-      }
-
       if (req.body.rating < 1 || req.body.rating > 5 || !Number.isInteger(req.body.rating)) {
         throw new HTTPError._400('Rating must be a natural integer between 1 and 5');
       }
@@ -116,8 +78,9 @@ export default class ReviewsController {
         _id: new mongoose.Types.ObjectId(),
         comment: req.body.comment,
         rating: req.body.rating,
-        customer: user._id,
+        customer: req.body.customer,
         health_unit: new mongoose.Types.ObjectId(healthUnitId),
+        type: 'mock',
       };
 
       const newReview = new HealthUnitReviewModel(review);
