@@ -37,6 +37,7 @@ interface IHealthUnit {
       linkedin?: string;
       youtube?: string;
     };
+    address: IAddress;
   };
 
   addresses: IAddress[];

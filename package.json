@@ -16,6 +16,7 @@
     "dev": "ENV=development nodemon --exec \"node --trace-warnings --experimental-modules -r ts-node/register -r tsconfig-paths/register\" ./src/server.ts",
     "dev:stripe": "stripe listen --forward-to localhost:8080/v1/webhooks/stripe",
     "dev:staging": "ENV=staging nodemon --exec \"node --trace-warnings --experimental-modules -r ts-node/register -r tsconfig-paths/register\" ./src/server.ts",
+    "dev:production": "ENV=production nodemon --exec \"node --trace-warnings --experimental-modules -r ts-node/register -r tsconfig-paths/register\" ./src/server.ts",
     "docker-dev": "docker-compose -f docker-compose.dev.yml up --build",
     "docker-prod": "docker-compose -f docker-compose.prod.yml up --build",
     "non-docker-dev": "npm run dev",
