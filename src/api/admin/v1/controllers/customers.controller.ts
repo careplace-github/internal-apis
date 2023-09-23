@@ -137,12 +137,13 @@ export default class AdminCustomersController {
       }
 
       const customerID = req.url.split('/').at(-1);
+      let customerExists;
       if (!customerID) {
         return next(new HTTPError._400('Missing required Customer ID.'));
       }
       try {
         // Get the Customer from MongoDB.
-        await AdminCustomersController.CustomersDAO.retrieve(customerID);
+        customerExists = await AdminCustomersController.CustomersDAO.retrieve(customerID);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
@@ -168,7 +169,7 @@ export default class AdminCustomersController {
 
       // Remove any whitespace
       sanitizedReqCustomer.phone = sanitizedReqCustomer?.phone?.replace(/\s/g, '');
-      const customer = new CustomerModel(sanitizedReqCustomer);
+      const customer = new CustomerModel({ ...customerExists.toJSON(), ...sanitizedReqCustomer });
       console.log('Customer --->', customer);
 
       // Validate the Customer data.
@@ -184,8 +185,8 @@ export default class AdminCustomersController {
       try {
         // Update the Customer in MongoDB.
         // const prevCustomer = AdminCustomersController.CustomersDAO.retrieve(customer.id);
-        console.log('Customer prev update ---->', customer);
         updatedCustomer = await AdminCustomersController.CustomersDAO.update(customer);
+        console.log('Updated Customer --->', updatedCustomer);
       } catch (error: any) {
         switch (error.type) {
           case 'NOT_FOUND': {
@@ -196,7 +197,7 @@ export default class AdminCustomersController {
           }
         }
       }
-      response.statusCode = 201;
+      response.statusCode = 200;
       response.data = updatedCustomer;
 
       // Send the response
