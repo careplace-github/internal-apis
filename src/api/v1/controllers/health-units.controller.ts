@@ -236,6 +236,9 @@ export default class HealthUnitsController {
         };
       }
 
+      // Only search for health units that are active.
+      filters.is_active = true;
+
       const healthUnits = await HealthUnitsController.HealthUnitsDAO.queryList(
         filters,
         options,
