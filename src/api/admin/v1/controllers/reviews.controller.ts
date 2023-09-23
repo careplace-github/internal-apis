@@ -166,9 +166,7 @@ export default class ReviewsController {
       };
 
       const accessToken = req.headers.authorization!.split(' ')[1];
-      const reviewId = req.params.id;
-
-      const user = await ReviewsController.AuthHelper.getUserFromDB(accessToken);
+      const { reviewId } = req.params;
 
       let review: IHealthUnitReviewDocument;
 
@@ -179,10 +177,6 @@ export default class ReviewsController {
       }
 
       const previousRating = review.rating;
-
-      if (review?.customer?.toString() !== user._id.toString()) {
-        return next(new HTTPError._403('You are not authorized to update this review.'));
-      }
 
       if (req.body.rating < 1 || req.body.rating > 5 || !Number.isInteger(req.body.rating)) {
         return next(new HTTPError._400('Rating must be a natural integer between 1 and 5'));
