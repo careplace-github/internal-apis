@@ -169,10 +169,12 @@ export default class AdminHealthUnitsController {
 
       const reqHealthUnit = req.body as IHealthUnit;
 
-      reqHealthUnit.business_profile = {
-        ...reqHealthUnit.business_profile,
-        address: reqHealthUnit.legal_information.address,
-      };
+      if (reqHealthUnit?.legal_information?.address) {
+        reqHealthUnit.business_profile = {
+          ...reqHealthUnit?.business_profile,
+          address: reqHealthUnit?.legal_information?.address,
+        };
+      }
 
       const sanitizedReqHealthUnit = omit(reqHealthUnit, ['_id']);
 
