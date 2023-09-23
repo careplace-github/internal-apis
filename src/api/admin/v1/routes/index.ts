@@ -4,6 +4,8 @@ export { default as AdminAuthRoute } from './auth/authentication.route';
 // routes
 export { default as AdminFilesRoute } from './files.route';
 
+export { default as AdminCollaboratorsRoute } from './collaborators.route';
+
 export { default as AdminHealthUnitsRoute } from './health-units.route';
 
 export { default as AdminPaymentsRoute } from './payments.route';
