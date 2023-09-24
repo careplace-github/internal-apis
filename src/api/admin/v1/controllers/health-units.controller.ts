@@ -169,23 +169,31 @@ export default class AdminHealthUnitsController {
 
       const reqHealthUnit = req.body as IHealthUnit;
 
+      const sanitizedReqHealthUnit = omit(reqHealthUnit, ['_id']);
+
+      logger.info('existingHealthIUnit' + JSON.stringify(healthUnit, null, 2));
+      logger.info('sanitizedReqHealthUnit' + JSON.stringify(sanitizedReqHealthUnit, null, 2));
+
+      const updateHealthUnit = {
+        ...healthUnit.toJSON(),
+        ...sanitizedReqHealthUnit,
+      };
+
       if (reqHealthUnit?.legal_information?.address) {
-        reqHealthUnit.business_profile = {
-          ...reqHealthUnit?.business_profile,
-          address: reqHealthUnit?.legal_information?.address,
+        updateHealthUnit.business_profile = {
+          ...updateHealthUnit.business_profile,
+          address: {
+            ...updateHealthUnit.business_profile.address,
+            ...reqHealthUnit.legal_information.address,
+          },
         };
       }
 
-      const sanitizedReqHealthUnit = omit(reqHealthUnit, ['_id']);
-
-      const existingHealthIUnit = await AdminHealthUnitsController.HealthUnitsDAO.retrieve(
-        healthUnitId
-      );
-
       const newHealthUnit = new HealthUnitModel({
-        ...existingHealthIUnit.toJSON(),
-        ...sanitizedReqHealthUnit,
+        ...updateHealthUnit,
       });
+
+      logger.info('newHealthUnit' + JSON.stringify(newHealthUnit, null, 2));
 
       // Validate the health unit data
       const validationError = newHealthUnit.validateSync({

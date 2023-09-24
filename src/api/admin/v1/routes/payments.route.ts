@@ -12,6 +12,27 @@ router
   .post(AuthenticationGuard, ClientGuard('admin'), AdminPaymentsController.createBankAccountToken);
 
 router
+  .route('/payments/health-units/:healthUnit/external-accounts/default')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminSetHealthUnitExternalAccountAsDefault
+  );
+
+router
+  .route('/payments/health-units/:healthUnit/external-accounts')
+  .post(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminCreateHealthUnitExternalAccount
+  )
+  .get(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminListHealthUnitExternalAccounts
+  );
+
+router
   .route('/payments/accounts')
   .post(
     AuthenticationGuard,
