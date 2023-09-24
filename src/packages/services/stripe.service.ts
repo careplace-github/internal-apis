@@ -62,6 +62,107 @@ export default class StripeService {
     return paymentMethods;
   }
 
+  static async updateBankAccount(
+    externalAccountId: string,
+    bankAccountId: string,
+    params: Stripe.ExternalAccountUpdateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.BankAccount> {
+    logger.info('StripeService.updateBankAccount params: ', {
+      externalAccountId,
+      params,
+    });
+
+    let bankAccount: Stripe.BankAccount;
+
+    try {
+      bankAccount = (await this.Stripe.accounts.updateExternalAccount(
+        externalAccountId,
+        bankAccountId,
+        params,
+        options
+      )) as Stripe.BankAccount;
+    } catch (error: any) {
+      logger.error('StripeService.updateBankAccount Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.updateBankAccount return: ', { bankAccount });
+
+    return bankAccount;
+  }
+
+  static async updateConnectAccount(
+    accountId: string,
+    params: Stripe.AccountUpdateParams,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.Account> {
+    logger.info('StripeService.updateConnectAccount params: ' + { accountId, params, options });
+
+    let account: Stripe.Account;
+
+    try {
+      account = await this.Stripe.accounts.update(accountId, params, options);
+    } catch (error: any) {
+      logger.error('StripeService.updateConnectAccount Error: ' + error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.updateConnectAccount return: ' + { account });
+
+    return account;
+  }
+
+  static async retrieveExternalAccount(
+    accountId: string,
+    externalAccountId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.BankAccount | Stripe.Card> {
+    logger.info('StripeService.retrieveExternalAccount params: ', {
+      accountId,
+      externalAccountId,
+      options,
+    });
+
+    let externalAccount: Stripe.BankAccount | Stripe.Card;
+
+    try {
+      externalAccount = await this.Stripe.accounts.retrieveExternalAccount(
+        accountId,
+        externalAccountId,
+        options
+      );
+    } catch (error: any) {
+      logger.error('StripeService.retrieveExternalAccount Error: ', error);
+
+      switch (error.type) {
+        case 'StripeCardError':
+          throw new LayerError.INVALID_PARAMETER(error.message);
+
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info('StripeService.retrieveExternalAccount return: ', { externalAccount });
+
+    return externalAccount;
+  }
+
   static async retrieveConnectAccount(
     accountId: string,
     options?: Stripe.RequestOptions
@@ -327,8 +428,8 @@ export default class StripeService {
     let bankAccount: Stripe.BankAccount;
 
     logger.info(
-      'StripeService.createExternalAccount params: ',
-      JSON.stringify({ accountId, params, options }, null, 2)
+      'StripeService.createExternalAccount params: ' +
+        JSON.stringify({ accountId, params, options }, null, 2)
     );
 
     try {
@@ -346,8 +447,7 @@ export default class StripeService {
     }
 
     logger.info(
-      'StripeService.createExternalAccount return: ',
-      JSON.stringify(bankAccount, null, 2)
+      'StripeService.createExternalAccount return: ' + JSON.stringify(bankAccount, null, 2)
     );
 
     return bankAccount;

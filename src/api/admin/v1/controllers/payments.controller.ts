@@ -281,6 +281,228 @@ export default class AdminPaymentsController {
     }
   }
 
+  static async adminCreateHealthUnitExternalAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      let accessToken: string;
+
+      // Check if there is an authorization header
+      if (req.headers.authorization) {
+        // Get the access token from the authorization header
+        accessToken = req.headers.authorization.split(' ')[1];
+      } else {
+        // If there is no authorization header, return an error
+        return next(new HTTPError._401('Missing required access token.'));
+      }
+
+      const external_account_token = req.body.external_account_token as string;
+
+      if (!external_account_token) {
+        return next(new HTTPError._400('Missing external account token.'));
+      }
+
+      const healthUnitId = req.params.healthUnit as string;
+
+      let healthUnitExists: IHealthUnitDocument | undefined;
+
+      try {
+        healthUnitExists = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        // do nothing
+      }
+
+      if (!healthUnitExists) {
+        return next(new HTTPError._400('Health unit already exists.'));
+      }
+
+      const connectAccountId = healthUnitExists?.stripe_information?.account_id;
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('Missing connect account id.'));
+      }
+
+      // Add the external account to the health unit connect account
+
+      let externalAccount: Stripe.BankAccount | undefined;
+
+      const params: Stripe.ExternalAccountCreateParams = {
+        external_account: external_account_token,
+      };
+
+      try {
+        externalAccount = await AdminPaymentsController.StripeService.createExternalAccount(
+          connectAccountId,
+          params
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!externalAccount) {
+        return next(new HTTPError._400('Error creating the external account.'));
+      }
+
+      response.statusCode = 200;
+
+      response.data = externalAccount;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminListHealthUnitExternalAccounts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let accessToken: string;
+      let externalAccounts: Stripe.ApiList<Stripe.BankAccount>;
+
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const healthUnitId = req.params.healthUnit as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      let healthUnit: IHealthUnitDocument | undefined;
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      if (!healthUnit) {
+        return next(new HTTPError._404('Health unit not found.'));
+      }
+
+      const connectAccountId = healthUnit?.stripe_information?.account_id;
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('Missing connect account id.'));
+      }
+
+      try {
+        externalAccounts = await AdminPaymentsController.StripeService.listExternalAccounts(
+          connectAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = externalAccounts;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminSetHealthUnitExternalAccountAsDefault(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let accessToken: string;
+      let externalAccount: Stripe.BankAccount | Stripe.Card | undefined;
+
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const healthUnitId = req.params.healthUnit as string;
+
+      if (!healthUnitId) {
+        return next(new HTTPError._400('Missing health unit id.'));
+      }
+
+      const externalAccountId = req.body.external_account_id as string;
+
+      if (!externalAccountId) {
+        return next(new HTTPError._400('Missing external account id.'));
+      }
+
+      let healthUnit: IHealthUnitDocument | undefined;
+      try {
+        healthUnit = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnitId);
+      } catch (error) {
+        return next(new HTTPError._500('Internal server error.'));
+      }
+
+      if (!healthUnit) {
+        return next(new HTTPError._404('Health unit not found.'));
+      }
+
+      const connectAccountId = healthUnit?.stripe_information?.account_id;
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('Missing connect account id.'));
+      }
+
+      try {
+        externalAccount = await AdminPaymentsController.StripeService.retrieveExternalAccount(
+          connectAccountId,
+          externalAccountId
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      if (!externalAccount) {
+        return next(new HTTPError._400('Error retrieving the external account.'));
+      }
+
+      try {
+        await AdminPaymentsController.StripeService.updateBankAccount(
+          connectAccountId,
+          externalAccountId,
+          {
+            default_for_currency: true,
+          }
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500('Internal server error.'));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = externalAccount;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
   static async adminCreateHealthUnitCustomer(
     req: Request,
     res: Response,
