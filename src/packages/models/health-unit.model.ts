@@ -1,5 +1,5 @@
 // mongoose
-import mongoose, { Model, Schema, Types } from 'mongoose';
+import mongoose, { CallbackError, Model, Schema, Types } from 'mongoose';
 // interfaces
 import { IHealthUnitDocument } from '../interfaces';
 
@@ -18,12 +18,12 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     },
 
     business_profile: {
-      name: { type: String, required: true, unique: true },
-      email: { type: String, required: true, unique: true },
-      phone: { type: String, required: true, unique: true },
+      name: { type: String, required: true, unique: true, sparse: true },
+      email: { type: String, required: true, unique: true, sparse: true },
+      phone: { type: String, required: true, unique: true, sparse: true },
 
       about: { type: String, required: false },
-      website: { type: String, required: false, unique: true },
+      website: { type: String, required: false, unique: true, sparse: true },
       logo: { type: String, required: true },
       banner: { type: String, required: false },
       social_links: {
@@ -59,18 +59,6 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
 
     services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
 
-    service_area: {
-      type: {
-        type: String,
-        enum: ['MultiPolygon'],
-        required: true,
-        default: 'MultiPolygon',
-      },
-      coordinates: {
-        type: [[[[Number]]]], // Specify the schema of the coordinates field
-      },
-    },
-
     pricing: {
       average_hourly_rate: { type: Number, required: false, default: 0 },
       minimum_hourly_rate: { type: Number, required: false, default: 0 },
@@ -79,8 +67,8 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
     },
 
     stripe_information: {
-      account_id: { type: String, required: false, unique: true },
-      customer_id: { type: String, required: false, unique: true },
+      account_id: { type: String, required: false, unique: true, sparse: true },
+      customer_id: { type: String, required: false, unique: true, sparse: true },
     },
 
     legal_information: {
@@ -123,6 +111,16 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
       },
     },
 
+    service_area: {
+      type: {
+        type: String,
+        default: 'MultiPolygon', // set default to MultiPolygon
+      },
+      coordinates: {
+        type: [[[[Number]]]], // Specify the schema of the coordinates field
+      },
+    },
+
     billing_addresses: [
       {
         primary: { type: Boolean, required: false },
@@ -150,9 +148,24 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
   }
 );
 
+HealthUnitSchema.index(
+  { service_area: '2dsphere' },
+  {
+    name: 'service_area_2dsphere_index',
+    background: true,
+    sparse: true,
+  }
+);
+
 const HealthUnitModel: Model<IHealthUnitDocument> = mongoose.model<IHealthUnitDocument>(
   'HealthUnit',
   HealthUnitSchema
 );
+
+HealthUnitModel.createIndexes((err: CallbackError) => {
+  if (err) {
+    console.error(err);
+  }
+});
 
 export { HealthUnitSchema, HealthUnitModel };

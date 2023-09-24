@@ -148,7 +148,7 @@ export default class HealthUnitsController {
         const lng = parseFloat(req.query.lng as string);
 
         // If the lat and lng query parameters are valid numbers, then we'll add them to the filter object.
-        if (!isNaN(lat) && !isNaN(lng)) {
+        if (lat && lng) {
           filters.service_area = {
             $geoIntersects: {
               $geometry: {
