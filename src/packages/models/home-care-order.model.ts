@@ -44,9 +44,15 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
       enum: ['new', 'declined', 'cancelled', 'accepted', 'pending_payment', 'active', 'completed'],
     },
     decline_reason: { type: String, required: false }, // heal unit reason to decline the order
-    decline_date: { type: Date, required: false }, // date when the order was declined
     cancellation_reason: { type: String, required: false }, // customer reason to cancel the order
-    cancellation_date: { type: Date, required: false }, // date when the order was cancelled
+
+    cancelledAt: { type: Date, required: false }, // date when the order was cancelled
+    declinedAt: { type: Date, required: false }, // date when the order was declined
+    acceptedAt: { type: Date, required: false }, // date when the order was accepted
+    visitScheduledAt: { type: Date, required: false }, // date when the visit was scheduled
+    quoteSentAt: { type: Date, required: false }, // date when the quote was sent
+    completedAt: { type: Date, required: false }, // date when the order was completed
+
     order_total: { type: Number, required: false },
 
     visits: [{ type: Schema.Types.ObjectId, ref: 'Event', required: true, default: [] }],
