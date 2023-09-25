@@ -33,6 +33,14 @@ router
   );
 
 router
+  .route('/payments/health-units/:healthUnit/external-accounts/:externalAccount')
+  .delete(
+    AuthenticationGuard,
+    ClientGuard('admin'),
+    AdminPaymentsController.adminDeleteHealthUnitExternalAccount
+  );
+
+router
   .route('/payments/accounts')
   .post(
     AuthenticationGuard,
