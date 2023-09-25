@@ -51,6 +51,7 @@ import logger from '@logger';
 // @data
 import { services } from '@assets';
 import Stripe from 'stripe';
+import HTTP_Error from 'src/packages/utils/errors/http/http-error';
 
 export default class AdminPaymentsController {
   static HealthUnitReviewsDAO = new HealthUnitReviewsDAO();
@@ -586,6 +587,69 @@ export default class AdminPaymentsController {
 
       response.statusCode = 200;
       response.data = updatedHelahtUnit;
+
+      next(response);
+    } catch (error: any) {
+      next(error);
+    }
+  }
+
+  static async adminDeleteHealthUnitExternalAccount(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      let accessToken: string;
+
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const { externalAccount, healthUnit } = req.params;
+      if (!externalAccount) {
+        return next(new HTTPError._400('Missing required external account id'));
+      }
+
+      if (!healthUnit) {
+        return next(new HTTPError._400('Missing required health unit id'));
+      }
+
+      let healthUnitInfo: IHealthUnitDocument;
+      try {
+        healthUnitInfo = await AdminPaymentsController.HealthUnitsDAO.retrieve(healthUnit);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'NOT_FOUND':
+            return next(new HTTPError._404('Health Unit not found'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      const connectAccountId = healthUnitInfo?.stripe_information?.account_id;
+
+      if (!connectAccountId) {
+        return next(new HTTPError._400('No Account ID'));
+      }
+
+      let deleteAccount;
+
+      try {
+        deleteAccount = await AdminPaymentsController.StripeService.deleteExternalAccount(
+          connectAccountId,
+          externalAccount
+        );
+      } catch (error: any) {
+        switch (error.type) {
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = deleteAccount;
 
       next(response);
     } catch (error: any) {

@@ -452,6 +452,38 @@ export default class StripeService {
 
     return bankAccount;
   }
+  static async deleteExternalAccount(
+    accountId: string,
+    externalAccountId: string,
+    options?: Stripe.RequestOptions
+  ): Promise<Stripe.DeletedBankAccount> {
+    let bankAccount: Stripe.DeletedBankAccount;
+
+    logger.info(
+      'StripeService.deleteExternalAccount params: ' +
+        JSON.stringify({ accountId, externalAccountId, options }, null, 2)
+    );
+
+    try {
+      bankAccount = (await this.Stripe.accounts.deleteExternalAccount(
+        accountId,
+        externalAccountId,
+        options
+      )) as Stripe.DeletedBankAccount;
+    } catch (error: any) {
+      logger.error('StripeService.deleteExternalAccount Error: ', error);
+      switch (error.type) {
+        default:
+          throw new LayerError.INTERNAL_ERROR(error.message);
+      }
+    }
+
+    logger.info(
+      'StripeService.deleteExternalAccount return: ' + JSON.stringify(bankAccount, null, 2)
+    );
+
+    return bankAccount;
+  }
 
   // -------------------------------------------------------------------------------------------- //
   //                                        CORE RESOURCES                                        //
