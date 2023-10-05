@@ -726,7 +726,7 @@ export default class CalendarController {
 
         try {
           eventsSeries = await CalendarController.EventSeriesDAO.queryList(
-            { health_unit: user.health_unit._id },
+            { owner: user.health_unit._id },
             undefined,
             undefined,
             undefined,
