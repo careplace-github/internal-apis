@@ -13,7 +13,7 @@ router
 router
   .route('/customers/patients/:id')
   .get(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.retrieveCustomerPatient)
-  .put(AuthenticationGuard, ClientGuard('marketplace'), PatientsController.updateCustomerPatient)
+  .put(AuthenticationGuard, PatientsController.updateCustomerPatient)
   .delete(
     AuthenticationGuard,
     ClientGuard('marketplace'),

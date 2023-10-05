@@ -11,18 +11,28 @@ import {
 
 import authUtils from '../../utils/auth/auth.utils';
 
-export default function clientGuard(app: string) {
+export default function clientGuard(appName: string) {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
       const AuthUtils = authUtils;
 
-      if (app === 'business') {
+      let app;
+
+      logger.info('Client Guard Middleware Params: ' + appName);
+
+      if (!appName) {
+        throw new HTTPError._400(`Missing required app name.`);
+      }
+
+      if (appName === 'business') {
         app = AWS_COGNITO_BUSINESS_CLIENT_ID || '';
         logger.info(`Business Client Id: ${app}`);
-      } else if (app === 'marketplace') {
+      } else if (appName === 'marketplace') {
         app = AWS_COGNITO_MARKETPLACE_CLIENT_ID || '';
-      } else if (app === 'admin') {
+        logger.info(`Marketplace Client Id: ${app}`);
+      } else if (appName === 'admin') {
         app = AWS_COGNITO_ADMIN_CLIENT_ID || '';
+        logger.info(`Admin Client Id: ${app}`);
       }
 
       const reqClientId = req.headers['x-client-id'] as string;
@@ -38,6 +48,7 @@ export default function clientGuard(app: string) {
         logger.info(`User passed endpoint access guard.`);
         next();
       } else {
+        logger.info(`User failed endpoint access guard.`);
         throw new HTTPError._403(
           `You do not have access to this endpoint. Please contact your administrator.`
         );
