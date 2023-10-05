@@ -693,6 +693,8 @@ export default class CalendarController {
 
       let eventsSeries: IEventSeriesDocument[] = [];
 
+      logger.info('health unit id --->' + user.health_unit._id);
+
       if (user.permissions.includes('calendar_view')) {
         try {
           const healthUnitEvents = await CalendarController.EventsDAO.queryList(
@@ -726,7 +728,7 @@ export default class CalendarController {
 
         try {
           eventsSeries = await CalendarController.EventSeriesDAO.queryList(
-            { health_unit: user.health_unit._id },
+            { owner: user.health_unit._id },
             undefined,
             undefined,
             undefined,
