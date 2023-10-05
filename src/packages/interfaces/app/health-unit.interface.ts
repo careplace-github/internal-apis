@@ -38,6 +38,8 @@ interface IHealthUnit {
       youtube?: string;
     };
     address: IAddress;
+
+    is_top?: boolean;
   };
 
   addresses: IAddress[];

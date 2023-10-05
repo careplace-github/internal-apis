@@ -125,7 +125,10 @@ export default class HealthUnitsController {
         if (req.query.sortBy === 'relevance') {
           // sort by healthUnit.business_profile.name
           options.sort = {
-            'business_profile.name': req.query.sortOrder === 'desc' ? -1 : 1, // 1 = ascending, -1 = descending
+            'business_profile.is_top': req.query.sortOrder === 'asc' ? 1 : -1, // 1 = ascending, -1 = descending
+            'rating.average': req.query.sortOrder === 'asc' ? 1 : -1, // 1 = ascending, -1 = descending
+            'rating.count': req.query.sortOrder === 'asc' ? 1 : -1, // 1 = ascending, -1 = descending
+            'business_profile.name': req.query.sortOrder === 'asc' ? 1 : -1, // 1 = ascending, -1 = descending
           };
         } else {
           // If the sortOrder query parameter is not null, then we will sort the results by the sortOrder query parameter.
