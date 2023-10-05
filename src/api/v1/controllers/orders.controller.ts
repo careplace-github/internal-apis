@@ -461,7 +461,7 @@ export default class OrdersController {
 
       order.status = 'cancelled';
       order.cancellation_reason = req.body.cancellation_reason;
-      order.cancellation_date = new Date();
+      order.cancelledAt = new Date();
 
       // validate the order
       const validationError = order.validateSync({});

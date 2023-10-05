@@ -43,6 +43,8 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
           required: false,
         },
       },
+
+      is_top: { type: Boolean, required: false, default: false },
     },
 
     rating: {
