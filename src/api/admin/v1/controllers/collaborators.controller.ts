@@ -178,7 +178,7 @@ export default class AdminCollaboratorsController {
 
         try {
           // Confirm the collaborator in Cognito.
-          const confirmcollaborator = AdminCollaboratorsController.CognitoService.adminConfirmUser(
+          const confirmcollaborator = await AdminCollaboratorsController.CognitoService.adminConfirmUser(
             reqCollaborator.email!
           );
         } catch (error: any) {
@@ -190,6 +190,21 @@ export default class AdminCollaboratorsController {
             default: {
               return next(new HTTPError._500(error.message));
             }
+          }
+        }
+      }
+
+      try {
+        // Mark the email as verified in Cognito.
+        await AdminCollaboratorsController.CognitoService.adminVerifyEmail(reqCollaborator.email!);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'INVALID_PARAMETER': {
+            return next(new HTTPError._400(error.message));
+          }
+
+          default: {
+            return next(new HTTPError._500(error.message));
           }
         }
       }
