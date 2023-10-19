@@ -16,7 +16,7 @@ import { AuthHelper, EmailHelper, StripeHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
   IHealthUnitDocument,

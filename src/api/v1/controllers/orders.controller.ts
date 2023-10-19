@@ -33,8 +33,8 @@ import {
   IHealthUnitDocument,
   ICustomer,
   IEventSeries,
-  IHomeCareOrder,
-  IHomeCareOrderDocument,
+  IOrder,
+  IOrderDocument,
   IPatient,
   IService,
   IServiceDocument,
@@ -53,7 +53,7 @@ import {
   CustomerModel,
   EventModel,
   EventSeriesModel,
-  HomeCareOrderModel,
+  OrderModel,
   ServiceModel,
 } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
@@ -126,7 +126,7 @@ export default class OrdersController {
         data: {},
       };
 
-      const order = req.body as IHomeCareOrder;
+      const order = req.body as IOrder;
       let patient: IPatient;
 
       const healthUnitId = req.body.health_unit;
@@ -190,7 +190,7 @@ export default class OrdersController {
 
       order.customer = user._id;
       order.status = 'new';
-      order.type = 'marketplace';
+      order.source = 'marketplace';
 
       order._id = new mongoose.Types.ObjectId();
 
@@ -198,7 +198,7 @@ export default class OrdersController {
       // HC-XXXXXXXX -> Home Care Order
       order.order_number = `HC-${order._id.toString().slice(-6).toUpperCase()}`;
 
-      const newOrder = new HomeCareOrderModel(order);
+      const newOrder = new OrderModel(order);
 
       // validate the order
       const validationError = newOrder.validateSync({
@@ -208,7 +208,7 @@ export default class OrdersController {
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
       }
-      let orderCreated: IHomeCareOrderDocument;
+      let orderCreated: IOrderDocument;
       try {
         orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
       } catch (error: any) {
@@ -361,7 +361,7 @@ export default class OrdersController {
           return next(new HTTPError._500('Error getting email template'));
         }
 
-        if (order.type === 'marketplace') {
+        if (order.source === 'marketplace') {
           await OrdersController.SES.sendEmail(
             [collaboratorsEmails[i]],
             businessNewOrderEmail.subject,
@@ -369,6 +369,56 @@ export default class OrdersController {
           );
         }
       }
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      next(error);
+    }
+  }
+
+  static async customerOrderHelp(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      const order = req.body as IOrder;
+
+      order.status = 'new';
+      order.source = 'lead';
+
+      order._id = new mongoose.Types.ObjectId();
+
+      // Use the first 8 characters of the order id as the order number
+      // HC-XXXXXXXX -> Home Care Order
+      order.order_number = `HC-${order._id.toString().slice(-6).toUpperCase()}`;
+
+      const newOrder = new OrderModel(order);
+
+      // validate the order
+      const validationError = newOrder.validateSync({
+        pathsToSkip: ['billing_details'],
+      });
+
+      if (validationError) {
+        return next(new HTTPError._400(validationError.message));
+      }
+      let orderCreated: IOrderDocument;
+      try {
+        orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
+      } catch (error: any) {
+        switch (error.type) {
+          default: {
+            return next(new HTTPError._500(error.message));
+          }
+        }
+      }
+
+      response.statusCode = 200;
+      response.data = orderCreated;
+
+      // Pass to the next middleware to handle the response
+      next(response);
     } catch (error: any) {
       // Pass to the next middleware to handle the error
       next(error);
@@ -415,7 +465,7 @@ export default class OrdersController {
         }
       }
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
 
       try {
         order = await OrdersController.HomeCareOrdersDAO.retrieve(
@@ -470,7 +520,7 @@ export default class OrdersController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      let orderUpdated: IHomeCareOrderDocument;
+      let orderUpdated: IOrderDocument;
       try {
         orderUpdated = await OrdersController.HomeCareOrdersDAO.update(order);
       } catch (error: any) {
@@ -502,7 +552,7 @@ export default class OrdersController {
         statusCode: res.statusCode,
         data: {},
       };
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
 
       const orderId = req.params.id;
 
@@ -616,7 +666,7 @@ export default class OrdersController {
         data: {},
       };
 
-      let homeCareOrders: IQueryListResponse<IHomeCareOrderDocument> | undefined;
+      let homeCareOrders: IQueryListResponse<IOrderDocument> | undefined;
 
       let accessToken: string;
 
@@ -714,7 +764,7 @@ export default class OrdersController {
 
       const orderId = req.params.id;
 
-      const order = req.body as IHomeCareOrder;
+      const order = req.body as IOrder;
 
       // remove the fields that should not be updated
       const reqOrder = omit(order, [
@@ -729,7 +779,7 @@ export default class OrdersController {
       ]);
 
       // retrieve the order from the database
-      let orderExists: IHomeCareOrderDocument;
+      let orderExists: IOrderDocument;
 
       try {
         orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
@@ -751,7 +801,7 @@ export default class OrdersController {
       }
 
       // create a new order object with the updated fields
-      const updatedOrder = new HomeCareOrderModel({
+      const updatedOrder = new OrderModel({
         ...orderExists.toJSON(),
         ...reqOrder,
       });
@@ -765,7 +815,7 @@ export default class OrdersController {
         return next(new HTTPError._400(validationError.message));
       }
 
-      let orderUpdated: IHomeCareOrderDocument;
+      let orderUpdated: IOrderDocument;
       try {
         orderUpdated = await OrdersController.HomeCareOrdersDAO.update(updatedOrder);
       } catch (error: any) {
@@ -814,7 +864,7 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const order = req.body as IHomeCareOrder;
+      const order = req.body as IOrder;
 
       if (!order.patient) {
         return next(new HTTPError._400('Missing required field: `patient`.'));
@@ -841,7 +891,7 @@ export default class OrdersController {
       order.health_unit = user.health_unit._id as Types.ObjectId;
 
       order.status = 'accepted';
-      order.type = 'external';
+      order.source = 'external';
 
       order._id = new mongoose.Types.ObjectId();
 
@@ -849,7 +899,7 @@ export default class OrdersController {
       // HC-XXXXXXXX -> Home Care Order
       order.order_number = `HC-${order._id.toString().slice(-6).toUpperCase()}`;
 
-      const newOrder = new HomeCareOrderModel(order);
+      const newOrder = new OrderModel(order);
 
       // validate the order
       const validationError = newOrder.validateSync({
@@ -859,7 +909,7 @@ export default class OrdersController {
       if (validationError) {
         return next(new HTTPError._400(validationError.message));
       }
-      let orderCreated: IHomeCareOrderDocument;
+      let orderCreated: IOrderDocument;
       try {
         orderCreated = await OrdersController.HomeCareOrdersDAO.create(newOrder);
       } catch (error: any) {
@@ -985,9 +1035,9 @@ export default class OrdersController {
 
       orderObj.billing_details = billingDetails;
 
-      const updatedOrder = new HomeCareOrderModel(orderObj);
+      const updatedOrder = new OrderModel(orderObj);
 
-      let orderUpdated: IHomeCareOrderDocument;
+      let orderUpdated: IOrderDocument;
       try {
         orderUpdated = await OrdersController.HomeCareOrdersDAO.update(updatedOrder);
       } catch (error: any) {
@@ -1043,7 +1093,7 @@ export default class OrdersController {
       // Retrieve the home care order based on the provided request parameters
       const orderId = req.params.id;
 
-      let homeCareOrder: IHomeCareOrderDocument;
+      let homeCareOrder: IOrderDocument;
 
       try {
         homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId, [
@@ -1137,7 +1187,7 @@ export default class OrdersController {
       }
 
       const orderId = req.params.id;
-      let orderExists: IHomeCareOrderDocument;
+      let orderExists: IOrderDocument;
 
       try {
         orderExists = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
@@ -1160,7 +1210,7 @@ export default class OrdersController {
       }
 
       // Get the fields to update from the request body
-      const reqOrder = req.body as IHomeCareOrder;
+      const reqOrder = req.body as IOrder;
 
       // Thos endpoint allows health units to update their offline orders, so it is allowed to update fields like the status
       const sanitizedReqOrder = omit(reqOrder, [
@@ -1176,9 +1226,9 @@ export default class OrdersController {
         ...sanitizedReqOrder,
       };
 
-      const updateOrder = new HomeCareOrderModel(newOrder);
+      const updateOrder = new OrderModel(newOrder);
 
-      let updatedOrder: IHomeCareOrderDocument;
+      let updatedOrder: IOrderDocument;
 
       try {
         updatedOrder = await OrdersController.HomeCareOrdersDAO.update(updateOrder);
@@ -1277,7 +1327,7 @@ export default class OrdersController {
         return next(new HTTPError._400('Missing required field: `id`.'));
       }
 
-      let homeCareOrder: IHomeCareOrderDocument;
+      let homeCareOrder: IOrderDocument;
 
       try {
         homeCareOrder = await OrdersController.HomeCareOrdersDAO.retrieve(orderId);
@@ -1292,7 +1342,7 @@ export default class OrdersController {
       }
 
       // Check if the order is of type external
-      if (homeCareOrder.type !== 'external') {
+      if (homeCareOrder.source !== 'external') {
         return next(new HTTPError._403('You cannot delete this order.'));
       }
 
@@ -1360,7 +1410,7 @@ export default class OrdersController {
         statusCode: res.statusCode,
         data: {},
       };
-      let homeCareOrders: IHomeCareOrderDocument[] = [];
+      let homeCareOrders: IOrderDocument[] = [];
 
       let accessToken: string;
 
@@ -1491,7 +1541,7 @@ export default class OrdersController {
 
       const healthUnitId = user.health_unit._id.toString();
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
       try {
         order = await OrdersController.HomeCareOrdersDAO.retrieve(req.params.id);
       } catch (error: any) {
@@ -1642,7 +1692,7 @@ export default class OrdersController {
 
       logger.info(`Sending email to customer: ${customer.email}`);
 
-      if (order.type === 'marketplace') {
+      if (order.source === 'marketplace') {
         await OrdersController.SES.sendEmail(
           [customer.email],
           marketplaceNewOrderEmail.subject,
@@ -1696,7 +1746,7 @@ export default class OrdersController {
               return next(new HTTPError._500('Error while generating email template.'));
             }
 
-            if (order.type === 'marketplace') {
+            if (order.source === 'marketplace') {
               await OrdersController.SES.sendEmail(
                 [collaboratorEmail],
                 businessNewOrderEmail.subject,
@@ -1750,7 +1800,7 @@ export default class OrdersController {
         return user?.health_unit?._id.toString();
       });
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
       try {
         order = await OrdersController.HomeCareOrdersDAO.retrieve(req.params.id);
       } catch (error: any) {
@@ -1834,7 +1884,7 @@ export default class OrdersController {
         return user?.health_unit?._id.toString();
       });
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
 
       const orderId = req.params.id;
 
@@ -1895,7 +1945,7 @@ export default class OrdersController {
       next(response);
 
       // Only send emails to the orders originated from our marketplace
-      if (order.type === 'marketplace') {
+      if (order.source === 'marketplace') {
         /**
          * From 'services' array, get the services that are in the order
          */
@@ -1984,7 +2034,7 @@ export default class OrdersController {
 
         logger.info('Sending email to customer: ', (order.customer as ICustomer).email);
 
-        if (order.type === 'marketplace') {
+        if (order.source === 'marketplace') {
           await OrdersController.SES.sendEmail(
             [(order.customer as ICustomer).email],
             marketplaceNewOrderEmail.subject,
@@ -2044,7 +2094,7 @@ export default class OrdersController {
                 return next(new HTTPError._500('Error while generating email template.'));
               }
 
-              if (order.type === 'marketplace') {
+              if (order.source === 'marketplace') {
                 await OrdersController.SES.sendEmail(
                   [collaboratorEmail],
                   businessNewOrderEmail.subject,
@@ -2092,7 +2142,7 @@ export default class OrdersController {
         return next(new HTTPError._400('Missing required `visit_end`.'));
       }
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
       try {
         order = await OrdersController.HomeCareOrdersDAO.queryOne({ _id: req.params.id }, [
           {
@@ -2136,7 +2186,7 @@ export default class OrdersController {
 
         description: ' ',
 
-        textColor: order.type === 'marketplace' ? '#04297A' : '#054f02',
+        textColor: order.source === 'marketplace' ? '#04297A' : '#054f02',
 
         end: visit_end,
       };
@@ -2179,7 +2229,7 @@ export default class OrdersController {
       next(response);
 
       // Only send emails to the orders originated from our marketplace
-      if (order.type === 'marketplace') {
+      if (order.source === 'marketplace') {
         /**
          * From 'services' array, get the services that are in the order
          */
@@ -2259,7 +2309,7 @@ export default class OrdersController {
           return next(new HTTPError._500('Error while getting the email template.'));
         }
 
-        if (order.type === 'marketplace') {
+        if (order.source === 'marketplace') {
           await OrdersController.SES.sendEmail(
             [(order.customer as ICustomer).email],
             marketplaceNewOrderEmail.subject,
@@ -2317,7 +2367,7 @@ export default class OrdersController {
                 return next(new HTTPError._500('Error while generating email template.'));
               }
 
-              if (order.type === 'marketplace') {
+              if (order.source === 'marketplace') {
                 await OrdersController.SES.sendEmail(
                   [collaboratorEmail],
                   businessNewOrderEmail.subject,

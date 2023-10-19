@@ -24,8 +24,8 @@ import {
   IAPIResponse,
   ICustomer,
   IHealthUnit,
-  IHomeCareOrder,
-  IHomeCareOrderDocument,
+  IOrder,
+  IOrderDocument,
   IPatient,
 } from '@packages/interfaces';
 import { PATHS } from 'src/packages/routes';
@@ -172,7 +172,7 @@ export default class StripeWebhooksController {
             application_fee_percent: parseInt(STRIPE_APPLICATION_FEE),
           });
 
-          let order: IHomeCareOrderDocument | undefined;
+          let order: IOrderDocument | undefined;
 
           try {
             // Get order from database
