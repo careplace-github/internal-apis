@@ -23,8 +23,8 @@ import {
   IHealthUnitDocument,
   ICustomer,
   IEventSeries,
-  IHomeCareOrder,
-  IHomeCareOrderDocument,
+  IOrder,
+  IOrderDocument,
   IPatient,
   IService,
   IServiceDocument,
@@ -33,7 +33,7 @@ import {
 import {
   CustomerModel,
   EventSeriesModel,
-  HomeCareOrderModel,
+  OrderModel,
   ServiceModel,
 } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
@@ -623,7 +623,7 @@ export default class PaymentsController {
       const billingDetails = req.body.billing_details;
 
       // Convert orderId to string
-      let order: IHomeCareOrderDocument | undefined;
+      let order: IOrderDocument | undefined;
       try {
         order = await PaymentsController.HomeCareOrdersDAO.queryOne(
           { _id: { $eq: orderId } },
@@ -1001,7 +1001,7 @@ export default class PaymentsController {
       }
 
       let subscriptionId: string;
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
       let paymentMethod: Stripe.PaymentMethod;
       let subscription: Stripe.Subscription;
 
@@ -1100,7 +1100,7 @@ export default class PaymentsController {
 
       const orderId = req.params.order;
 
-      let order: IHomeCareOrderDocument;
+      let order: IOrderDocument;
       let subscription: Stripe.Subscription;
       let invoice: Stripe.Invoice;
 
@@ -1207,7 +1207,7 @@ export default class PaymentsController {
 
       const orderId = req.params.order;
 
-      let order: IHomeCareOrder;
+      let order: IOrder;
       let subscription: Stripe.Subscription;
 
       try {
@@ -1299,7 +1299,7 @@ export default class PaymentsController {
       const orderId = req.params.order;
       const promotionCodeId = req.body.promotion_code;
 
-      let order: IHomeCareOrder;
+      let order: IOrder;
       let subscription: Stripe.Subscription;
       let promotionCode: Stripe.PromotionCode;
       let coupon: Stripe.Coupon;

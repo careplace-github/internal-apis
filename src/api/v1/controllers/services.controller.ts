@@ -14,7 +14,7 @@ import { AuthHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
 } from 'src/packages/interfaces';

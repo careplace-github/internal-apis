@@ -10,7 +10,7 @@ import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO } from 'src/pac
 import {
   IAPIResponse,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
 } from 'src/packages/interfaces';

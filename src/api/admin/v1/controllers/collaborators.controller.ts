@@ -178,9 +178,10 @@ export default class AdminCollaboratorsController {
 
         try {
           // Confirm the collaborator in Cognito.
-          const confirmcollaborator = AdminCollaboratorsController.CognitoService.adminConfirmUser(
-            reqCollaborator.email!
-          );
+          const confirmcollaborator =
+            await AdminCollaboratorsController.CognitoService.adminConfirmUser(
+              reqCollaborator.email!
+            );
         } catch (error: any) {
           switch (error.type) {
             case 'INVALID_PARAMETER': {

@@ -16,12 +16,12 @@ import { AuthHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
   IPatient,
   IPatientDocument,
-  IHomeCareOrderDocument,
+  IOrderDocument,
   IHealthUnitDocument,
 } from 'src/packages/interfaces';
 // @api/common
@@ -693,7 +693,7 @@ export default class PatientsController {
       }
 
       // Check if the Customer has any orders.
-      let orders: IHomeCareOrderDocument[] = [];
+      let orders: IOrderDocument[] = [];
 
       try {
         // Get the orders for the Customer from MongoDB.

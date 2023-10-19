@@ -20,8 +20,8 @@ import {
   ICaregiverDocument,
   IHealthUnit,
   IHealthUnitDocument,
-  IHomeCareOrder,
-  IHomeCareOrderDocument,
+  IOrder,
+  IOrderDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
 import { HTTPError, AuthUtils } from '@utils';
