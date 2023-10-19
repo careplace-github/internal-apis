@@ -48,6 +48,10 @@ router
     OrdersController.customerCreateHomeCareOrder
   );
 
+router
+  .route('/customers/orders/help')
+  .post(AuthenticationGuard, ClientGuard('marketplace'), OrdersController.customerOrderHelp);
+
 /**
  * Business
  */

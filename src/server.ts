@@ -469,7 +469,6 @@ const main = async () => {
       app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
       app.use(process.env.API_ROUTE as string, CustomersRoute);
 
-
       app.use(process.env.API_ROUTE as string, LeadsRoute);
 
       // Admin API Routes

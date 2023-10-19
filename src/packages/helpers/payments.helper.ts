@@ -4,7 +4,7 @@ import {
   IEvent,
   ICaregiver,
   IEventDocument,
-  IHomeCareOrder,
+  IOrder,
 } from 'src/packages/interfaces';
 import logger from 'src/logs/logger';
 

@@ -1,7 +1,7 @@
 // mongoose
 import { Document, Types } from 'mongoose';
 // interfaces
-import { IHealthUnit, ICustomer, IHomeCareOrder } from 'src/packages/interfaces';
+import { IHealthUnit, ICustomer, IOrder } from 'src/packages/interfaces';
 
 interface IHealthUnitReview {
   _id: Types.ObjectId | string;
