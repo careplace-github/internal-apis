@@ -1,11 +1,5 @@
 import { Document, Types } from 'mongoose';
-import {
-  IEventSeries,
-  IEvent,
-  ICaregiver,
-  IEventDocument,
-  IOrder,
-} from 'src/packages/interfaces';
+import { IEventSeries, IEvent, ICaregiver, IEventDocument, IOrder } from 'src/packages/interfaces';
 import { HomeCareOrdersDAO } from 'src/packages/database';
 import logger from 'src/logs/logger';
 

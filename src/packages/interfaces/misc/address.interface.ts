@@ -4,9 +4,9 @@ interface IAddress {
   street: string;
   postal_code: string;
   city: string;
-  state: string;
+  state?: string;
   country: TCountry;
-  coordinates: TCoordinates;
+  coordinates?: TCoordinates;
 }
 
 export { IAddress };
