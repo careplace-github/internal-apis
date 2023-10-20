@@ -54,6 +54,7 @@ import {
   EventModel,
   EventSeriesModel,
   OrderModel,
+  PatientModel,
   ServiceModel,
 } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
@@ -383,6 +384,69 @@ export default class OrdersController {
       };
 
       const order = req.body as IOrder;
+
+      // create customer model
+      const customer = new CustomerModel(order.customer);
+
+      // validate the customer
+      const customerValidationError = customer.validateSync();
+
+      if (customerValidationError) {
+        return next(new HTTPError._400(customerValidationError.message));
+      }
+
+      // create customer in database
+      let customerCreated: ICustomerDocument;
+
+      try {
+        customerCreated = await OrdersController.CustomersDAO.create(customer);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'ALREADY_EXISTS':
+            return next(new HTTPError._409('Customer already exists.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // add the customer id to the order
+      order.customer = customerCreated._id;
+
+      (order.patient as IPatient).birthdate = new Date();
+
+      (order.patient as IPatient).address = {
+        street: 'N/A',
+        postal_code: 'N/A',
+        city: 'N/A',
+        country: 'PT',
+      };
+
+      // create patient model
+      const patient = new PatientModel(order.patient);
+
+      // validate the patient
+      const patientValidationError = patient.validateSync();
+
+      if (patientValidationError) {
+        return next(new HTTPError._400(patientValidationError.message));
+      }
+
+      // create patient in database
+      let patientCreated: IPatientDocument;
+
+      try {
+        patientCreated = await OrdersController.PatientsDAO.create(patient);
+      } catch (error: any) {
+        switch (error.type) {
+          case 'ALREADY_EXISTS':
+            return next(new HTTPError._409('Patient already exists.'));
+          default:
+            return next(new HTTPError._500(error.message));
+        }
+      }
+
+      // add the patient id to the order
+      order.patient = patientCreated._id;
 
       order.status = 'new';
       order.source = 'lead';

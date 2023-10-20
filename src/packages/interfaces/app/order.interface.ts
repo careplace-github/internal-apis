@@ -64,6 +64,8 @@ interface IOrder {
     address: IAddress;
     tax_id?: string;
   };
+
+  additional_information?: any;
 }
 
 type IOrderDocument = IOrder & Document;

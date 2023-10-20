@@ -78,6 +78,12 @@ const OrderSchema: Schema<IOrderDocument> = new Schema<IOrderDocument>(
       },
       tax_id: { type: String, required: false, default: null },
     },
+
+    additional_information: {
+      type: Object,
+      required: false,
+      default: null,
+    },
   },
   {
     timestamps: true, // createdAt, updatedAt

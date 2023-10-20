@@ -30,12 +30,7 @@ import {
   IServiceDocument,
   ICustomerDocument,
 } from 'src/packages/interfaces';
-import {
-  CustomerModel,
-  EventSeriesModel,
-  OrderModel,
-  ServiceModel,
-} from 'src/packages/models';
+import { CustomerModel, EventSeriesModel, OrderModel, ServiceModel } from 'src/packages/models';
 import { CognitoService, SESService, StripeService } from 'src/packages/services';
 import { AuthUtils, HTTPError, DateUtils } from 'src/packages/utils';
 
