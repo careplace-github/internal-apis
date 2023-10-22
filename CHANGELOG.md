@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.1.12 (2023-10-22)
+
+
+### Bug Fixes
+
+* **orders:** resolve bug that required login ([b4cb9e3](https://github.com/CarelyPT/crm-backend/commit/b4cb9e3154e942f046b9446741f7d1785b7ca65d))
+
 ### 0.1.11 (2023-09-23)
 
 ### 0.1.10 (2023-09-22)
