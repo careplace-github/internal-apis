@@ -19,8 +19,8 @@ import {
   ICustomerDocument,
   IHealthUnit,
   IHealthUnitDocument,
-  IHomeCareOrder,
-  IHomeCareOrderDocument,
+  IOrder,
+  IOrderDocument,
 } from 'src/packages/interfaces';
 import { CognitoService, SESService } from 'src/packages/services';
 import { HTTPError, AuthUtils } from '@utils';
@@ -512,7 +512,7 @@ export default class CustomersController {
       }
 
       // Check if the Customer has any orders.
-      let orders: IHomeCareOrderDocument[] = [];
+      let orders: IOrderDocument[] = [];
 
       try {
         // Get the orders for the Customer from MongoDB.

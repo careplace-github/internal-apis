@@ -7,7 +7,7 @@ import {
   ICollaborator,
   IHealthUnit,
   IEventSeries,
-  IHomeCareOrder,
+  IOrder,
 } from 'src/packages/interfaces';
 
 interface IEvent {
@@ -18,7 +18,7 @@ interface IEvent {
   owner: Types.ObjectId | ICollaborator | IHealthUnit;
 
   // If owner type is health-unit
-  order?: Types.ObjectId | IHomeCareOrder;
+  order?: Types.ObjectId | IOrder;
 
   title: string;
   description: string;

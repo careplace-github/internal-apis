@@ -5,7 +5,7 @@ import { Document, Types } from 'mongoose';
 import { THomeCareOrderRecurrency } from 'src/packages/interfaces/types';
 
 // interfaces
-import { IAddress, ICustomer, IHealthUnit, ICollaborator, IHomeCareOrder } from '..';
+import { IAddress, ICustomer, IHealthUnit, ICollaborator, IOrder } from '..';
 
 interface IEventSeries {
   _id: Types.ObjectId | string;
@@ -14,7 +14,7 @@ interface IEventSeries {
   owner: Types.ObjectId | ICollaborator | IHealthUnit;
 
   // If owner type is health-unit
-  order?: Types.ObjectId | IHomeCareOrder;
+  order?: Types.ObjectId | IOrder;
 
   start_date: Date;
   recurrency: THomeCareOrderRecurrency;

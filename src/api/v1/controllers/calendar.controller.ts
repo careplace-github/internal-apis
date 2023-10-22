@@ -21,7 +21,7 @@ import {
   ICollaborator,
   ICustomer,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
   IEvent,

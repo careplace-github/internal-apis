@@ -1,9 +1,9 @@
 // mongoose
 import mongoose, { Model, Schema, Types } from 'mongoose';
 // interfaces
-import { IHomeCareOrderDocument } from '../interfaces';
+import { IOrderDocument } from '../interfaces';
 
-const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCareOrderDocument>(
+const OrderSchema: Schema<IOrderDocument> = new Schema<IOrderDocument>(
   {
     _id: {
       type: Schema.Types.ObjectId,
@@ -16,24 +16,30 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
     type: {
       type: String,
       required: true,
-      enum: ['marketplace', 'external'],
+      enum: ['home_care', 'medical_equipment', 'nursing_home', 'senior_residence', 'day_center'],
     },
 
-    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: true },
-    caregiver: { type: Schema.Types.ObjectId, ref: 'Caregiver', required: false },
-    customer: { type: Schema.Types.ObjectId, ref: 'marketplace_users', required: true },
-    patient: { type: Schema.Types.ObjectId, ref: 'patient', required: true },
+    source: {
+      type: String,
+      required: true,
+      enum: ['marketplace', 'lead', 'external'],
+    },
 
-    services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: true }],
+    health_unit: { type: Schema.Types.ObjectId, ref: 'HealthUnit', required: false },
+    caregiver: { type: Schema.Types.ObjectId, ref: 'Caregiver', required: false },
+    customer: { type: Schema.Types.ObjectId, ref: 'marketplace_users', required: false },
+    patient: { type: Schema.Types.ObjectId, ref: 'patient', required: false },
+
+    services: [{ type: Schema.Types.ObjectId, ref: 'Service', required: false }],
     schedule_information: {
-      start_date: { type: Date, required: true },
+      start_date: { type: Date, required: false },
       end_date: { type: Date, required: false, default: null },
-      recurrency: { type: Number, required: true, enum: [0, 1, 2, 4] },
+      recurrency: { type: Number, required: false, enum: [0, 1, 2, 4] },
       schedule: [
         {
-          week_day: { type: Number, required: true, enum: [1, 2, 3, 4, 5, 6, 7] },
-          start: { type: Date, required: true },
-          end: { type: Date, required: true },
+          week_day: { type: Number, required: false, enum: [1, 2, 3, 4, 5, 6, 7] },
+          start: { type: Date, required: false },
+          end: { type: Date, required: false },
         },
       ],
     },
@@ -55,7 +61,7 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
 
     order_total: { type: Number, required: false },
 
-    visits: [{ type: Schema.Types.ObjectId, ref: 'Event', required: true, default: [] }],
+    visits: [{ type: Schema.Types.ObjectId, ref: 'Event', required: false, default: [] }],
     observations: { type: String, required: false, default: null },
     stripe_information: {
       subscription_id: { type: String, required: false, default: null },
@@ -72,6 +78,12 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
       },
       tax_id: { type: String, required: false, default: null },
     },
+
+    additional_information: {
+      type: Object,
+      required: false,
+      default: null,
+    },
   },
   {
     timestamps: true, // createdAt, updatedAt
@@ -81,9 +93,6 @@ const HomeCareOrderSchema: Schema<IHomeCareOrderDocument> = new Schema<IHomeCare
   }
 );
 
-const HomeCareOrderModel: Model<IHomeCareOrderDocument> = mongoose.model<IHomeCareOrderDocument>(
-  'HomeCareOrder',
-  HomeCareOrderSchema
-);
+const OrderModel: Model<IOrderDocument> = mongoose.model<IOrderDocument>('Order', OrderSchema);
 
-export { HomeCareOrderSchema, HomeCareOrderModel };
+export { OrderSchema, OrderModel };

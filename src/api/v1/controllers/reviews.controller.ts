@@ -9,7 +9,7 @@ import { AuthHelper } from '@packages/helpers';
 import {
   IAPIResponse,
   IHealthUnitReview,
-  IHomeCareOrder,
+  IOrder,
   IHealthUnit,
   IQueryListResponse,
   IHealthUnitDocument,
@@ -71,7 +71,7 @@ export default class ReviewsController {
         throw new HTTPError._404('HealthUnit does not exist.');
       }
 
-      let orders: IQueryListResponse<IHomeCareOrder>;
+      let orders: IQueryListResponse<IOrder>;
       let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
@@ -170,7 +170,7 @@ export default class ReviewsController {
 
       const healthUnitId = req.params.healthUnit;
 
-      let orders: IQueryListResponse<IHomeCareOrder>;
+      let orders: IQueryListResponse<IOrder>;
       let filters: FilterQuery<IHealthUnitReview>;
 
       filters = {
