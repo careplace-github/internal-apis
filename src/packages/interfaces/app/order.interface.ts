@@ -18,10 +18,11 @@ import {
   THomeCareOrderScreeningVisitStatus,
 } from 'src/packages/interfaces/types';
 
-interface IHomeCareOrder {
+interface IOrder {
   order_number: string;
   _id: Types.ObjectId | string;
-  type: 'marketplace' | 'external';
+  source: 'marketplace' | 'external' | 'lead';
+  type: 'home_care' | 'medical_equipment' | 'nursing_home' | 'senior_residence' | 'day_center';
   health_unit: Types.ObjectId | IHealthUnit;
   caregiver?: Types.ObjectId | ICaregiver;
   customer: Types.ObjectId | ICustomer;
@@ -48,8 +49,6 @@ interface IHomeCareOrder {
   quoteSentAt?: Date;
   completedAt?: Date;
 
-
-
   cancellation_reason?: string;
   order_total: number;
   visits: IEvent[];
@@ -65,8 +64,10 @@ interface IHomeCareOrder {
     address: IAddress;
     tax_id?: string;
   };
+
+  additional_information?: any;
 }
 
-type IHomeCareOrderDocument = IHomeCareOrder & Document;
+type IOrderDocument = IOrder & Document;
 
-export { IHomeCareOrder, IHomeCareOrderDocument };
+export { IOrder, IOrderDocument };

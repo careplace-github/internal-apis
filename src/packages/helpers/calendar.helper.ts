@@ -1,11 +1,5 @@
 import { Document, Types } from 'mongoose';
-import {
-  IEventSeries,
-  IEvent,
-  ICaregiver,
-  IEventDocument,
-  IHomeCareOrder,
-} from 'src/packages/interfaces';
+import { IEventSeries, IEvent, ICaregiver, IEventDocument, IOrder } from 'src/packages/interfaces';
 import { HomeCareOrdersDAO } from 'src/packages/database';
 import logger from 'src/logs/logger';
 
@@ -127,7 +121,7 @@ export default class CalendarHelper {
           const eventObj: IEventDocument = eventModel.toObject();
 
           eventObj.event_series = eventSeries._id as Types.ObjectId;
-          eventObj.order = orderData as IHomeCareOrder;
+          eventObj.order = orderData as IOrder;
 
           // Add the event to the list of events
           events.push(eventObj);

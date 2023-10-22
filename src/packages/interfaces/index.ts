@@ -5,7 +5,7 @@ export { ICollaborator, ICollaboratorDocument } from './app/collaborator.interfa
 export type { IEvent, IEventDocument } from './app/event.interface';
 export type { IEventSeries, IEventSeriesDocument } from './app/event-series.interface';
 export type { ICustomer, ICustomerDocument } from './app/customer.interface';
-export type { IHomeCareOrder, IHomeCareOrderDocument } from './app/home-care-order.interface';
+export type { IOrder, IOrderDocument } from './app/order.interface';
 export type { IPatient, IPatientDocument } from './app/patient.interface';
 export type {
   IHealthUnitReview,
