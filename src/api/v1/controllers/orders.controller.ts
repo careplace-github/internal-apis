@@ -192,6 +192,7 @@ export default class OrdersController {
       order.customer = user._id;
       order.status = 'new';
       order.source = 'marketplace';
+      order.type = 'home_care'
 
       order._id = new mongoose.Types.ObjectId();
 
