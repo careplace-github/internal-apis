@@ -160,7 +160,7 @@ export default class AdminCustomersController {
       if (!reqCustomer?.phone) reqCustomer.phone = '000000000';
 
       // Omit the fiels that are not allowed to be changed by the user.
-      let sanitizedReqCustomer = omit(reqCustomer, [
+      const sanitizedReqCustomer = omit(reqCustomer, [
         '_id',
         'cognito_id',
         'settings',
