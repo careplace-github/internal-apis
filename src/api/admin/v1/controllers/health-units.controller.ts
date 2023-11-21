@@ -171,8 +171,8 @@ export default class AdminHealthUnitsController {
 
       const sanitizedReqHealthUnit = omit(reqHealthUnit, ['_id']);
 
-      logger.info('existingHealthIUnit' + JSON.stringify(healthUnit, null, 2));
-      logger.info('sanitizedReqHealthUnit' + JSON.stringify(sanitizedReqHealthUnit, null, 2));
+      logger.info(`existingHealthIUnit${JSON.stringify(healthUnit, null, 2)}`);
+      logger.info(`sanitizedReqHealthUnit${JSON.stringify(sanitizedReqHealthUnit, null, 2)}`);
 
       const updateHealthUnit = {
         ...healthUnit.toJSON(),
@@ -193,7 +193,7 @@ export default class AdminHealthUnitsController {
         ...updateHealthUnit,
       });
 
-      logger.info('newHealthUnit' + JSON.stringify(newHealthUnit, null, 2));
+      logger.info(`newHealthUnit${JSON.stringify(newHealthUnit, null, 2)}`);
 
       // Validate the health unit data
       const validationError = newHealthUnit.validateSync({

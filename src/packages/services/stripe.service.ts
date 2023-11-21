@@ -104,14 +104,14 @@ export default class StripeService {
     params: Stripe.AccountUpdateParams,
     options?: Stripe.RequestOptions
   ): Promise<Stripe.Account> {
-    logger.info('StripeService.updateConnectAccount params: ' + { accountId, params, options });
+    logger.info(`StripeService.updateConnectAccount params: ${{ accountId, params, options }}`);
 
     let account: Stripe.Account;
 
     try {
       account = await this.Stripe.accounts.update(accountId, params, options);
     } catch (error: any) {
-      logger.error('StripeService.updateConnectAccount Error: ' + error);
+      logger.error(`StripeService.updateConnectAccount Error: ${error}`);
 
       switch (error.type) {
         case 'StripeCardError':
@@ -122,7 +122,7 @@ export default class StripeService {
       }
     }
 
-    logger.info('StripeService.updateConnectAccount return: ' + { account });
+    logger.info(`StripeService.updateConnectAccount return: ${{ account }}`);
 
     return account;
   }
@@ -428,8 +428,11 @@ export default class StripeService {
     let bankAccount: Stripe.BankAccount;
 
     logger.info(
-      'StripeService.createExternalAccount params: ' +
-        JSON.stringify({ accountId, params, options }, null, 2)
+      `StripeService.createExternalAccount params: ${JSON.stringify(
+        { accountId, params, options },
+        null,
+        2
+      )}`
     );
 
     try {
@@ -447,11 +450,12 @@ export default class StripeService {
     }
 
     logger.info(
-      'StripeService.createExternalAccount return: ' + JSON.stringify(bankAccount, null, 2)
+      `StripeService.createExternalAccount return: ${JSON.stringify(bankAccount, null, 2)}`
     );
 
     return bankAccount;
   }
+
   static async deleteExternalAccount(
     accountId: string,
     externalAccountId: string,
@@ -460,8 +464,11 @@ export default class StripeService {
     let bankAccount: Stripe.DeletedBankAccount;
 
     logger.info(
-      'StripeService.deleteExternalAccount params: ' +
-        JSON.stringify({ accountId, externalAccountId, options }, null, 2)
+      `StripeService.deleteExternalAccount params: ${JSON.stringify(
+        { accountId, externalAccountId, options },
+        null,
+        2
+      )}`
     );
 
     try {
@@ -479,7 +486,7 @@ export default class StripeService {
     }
 
     logger.info(
-      'StripeService.deleteExternalAccount return: ' + JSON.stringify(bankAccount, null, 2)
+      `StripeService.deleteExternalAccount return: ${JSON.stringify(bankAccount, null, 2)}`
     );
 
     return bankAccount;
