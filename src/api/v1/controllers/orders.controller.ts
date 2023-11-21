@@ -1575,32 +1575,10 @@ export default class OrdersController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const caregiver = req.body.caregiver as string;
-
-      if (!caregiver) {
-        return next(new HTTPError._400('Missing caregiver.'));
-      }
-
-      let caregiverExists: ICaregiverDocument;
-      try {
-        caregiverExists = await OrdersController.CaregiversDAO.retrieve(caregiver);
-      } catch (error: any) {
-        switch (error.type) {
-          case 'NOT_FOUND':
-            return next(new HTTPError._404('Caregiver not found.'));
-          default:
-            return next(new HTTPError._500(error.message));
-        }
-      }
-
       const user = await AuthHelper.getUserFromDB(accessToken);
 
-      if (!(user instanceof CollaboratorModel || user instanceof CaregiverModel)) {
+      if (!(user instanceof CollaboratorModel)) {
         return next(new HTTPError._403('You are not authorized to accept this order.'));
-      }
-
-      if (caregiverExists.health_unit.toString() !== user.health_unit._id.toString()) {
-        return next(new HTTPError._403('Caregiver does not belong to this health unit.'));
       }
 
       const healthUnitId = user.health_unit._id.toString();
@@ -1628,7 +1606,6 @@ export default class OrdersController {
       }
 
       order.status = 'accepted';
-      order.caregiver = caregiverExists._id as Types.ObjectId;
 
       try {
         await OrdersController.HomeCareOrdersDAO.update(order);
@@ -1756,13 +1733,16 @@ export default class OrdersController {
 
       logger.info(`Sending email to customer: ${customer.email}`);
 
-      if (order.source === 'marketplace') {
-        await OrdersController.SES.sendEmail(
-          [customer.email],
-          marketplaceNewOrderEmail.subject,
-          marketplaceNewOrderEmail.htmlBody
-        );
-      }
+      // Remove if want to send an email confirmation to the user
+
+      // if (order.source === 'marketplace') {
+      //   await OrdersController.SES.sendEmail(
+      //     [customer.email],
+      //     marketplaceNewOrderEmail.subject,
+      //     marketplaceNewOrderEmail.htmlBody
+      //   );
+      // }
+
       // Send email to all collaborators that have the 'orders_emails' permission
       if (collaboratorsEmails && collaboratorsEmails.length > 0) {
         for (let i = 0; i < collaboratorsEmails.length; i++) {
