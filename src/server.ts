@@ -78,6 +78,7 @@ const main = async () => {
       AdminPaymentsRoute,
       AdminReviewsRoute,
       AdminServicesRoute,
+      AdminCaregiversRoute,
       AdminCustomersRoute,
     } = require('@api/admin/v1/routes');
 
@@ -475,6 +476,7 @@ const main = async () => {
       app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminFilesRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminCollaboratorsRoute);
+      app.use(process.env.ADMIN_API_ROUTE as string, AdminCaregiversRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminPaymentsRoute);
       app.use(process.env.ADMIN_API_ROUTE as string, AdminReviewsRoute);
