@@ -18,7 +18,7 @@ export default function clientGuard(appName: string) {
 
       let app;
 
-      logger.info('Client Guard Middleware Params: ' + appName);
+      logger.info(`Client Guard Middleware Params: ${appName}`);
 
       if (!appName) {
         throw new HTTPError._400(`Missing required app name.`);
