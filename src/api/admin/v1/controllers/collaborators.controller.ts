@@ -136,7 +136,10 @@ export default class AdminCollaboratorsController {
       if (existingcollaborator) {
         return next(
           new HTTPError._409(
-            `Health unit already has a collaborator with the email: ${sanitizedReqCollaborator.email}.`
+            `Health unit already has a collaborator with the email: ${sanitizedReqCollaborator.email}.`,
+            '409',
+            409,
+            'EMAIL_ALREADY_EXISTS'
           )
         );
       }
