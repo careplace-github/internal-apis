@@ -703,7 +703,7 @@ export default class CalendarController {
             [
               {
                 path: 'order',
-                model: 'HomeCareOrder',
+                model: 'Order',
                 populate: {
                   path: 'caregiver',
                   model: 'Caregiver',
@@ -733,7 +733,7 @@ export default class CalendarController {
             [
               {
                 path: 'order',
-                model: 'HomeCareOrder',
+                model: 'Order',
               },
             ]
           ).then((eventsSeries) => eventsSeries.data);
@@ -818,7 +818,7 @@ export default class CalendarController {
           [
             {
               path: 'order',
-              model: 'HomeCareOrder',
+              model: 'Order',
             },
           ]
         ).then((eventSeries) => eventSeries.data);
