@@ -939,10 +939,6 @@ export default class OrdersController {
         return next(new HTTPError._400('Missing required field: `customer`.'));
       }
 
-      if (!order.caregiver) {
-        return next(new HTTPError._400('Missing required field: `caregiver`.'));
-      }
-
       const user = await OrdersController.AuthHelper.getUserFromDB(accessToken);
 
       if (!(user instanceof CollaboratorModel)) {
