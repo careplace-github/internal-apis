@@ -181,7 +181,8 @@ export default class AdminCollaboratorsController {
 
         try {
           // Confirm the collaborator in Cognito.
-          const confirmcollaborator = await AdminCollaboratorsController.CognitoService.adminConfirmUser(
+          const confirmcollaborator =
+            await AdminCollaboratorsController.CognitoService.adminConfirmUser(
               reqCollaborator.email!
             );
         } catch (error: any) {
