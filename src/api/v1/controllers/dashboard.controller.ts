@@ -26,6 +26,7 @@ import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
 import { CaregiverModel, CollaboratorModel } from '@packages/models';
+import { log } from 'console';
 
 export default class DashboardController {
   // db
@@ -88,7 +89,50 @@ export default class DashboardController {
         status: { $eq: 'new' },
       }).then((orders) => orders.data);
 
+      const activeOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+        health_unit: { $eq: healthUnitId },
+        // status different from new, declined, cancelled and completed
+        status: { $nin: ['new', 'declined', 'cancelled', 'completed'] },
+      }).then((orders) => orders.data);
+
+      const currentMonthOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+        health_unit: { $eq: healthUnitId },
+
+        'schedule_information.start_date': {
+          $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // first day of the current month
+          $lte: new Date(), // today
+        },
+      }).then((orders) => orders.data);
+
+      const lastMonthOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+        health_unit: { $eq: healthUnitId },
+
+        'schedule_information.start_date': {
+          $gte: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1),
+          $lte: new Date(new Date().getFullYear(), new Date().getMonth(), 0),
+        },
+      }).then((orders) => orders.data);
+
+      const thisYearOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+        health_unit: { $eq: healthUnitId },
+
+        'schedule_information.start_date': {
+          $gte: new Date(new Date().getFullYear(), 0, 1),
+          $lte: new Date(),
+        },
+      }).then((orders) => orders.data);
+
+      const lastYearOrders = await DashboardController.HomeCareOrdersDAO.queryList({
+        health_unit: { $eq: healthUnitId },
+
+        'schedule_information.start_date': {
+          $gte: new Date(new Date().getFullYear() - 1, 0, 1),
+          $lte: new Date(new Date().getFullYear(), 0, 0),
+        },
+      }).then((orders) => orders.data);
+
       // ----------------------------------------------------------------------------------------- //
+
       const currentYear = new Date().getFullYear();
       const currentMonthStart = new Date();
       currentMonthStart.setDate(1); // Set the date to the first day of the month
@@ -214,7 +258,8 @@ export default class DashboardController {
 
       // ------- ACTIVE CLIENTS ------- //
 
-      const currentMonthClients = currentMonthCharges.length;
+      // Add the number of clients from the current month's subscriptions from Stripe
+      let currentMonthClients = currentMonthOrders.length;
       const previousMonthClients = previousMonthCharges.length;
 
       let activeClientsMonthOverMonthPercentage = 0;
@@ -260,18 +305,27 @@ export default class DashboardController {
       const trimmedArray = activeClientsByMonthArray.slice(0, lastNonZeroIndex + 1);
 
       const activeClientsData = {
-        value: Number(currentMonthClients.toFixed(2)),
-        month_over_month_percentage: Number(activeClientsMonthOverMonthPercentage.toFixed(2)),
-        active_clients_by_month: trimmedArray,
-        test: activeClientsByMonth,
+        value: Number(activeOrders.length.toFixed(2)) || 0,
+        // FIXME: fix percentage calculation with offline orders
+        month_over_month_percentage: Number(activeClientsMonthOverMonthPercentage.toFixed(2)) || 0,
+        active_clients_by_month: trimmedArray || [],
       };
+
+      logger.info('activeClientsData' + JSON.stringify(activeClientsData, null, 2));
 
       // ------- ACTIVE CLIENTS ------- //
 
       // ------- MONTHLY BILLING ------- //
 
+      let offlineOrdersMonthlyBilling = 0;
+
+      activeOrders.forEach((order) => {
+        offlineOrdersMonthlyBilling += order.order_total;
+      });
+
       let monthlyBiilingMonthOverMonthPercentage = 0;
 
+      // FIXME: fix percentage calculation with offline orders
       if (previousMonthChargesAmount !== 0) {
         monthlyBiilingMonthOverMonthPercentage =
           ((currentMonthChargesAmount - previousMonthChargesAmount) / previousMonthChargesAmount) *
@@ -279,9 +333,12 @@ export default class DashboardController {
       }
 
       const monthlyBillingData = {
-        value: Number(currentMonthChargesAmount.toFixed(2)),
-        month_over_month_percentage: Number(monthlyBiilingMonthOverMonthPercentage.toFixed(2)),
+        value:
+          Number(currentMonthChargesAmount.toFixed(2)) + Number(offlineOrdersMonthlyBilling) || 0,
+        month_over_month_percentage: Number(monthlyBiilingMonthOverMonthPercentage.toFixed(2)) || 0,
       };
+
+      logger.info('monthlyBillingData' + JSON.stringify(monthlyBillingData, null, 2));
 
       // ------- MONTHLY BILLING ------- //
 
@@ -295,22 +352,42 @@ export default class DashboardController {
           100;
       }
 
+      const currentYearOfflineOrderBilling = thisYearOrders.reduce(
+        (total, order) => total + order.order_total,
+        0
+      );
+
+      const previousYearOfflineOrderBilling = lastYearOrders.reduce(
+        (total, order) => total + order.order_total,
+        0
+      );
+
       const yearToDateBillingData = {
-        value: Number(currentYearChargesAmount.toFixed(2)),
-        year_over_year_percentage: Number(yearOverYearPercentage.toFixed(2)),
+        value:
+          Number(currentYearChargesAmount.toFixed(2)) + Number(currentYearOfflineOrderBilling) || 0,
+        // FIXME: fix percentage calculation with offline orders
+        year_over_year_percentage: Number(yearOverYearPercentage) || 0,
       };
+
+      logger.info('yearToDateBillingData' + JSON.stringify(yearToDateBillingData, null, 2));
 
       // ------- YEAR TO DATE BILLING ------- //
 
       // -------- ORDERS AVERAGE -------- //
 
-      const current_year_order_average = currentYearChargesAmount / currentYearCharges.data.length;
+      const current_year_order_average =
+        (currentYearChargesAmount + currentYearOfflineOrderBilling) /
+          (currentYearCharges.data.length + thisYearOrders.length) || 0;
+
       const previous_year_order_average =
-        previousYearChargesAmount / previousYearCharges.data.length;
+        (previousYearChargesAmount + previousYearOfflineOrderBilling) /
+          (previousYearCharges.data.length + lastYearOrders.length) || 0;
 
       const yearly_order_average_month_over_month_percentage =
         ((current_year_order_average - previous_year_order_average) / previous_year_order_average) *
-        100;
+          100 || 0;
+
+      const online_and_offline_orders = [...currentYearCharges.data, ...thisYearOrders];
 
       // Calculate the average order amount for each month
       const order_average_by_month = currentYearCharges.data.reduce((accumulator, charge) => {
@@ -334,7 +411,7 @@ export default class DashboardController {
       // Calculate the average amount for each month and store it in an array
       const monthly_order_average_by_month = Object.keys(order_average_by_month).map((month) => {
         const { count, totalAmount } = order_average_by_month[month];
-        return Number((totalAmount / 100 / count).toFixed(2));
+        return Number(totalAmount / 100 / count) || 0;
       });
 
       const monthlyOrderAverageByMonthHighestMonthIndex = Math.max(
@@ -350,32 +427,57 @@ export default class DashboardController {
       // Remove the last element of the array (index)
       monthly_order_average_by_month.pop();
 
-      const current_month_order_average = Number(
-        monthly_order_average_by_month[monthly_order_average_by_month.length - 1].toFixed(2)
+      let current_month_order_average =
+        Number(monthly_order_average_by_month[monthly_order_average_by_month.length - 1]) || 0;
+
+      // Add the offline orders to the current month's order average
+      current_month_order_average += activeOrders.reduce(
+        (total, order) => total + order.order_total,
+        0
       );
-      const previous_month_order_average = Number(
-        monthly_order_average_by_month[monthly_order_average_by_month.length - 2].toFixed(2)
+
+      logger.info('current_month_order_average' + current_month_order_average);
+
+      // Calculate the sum of order totals for the current month
+      const sumOfOrderTotals = activeOrders.reduce((total, order) => total + order.order_total, 0);
+
+      // Calculate the count of orders for the current month
+      const numberOfOrders = activeOrders.length;
+
+      // Calculate the average for the current month's orders
+      const currentMonthOrderAverage = numberOfOrders > 0 ? sumOfOrderTotals / numberOfOrders : 0;
+
+      let previous_month_order_average =
+        Number(monthly_order_average_by_month[monthly_order_average_by_month.length - 2]) || 0;
+
+      // Add the offline orders to the previous month's order average
+      previous_month_order_average += lastMonthOrders.reduce(
+        (total, order) => total + order.order_total,
+        0
       );
 
       const monthly_order_average_month_over_month_percentage =
         ((current_month_order_average - previous_month_order_average) /
           previous_month_order_average) *
-        100;
+          100 || 0;
 
       const ordersAverageData = {
-        current_year_order_average: Number(current_year_order_average.toFixed(2)),
-        previous_year_order_average: Number(previous_year_order_average.toFixed(2)),
+        current_year_order_average: Number(current_year_order_average),
+        previous_year_order_average: Number(previous_year_order_average),
+        // FIXME: fix percentage calculation with offline orders
         yearly_order_average_month_over_month_percentage: Number(
-          yearly_order_average_month_over_month_percentage.toFixed(2)
+          yearly_order_average_month_over_month_percentage
         ),
         current_month_order_average,
         previous_month_order_average,
+        // FIXME: fix percentage calculation with offline orders
         monthly_order_average_month_over_month_percentage: Number(
-          monthly_order_average_month_over_month_percentage.toFixed(2)
+          monthly_order_average_month_over_month_percentage
         ),
         order_average_by_month: monthly_order_average_by_month,
-        test: order_average_by_month,
       };
+
+      logger.info('ordersAverageData' + JSON.stringify(ordersAverageData, null, 2));
 
       // -------- ORDERS AVERAGE -------- //
 
@@ -407,12 +509,22 @@ export default class DashboardController {
 
       const newClientsByMonthArray = Object.values(newClientsByMonth);
 
-      const currentMonthNewClients = newClientsByMonthArray[
-        newClientsByMonthArray.length - 1
-      ] as number;
-      const previousMonthNewClients = newClientsByMonthArray[
+      let currentMonthNewClients =
+        (newClientsByMonthArray[newClientsByMonthArray.length - 1] as number) || 0;
+
+      logger.info('currentMonthNewClients' + currentMonthNewClients);
+
+      // Add the number of clients from the current month's orders from the database (offline orders)
+      logger.info('currentMonthClients' + currentMonthClients);
+
+      currentMonthNewClients += currentMonthClients;
+
+      let previousMonthNewClients = newClientsByMonthArray[
         newClientsByMonthArray.length - 2
       ] as number;
+
+      // Add the number of clients from the current month's orders from the database (offline orders)
+      previousMonthNewClients += lastMonthOrders.length;
 
       let monthOverMonthPercentage = 0;
 
@@ -425,8 +537,9 @@ export default class DashboardController {
         value: Number(currentMonthNewClients.toFixed(2)),
         month_over_month_percentage: Number(monthOverMonthPercentage.toFixed(2)),
         new_clients_by_month: newClientsByMonthArray,
-        test: newClientsByMonth,
       };
+
+      logger.info('newClientsData' + JSON.stringify(newClientsData, null, 2));
 
       // --------- NEW CLIENTS --------- //
 
