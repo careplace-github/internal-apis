@@ -259,7 +259,7 @@ export default class DashboardController {
       // ------- ACTIVE CLIENTS ------- //
 
       // Add the number of clients from the current month's subscriptions from Stripe
-      let currentMonthClients = currentMonthOrders.length;
+      const currentMonthClients = currentMonthOrders.length;
       const previousMonthClients = previousMonthCharges.length;
 
       let activeClientsMonthOverMonthPercentage = 0;
@@ -311,7 +311,7 @@ export default class DashboardController {
         active_clients_by_month: trimmedArray || [],
       };
 
-      logger.info('activeClientsData' + JSON.stringify(activeClientsData, null, 2));
+      logger.info(`activeClientsData${JSON.stringify(activeClientsData, null, 2)}`);
 
       // ------- ACTIVE CLIENTS ------- //
 
@@ -338,7 +338,7 @@ export default class DashboardController {
         month_over_month_percentage: Number(monthlyBiilingMonthOverMonthPercentage.toFixed(2)) || 0,
       };
 
-      logger.info('monthlyBillingData' + JSON.stringify(monthlyBillingData, null, 2));
+      logger.info(`monthlyBillingData${JSON.stringify(monthlyBillingData, null, 2)}`);
 
       // ------- MONTHLY BILLING ------- //
 
@@ -369,7 +369,7 @@ export default class DashboardController {
         year_over_year_percentage: Number(yearOverYearPercentage) || 0,
       };
 
-      logger.info('yearToDateBillingData' + JSON.stringify(yearToDateBillingData, null, 2));
+      logger.info(`yearToDateBillingData${JSON.stringify(yearToDateBillingData, null, 2)}`);
 
       // ------- YEAR TO DATE BILLING ------- //
 
@@ -436,7 +436,7 @@ export default class DashboardController {
         0
       );
 
-      logger.info('current_month_order_average' + current_month_order_average);
+      logger.info(`current_month_order_average${current_month_order_average}`);
 
       // Calculate the sum of order totals for the current month
       const sumOfOrderTotals = activeOrders.reduce((total, order) => total + order.order_total, 0);
@@ -477,7 +477,7 @@ export default class DashboardController {
         order_average_by_month: monthly_order_average_by_month,
       };
 
-      logger.info('ordersAverageData' + JSON.stringify(ordersAverageData, null, 2));
+      logger.info(`ordersAverageData${JSON.stringify(ordersAverageData, null, 2)}`);
 
       // -------- ORDERS AVERAGE -------- //
 
@@ -512,10 +512,10 @@ export default class DashboardController {
       let currentMonthNewClients =
         (newClientsByMonthArray[newClientsByMonthArray.length - 1] as number) || 0;
 
-      logger.info('currentMonthNewClients' + currentMonthNewClients);
+      logger.info(`currentMonthNewClients${currentMonthNewClients}`);
 
       // Add the number of clients from the current month's orders from the database (offline orders)
-      logger.info('currentMonthClients' + currentMonthClients);
+      logger.info(`currentMonthClients${currentMonthClients}`);
 
       currentMonthNewClients += currentMonthClients;
 
@@ -539,7 +539,7 @@ export default class DashboardController {
         new_clients_by_month: newClientsByMonthArray,
       };
 
-      logger.info('newClientsData' + JSON.stringify(newClientsData, null, 2));
+      logger.info(`newClientsData${JSON.stringify(newClientsData, null, 2)}`);
 
       // --------- NEW CLIENTS --------- //
 
