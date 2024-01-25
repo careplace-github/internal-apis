@@ -1,8 +1,18 @@
+/**
+ * @see https://www.npmjs.com/package/dotenv
+ */
+import dotenv from 'dotenv';
+
 import { JWK, RSA } from 'jwk-to-pem';
 import publicKey from './cognito-public-key.json';
 
 // Loads environment settings
-export const ENV = process.env.NODE_ENV || ('development' as string);
+export const ENV = process.env.ENV || ('staging' as string);
+
+// Loads environment variables
+dotenv.config({ path: `./src/config/.env/.env.${ENV}` });
+
+
 
 // Application
 export const HOST = process.env.HOST as string;

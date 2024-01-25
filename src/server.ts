@@ -1,5 +1,5 @@
-// express-validator
-import { body } from 'express-validator';
+// body-parser
+import bodyParser from 'body-parser';
 // cors
 import cors from 'cors';
 // express
@@ -18,39 +18,53 @@ import mongoose from 'mongoose';
 import xss from 'xss-clean';
 // express-http-context
 import httpContext from 'express-http-context';
+// express-sanitizer
+import expressSanitizer from 'express-sanitizer';
 
-// swagger
-import logger from '@logger';
+// config
+import {
+  ENV,
+  HOST,
+  API_VERSION,
+  API_ROUTE,
+  API_URL,
+  SERVER_PORT,
+  MONGODB_CLUSTER_URI,
+  MONGODB_DB_ACTIVE_NS,
+  MONGODB_DB_DELETES_NS,
+  MONGODB_USER,
+  MONGODB_PASSWORD,
+} from './config/constants';
+// documentation
 import swaggerDocs from './documentation/swagger';
-// @logger
+// logger
+import logger from './logs/logger';
+
+import { body } from 'express-validator';
 
 const main = async () => {
   let app: express.Application = express();
   const MAX_RECONNECT_ATTEMPTS = 10;
   let currentReconnectAttempts = 0;
 
-  let MONGODB_DB_ACTIVE_URI: string;
-  let MONGODB_DB_DELETES_URI: string;
-
   try {
     logger.info(`
-    // -------------------------------------------------------------------------------------------- //
-    //                                                                                              //
-    //                                      CAREPLACE REST API                                      //
-    //                                                                                              //
-    // -------------------------------------------------------------------------------------------- //
-    \n`);
+     // -------------------------------------------------------------------------------------------- //
+     //                                                                                              //
+     //                                      CAREPLACE REST API                                      //
+     //                                                                                              //
+     // -------------------------------------------------------------------------------------------- //
+     \n`);
+
+    logger.info(`Server settings: `);
+    logger.info(`Running in '${ENV}' environment`);
+    logger.info(`Host: ${HOST} `);
+    logger.info(`API Version: ${API_VERSION} `);
+    logger.info(`API Route: ${API_ROUTE} `);
+    logger.info(`API URL: ${API_URL} `);
+    logger.info(`Server Port: ${SERVER_PORT} \n \n`);
 
     logger.info(`Initializing the server... \n \n`);
-
-    /**
-     * Load AWS Secrets
-     *
-     *  For the modules to work the environment variables must be loaded first
-     */
-    const { loadAWSSecrets } = require('@packages/services/secrets.service');
-    // Now that the environment variables are loaded, we can load the modules (we need to use require instead of import because import statements are hoisted)
-    await loadAWSSecrets();
 
     // routes
     const {
@@ -99,26 +113,24 @@ const main = async () => {
 
     // MongoDB connection options
     const options: mongoose.ConnectOptions = {
-      // useCreateIndex: true, //
+      //useCreateIndex: true, //
       autoIndex: false, // Don't build indexes
-      // useFindAndModify: false, // Use the new Server Discover and Monitoring engine
+      //useFindAndModify: false, // Use the new Server Discover and Monitoring engine
       maxPoolSize: 100, // Maintain up to 100 socket connections
       serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
       family: 4, // Use IPv4, skip trying IPv6
     };
 
+    logger.info(`Connecting to MongoDB Database '${MONGODB_CLUSTER_URI}'...`);
+
     mongoose.set('strictQuery', true);
 
-    MONGODB_DB_ACTIVE_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_ACTIVE_NS}?retryWrites=true&w=majority`;
-    MONGODB_DB_DELETES_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_URI}/${process.env.MONGODB_DB_DELETES_NS}?retryWrites=true&w=majority`;
-
-    logger.info(`Connecting to MongoDB Cluster: ${process.env.MONGODB_CLUSTER_URI}`);
-
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
-    let db_connection = await mongoose.connect(MONGODB_DB_ACTIVE_URI, options);
-
-    logger.info(`Connecting to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}'...`);
+    let db_connection = await mongoose.connect(
+      `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_ACTIVE_NS}`,
+      options
+    );
 
     /**
      *  Handle connection errors
@@ -130,10 +142,7 @@ const main = async () => {
         logger.info(`Attempting to reconnect to MongoDB (Attempt ${currentReconnectAttempts})...`);
         try {
           await mongoose.disconnect();
-          db_connection = await mongoose.connect(
-            process.env.MONGODB_DB_ACTIVE_URI as string,
-            options
-          );
+          db_connection = await mongoose.connect(MONGODB_CLUSTER_URI, options);
           currentReconnectAttempts = 0;
         } catch (error) {
           logger.error(`Failed to reconnect to MongoDB: ${error}`);
@@ -161,10 +170,8 @@ const main = async () => {
     db_connection.connection.on('close', handleMongoDBError);
 
     // Successfuly connected to MongoDB
-    logger.info(
-      `Connected to MongoDB Database '${process.env.MONGODB_DB_ACTIVE_NS}' Successfully!`
-    );
-    // Store the connection in a global variable
+    logger.info(`Connected to MongoDB Database '${MONGODB_DB_ACTIVE_NS}' Successfully!`);
+    //Store the connection in a global variable
     global.db = db_connection.connection;
 
     try {
@@ -192,7 +199,7 @@ const main = async () => {
 
       logger.info(`Applying Application Security Middlewares...`);
 
-      // app.use('/packages/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
+      //app.use('/api/v1/webhooks/stripe/connect', bodyParser.raw({type: "*/*"}))
 
       /**
        * Prevents HTTP Parameter Pollution & Prototype Pollution Attacks
@@ -222,48 +229,10 @@ const main = async () => {
 
       app.use(
         body()
-          // Trim all request body inputs (eg: name: '  John  ' => name: 'John')
-          .trim()
-          // Escape all request body inputs (eg: name: '<script>John</script>' => name: '&lt;script&gt;John&lt;/script&gt;')
-          .escape()
-          // Apply additional custom sanitization logic here if needed
+          .trim() // Trim all request body inputs (eg: name: '  John  ' => name: 'John')
+          .escape() // Escape all request body inputs (eg: name: '<script>John</script>' => name: '&lt;script&gt;John&lt;/script&gt;')
           .customSanitizer((value) => {
-            // If the value is an array
-            if (Array.isArray(value)) {
-              // trim and escape all of its elements
-              value = value.map((element) => element.trim().escape());
-
-              // delete unwanted elements
-              delete value.__v;
-              delete value._id;
-              delete value.createdAt;
-              delete value.updatedAt;
-            }
-
-            // If the value is an object
-            else if (typeof value === 'object') {
-              //  trim and escape all of its properties
-              for (const key in value) {
-                if (Object.prototype.hasOwnProperty.call(value, key)) {
-                  value[key] = value[key].trim().escape();
-                }
-              }
-
-              // delete unwanted properties
-              delete value._id;
-              delete value.__v;
-              delete value._id;
-              delete value.createdAt;
-              delete value.updatedAt;
-            }
-
-            // If the value is a string
-            else if (typeof value === 'string') {
-              // TODO escape string
-              // trim and escape it
-              value = value.trim();
-            }
-
+            // Apply additional custom sanitization logic here if needed
             return value;
           })
       );
@@ -436,12 +405,12 @@ const main = async () => {
       // Middleware to parse the body of the HTTP requests
 
       // Check if the request is a webhook request
-      // A request is a webhook request if the original URL is /packages/webhooks/ + the name of the webhook
+      // A request is a webhook request if the original URL is /api/v1/webhooks/ + the name of the webhook
 
       // Use JSON parser for all non-webhook routes
 
       app.use((req: Request, res: Response, next: NextFunction) => {
-        if (req.originalUrl === '/v1/webhooks/stripe') {
+        if (req.originalUrl === '/api/v1/webhooks/stripe/connect') {
           next();
         } else {
           express.json()(req, res, next);
@@ -454,34 +423,22 @@ const main = async () => {
       // Middleware to log all the HTTP requests
       app.use(RequestHandlerMiddleware);
 
-      // API Routes
-      app.use(process.env.API_ROUTE as string, FilesRoute);
-      app.use(process.env.API_ROUTE as string, ReviewsRoute);
-      app.use(process.env.API_ROUTE as string, AuthRoute);
-      app.use(process.env.API_ROUTE as string, PatientsRoute);
-      app.use(process.env.API_ROUTE as string, OrdersRoute);
-      app.use(process.env.API_ROUTE as string, ServicesRoute);
-      app.use(process.env.API_ROUTE as string, CollaboratorsRoute);
-      app.use(process.env.API_ROUTE as string, CaregiversRoute);
-      app.use(process.env.API_ROUTE as string, CalendarRoute);
-      app.use(process.env.API_ROUTE as string, DashboardRoute);
-      app.use(process.env.API_ROUTE as string, WebhooksRoute);
-      app.use(process.env.API_ROUTE as string, PaymentsRoute);
-      app.use(process.env.API_ROUTE as string, HealthUnitsRoute);
-      app.use(process.env.API_ROUTE as string, CustomersRoute);
+      // Routes middlewares
 
-      app.use(process.env.API_ROUTE as string, LeadsRoute);
+      app.use(API_ROUTE, FilesRoute);
+      app.use(API_ROUTE, ReviewsRoute);
+      app.use(API_ROUTE, AuthRoute);
+      app.use(API_ROUTE, CustomersRoute);
+      app.use(API_ROUTE, HealthUnitsRoute);
+      app.use(API_ROUTE, PatientsRoute);
 
-      // Admin API Routes
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminAuthRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminFilesRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminCollaboratorsRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminCaregiversRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminHealthUnitsRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminPaymentsRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminReviewsRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminServicesRoute);
-      app.use(process.env.ADMIN_API_ROUTE as string, AdminCustomersRoute);
+      app.use(API_ROUTE, OrdersRoute);
+      app.use(API_ROUTE, ServicesRoute);
+      app.use(API_ROUTE, CalendarRoute);
+      app.use(API_ROUTE, PaymentsRoute);
+      //app.use(API_ROUTE, WebHooksRoute);
+      // app.use(API_ROUTE, AdminRoute);
+
       // Middleware to handle and log all the errors
       app.use(ErrorHandlerMiddleware);
       // Middleware to handle and log all the HTTP responses
@@ -523,7 +480,7 @@ const main = async () => {
        * Gets all the services from the database and stores them in the cache
        */
 
-      logger.info(`Fetched all the necessary assets successfully! \n`);
+      logger.info('Fetched all the necessary assets successfully!');
     } catch (error) {
       // throw new HTTPError._503(`Service Unavailable: ${error}`);
     }
@@ -539,20 +496,10 @@ const main = async () => {
       logger.info(`Starting to listen for HTTP requests...`);
 
       // Starts listening for HTTP requests
-      app.listen(process.env.PORT, () => {
-        logger.info(`Successfully listening for HTTP requests on port: ${process.env.PORT}`);
+      app.listen(SERVER_PORT, () => {
+        logger.info(`Successfully listening for HTTP requests on port: ${SERVER_PORT}`);
 
-        logger.info(`Server Settings: `);
-        logger.info(`NODE_ENV: '${process.env.NODE_ENV}'`);
-        logger.info(`HOST: ${process.env.HOST} `);
-        logger.info(`API Version: ${process.env.API_VERSION} `);
-        logger.info(`API Route: ${process.env.API_ROUTE as string} `);
-        logger.info(`API URL: ${process.env.API_URL} `);
-        logger.info(`Server Port: ${process.env.PORT}`);
-        logger.info(`Marketplace Base URL: ${process.env.MARKETPLACE_BASE_URL}`);
-        logger.info(`Business Base URL: ${process.env.BUSINESS_BASE_URL} \n`);
-
-        swaggerDocs(app, process.env.PORT);
+        swaggerDocs(app, SERVER_PORT);
 
         logger.info(`Server started successfully! 🚀`);
       });
@@ -565,12 +512,9 @@ const main = async () => {
       console.log(`Unable to start the HTTP Server: ${error}`);
       // throw new HTTPError._500(`Unable to start the HTTP Server: ${error}`);
     }
-  } catch (error: any) {
-    logger.error(`Internal Error: ${error}`);
-
-    if (!error?.isOperational) {
-      process.exit(1);
-    }
+  } catch (error) {
+    console.log(`Internal Error: ${error}`);
+    // throw new HTTPError._500(`Internal Error: ${error}`);
   }
 };
 
