@@ -128,9 +128,6 @@ const main = async () => {
     mongoose.set('strictQuery', true);
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
-    // let db_connection = await mongoose.connect(
-    //   "mongodb+srv://admin:<password>@development-cluster.xi2luge.mongodb.net/?retryWrites=true&w=majority"
-    // );
     let db_connection = await mongoose.connect(
       `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_ACTIVE_NS}`,
       options
