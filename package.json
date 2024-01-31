@@ -61,6 +61,7 @@
   },
   "homepage": "https://github.com/CarelyPT/crm-backend#readme",
   "dependencies": {
+    "@types/body-parser": "^1.19.5",
     "aws-jwt-verify": "^4.0.0",
     "aws-sdk": "2.1354.0",
     "axios": "^1.4.0",

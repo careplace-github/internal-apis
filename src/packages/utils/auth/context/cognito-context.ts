@@ -26,6 +26,7 @@ export default class CognitoContext {
    */
   static async verifyToken(token: string): Promise<CognitoJwtPayload> {
     logger.info(`Authentication Utils VERIFY_TOKEN Request: \n ${token}`);
+    logger.info('VARS HERE', AWS_COGNITO_ADMIN_USER_POOL_ID, AWS_COGNITO_ADMIN_CLIENT_ID);
 
     const businessVerifier = CognitoJwtVerifier.create({
       userPoolId: AWS_COGNITO_BUSINESS_USER_POOL_ID,
@@ -36,6 +37,8 @@ export default class CognitoContext {
       userPoolId: AWS_COGNITO_MARKETPLACE_USER_POOL_ID,
       clientId: AWS_COGNITO_MARKETPLACE_CLIENT_ID,
     });
+
+    logger.info('VARS HERE', AWS_COGNITO_ADMIN_USER_POOL_ID, AWS_COGNITO_ADMIN_CLIENT_ID);
 
     const adminVerifier = CognitoJwtVerifier.create({
       userPoolId: AWS_COGNITO_ADMIN_USER_POOL_ID,

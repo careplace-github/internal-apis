@@ -227,6 +227,8 @@ export default abstract class DAO<T extends Document> {
         this.Model.countDocuments(filters).exec(),
       ]);
 
+      console.log('DATA HERE ->', data);
+
       const totalPages = Math.ceil(totalDocuments / documentsPerPage);
 
       response = {

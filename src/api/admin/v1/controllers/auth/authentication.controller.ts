@@ -270,9 +270,7 @@ export default class AdminAuthenticationController {
         return next(new HTTPError._401('Missing required access token.'));
       }
 
-      const clientId = await AdminAuthenticationController.AuthHelper.getClientIdFromAccessToken(
-        accessToken
-      );
+      await AdminAuthenticationController.AuthHelper.getClientIdFromAccessToken(accessToken);
 
       const user = await AdminAuthenticationController.AuthHelper.getAuthUser(accessToken);
 

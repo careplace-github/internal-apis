@@ -27,6 +27,7 @@ import {
   HOST,
   API_VERSION,
   API_ROUTE,
+  ADMIN_API_ROUTE,
   API_URL,
   SERVER_PORT,
   MONGODB_CLUSTER_URI,
@@ -127,6 +128,9 @@ const main = async () => {
     mongoose.set('strictQuery', true);
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
+    // let db_connection = await mongoose.connect(
+    //   "mongodb+srv://admin:<password>@development-cluster.xi2luge.mongodb.net/?retryWrites=true&w=majority"
+    // );
     let db_connection = await mongoose.connect(
       `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_ACTIVE_NS}`,
       options
@@ -142,7 +146,9 @@ const main = async () => {
         logger.info(`Attempting to reconnect to MongoDB (Attempt ${currentReconnectAttempts})...`);
         try {
           await mongoose.disconnect();
+          console.log('CONNECT');
           db_connection = await mongoose.connect(MONGODB_CLUSTER_URI, options);
+          console.log('CONNECTED');
           currentReconnectAttempts = 0;
         } catch (error) {
           logger.error(`Failed to reconnect to MongoDB: ${error}`);
@@ -424,6 +430,8 @@ const main = async () => {
       app.use(RequestHandlerMiddleware);
 
       // Routes middlewares
+
+      app.use(ADMIN_API_ROUTE, AdminAuthRoute);
 
       app.use(API_ROUTE, FilesRoute);
       app.use(API_ROUTE, ReviewsRoute);

@@ -38,7 +38,12 @@ export default function validateAuth(req: Request, res: Response, next: NextFunc
 
       // accessToken provided
       if (accessToken !== null && accessToken !== undefined) {
-        const isLoggedIn = await AuthUtils.isValidJwtToken(accessToken);
+        let isLoggedIn;
+        try {
+          isLoggedIn = await AuthUtils.isValidJwtToken(accessToken);
+        } catch (err) {
+          logger.error('ERROR HERE BRO -->', err);
+        }
 
         if (isLoggedIn) {
           next();
