@@ -128,6 +128,16 @@ const main = async () => {
     mongoose.set('strictQuery', true);
 
     // Attempts to create a connection to the MongoDB Database and handles the error of the connection fails
+    console.log(
+      'USER',
+      MONGODB_USER,
+      'password',
+      MONGODB_PASSWORD,
+      'cluster',
+      MONGODB_CLUSTER_URI,
+      'active ns',
+      MONGODB_DB_ACTIVE_NS
+    );
     let db_connection = await mongoose.connect(
       `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_CLUSTER_URI}/${MONGODB_DB_ACTIVE_NS}`,
       options
@@ -429,6 +439,14 @@ const main = async () => {
       // Routes middlewares
 
       app.use(ADMIN_API_ROUTE, AdminAuthRoute);
+      app.use(ADMIN_API_ROUTE, AdminFilesRoute);
+      app.use(ADMIN_API_ROUTE, AdminCollaboratorsRoute);
+      app.use(ADMIN_API_ROUTE, AdminHealthUnitsRoute);
+      app.use(ADMIN_API_ROUTE, AdminPaymentsRoute);
+      app.use(ADMIN_API_ROUTE, AdminReviewsRoute);
+      app.use(ADMIN_API_ROUTE, AdminServicesRoute);
+      app.use(ADMIN_API_ROUTE, AdminCaregiversRoute);
+      app.use(ADMIN_API_ROUTE, AdminCustomersRoute);
 
       app.use(API_ROUTE, FilesRoute);
       app.use(API_ROUTE, ReviewsRoute);
