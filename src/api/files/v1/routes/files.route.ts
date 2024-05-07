@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
     /**
      * Change the file name to the current date and time to avoid duplicate file names
      */
-    cb(null, `careplace_${Date.now()}_${file.originalname}`);
+    cb(null, `careplace_file_${Date.now()}_${file.originalname}`);
   },
 });
 

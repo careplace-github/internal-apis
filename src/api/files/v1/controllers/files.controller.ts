@@ -1,20 +1,13 @@
 // express
 import { Request, Response, NextFunction } from 'express';
-// mongoose
-import mongoose, { FilterQuery, startSession } from 'mongoose';
 // fs
-import fs, { createReadStream } from 'fs';
+import fs from 'fs';
 
 // @api
-import { HealthUnitsDAO, HomeCareOrdersDAO, HealthUnitReviewsDAO } from 'src/packages/database';
 import {
   IAPIResponse,
-  IHealthUnitReview,
-  IOrder,
-  IHealthUnit,
-  IQueryListResponse,
 } from 'src/packages/interfaces';
-import { CognitoService, StripeService, BucketService } from 'src/packages/services';
+import { BucketService } from 'src/packages/services';
 import { HTTPError } from '@utils';
 // @logger
 import logger from '@logger';
@@ -37,7 +30,7 @@ export default class FilesController {
    */
   static async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const response: IAPIResponse = {
+      var response: IAPIResponse = {
         statusCode: res.statusCode,
         data: {},
       };

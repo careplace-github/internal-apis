@@ -53,6 +53,8 @@ export default class S3Manager {
       throw new LayerError.NOT_FOUND('No file found.');
     }
 
+    logger.info("FILE: "+  JSON.stringify(file, null, 2));
+
     // Read content from the file
     const fileStream = fs.createReadStream(file);
 
@@ -64,10 +66,10 @@ export default class S3Manager {
     // Remove file extension from the file path
     const fileKey = file
       .toString()
-      .split('uploads/')[1]
-      .replace(/\s/g, '_')
-      .replace(/[^a-zA-Z0-9_]/g, '')
-      .replace(pattern, '');
+      .split('uploads')[1] // Remove the "uploads/" part of the file path
+      .replace(/\s/g, '_') // Replace every white space with an underscore
+      .replace(/[^a-zA-Z0-9_]/g, '') // Remove special characters
+      .replace(pattern, ''); // Remove file extension
 
     const params: AWS.S3.PutObjectRequest = {
       Bucket: AWS_S3_BUCKET_NAME,
@@ -77,7 +79,7 @@ export default class S3Manager {
       /**
        * ACL stands for Access Control List and is a list of permissions
        */
-      ACL: ACL || 'private',
+      ACL: ACL || 'public-read',
     };
 
     try {

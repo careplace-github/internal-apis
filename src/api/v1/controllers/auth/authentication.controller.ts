@@ -684,8 +684,6 @@ export default class AuthenticationController {
         statusCode: res.statusCode,
         data: {},
       };
-      logger.info(`STRIPE KEY: ${STRIPE_SECRET_KEY}`);
-
       let app = '';
 
       let accessToken: string;
@@ -718,16 +716,16 @@ export default class AuthenticationController {
       let phone;
 
       if (userAttributes) {
-        phoneVerified =
-          userAttributes.find((attribute) => attribute.Name === 'phone_number_verified')?.Value ===
-          'true';
-
         emailVerified =
           userAttributes.find((attribute) => attribute.Name === 'email_verified')?.Value === 'true';
 
         email = userAttributes?.find((attribute) => attribute.Name === 'email')?.Value;
 
-        phone = userAttributes?.find((attribute) => attribute.Name === 'phone_number')?.Value;
+        // TODO: Check if phone number is verified
+        // phone = userAttributes?.find((attribute) => attribute.Name === 'phone_number')?.Value;
+        // phoneVerified =
+        // userAttributes.find((attribute) => attribute.Name === 'phone_number_verified')?.Value ===
+        // 'true';
       }
 
       if (clientId === AWS_COGNITO_BUSINESS_CLIENT_ID) {
@@ -829,10 +827,11 @@ export default class AuthenticationController {
 
       // Convert user to JSON
 
-      userJSON.phone_verified = phoneVerified;
       userJSON.email_verified = emailVerified;
       userJSON.email = email;
-      userJSON.phone = phone;
+      // userJSON.phone = phone;
+      // userJSON.phone_verified = phoneVerified;
+
       delete userJSON.createdAt;
       delete userJSON.updatedAt;
       delete userJSON.__v;
@@ -882,7 +881,7 @@ export default class AuthenticationController {
 
       const reqUser = req.body as ICustomerDocument | ICollaboratorDocument | ICaregiverDocument;
 
-      const sanitizedReqUser = omit(reqUser, ['_id', 'cognito_id', 'email', 'phone']);
+      const sanitizedReqUser = omit(reqUser, ['_id', 'cognito_id', 'email']);
 
       const updatedUserFields = {
         ...user.toJSON(),
