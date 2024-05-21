@@ -95,6 +95,7 @@ const main = async () => {
       AdminServicesRoute,
       AdminCaregiversRoute,
       AdminCustomersRoute,
+      AdminAdsRoute
     } = require('@api/admin/v1/routes');
 
     const { FilesRoute } = require('@api/files/v1/routes');
@@ -447,6 +448,7 @@ const main = async () => {
       app.use(ADMIN_API_ROUTE, AdminServicesRoute);
       app.use(ADMIN_API_ROUTE, AdminCaregiversRoute);
       app.use(ADMIN_API_ROUTE, AdminCustomersRoute);
+      app.use(ADMIN_API_ROUTE, AdminAdsRoute);
 
       app.use(API_ROUTE, FilesRoute);
       app.use(API_ROUTE, ReviewsRoute);

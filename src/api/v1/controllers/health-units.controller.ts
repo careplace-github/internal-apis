@@ -11,6 +11,7 @@ import {
   CustomersDAO,
   CollaboratorsDAO,
   CaregiversDAO,
+  AdsDAO,
 } from 'src/packages/database';
 import { AuthHelper, EmailHelper, StripeHelper } from '@packages/helpers';
 import {
@@ -40,6 +41,8 @@ export default class HealthUnitsController {
   static HealthUnitsDAO = new HealthUnitsDAO();
 
   static HomeCareOrdersDAO = new HomeCareOrdersDAO();
+
+  static AdsDAO = new AdsDAO();
 
   // helpers
   static AuthHelper = AuthHelper;
@@ -249,6 +252,41 @@ export default class HealthUnitsController {
         documentsPerPage,
         undefined,
         '-plan -legal_information.name -legal_information.director -legal_information.tax_number -legal_information.business_structure -team -stripe_information -billing_address -createdAt -updatedAt -__v'
+      );
+
+      response.statusCode = 200;
+      response.data = healthUnits;
+
+      // Pass to the next middleware to handle the response
+      next(response);
+    } catch (error: any) {
+      // Pass to the next middleware to handle the error
+      return next(new HTTPError._500(error.message));
+    }
+  }
+
+  // Retrieve health units with paid ads
+  static async retrieveHealthUnitsWithPaidAds(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const response: IAPIResponse = {
+        statusCode: res.statusCode,
+        data: {},
+      };
+
+      // Retrieve health units with paid ads and expand the health_unit field.
+      const healthUnits = await HealthUnitsController.AdsDAO.queryList(
+        {
+          type: 1,
+        },
+        {},
+        1,
+        10,
+        undefined,
+        '-_id health_unit'
       );
 
       response.statusCode = 200;

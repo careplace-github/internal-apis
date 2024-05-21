@@ -13,6 +13,7 @@ export type {
 } from './app/health-unit-review.interface';
 export type { IService, IServiceDocument } from './app/service.interface';
 export type { ILead, ILeadDocument } from './app/leads.interface';
+export type { IAd, IAdDocument } from './app/ad.interface';
 
 // Misc Interfaces
 export type { IAddress } from './misc/address.interface';
