@@ -13,7 +13,7 @@ const HealthUnitSchema: Schema<IHealthUnitDocument> = new Schema<IHealthUnitDocu
 
     type: {
       type: String,
-      enum: ['agency', 'retirement_home', 'senior_residence'],
+      enum: ['home_care', 'medical_equipment', 'nursing_home', 'senior_residence', 'day_center'],
       required: true,
     },
 

@@ -62,6 +62,7 @@ export const MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS = process.env
   .MONGODB_COLLECTION_HEALTH_UNIT_REVIEWS_NS as string;
 export const MONGODB_COLLECTION_LEADS_NS = process.env.MONGODB_COLLECTION_LEADS_NS as string;
 export const MONGODB_COLLECTION_ADS_NS = process.env.MONGODB_COLLECTION_ADS_NS as string;
+export const MONGODB_COLLECTION_FAVOURITES_NS = process.env.MONGODB_COLLECTION_FAVOURITES_NS as string;
 
 // AWS Credentials
 export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID as string;

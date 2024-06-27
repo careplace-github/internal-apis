@@ -11,3 +11,4 @@ export { default as HealthUnitReviewsDAO } from './health-unit-reviews.dao';
 export { default as ServicesDAO } from './services.dao';
 export { default as LeadsDAO } from './leads.dao';
 export { default as AdsDAO } from './ads.dao';
+export { default as FavouritesDAO } from './favourites.dao';

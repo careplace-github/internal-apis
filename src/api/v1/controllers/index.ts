@@ -8,3 +8,6 @@ export { default as ServicesController } from './services.controller';
 export { default as CalendarController } from './calendar.controller';
 export { default as CaregiversController } from './caregivers.controller';
 export { default as CollaboratorsController } from './collaborators.controller';
+export { default as FavouritesController } from './favourites.controller';
+export { default as LeadsController } from './leads.controller';
+export { default as CustomersController } from './customers.controller';

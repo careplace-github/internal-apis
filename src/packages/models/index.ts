@@ -13,6 +13,7 @@ export { HealthUnitReviewSchema } from './health-unit-review.model';
 export { ServiceSchema } from './service.model';
 export { LeadSchema } from './lead.model';
 export { AdSchema } from './ad.model';
+export { FavouriteSchema } from './favourite.model';
 
 // models
 export { DeletedDocumentModel } from './misc/deletedDocument.model';
@@ -29,3 +30,5 @@ export { HealthUnitReviewModel } from './health-unit-review.model';
 export { ServiceModel } from './service.model';
 export { LeadModel } from './lead.model';
 export { AdModel } from './ad.model';
+export { FavouriteModel } from './favourite.model';
+
