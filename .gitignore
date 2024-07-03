@@ -11,4 +11,5 @@ build
 yarn-error.log
 .docker/mongodb/data/*
 package-lock.json
-
+.env.*
+**/.env.*
